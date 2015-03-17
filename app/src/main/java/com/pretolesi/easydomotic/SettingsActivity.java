@@ -52,10 +52,17 @@ public class SettingsActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, BuildingFragment.newInstance(position + 1))
-                .commit();
+        if(position == 0){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, BuildingFragment.newInstance(position + 1))
+                    .commit();
+        }
+
+        if(position == 1){
+            BuildingFragment bf = (BuildingFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            bf.addLightSwitch();
+        }
     }
 
     public void onSectionAttached(int number) {
