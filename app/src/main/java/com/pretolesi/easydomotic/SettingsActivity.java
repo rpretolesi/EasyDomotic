@@ -1,27 +1,34 @@
 package com.pretolesi.easydomotic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity
-        implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
+/**
+ * Settings Activity and Settings Navigation Drawer
+ */
+public class SettingsActivity extends ActionBarActivity
+        implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private MainNavigationDrawerFragment mNavigationDrawerFragment;
+    private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -31,9 +38,9 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.settings_activity);
 
-        mNavigationDrawerFragment = (MainNavigationDrawerFragment)
+        mNavigationDrawerFragment = (SettingsNavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -48,7 +55,7 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, BuildingFragment.newInstance(position + 1))
                 .commit();
     }
 
@@ -62,6 +69,9 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
+                break;
+            case 4:
+                mTitle = getString(R.string.settings_title_section_add_room);
                 break;
         }
     }
@@ -96,10 +106,6 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-
-            Intent intent = SettingsActivity.makeSettingsActivity(this);
-            startActivity(intent);
-
             return true;
         }
 
@@ -134,16 +140,102 @@ public class MainActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.main_fragment, container, false);
+
+            View rootView = inflater.inflate(R.layout.settings_fragment, container, false);
             return rootView;
         }
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
+            ((SettingsActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
+    }
+
+    /**
+     * Building Fragment for build my custom fragment
+     */
+    public static class BuildingFragment extends Fragment {
+        RelativeLayout m_rl;
+        RelativeLayout.LayoutParams m_rllp;
+        ArrayList<LightSwitch> m_alLightSwitch;
+
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static BuildingFragment newInstance(int sectionNumber) {
+            BuildingFragment fragment = new BuildingFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public BuildingFragment() {
+        }
+
+        @Override
+        public void  onCreate (Bundle savedInstanceState){
+            if(m_rl == null){
+                m_rl = new RelativeLayout(getActivity().getApplicationContext());
+                RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                m_rl.setLayoutParams(rllp);
+            }
+            if(m_alLightSwitch == null){
+                m_alLightSwitch = new ArrayList<>();
+            }
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            // Creating a new TextView
+            TextView tv = new TextView(getActivity().getApplicationContext());
+            tv.setText("Test");
+
+            // Defining the layout parameters of the TextView
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+            // Setting the parameters on the TextView
+            tv.setLayoutParams(lp);
+
+            // Adding the TextView to the RelativeLayout as a child
+            m_rl.addView(tv);
+
+            return m_rl;
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            ((SettingsActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));
+        }
+
+        /*
+            Add a new Light Switch
+         */
+        public void addLightSwitch(){
+
+        }
+    }
+
+    public static Intent makeSettingsActivity(Context context)
+    {
+        Intent intent = new Intent();
+        intent.setClass(context, SettingsActivity.class);
+        return intent;
     }
 
 }
