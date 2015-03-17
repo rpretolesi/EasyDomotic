@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -184,6 +183,7 @@ public class SettingsActivity extends ActionBarActivity
 
         @Override
         public void  onCreate (Bundle savedInstanceState){
+            super.onCreate(savedInstanceState);
             if(m_rl == null){
                 m_rl = new RelativeLayout(getActivity().getApplicationContext());
                 RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -196,7 +196,7 @@ public class SettingsActivity extends ActionBarActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+/*
             // Creating a new TextView
             TextView tv = new TextView(getActivity().getApplicationContext());
             tv.setText("Test");
@@ -212,7 +212,7 @@ public class SettingsActivity extends ActionBarActivity
 
             // Adding the TextView to the RelativeLayout as a child
             m_rl.addView(tv);
-
+*/
             return m_rl;
         }
 
@@ -227,7 +227,20 @@ public class SettingsActivity extends ActionBarActivity
             Add a new Light Switch
          */
         public void addLightSwitch(){
+            // Define the switch
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext());
 
+            // Defining the layout parameters of the TextView
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+            ls.setLayoutParams(lp);
+
+            if(m_alLightSwitch!= null){
+                m_alLightSwitch.add(ls);
+            }
+            if(m_rl != null){
+                m_rl.addView(ls);
+            }
         }
     }
 
