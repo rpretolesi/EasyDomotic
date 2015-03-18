@@ -1,15 +1,11 @@
 package com.pretolesi.easydomotic;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Switch;
-import android.widget.Toast;
 
 /**
  * Created by RPRETOLESI on 17/03/2015.
@@ -46,7 +42,7 @@ public class LightSwitch extends Switch {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        // Let the ScaleGestureDetector inspect all events.event
+        // Let the ScaleGestureDetector inspect all events.
         //mScaleDetector.onTouchEvent(ev);
 
         final int action = MotionEventCompat.getActionMasked(event);
@@ -60,21 +56,20 @@ public class LightSwitch extends Switch {
                 // Remember where we started (for dragging)
                 mLastTouchX = x;
                 mLastTouchY = y;
+
                 // Save the ID of this pointer (for dragging)
                 mActivePointerId = MotionEventCompat.getPointerId(event, 0);
 
-                Log.d(TAG, "ACTION_DOWN: Pos X: " + mPosX + "-Pos Y: " + mPosY);
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
                 // Find the index of the active pointer and fetch its position
-                final int pointerIndex =
-                        MotionEventCompat.findPointerIndex(event, mActivePointerId);
+                Log.d(TAG,"ACTION_MOVE: mActivePointerId: " + mActivePointerId);
+                final int pointerIndex = MotionEventCompat.findPointerIndex(event, mActivePointerId);
 
                 final float x = MotionEventCompat.getX(event, pointerIndex);
                 final float y = MotionEventCompat.getY(event, pointerIndex);
-
                 // Calculate the distance moved
                 final float dx = x - mLastTouchX;
                 final float dy = y - mLastTouchY;
@@ -82,17 +77,16 @@ public class LightSwitch extends Switch {
                 mPosX += dx;
                 mPosY += dy;
 
- //               this.setX(mPosX);
- //               this.setY(mPosY);
-                this.setPivotX(mPosX);
-                this.setPivotY(mPosY);
-                 invalidate();
+                this.setX(mPosX);
+                this.setY(mPosY);
+
+                invalidate();
 
                 // Remember this touch position for the next move event
                 mLastTouchX = x;
                 mLastTouchY = y;
 
-                Log.d(TAG, "ACTION_MOVE: Pos X: " + mPosX + "-Pos Y: " + mPosY);
+                Log.d(TAG,"ACTION_MOVE: setX()/Finger X: " + getX() + "/" + x + " setY()/Finger Y: " + getY() + "/" + y);
 
                 break;
             }
@@ -108,6 +102,7 @@ public class LightSwitch extends Switch {
             }
 
             case MotionEvent.ACTION_POINTER_UP: {
+                mActivePointerId = MotionEvent.INVALID_POINTER_ID;
 
                 final int pointerIndex = MotionEventCompat.getActionIndex(event);
                 final int pointerId = MotionEventCompat.getPointerId(event, pointerIndex);
@@ -120,13 +115,10 @@ public class LightSwitch extends Switch {
                     mLastTouchY = MotionEventCompat.getY(event, newPointerIndex);
                     mActivePointerId = MotionEventCompat.getPointerId(event, newPointerIndex);
                 }
-
-                Log.d(TAG, "ACTION_POINTER_UP: Pos X: " + mPosX + "-Pos Y: " + mPosY);
-
                 break;
             }
         }
-//        return true;
-        return super.onTouchEvent(event);
+        return true;
+//        return super.onTouchEvent(event);
     }
 }

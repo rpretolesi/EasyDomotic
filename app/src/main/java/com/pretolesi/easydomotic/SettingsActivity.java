@@ -193,8 +193,8 @@ public class SettingsActivity extends ActionBarActivity
             super.onCreate(savedInstanceState);
             if(m_rl == null){
                 m_rl = new RelativeLayout(getActivity().getApplicationContext());
-                RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                m_rl.setLayoutParams(rllp);
+ //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+ //               m_rl.setLayoutParams(rllp);
             }
             if(m_alLightSwitch == null){
                 m_alLightSwitch = new ArrayList<>();
