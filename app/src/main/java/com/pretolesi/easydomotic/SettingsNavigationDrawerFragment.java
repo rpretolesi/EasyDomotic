@@ -25,8 +25,7 @@ import android.widget.Toast;
 /**
  * Settings
  */
-public class SettingsNavigationDrawerFragment
-        extends Fragment {
+public class SettingsNavigationDrawerFragment extends Fragment {
 
     /**
      * Remember the position of the selected item.

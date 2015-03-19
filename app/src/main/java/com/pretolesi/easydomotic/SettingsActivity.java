@@ -17,13 +17,14 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pretolesi.SQL.SQLContract;
+
 import java.util.ArrayList;
 
 /**
  * Settings Activity and Settings Navigation Drawer
  */
-public class SettingsActivity extends ActionBarActivity
-        implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks {
+public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -61,11 +62,13 @@ public class SettingsActivity extends ActionBarActivity
         }
 
         if(position == 1){
-            RoomFragment bf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            bf.addLightSwitch();
+            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            rf.addLightSwitch();
         }
 
         if(position == 7){
+            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            SQLContract.RoomEntry.save(getApplicationContext(), rf);
         }
     }
 
@@ -265,7 +268,7 @@ public class SettingsActivity extends ActionBarActivity
          */
         public void addLightSwitch(){
             // Define the switch
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), getTag());
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), "MyLS", getTag());
 
             // Defining the layout parameters of the LightSwitch
 //            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

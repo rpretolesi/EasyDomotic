@@ -1,5 +1,10 @@
 package com.pretolesi.easydomotic;
 
+import android.database.Cursor;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -11,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +28,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.pretolesi.SQL.SQLContract;
+
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class MainNavigationDrawerFragment extends Fragment {
+public class MainNavigationDrawerFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Remember the position of the selected item.
@@ -58,6 +66,8 @@ public class MainNavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    SimpleCursorAdapter mAdapter;
+
     public MainNavigationDrawerFragment() {
     }
 
@@ -84,6 +94,9 @@ public class MainNavigationDrawerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+
+        // Init loader
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -97,6 +110,7 @@ public class MainNavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+/*
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
@@ -107,7 +121,25 @@ public class MainNavigationDrawerFragment extends Fragment {
                         getString(R.string.title_section3),
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+*/
+        mAdapter = new SimpleCursorAdapter(
+                getActivity(),
+                android.R.layout.simple_list_item_2,
+                null,
+                new String[] {SQLContract.RoomEntry.COLUMN_NAME_TAG},
+                new int[] {android.R.id.text1}, 0);
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
+        mDrawerListView.setAdapter(mAdapter);
         return mDrawerListView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!getLoaderManager().hasRunningLoaders()) {
+            getLoaderManager().restartLoader(0, null, this);
+        }
     }
 
     public boolean isDrawerOpen() {
@@ -268,6 +300,32 @@ public class MainNavigationDrawerFragment extends Fragment {
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity()){
+            @Override
+            public Cursor loadInBackground() {
+
+                return SQLContract.RoomEntry.load(getContext());
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        // Swap the new cursor in.  (The framework will take care of closing the
+        // old cursor once we return.)
+        mAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        // This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed.  We need to make sure we are no
+        // longer using it.
+        mAdapter.swapCursor(null);
     }
 
     /**

@@ -375,13 +375,13 @@ public class SQLContract
             return false;
         }
 
-        public static ArrayList<String> load(Context context)
+        public static Cursor load(Context context)
         {
             try
             {
                 m_LockCommandHolder.lock();
 
-                ArrayList<String> als = new ArrayList<String>();
+               Cursor cursor = null;
 
                 if(context != null)
                 {
@@ -393,13 +393,14 @@ public class SQLContract
                     // you will actually use after this query.
                     String[] projection =
                             {
+                                    _ID,
                                     COLUMN_NAME_TAG
                             };
 
                     // How you want the results sorted in the resulting Cursor
                     String sortOrder = "";
 
-                    Cursor cursor = db.query(
+                    cursor = db.query(
                             TABLE_NAME,                 // The table to query
                             projection,                 // The columns to return
                             null,                  // The columns for the WHERE clause
@@ -408,26 +409,15 @@ public class SQLContract
                             null,                       // don't filter by row groups
                             sortOrder                   // The sort order
                     );
-                    if((cursor != null) && (cursor.getCount() > 0))
-                    {
-                        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-                        {
-                            String strTAG_TMP;
-                            strTAG_TMP = new String (cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
-                            als.add(strTAG_TMP);
-                        }
 
-                        // Chiudo il cursore
-                        cursor.close();
-                    }
                 }
-                return als;
+
+                return cursor;
             }
             finally
             {
                 m_LockCommandHolder.unlock();
             }
-
         }
     }
 }
