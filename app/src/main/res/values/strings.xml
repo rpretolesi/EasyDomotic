@@ -4,7 +4,10 @@
     <!--
         Settings Activity
     -->
-    <string name="settings_title_section_add_room">Add Room</string>
+    <string name="settings_title_section_new_room">New Room</string>
+    <string name="settings_title_section_add_switch">Add Switch</string>
+    <string name="settings_title_section_disp"> </string>
+    <string name="settings_title_section_save">Save Room</string>
 
 
    <string name="title_section1">Section 1</string>

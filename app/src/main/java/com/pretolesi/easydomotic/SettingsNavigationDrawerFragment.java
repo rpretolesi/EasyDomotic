@@ -101,10 +101,14 @@ public class SettingsNavigationDrawerFragment
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
                 new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                        getString(R.string.settings_title_section_add_room),
+                        getString(R.string.settings_title_section_new_room),
+                        getString(R.string.settings_title_section_add_switch),
+                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_save)
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

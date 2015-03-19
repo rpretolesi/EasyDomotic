@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -55,29 +56,44 @@ public class SettingsActivity extends ActionBarActivity
         if(position == 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BuildingFragment.newInstance(position + 1))
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1), "NAME")
                     .commit();
         }
 
         if(position == 1){
-            BuildingFragment bf = (BuildingFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            RoomFragment bf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             bf.addLightSwitch();
+        }
+
+        if(position == 7){
         }
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.settings_title_section_new_room);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.settings_title_section_add_switch);
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
                 break;
             case 4:
-                mTitle = getString(R.string.settings_title_section_add_room);
+                mTitle = getString(R.string.settings_title_section_disp);
+                break;
+            case 5:
+                mTitle = getString(R.string.settings_title_section_disp);
+                break;
+            case 6:
+                mTitle = getString(R.string.settings_title_section_disp);
+                break;
+            case 7:
+                mTitle = getString(R.string.settings_title_section_disp);
+                break;
+            case 8:
+                mTitle = getString(R.string.settings_title_section_save);
                 break;
         }
     }
@@ -160,9 +176,10 @@ public class SettingsActivity extends ActionBarActivity
     }
 
     /**
-     * Building Fragment for build my custom fragment
+     * Room Fragment for build my custom fragment
      */
-    public static class BuildingFragment extends Fragment {
+    public static class RoomFragment extends Fragment {
+        TextView m_tvRoomName;
         RelativeLayout m_rl;
         RelativeLayout.LayoutParams m_rllp;
         ArrayList<LightSwitch> m_alLightSwitch;
@@ -177,15 +194,15 @@ public class SettingsActivity extends ActionBarActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static BuildingFragment newInstance(int sectionNumber) {
-            BuildingFragment fragment = new BuildingFragment();
+        public static RoomFragment newInstance(int sectionNumber) {
+            RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
-        public BuildingFragment() {
+        public RoomFragment() {
         }
 
         @Override
@@ -196,6 +213,13 @@ public class SettingsActivity extends ActionBarActivity
  //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
  //               m_rl.setLayoutParams(rllp);
             }
+            if(m_tvRoomName == null){
+                m_tvRoomName = new TextView(getActivity().getApplicationContext());
+                RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                m_tvRoomName.setLayoutParams(rlp);
+            }
             if(m_alLightSwitch == null){
                 m_alLightSwitch = new ArrayList<>();
             }
@@ -204,7 +228,9 @@ public class SettingsActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 /*
-            // Creating a new TextView
+            // Creating TextView for Room Name
+            TextView tv = new LightSwitch(getActivity().getApplicationContext(), getTag());
+
             TextView tv = new TextView(getActivity().getApplicationContext());
             tv.setText("Test");
 
@@ -220,6 +246,10 @@ public class SettingsActivity extends ActionBarActivity
             // Adding the TextView to the RelativeLayout as a child
             m_rl.addView(tv);
 */
+            if(m_rl != null & m_tvRoomName != null) {
+                m_tvRoomName.setText(getTag());
+                m_rl.addView(m_tvRoomName);
+            }
             return m_rl;
         }
 
@@ -235,12 +265,12 @@ public class SettingsActivity extends ActionBarActivity
          */
         public void addLightSwitch(){
             // Define the switch
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext());
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), getTag());
 
-            // Defining the layout parameters of the TextView
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-            ls.setLayoutParams(lp);
+            // Defining the layout parameters of the LightSwitch
+//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+ //           lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+ //           ls.setLayoutParams(lp);
 
             if(m_alLightSwitch!= null){
                 m_alLightSwitch.add(ls);

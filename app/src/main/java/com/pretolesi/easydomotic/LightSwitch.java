@@ -14,6 +14,9 @@ public class LightSwitch extends Switch {
 
     private static final String TAG = "LightSwitch";
 
+    // Room TAG
+    private String m_strRoomTAG;
+
     // The ‘active pointer’ is the one currently moving our object.
     private int mActivePointerId = MotionEvent.INVALID_POINTER_ID;
 
@@ -22,10 +25,12 @@ public class LightSwitch extends Switch {
     private float mPosX;
     private float mPosY;
 
-    public LightSwitch(Context context) {
+    public LightSwitch(Context context, String strTAG, String strRoomTAG) {
         super(context);
+        this.setTag(strTAG);
+        m_strRoomTAG = strRoomTAG;
     }
-
+/*
     public LightSwitch(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -33,7 +38,7 @@ public class LightSwitch extends Switch {
     public LightSwitch(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-/*
+
     public LightSwitch(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -65,7 +70,9 @@ public class LightSwitch extends Switch {
 
             case MotionEvent.ACTION_MOVE: {
                 // Find the index of the active pointer and fetch its position
+
                 Log.d(TAG,"ACTION_MOVE: mActivePointerId: " + mActivePointerId);
+
                 final int pointerIndex = MotionEventCompat.findPointerIndex(event, mActivePointerId);
 
                 final float x = MotionEventCompat.getX(event, pointerIndex);
@@ -120,5 +127,9 @@ public class LightSwitch extends Switch {
         }
         return true;
 //        return super.onTouchEvent(event);
+    }
+
+    public String getRoomTAG(){
+        return m_strRoomTAG;
     }
 }
