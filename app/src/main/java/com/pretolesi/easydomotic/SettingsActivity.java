@@ -2,8 +2,10 @@ package com.pretolesi.easydomotic;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 /**
  * Settings Activity and Settings Navigation Drawer
  */
-public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks {
+public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks, SetNameDialogFragment.SetNameDialogFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -55,20 +57,33 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1), "NAME")
-                    .commit();
+            SetNameDialogFragment sndf = SetNameDialogFragment.newInstance(position);
+            sndf.show(getSupportFragmentManager(), "");
         }
 
         if(position == 1){
             RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            rf.addLightSwitch();
+            if(rf != null)
+            {
+                rf.addLightSwitch();
+            }
+        }
+        if(position == 2){
         }
 
         if(position == 7){
             RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             SQLContract.RoomEntry.save(getApplicationContext(), rf);
+        }
+    }
+
+    @Override
+    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strName) {
+        if(position == 0){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1), strName)
+                    .commit();
         }
     }
 

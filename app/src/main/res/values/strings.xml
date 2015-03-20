@@ -9,8 +9,10 @@
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
 
+    <string name="text_tv_room_name">Room Name</string>
+    <string name="hint_tv_room_name">My Room Name</string>
 
-   <string name="title_section1">Section 1</string>
+    <string name="title_section1">Section 1</string>
    <string name="title_section2">Section 2</string>
    <string name="title_section3">Section 3</string>
 
@@ -20,4 +22,9 @@
    <string name="action_example">Example action</string>
 
    <string name="action_settings">Settings</string>
+
+    <!-- General string -->
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
