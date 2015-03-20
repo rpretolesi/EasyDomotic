@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class SetNameDialogFragment extends DialogFragment {
 
     private SetNameDialogFragmentCallbacks mCallbacks;
+    private AlertDialog mAD;
     EditText et;
     /**
      * The fragment argument representing the section number for this
@@ -40,7 +41,7 @@ public class SetNameDialogFragment extends DialogFragment {
         try {
             mCallbacks = (SetNameDialogFragmentCallbacks) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            throw new ClassCastException("Activity must implement SetNameDialogFragmentCallbacks.");
         }
     }
     @Override
@@ -74,7 +75,6 @@ public class SetNameDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflater.inflate(R.layout.set_name_dialog_fragment, null))
@@ -98,6 +98,7 @@ public class SetNameDialogFragment extends DialogFragment {
                         SetNameDialogFragment.this.getDialog().cancel();
                     }
                 });
+
         return builder.create();
     }
     /**
