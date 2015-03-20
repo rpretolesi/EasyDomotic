@@ -2,7 +2,6 @@ package com.pretolesi.easydomotic;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Switch;
@@ -22,13 +21,25 @@ public class LightSwitch extends Switch {
 
     private float mLastTouchX;
     private float mLastTouchY;
-    private float mPosX;
-    private float mPosY;
+    private float m_PosX;
+    private float m_PosY;
 
-    public LightSwitch(Context context, String strTAG, String strRoomTAG) {
+    public LightSwitch(Context context, String strRoomTAG, String strTAG) {
         super(context);
+        this.m_strRoomTAG = strRoomTAG;
         this.setTag(strTAG);
-        m_strRoomTAG = strRoomTAG;
+    }
+    public LightSwitch(Context context, LightSwitchData lsd) {
+        super(context);
+        this.m_strRoomTAG = lsd.getRoomTAG();
+        this.setTag(lsd.getTAG());
+        this.m_PosX = lsd.getPosX();
+        this.m_PosY = lsd.getPosY();
+    }
+
+    public LightSwitchData getData() {
+        return new LightSwitchData(m_strRoomTAG, (String)getTag(), m_PosX, m_PosY);
+
     }
 /*
     public LightSwitch(Context context, AttributeSet attrs) {
@@ -81,11 +92,11 @@ public class LightSwitch extends Switch {
                 final float dx = x - mLastTouchX;
                 final float dy = y - mLastTouchY;
 
-                mPosX += dx;
-                mPosY += dy;
+                m_PosX += dx;
+                m_PosY += dy;
 
-                this.setX(mPosX);
-                this.setY(mPosY);
+                this.setX(m_PosX);
+                this.setY(m_PosY);
 
                 invalidate();
 

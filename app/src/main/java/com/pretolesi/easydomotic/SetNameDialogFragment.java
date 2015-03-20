@@ -16,8 +16,7 @@ import android.widget.TextView;
 public class SetNameDialogFragment extends DialogFragment {
 
     private SetNameDialogFragmentCallbacks mCallbacks;
-    private AlertDialog mAD;
-    EditText et;
+    private AlertDialog m_AD;
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -47,31 +46,11 @@ public class SetNameDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        et = (EditText) getActivity().findViewById(R.id.id_et_room_name);
-
-    }
+     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-/*
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Message 1")
 
-                .setPositiveButton("Fire", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-
-        // Create the AlertDialog object and return it
-        return builder.create();
-*/
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -85,6 +64,7 @@ public class SetNameDialogFragment extends DialogFragment {
                         if (mCallbacks != null) {
                             String str = "";
                             int position;
+                            EditText et = (EditText)m_AD.findViewById(R.id.id_et_room_name);
                             if (et != null) {
                                 str = et.getText().toString();
                             }
@@ -98,8 +78,8 @@ public class SetNameDialogFragment extends DialogFragment {
                         SetNameDialogFragment.this.getDialog().cancel();
                     }
                 });
-
-        return builder.create();
+        m_AD = builder.create();
+        return m_AD;
     }
     /**
      * Callbacks interface that all activities using this fragment must implement.

@@ -74,7 +74,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        // selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
         });
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
+                android.R.layout.simple_list_item_1,
                 android.R.id.text1,
                 new String[]{
                         getString(R.string.settings_title_section_new_room),
@@ -109,7 +109,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                         getString(R.string.settings_title_section_disp),
                         getString(R.string.settings_title_section_save)
                 }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
 

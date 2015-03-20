@@ -32,7 +32,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
-
+    private SetNameDialogFragment m_sndf;
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -54,19 +54,29 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(m_sndf != null){
+            m_sndf.dismiss();
+        }
+    }
+
+    @Override
+    protected void  onSaveInstanceState (Bundle outState) {
+
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            SetNameDialogFragment sndf = SetNameDialogFragment.newInstance(position);
-            sndf.show(getSupportFragmentManager(), "");
+            m_sndf = SetNameDialogFragment.newInstance(position);
+            m_sndf.show(getSupportFragmentManager(), "");
         }
 
         if(position == 1){
-            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            if(rf != null)
-            {
-                rf.addLightSwitch();
-            }
+            m_sndf = SetNameDialogFragment.newInstance(position);
+            m_sndf.show(getSupportFragmentManager(), "");
         }
         if(position == 2){
         }
@@ -74,6 +84,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         if(position == 7){
             RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             SQLContract.RoomEntry.save(getApplicationContext(), rf);
+            getLightSwitchData
         }
     }
 
@@ -84,6 +95,12 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomFragment.newInstance(position + 1), strName)
                     .commit();
+        }
+        if(position == 1){
+            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            if(rf != null) {
+                rf.addLightSwitch(strName);
+            }
         }
     }
 
@@ -197,10 +214,9 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
      * Room Fragment for build my custom fragment
      */
     public static class RoomFragment extends Fragment {
-        TextView m_tvRoomName;
-        RelativeLayout m_rl;
-        RelativeLayout.LayoutParams m_rllp;
-        ArrayList<LightSwitch> m_alLightSwitch;
+        private TextView m_tvRoomName;
+        private RelativeLayout m_rl;
+        private ArrayList<LightSwitch> m_alLightSwitch;
 
         /**
          * The fragment argument representing the section number for this
@@ -245,25 +261,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-/*
-            // Creating TextView for Room Name
-            TextView tv = new LightSwitch(getActivity().getApplicationContext(), getTag());
 
-            TextView tv = new TextView(getActivity().getApplicationContext());
-            tv.setText("Test");
-
-            // Defining the layout parameters of the TextView
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-            lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-
-            // Setting the parameters on the TextView
-            tv.setLayoutParams(lp);
-
-            // Adding the TextView to the RelativeLayout as a child
-            m_rl.addView(tv);
-*/
             if(m_rl != null & m_tvRoomName != null) {
                 m_tvRoomName.setText(getTag());
                 m_rl.addView(m_tvRoomName);
@@ -281,14 +279,9 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         /*
             Add a new Light Switch
          */
-        public void addLightSwitch(){
+        public void addLightSwitch(String strTAG){
             // Define the switch
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), "MyLS", getTag());
-
-            // Defining the layout parameters of the LightSwitch
-//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
- //           lp.addRule(RelativeLayout.CENTER_IN_PARENT);
- //           ls.setLayoutParams(lp);
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), getTag(), strTAG);
 
             if(m_alLightSwitch!= null){
                 m_alLightSwitch.add(ls);
@@ -296,6 +289,14 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             if(m_rl != null){
                 m_rl.addView(ls);
             }
+        }
+
+        public ArrayList<LightSwitchData> getLightSwitchData() {
+            ArrayList<LightSwitchData> lsd = new ArrayList<>();
+            for(LightSwitch ls : m_alLightSwitch){
+                lsd.add(ls.getData());
+            }
+            return lsd;
         }
     }
 

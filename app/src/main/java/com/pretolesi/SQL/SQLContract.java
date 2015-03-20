@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.LightSwitch;
+import com.pretolesi.easydomotic.LightSwitchData;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
@@ -199,8 +200,7 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class LightSwitchEntry implements BaseColumns
-    {
+    public static abstract class LightSwitchEntry implements BaseColumns {
         public static final String TABLE_NAME = "LightSwitch";
         public static final String COLUMN_NAME_ROOM_TAG = "Room_TAG";
         public static final String COLUMN_NAME_TAG = "TAG";
@@ -223,31 +223,26 @@ public class SQLContract
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
-        public static boolean save(Context context, LightSwitch ls)
-        {
+        public static boolean save(Context context, ArrayList<LightSwitchData> lsd)  {
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && ls != null)
-                {
+                if(context != null && lsd != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_ROOM_TAG, ls.getRoomTAG());
-                    values.put(COLUMN_NAME_TAG, String.valueOf(ls.getTag()));
-                    values.put(COLUMN_NAME_X, String.valueOf(ls.getX()));
-                    values.put(COLUMN_NAME_Y, String.valueOf(ls.getY()));
+                    values.put(COLUMN_NAME_ROOM_TAG, lsd.getRoomTAG());
+                    values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTAG()));
+                    values.put(COLUMN_NAME_X, String.valueOf(lsd.getPosX()));
+                    values.put(COLUMN_NAME_Y, String.valueOf(lsd.getPosY()));
                     values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
 
                     // Insert the new row, returning the primary key value of the new row
-                    if(db.insert(TABLE_NAME, null, values) > 0)
-                    {
+                    if(db.insert(TABLE_NAME, null, values) > 0) {
                         return true;
                     }
                 }
-            }
-            finally
-            {
+            } finally {
                 m_LockCommandHolder.unlock();
             }
 

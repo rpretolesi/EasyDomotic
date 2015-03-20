@@ -35,7 +35,7 @@ import com.pretolesi.SQL.SQLContract;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class MainNavigationDrawerFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainNavigationDrawerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Remember the position of the selected item.
@@ -94,9 +94,6 @@ public class MainNavigationDrawerFragment extends BaseFragment implements Loader
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
-
-        // Init loader
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -128,18 +125,9 @@ public class MainNavigationDrawerFragment extends BaseFragment implements Loader
                 null,
                 new String[] {SQLContract.RoomEntry.COLUMN_NAME_TAG},
                 new int[] {android.R.id.text1}, 0);
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
         mDrawerListView.setAdapter(mAdapter);
         return mDrawerListView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(!getLoaderManager().hasRunningLoaders()) {
-            getLoaderManager().restartLoader(0, null, this);
-        }
     }
 
     public boolean isDrawerOpen() {
@@ -231,6 +219,20 @@ public class MainNavigationDrawerFragment extends BaseFragment implements Loader
         if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
+    }
+
+    @Override
+    public void onResume (){
+        super.onResume();
+        // Init loader
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Destroy loader
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override
