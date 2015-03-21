@@ -44,7 +44,9 @@ public class SQLContract
         SET_SENSOR_LOW_PASS_FILTER_K(11, "0.5"),
         SET_SENSOR_MAX_OUTPUT_VALUE(12, "250"),
         SET_SENSOR_MIN_VALUE_START_OUTPUT(13, "10"),
-        SET_SENSOR_ORIENTATION_LANDSCAPE(14, "0");
+        SET_SENSOR_ORIENTATION_LANDSCAPE(14, "10"),
+        LAST_ROOM_TAG(100, ""),
+        DEFAULT_ROOM_TAG(100, "");
 
         private int value;
         private String defaultValue;
@@ -423,6 +425,101 @@ public class SQLContract
                 }
 
                 return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static String getTAG(Context context, long id) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                String strTAG = "";
+
+                if(context != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    COLUMN_NAME_TAG
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String selection = _ID + " = ?";
+
+                    String[] selectionArgs = {String.valueOf(id)};
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            selection,                                      // The columns for the WHERE clause
+                            selectionArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        cursor.moveToFirst();
+                        strTAG = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
+                    }
+
+                }
+
+                return strTAG;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static String getFirstTAG(Context context) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                String strTAG = "";
+
+                if(context != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    COLUMN_NAME_TAG
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            null,                                      // The columns for the WHERE clause
+                            null,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        cursor.moveToFirst();
+                        strTAG = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
+                    }
+
+                }
+
+                return strTAG;
             }
             finally
             {

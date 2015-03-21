@@ -21,12 +21,14 @@ public class SetNameDialogFragment extends DialogFragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String POSITION = "section_number";
+    private static final String POSITION = "position";
+    private static final String TITLE = "title";
 
-    public static SetNameDialogFragment newInstance(int position) {
+    public static SetNameDialogFragment newInstance(int position, String strTitle) {
         SetNameDialogFragment fragment = new SetNameDialogFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
+        args.putString(TITLE, strTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +71,7 @@ public class SetNameDialogFragment extends DialogFragment {
                                 str = et.getText().toString();
                             }
                             position = getArguments().getInt(POSITION);
-                            mCallbacks.onSetNameDialogFragmentClickListener(SetNameDialogFragment.this, position, str);
+                            mCallbacks.onSetNameDialogFragmentClickListener(SetNameDialogFragment.this, position, getArguments().getString(TITLE), str);
                         }
                     }
                 })
@@ -88,6 +90,6 @@ public class SetNameDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position,  String strName);
+        void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle,  String strName);
     }
 }

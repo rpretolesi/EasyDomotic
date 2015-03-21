@@ -8,6 +8,10 @@ import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -15,6 +19,18 @@ import android.view.ViewGroup;
 public class BaseFragment extends Fragment {
 
     private static final String TAG = "BaseFragment";
+
+    /**
+     * The fragment argument representing the section number for this
+     * fragment.
+     */
+    protected static final String ARG_SECTION_NUMBER = "section_number";
+    protected static final String _ID = "id";
+    protected static final String EDIT_MODE = "edit_mode";
+
+    protected TextView m_tvRoomName;
+    protected RelativeLayout m_rl;
+    protected ArrayList<LightSwitch> m_alLightSwitch;
 
     @Override
     public void onAttach(Activity activity) {
@@ -24,6 +40,19 @@ public class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(m_rl == null){
+            m_rl = new RelativeLayout(getActivity().getApplicationContext());
+            //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            //               m_rl.setLayoutParams(rllp);
+        }
+        if(m_tvRoomName == null){
+            m_tvRoomName = new TextView(getActivity().getApplicationContext());
+            RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            m_tvRoomName.setLayoutParams(rlp);
+        }
+
         // Log.d(TAG, "onCreate()");
     }
     @Override

@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import com.pretolesi.SQL.SQLContract;
+
 
 public class MainActivity extends BaseActivity
         implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -47,13 +49,19 @@ public class MainActivity extends BaseActivity
     public void onNavigationDrawerItemSelected(int position, long id) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-richiamare get tag qui
+        String strTAG = SQLContract.RoomEntry.getTAG(this, id);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, id))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, id), strTAG)
                 .commit();
     }
 
-    public void onSectionAttached(int number) {
+    public void onSectionAttached(int number, long id) {
+        if(id > 0){
+            mTitle = SQLContract.RoomEntry.getTAG(this, id);
+        } else {
+            mTitle = "";
+        }
+/*
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -65,6 +73,7 @@ richiamare get tag qui
                 mTitle = getString(R.string.title_section3);
                 break;
         }
+*/
     }
 
     public void restoreActionBar() {
@@ -110,13 +119,7 @@ richiamare get tag qui
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-        private static final String _ID = "id";
+    public static class PlaceholderFragment extends BaseFragment {
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -127,6 +130,7 @@ richiamare get tag qui
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             args.putLong(_ID, id);
+            args.putBoolean(EDIT_MODE, false);
             fragment.setArguments(args);
             return fragment;
         }
@@ -145,7 +149,7 @@ richiamare get tag qui
         public void onAttach(Activity activity) {
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+                    getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getLong(_ID));
         }
     }
 

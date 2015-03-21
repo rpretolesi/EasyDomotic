@@ -1,9 +1,5 @@
 package com.pretolesi.easydomotic;
 
-import android.database.Cursor;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
@@ -16,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,7 +29,7 @@ import com.pretolesi.SQL.SQLContract;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class MainNavigationDrawerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainNavigationDrawerFragment extends Fragment {
 
     /**
      * Remember the position of the selected item.
@@ -84,12 +78,10 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mCurrentSelectedID = savedInstanceState.getInt(STATE_SELECTED_ID);
+            mCurrentSelectedID = savedInstanceState.getLong(STATE_SELECTED_ID);
             mFromSavedInstanceState = true;
         }
 
-        // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition, mCurrentSelectedID);
     }
 
     @Override
@@ -123,7 +115,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 */
         mAdapter = new SimpleCursorAdapter(
-                getActivity(),
+                getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_2,
                 null,
                 new String[] {SQLContract.RoomEntry.COLUMN_NAME_TAG},
@@ -213,9 +205,10 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
 
     private void selectItem(int position, long id) {
         mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
-        }
+        mCurrentSelectedID = id;
+//        if (mDrawerListView != null) {
+//            mDrawerListView.setItemChecked(position, true);
+//        }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
@@ -227,15 +220,16 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
     @Override
     public void onResume (){
         super.onResume();
-        // Init loader
-        getLoaderManager().initLoader(0, null, this);
+        mAdapter.swapCursor(SQLContract.RoomEntry.load(getActivity()));
+
+        // Select either the default item (0) or the last selected item.
+        selectItem(mCurrentSelectedPosition, mCurrentSelectedID);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // Destroy loader
-        getLoaderManager().destroyLoader(0);
+        mAdapter.swapCursor(null);
     }
 
     @Override
@@ -307,33 +301,6 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity()){
-            @Override
-            public Cursor loadInBackground() {
-
-                return SQLContract.RoomEntry.load(getContext());
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        // Swap the new cursor in.  (The framework will take care of closing the
-        // old cursor once we return.)
-        mAdapter.swapCursor(cursor);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        // This is called when the last Cursor provided to onLoadFinished()
-        // above is about to be closed.  We need to make sure we are no
-        // longer using it.
-        mAdapter.swapCursor(null);
-    }
-
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */

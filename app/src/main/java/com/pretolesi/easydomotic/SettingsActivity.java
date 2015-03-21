@@ -93,7 +93,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         if(position == 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1), strName)
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, true ), strName)
                     .commit();
         }
         if(position == 1){
@@ -104,7 +104,9 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         }
     }
 
-    public void onSectionAttached(int number) {
+    public void onSectionAttached(String strTitle) {
+        mTitle = strTitle;
+/*
         switch (number) {
             case 1:
                 mTitle = getString(R.string.settings_title_section_new_room);
@@ -131,6 +133,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
                 mTitle = getString(R.string.settings_title_section_save);
                 break;
         }
+*/
     }
 
     public void restoreActionBar() {
@@ -170,70 +173,22 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     }
 
     /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-            View rootView = inflater.inflate(R.layout.settings_fragment, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((SettingsActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-    }
-
-    /**
      * Room Fragment for build my custom fragment
      */
-    public static class RoomFragment extends Fragment {
-        private TextView m_tvRoomName;
-        private RelativeLayout m_rl;
-        private ArrayList<LightSwitch> m_alLightSwitch;
+    public static class RoomFragment extends BaseFragment {
 
         /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static RoomFragment newInstance(int sectionNumber) {
-            RoomFragment fragment = new RoomFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
+        * Returns a new instance of this fragment for the given section
+        * number.
+        */
+        public static RoomFragment newInstance(int sectionNumber, long id, boolean editMode) {
+         RoomFragment fragment = new RoomFragment();
+         Bundle args = new Bundle();
+         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+         args.putLong(_ID, id);
+         args.putBoolean(EDIT_MODE, editMode);
+         fragment.setArguments(args);
+         return fragment;
         }
 
         public RoomFragment() {
@@ -242,18 +197,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         @Override
         public void  onCreate (Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
-            if(m_rl == null){
-                m_rl = new RelativeLayout(getActivity().getApplicationContext());
- //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
- //               m_rl.setLayoutParams(rllp);
-            }
-            if(m_tvRoomName == null){
-                m_tvRoomName = new TextView(getActivity().getApplicationContext());
-                RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                m_tvRoomName.setLayoutParams(rlp);
-            }
+
             if(m_alLightSwitch == null){
                 m_alLightSwitch = new ArrayList<>();
             }
@@ -272,8 +216,8 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((SettingsActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+            ((SettingsActivity) activity).onSectionAttached(getTag());
+            ((SettingsActivity) activity).restoreActionBar();
         }
 
         /*
