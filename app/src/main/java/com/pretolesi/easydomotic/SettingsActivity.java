@@ -83,8 +83,8 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         if(position == 7){
             RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            SQLContract.RoomEntry.save(getApplicationContext(), rf);
-            getLightSwitchData
+            SQLContract.RoomEntry.save(getApplicationContext(), rf.getRoomFragmentData());
+            SQLContract.LightSwitchEntry.save(getApplicationContext(),rf.getLightSwitchData());
         }
     }
 
@@ -292,11 +292,18 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         }
 
         public ArrayList<LightSwitchData> getLightSwitchData() {
-            ArrayList<LightSwitchData> lsd = new ArrayList<>();
+            ArrayList<LightSwitchData> allsd = new ArrayList<>();
             for(LightSwitch ls : m_alLightSwitch){
-                lsd.add(ls.getData());
+                allsd.add(ls.getData());
             }
-            return lsd;
+            return allsd;
+        }
+
+        public ArrayList<RoomFragmentData> getRoomFragmentData() {
+            ArrayList<RoomFragmentData> alrfd = new ArrayList<>();
+            RoomFragmentData rfd = new RoomFragmentData("PRETOLESI", getTag(), 0, 0);
+            alrfd.add(rfd);
+            return alrfd;
         }
     }
 

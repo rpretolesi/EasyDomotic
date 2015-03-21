@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitchData;
+import com.pretolesi.easydomotic.RoomFragmentData;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
@@ -224,6 +225,8 @@ public class SQLContract
 
 
         public static boolean save(Context context, ArrayList<LightSwitchData> lsd)  {
+
+            boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
@@ -231,22 +234,24 @@ public class SQLContract
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_ROOM_TAG, lsd.getRoomTAG());
-                    values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTAG()));
-                    values.put(COLUMN_NAME_X, String.valueOf(lsd.getPosX()));
-                    values.put(COLUMN_NAME_Y, String.valueOf(lsd.getPosY()));
-                    values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
-
-                    // Insert the new row, returning the primary key value of the new row
-                    if(db.insert(TABLE_NAME, null, values) > 0) {
-                        return true;
+                    for(LightSwitchData lsdTemp:lsd){
+                        values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
+                        values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTAG()));
+                        values.put(COLUMN_NAME_X, String.valueOf(lsdTemp.getPosX()));
+                        values.put(COLUMN_NAME_Y, String.valueOf(lsdTemp.getPosY()));
+                        values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
+                        // Insert the new row, returning the primary key value of the new row
+                        if(db.insert(TABLE_NAME, null, values) <= 0) {
+                            bRes = false;
+                        }
                     }
                 }
             } finally {
                 m_LockCommandHolder.unlock();
             }
 
-            return false;
+            return bRes;
+
         }
 
         public static ArrayList<LightSwitch> load(Context context, String strRoomTAG)
@@ -330,44 +335,54 @@ public class SQLContract
     public static abstract class RoomEntry implements BaseColumns
     {
         public static final String TABLE_NAME = "Room";
+        public static final String COLUMN_NAME_HOUSE_TAG = "House_TAG";
         public static final String COLUMN_NAME_TAG = "TAG";
+        public static final String COLUMN_NAME_X = "X";
+        public static final String COLUMN_NAME_Y = "Y";
+        public static final String COLUMN_NAME_Z = "Z";
 
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_TAG + TEXT_TYPE +
+                        COLUMN_NAME_HOUSE_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Z + TEXT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
+        public static boolean save(Context context, ArrayList<RoomFragmentData> rfd)  {
 
-        public static boolean save(Context context, SettingsActivity.RoomFragment rf)
-        {
+            boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && rf != null)
-                {
+                if(context != null && rfd != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_TAG, String.valueOf(rf.getTag()));
-
-                    // Insert the new row, returning the primary key value of the new row
-                    if(db.insert(TABLE_NAME, null, values) > 0)
-                    {
-                        return true;
+                    for(RoomFragmentData rfdTemp:rfd){
+                        values.put(COLUMN_NAME_HOUSE_TAG, rfdTemp.getHouseTAG());
+                        values.put(COLUMN_NAME_TAG, String.valueOf(rfdTemp.getTAG()));
+                        values.put(COLUMN_NAME_X, String.valueOf(rfdTemp.getPosX()));
+                        values.put(COLUMN_NAME_Y, String.valueOf(rfdTemp.getPosY()));
+                        values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
+                        // Insert the new row, returning the primary key value of the new row
+                        if(db.insert(TABLE_NAME, null, values) <= 0) {
+                            bRes = false;
+                        }
                     }
                 }
-            }
-            finally
-            {
+            } finally {
                 m_LockCommandHolder.unlock();
             }
 
-            return false;
+            return bRes;
+
         }
 
         public static Cursor load(Context context)

@@ -41,6 +41,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
      * Remember the position of the selected item.
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+    private static final String STATE_SELECTED_ID = "selected_navigation_drawer_id";
 
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
@@ -63,6 +64,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
+    private long mCurrentSelectedID = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -82,11 +84,12 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+            mCurrentSelectedID = savedInstanceState.getInt(STATE_SELECTED_ID);
             mFromSavedInstanceState = true;
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        selectItem(mCurrentSelectedPosition, mCurrentSelectedID);
     }
 
     @Override
@@ -104,7 +107,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+                selectItem(position, id);
             }
         });
 /*
@@ -208,7 +211,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    private void selectItem(int position) {
+    private void selectItem(int position, long id) {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
@@ -217,7 +220,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+            mCallbacks.onNavigationDrawerItemSelected(position, id);
         }
     }
 
@@ -255,6 +258,7 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+        outState.putLong(STATE_SELECTED_ID, mCurrentSelectedID);
     }
 
     @Override
@@ -337,6 +341,6 @@ public class MainNavigationDrawerFragment extends Fragment implements LoaderMana
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemSelected(int position);
+        void onNavigationDrawerItemSelected(int position, long id);
     }
 }

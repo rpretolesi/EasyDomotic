@@ -44,11 +44,12 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public void onNavigationDrawerItemSelected(int position, long id) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
+richiamare get tag qui
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, id))
                 .commit();
     }
 
@@ -115,15 +116,17 @@ public class MainActivity extends BaseActivity
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String _ID = "id";
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int sectionNumber, long id) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putLong(_ID, id);
             fragment.setArguments(args);
             return fragment;
         }
