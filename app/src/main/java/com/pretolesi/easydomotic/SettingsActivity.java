@@ -70,12 +70,12 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            m_sndf = SetNameDialogFragment.newInstance(position);
+            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.text_tv_room_name));
             m_sndf.show(getSupportFragmentManager(), "");
         }
 
         if(position == 1){
-            m_sndf = SetNameDialogFragment.newInstance(position);
+            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.text_tv_lightswitch_name));
             m_sndf.show(getSupportFragmentManager(), "");
         }
         if(position == 2){
@@ -89,7 +89,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     }
 
     @Override
-    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strName) {
+    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName) {
         if(position == 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -99,6 +99,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         if(position == 1){
             RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
+                LightSwitchData lsd = new
                 rf.addLightSwitch(strName);
             }
         }
@@ -205,12 +206,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-            if(m_rl != null & m_tvRoomName != null) {
-                m_tvRoomName.setText(getTag());
-                m_rl.addView(m_tvRoomName);
-            }
-            return m_rl;
+            return super.onCreateView(inflater, container, savedInstanceState);
         }
 
         @Override
@@ -220,35 +216,6 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             ((SettingsActivity) activity).restoreActionBar();
         }
 
-        /*
-            Add a new Light Switch
-         */
-        public void addLightSwitch(String strTAG){
-            // Define the switch
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), getTag(), strTAG);
-
-            if(m_alLightSwitch!= null){
-                m_alLightSwitch.add(ls);
-            }
-            if(m_rl != null){
-                m_rl.addView(ls);
-            }
-        }
-
-        public ArrayList<LightSwitchData> getLightSwitchData() {
-            ArrayList<LightSwitchData> allsd = new ArrayList<>();
-            for(LightSwitch ls : m_alLightSwitch){
-                allsd.add(ls.getData());
-            }
-            return allsd;
-        }
-
-        public ArrayList<RoomFragmentData> getRoomFragmentData() {
-            ArrayList<RoomFragmentData> alrfd = new ArrayList<>();
-            RoomFragmentData rfd = new RoomFragmentData("PRETOLESI", getTag(), 0, 0);
-            alrfd.add(rfd);
-            return alrfd;
-        }
     }
 
     public static Intent makeSettingsActivity(Context context)

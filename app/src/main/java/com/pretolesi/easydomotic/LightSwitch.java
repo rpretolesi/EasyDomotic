@@ -23,6 +23,7 @@ public class LightSwitch extends Switch {
     private float mLastTouchY;
     private float m_PosX;
     private float m_PosY;
+    private float m_PosZ;
 
     public LightSwitch(Context context, String strRoomTAG, String strTAG) {
         super(context);
@@ -35,10 +36,11 @@ public class LightSwitch extends Switch {
         this.setTag(lsd.getTAG());
         this.m_PosX = lsd.getPosX();
         this.m_PosY = lsd.getPosY();
+//        this.m_PosZ = lsd.getPosZ();
     }
 
     public LightSwitchData getData() {
-        return new LightSwitchData(m_strRoomTAG, (String)getTag(), m_PosX, m_PosY);
+        return new LightSwitchData(m_strRoomTAG, (String)getTag(), m_PosX, m_PosY, m_PosZ);
 
     }
 /*

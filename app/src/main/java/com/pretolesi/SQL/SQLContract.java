@@ -241,7 +241,7 @@ public class SQLContract
                         values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTAG()));
                         values.put(COLUMN_NAME_X, String.valueOf(lsdTemp.getPosX()));
                         values.put(COLUMN_NAME_Y, String.valueOf(lsdTemp.getPosY()));
-                        values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
+                        values.put(COLUMN_NAME_Z, String.valueOf(lsdTemp.getPosZ()));
                         // Insert the new row, returning the primary key value of the new row
                         if(db.insert(TABLE_NAME, null, values) <= 0) {
                             bRes = false;
@@ -256,24 +256,25 @@ public class SQLContract
 
         }
 
-        public static ArrayList<LightSwitch> load(Context context, String strRoomTAG)
+        public static ArrayList<LightSwitchData> get(Context context, String strRoomTAG)
         {
             try
             {
                 m_LockCommandHolder.lock();
 
-                ArrayList<LightSwitch> alls = new ArrayList<LightSwitch>();
+                ArrayList<LightSwitchData> allsd = new ArrayList<>();
 
                 if(context != null && strRoomTAG != null)
                 {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
-                    LightSwitch ls = null;
+                    LightSwitchData lsd = null;
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
                     String[] projection =
                             {
+                                    _ID,
                                     COLUMN_NAME_ROOM_TAG,
                                     COLUMN_NAME_TAG,
                                     COLUMN_NAME_X,
@@ -302,28 +303,22 @@ public class SQLContract
                     {
                         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                         {
-                            String strRoomTAG_TMP;
-                            String strTAG_TMP;
-                            float fX_TMP;
-                            float fY_TMP;
-                            float fZ_TMP;
-                            strRoomTAG_TMP = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG));
-                            strTAG_TMP = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
-                            fX_TMP = Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X)));
-                            fY_TMP = Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y)));
-                            fZ_TMP = Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z)));
-                            ls = new LightSwitch(context, strTAG_TMP, strRoomTAG_TMP);
-                            ls.setX(fX_TMP);
-                            ls.setY(fY_TMP);
-                            //ls.setZ(fZ_TMP);
-                            alls.add(ls);
+                            lsd = new LightSwitchData(
+                                    cursor.getLong(cursor.getColumnIndex(_ID)),
+                                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG)),
+                                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)),
+                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)),
+                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z))
+                            );
+                            allsd.add(lsd);
                         }
 
                         // Chiudo il cursore
                         cursor.close();
                     }
                 }
-                return alls;
+                return allsd;
             }
             finally
             {
@@ -357,7 +352,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(Context context, ArrayList<RoomFragmentData> rfd)  {
+        public static boolean save(Context context, RoomFragmentData rfd)  {
 
             boolean bRes = true;
             try
@@ -367,16 +362,14 @@ public class SQLContract
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    for(RoomFragmentData rfdTemp:rfd){
-                        values.put(COLUMN_NAME_HOUSE_TAG, rfdTemp.getHouseTAG());
-                        values.put(COLUMN_NAME_TAG, String.valueOf(rfdTemp.getTAG()));
-                        values.put(COLUMN_NAME_X, String.valueOf(rfdTemp.getPosX()));
-                        values.put(COLUMN_NAME_Y, String.valueOf(rfdTemp.getPosY()));
-                        values.put(COLUMN_NAME_Z, String.valueOf(0.0f));
-                        // Insert the new row, returning the primary key value of the new row
-                        if(db.insert(TABLE_NAME, null, values) <= 0) {
-                            bRes = false;
-                        }
+                    values.put(COLUMN_NAME_HOUSE_TAG, rfd.getHouseTAG());
+                    values.put(COLUMN_NAME_TAG, String.valueOf(rfd.getTAG()));
+                    values.put(COLUMN_NAME_X, String.valueOf(rfd.getPosX()));
+                    values.put(COLUMN_NAME_Y, String.valueOf(rfd.getPosY()));
+                    values.put(COLUMN_NAME_Z, String.valueOf(rfd.getPosZ()));
+                    // Insert the new row, returning the primary key value of the new row
+                    if(db.insert(TABLE_NAME, null, values) <= 0) {
+                        bRes = false;
                     }
                 }
             } finally {
@@ -405,8 +398,12 @@ public class SQLContract
                     // you will actually use after this query.
                     String[] projection =
                             {
-                                    _ID,
-                                    COLUMN_NAME_TAG
+                                _ID,
+                                COLUMN_NAME_HOUSE_TAG,
+                                COLUMN_NAME_TAG,
+                                COLUMN_NAME_X,
+                                COLUMN_NAME_Y,
+                                COLUMN_NAME_Z
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -425,6 +422,70 @@ public class SQLContract
                 }
 
                 return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static RoomFragmentData get(Context context, long id) {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                RoomFragmentData rfd = null;
+
+                if(context != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                _ID,
+                                COLUMN_NAME_HOUSE_TAG,
+                                COLUMN_NAME_TAG,
+                                COLUMN_NAME_X,
+                                COLUMN_NAME_Y,
+                                COLUMN_NAME_Z
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String selection = _ID + " = ?";
+
+                    String[] selectionArgs = {String.valueOf(id)};
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            selection,                                      // The columns for the WHERE clause
+                            selectionArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        cursor.moveToFirst();
+                        rfd = new RoomFragmentData(
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z))
+                        );
+
+                        // Chiudo il cursore
+                        cursor.close();
+                    }
+
+                }
+
+                return rfd;
             }
             finally
             {
@@ -470,6 +531,9 @@ public class SQLContract
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
                         strTAG = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
+
+                        // Chiudo il cursore
+                        cursor.close();
                     }
 
                 }
@@ -515,6 +579,9 @@ public class SQLContract
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
                         strTAG = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
+
+                        // Chiudo il cursore
+                        cursor.close();
                     }
 
                 }

@@ -2,9 +2,8 @@ package com.pretolesi.easydomotic;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +14,8 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity
@@ -48,11 +49,25 @@ public class MainActivity extends BaseActivity
     @Override
     public void onNavigationDrawerItemSelected(int position, long id) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager f = getSupportFragmentManager();
+        FragmentTransaction ft = f.beginTransaction();
+
+        // Costruisco l'istanza
+        RoomFragment rf = RoomFragment.newInstance(position + 1, id);
+
+        // Prelevo il TAG
         String strTAG = SQLContract.RoomEntry.getTAG(this, id);
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, id), strTAG)
-                .commit();
+
+        // Inizio la Transazione
+        ft.replace(R.id.container, RoomFragment.newInstance(position + 1, id), strTAG);
+        // Visualizzo la pagina
+        ft.commit();
+
+        // Aggiungo gli elementi
+        RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
+        rf.setRoomFragmentData(rfd);
+        ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, strTAG);
+        rf.setLightSwitchData(allsd);
     }
 
     public void onSectionAttached(int number, long id) {
@@ -119,23 +134,25 @@ public class MainActivity extends BaseActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends BaseFragment {
+    public static class RoomFragment extends BaseFragment {
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber, long id) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
+            RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             args.putLong(_ID, id);
+            args.putParcelable(ARG_ROOM_DATA, rfd);
+            args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
             args.putBoolean(EDIT_MODE, false);
             fragment.setArguments(args);
             return fragment;
         }
 
-        public PlaceholderFragment() {
+        public RoomFragment() {
         }
 
         @Override
