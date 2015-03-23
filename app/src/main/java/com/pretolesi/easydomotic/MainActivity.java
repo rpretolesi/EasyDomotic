@@ -2,7 +2,6 @@ package com.pretolesi.easydomotic;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -49,25 +48,17 @@ public class MainActivity extends BaseActivity
     @Override
     public void onNavigationDrawerItemSelected(int position, long id) {
         // update the main content by replacing fragments
-        FragmentManager f = getSupportFragmentManager();
-        FragmentTransaction ft = f.beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Prelevo i dati e TAG
+        RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
+        ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, rfd.getTAG());
 
         // Costruisco l'istanza
-        RoomFragment rf = RoomFragment.newInstance(position + 1, id);
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                .commit();
 
-        // Prelevo il TAG
-        String strTAG = SQLContract.RoomEntry.getTAG(this, id);
-
-        // Inizio la Transazione
-        ft.replace(R.id.container, RoomFragment.newInstance(position + 1, id), strTAG);
-        // Visualizzo la pagina
-        ft.commit();
-
-        // Aggiungo gli elementi
-        RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
-        rf.setRoomFragmentData(rfd);
-        ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, strTAG);
-        rf.setLightSwitchData(allsd);
     }
 
     public void onSectionAttached(int number, long id) {
@@ -140,6 +131,7 @@ public class MainActivity extends BaseActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
+/*
         public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -154,7 +146,7 @@ public class MainActivity extends BaseActivity
 
         public RoomFragment() {
         }
-
+*/
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {

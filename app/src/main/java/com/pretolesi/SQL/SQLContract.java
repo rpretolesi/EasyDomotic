@@ -434,7 +434,7 @@ public class SQLContract
             {
                 m_LockCommandHolder.lock();
 
-                RoomFragmentData rfd = null;
+                RoomFragmentData rfd = new RoomFragmentData();
 
                 if(context != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
@@ -470,14 +470,12 @@ public class SQLContract
                     );
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
-                        rfd = new RoomFragmentData(
-                                cursor.getLong(cursor.getColumnIndex(_ID)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z))
-                        );
+                        rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
+                        rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));
+                        rfd.setTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
+                        rfd.setPosX(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)));
+                        rfd.setPosY(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)));
+                        rfd.setPosZ(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z)));
 
                         // Chiudo il cursore
                         cursor.close();

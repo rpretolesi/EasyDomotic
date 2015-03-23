@@ -26,11 +26,21 @@ public class RoomFragmentData implements Parcelable {
     }
 
     public RoomFragmentData(String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ) {
+        this.m_ID = 0;
         this.m_strHouseTAG = strHouseTAG;
         this.m_strTAG = strTAG;
         this.m_fPosX = fPosX;
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
+    }
+
+    public RoomFragmentData() {
+        this.m_ID = 0;
+        this.m_strHouseTAG = "";
+        this.m_strTAG = "";
+        this.m_fPosX = 0;
+        this.m_fPosY = 0;
+        this.m_fPosZ = 0;
     }
 
     public void setID(long id) { this.m_ID = id; }

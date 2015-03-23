@@ -33,6 +33,25 @@ public class BaseFragment extends Fragment {
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
 
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number.
+     */
+    public static BaseFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
+        BaseFragment fragment = new BaseFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putLong(_ID, id);
+        args.putParcelable(ARG_ROOM_DATA, rfd);
+        args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
+        args.putBoolean(EDIT_MODE, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public BaseFragment() {
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -79,7 +98,9 @@ public class BaseFragment extends Fragment {
             }
             if(m_allsd != null){
                 for(LightSwitchData lsd : m_allsd){
-                    m_rl.addView(new LightSwitch(getActivity().getApplicationContext(), lsd));
+                    LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+                    m_rl.addView(ls);
+                    ls.animate().translationX(lsd.getPosX()).translationY(lsd.getPosY()).setDuration(1000).start();
                 }
             }
         }
@@ -145,9 +166,11 @@ public class BaseFragment extends Fragment {
      */
     public void addLightSwitch(LightSwitchData lsd){
         // Define the switch
-        if(m_rl != null){
+        if(m_rl != null && lsd != null){
             m_allsd.add(lsd);
-            m_rl.addView(new LightSwitch(getActivity().getApplicationContext(), lsd));
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+            m_rl.addView(ls);
+            ls.animate().translationX(lsd.getPosX()).translationY(lsd.getPosY()).setDuration(0).start();
         }
     }
 
@@ -156,6 +179,16 @@ public class BaseFragment extends Fragment {
     }
 
     public ArrayList<LightSwitchData> getLightSwitchData() {
+        LightSwitch ls = null;
+        if(m_rl != null && m_allsd != null){
+            for(LightSwitchData lsd : m_allsd) {
+                ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTAG());
+                if(ls != null){
+                    lsd.update(ls.getLightSwitchData());
+                }
+            }
+        }
+
         return m_allsd;
     }
 /*

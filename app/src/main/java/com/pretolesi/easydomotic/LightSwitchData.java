@@ -33,6 +33,15 @@ public class LightSwitchData implements Parcelable {
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
     }
+verificare se c'e' un metodo piu' pulito per fare questa operazione'
+    public void update(LightSwitchData lsd){
+        this.m_ID = lsd.getID();
+        this.m_strRoomTAG = lsd.getRoomTAG();
+        this.m_strTAG = lsd.getTAG();
+        this.m_fPosX = lsd.getPosX();
+        this.m_fPosY = lsd.getPosY();
+        this.m_fPosZ = lsd.getPosZ();
+    }
 
     public void setID(long id) {
         this.m_ID = id;

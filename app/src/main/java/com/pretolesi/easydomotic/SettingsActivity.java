@@ -2,26 +2,21 @@ package com.pretolesi.easydomotic;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import com.pretolesi.SQL.SQLContract;
 
 import java.util.ArrayList;
+
 
 /**
  * Settings Activity and Settings Navigation Drawer
@@ -82,7 +77,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         }
 
         if(position == 7){
-            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             SQLContract.RoomEntry.save(getApplicationContext(), rf.getRoomFragmentData());
             SQLContract.LightSwitchEntry.save(getApplicationContext(),rf.getLightSwitchData());
         }
@@ -92,15 +87,19 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName) {
         if(position == 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
+            RoomFragmentData rfd = new RoomFragmentData();
+            rfd.setTAG(strName);
+            ArrayList<LightSwitchData> allsd = new ArrayList<>();
+
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, true ), strName)
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd ), rfd.getTAG())
                     .commit();
         }
         if(position == 1){
-            RoomFragment rf = (RoomFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
-                LightSwitchData lsd = new
-                rf.addLightSwitch(strName);
+                LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 10, 10, 0);
+                rf.addLightSwitch(lsd);
             }
         }
     }
@@ -182,6 +181,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         * Returns a new instance of this fragment for the given section
         * number.
         */
+/*
         public static RoomFragment newInstance(int sectionNumber, long id, boolean editMode) {
          RoomFragment fragment = new RoomFragment();
          Bundle args = new Bundle();
@@ -194,14 +194,10 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         public RoomFragment() {
         }
-
+*/
         @Override
         public void  onCreate (Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
-
-            if(m_alLightSwitch == null){
-                m_alLightSwitch = new ArrayList<>();
-            }
         }
 
         @Override
