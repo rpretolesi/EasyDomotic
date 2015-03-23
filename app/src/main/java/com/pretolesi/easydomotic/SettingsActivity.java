@@ -65,12 +65,12 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.text_tv_room_name));
+            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), false);
             m_sndf.show(getSupportFragmentManager(), "");
         }
 
         if(position == 1){
-            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.text_tv_lightswitch_name));
+            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), false);
             m_sndf.show(getSupportFragmentManager(), "");
         }
         if(position == 2){
@@ -84,13 +84,13 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     }
 
     @Override
-    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName) {
+    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape) {
         if(position == 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
             RoomFragmentData rfd = new RoomFragmentData();
             rfd.setTAG(strName);
+            rfd.setLandscape(bLandscape);
             ArrayList<LightSwitchData> allsd = new ArrayList<>();
-
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd ), rfd.getTAG())
                     .commit();
@@ -98,7 +98,7 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         if(position == 1){
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
-                LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 10, 10, 0);
+                LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 10, 10, 0, false);
                 rf.addLightSwitch(lsd);
             }
         }

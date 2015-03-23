@@ -7,8 +7,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.RadioButton;
 
 /**
  * Created by RPRETOLESI on 20/03/2015.
@@ -17,18 +18,24 @@ public class SetNameDialogFragment extends DialogFragment {
 
     private SetNameDialogFragmentCallbacks mCallbacks;
     private AlertDialog m_AD;
+    private EditText m_et;
+    private RadioButton m_rl;
+    private RadioButton m_rp;
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String POSITION = "position";
     private static final String TITLE = "title";
+    private static final String DEFAULT_ORIENTATION = "default_orientation";
 
-    public static SetNameDialogFragment newInstance(int position, String strTitle) {
+    public static SetNameDialogFragment newInstance(int position, String strTitle, boolean bLandscape) {
         SetNameDialogFragment fragment = new SetNameDialogFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
         args.putString(TITLE, strTitle);
+        args.putBoolean(DEFAULT_ORIENTATION, bLandscape);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,24 +61,38 @@ public class SetNameDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = getActivity().getLayoutInflater().inflate(R.layout.set_name_dialog_fragment, null);
+        m_et = (EditText)view.findViewById(R.id.id_et_room_name);
+        m_rl = (RadioButton)view.findViewById(R.id.radioButtonLandscape);
+        m_rp = (RadioButton)view.findViewById(R.id.radioButtonPortrait);
+        if(getArguments().getBoolean(DEFAULT_ORIENTATION)){
+            if (m_rl != null) {
+                m_rl.setChecked(true);
+            }
+        } else {
+            if (m_rp != null) {
+                m_rp.setChecked(true);
+            }
+        }
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.set_name_dialog_fragment, null))
+        builder.setTitle(getArguments().getString(TITLE));
+        builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (mCallbacks != null) {
                             String str = "";
-                            int position;
-                            EditText et = (EditText)m_AD.findViewById(R.id.id_et_room_name);
-                            if (et != null) {
-                                str = et.getText().toString();
+                            boolean bLandscape = false;
+                             if (m_et != null) {
+                                str = m_et.getText().toString();
                             }
-                            position = getArguments().getInt(POSITION);
-                            mCallbacks.onSetNameDialogFragmentClickListener(SetNameDialogFragment.this, position, getArguments().getString(TITLE), str);
+                            if (m_rl != null) {
+                                bLandscape = m_rl.isChecked();;
+                            }
+                            mCallbacks.onSetNameDialogFragmentClickListener(SetNameDialogFragment.this, getArguments().getInt(POSITION), getArguments().getString(TITLE), str, bLandscape);
                         }
                     }
                 })
@@ -90,6 +111,6 @@ public class SetNameDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle,  String strName);
+        void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle,  String strName, boolean bLandscape);
     }
 }

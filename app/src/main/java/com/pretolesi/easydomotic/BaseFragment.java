@@ -1,6 +1,7 @@
 package com.pretolesi.easydomotic;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -76,7 +77,7 @@ public class BaseFragment extends Fragment {
         try {
             m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
         } catch (Exception ex){
-            m_rfd = new RoomFragmentData("PRETOLESI", getTag(), 0, 0, 0);
+            m_rfd = new RoomFragmentData("PRETOLESI", getTag(), 0, 0, 0, false);
         }
         try {
             m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
@@ -104,6 +105,13 @@ public class BaseFragment extends Fragment {
                 }
             }
         }
+        if(m_rfd != null){
+            if(m_rfd.getLandscape()){
+                getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+        }
         return m_rl;
     }
 
@@ -128,6 +136,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         // Log.d(TAG, "onResume()");
     }
 
@@ -179,7 +188,7 @@ public class BaseFragment extends Fragment {
     }
 
     public ArrayList<LightSwitchData> getLightSwitchData() {
-        LightSwitch ls = null;
+        LightSwitch ls;
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd) {
                 ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTAG());

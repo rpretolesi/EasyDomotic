@@ -14,33 +14,38 @@ public class LightSwitchData implements Parcelable {
     private float m_fPosX;
     private float m_fPosY;
     private float m_fPosZ;
+    private boolean m_bLandscape;
 
 
-    public LightSwitchData(long id, String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ) {
+    public LightSwitchData(long id, String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         this.m_ID = id;
         this.m_strRoomTAG = strRoomTAG;
         this.m_strTAG = strTAG;
         this.m_fPosX = fPosX;
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
+        this.m_bLandscape = bLandscape;
     }
 
-    public LightSwitchData(String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ) {
+    public LightSwitchData(String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         this.m_ID = 0;
         this.m_strRoomTAG = strRoomTAG;
         this.m_strTAG = strTAG;
         this.m_fPosX = fPosX;
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
+        this.m_bLandscape = bLandscape;
     }
-verificare se c'e' un metodo piu' pulito per fare questa operazione'
     public void update(LightSwitchData lsd){
-        this.m_ID = lsd.getID();
-        this.m_strRoomTAG = lsd.getRoomTAG();
-        this.m_strTAG = lsd.getTAG();
-        this.m_fPosX = lsd.getPosX();
-        this.m_fPosY = lsd.getPosY();
-        this.m_fPosZ = lsd.getPosZ();
+        if(lsd != null){
+            this.m_ID = lsd.getID();
+            this.m_strRoomTAG = lsd.getRoomTAG();
+            this.m_strTAG = lsd.getTAG();
+            this.m_fPosX = lsd.getPosX();
+            this.m_fPosY = lsd.getPosY();
+            this.m_fPosZ = lsd.getPosZ();
+            this.m_bLandscape = lsd.getLandscape();
+        }
     }
 
     public void setID(long id) {
@@ -65,6 +70,10 @@ verificare se c'e' un metodo piu' pulito per fare questa operazione'
         this.m_fPosZ = fPosZ;
     }
 
+    public void setLandscape(boolean bLandScape) {
+        this.m_bLandscape = bLandScape;
+    }
+
     public long getID() { return m_ID; }
 
     public String getRoomTAG() {
@@ -85,6 +94,10 @@ verificare se c'e' un metodo piu' pulito per fare questa operazione'
         return m_fPosZ;
     }
 
+    public boolean getLandscape() {
+        return m_bLandscape;
+    }
+
     protected LightSwitchData(Parcel in) {
         m_ID = in.readLong();
         m_strRoomTAG = in.readString();
@@ -92,6 +105,7 @@ verificare se c'e' un metodo piu' pulito per fare questa operazione'
         m_fPosX = in.readFloat();
         m_fPosY = in.readFloat();
         m_fPosZ = in.readFloat();
+        m_bLandscape = in.readByte() != 0;
     }
 
     @Override
@@ -107,6 +121,7 @@ verificare se c'e' un metodo piu' pulito per fare questa operazione'
         dest.writeFloat(m_fPosX);
         dest.writeFloat(m_fPosY);
         dest.writeFloat(m_fPosZ);
+        dest.writeByte((byte) (m_bLandscape ? 1 : 0));
     }
 
     @SuppressWarnings("unused")

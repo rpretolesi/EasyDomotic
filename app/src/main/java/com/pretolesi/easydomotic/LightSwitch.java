@@ -36,7 +36,7 @@ public class LightSwitch extends Switch {
             fPosX = rllp.leftMargin;
             fPosY = rllp.topMargin;
         }
-        return new LightSwitchData(m_id, m_strRoomTAG, (String)getTag(), fPosX, fPosY, 0.0f);
+        return new LightSwitchData(m_id, m_strRoomTAG, (String)getTag(), fPosX, fPosY, 0.0f, false);
     }
 
 /*

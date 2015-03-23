@@ -4,16 +4,25 @@
     <!--
         Settings Activity
     -->
+    <string name="settings_title_dialog_section_new_room">Room</string>
     <string name="settings_title_section_new_room">New Room</string>
+    <string name="settings_title_dialog_section_add_switch">Switch</string>
     <string name="settings_title_section_add_switch">Add Switch</string>
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
 
+    <!--
+        SetNameDialogFragment
+    -->
     <string name="text_tv_room_name">Room Name</string>
     <string name="hint_tv_room_name">My Room Name</string>
 
-    <string name="text_tv_lightswitch_name">Light Switch Name</string>
-    <string name="hint_tv_lightswitch_name">My Light Switch Name</string>
+    <string name="text_tv_switch_name">Switch Name</string>
+    <string name="hint_tv_switch_name">My Switch Name</string>
+
+    <string name="text_orientation_landscape">Landscape</string>
+    <string name="text_orientation_vertical">Vertical</string>
+
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>

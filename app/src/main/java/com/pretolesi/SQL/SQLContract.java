@@ -210,6 +210,7 @@ public class SQLContract
         public static final String COLUMN_NAME_X = "X";
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
+        public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
 
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME +
@@ -219,7 +220,8 @@ public class SQLContract
                         COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_Z + TEXT_TYPE +
+                        COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_LANDSCAPE + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -239,9 +241,10 @@ public class SQLContract
                     for(LightSwitchData lsdTemp:lsd){
                         values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
                         values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTAG()));
-                        values.put(COLUMN_NAME_X, String.valueOf(lsdTemp.getPosX()));
-                        values.put(COLUMN_NAME_Y, String.valueOf(lsdTemp.getPosY()));
-                        values.put(COLUMN_NAME_Z, String.valueOf(lsdTemp.getPosZ()));
+                        values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
+                        values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
+                        values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
+                        values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
                         // Insert the new row, returning the primary key value of the new row
                         if(db.insert(TABLE_NAME, null, values) <= 0) {
                             bRes = false;
@@ -279,7 +282,8 @@ public class SQLContract
                                     COLUMN_NAME_TAG,
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
-                                    COLUMN_NAME_Z
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -307,9 +311,10 @@ public class SQLContract
                                     cursor.getLong(cursor.getColumnIndex(_ID)),
                                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG)),
                                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)),
-                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)),
-                                    cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z))
+                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                                    ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
                             );
                             allsd.add(lsd);
                         }
@@ -337,6 +342,7 @@ public class SQLContract
         public static final String COLUMN_NAME_X = "X";
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
+        public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
 
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME +
@@ -346,7 +352,8 @@ public class SQLContract
                         COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_Z + TEXT_TYPE +
+                        COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_LANDSCAPE + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -364,9 +371,10 @@ public class SQLContract
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_NAME_HOUSE_TAG, rfd.getHouseTAG());
                     values.put(COLUMN_NAME_TAG, String.valueOf(rfd.getTAG()));
-                    values.put(COLUMN_NAME_X, String.valueOf(rfd.getPosX()));
-                    values.put(COLUMN_NAME_Y, String.valueOf(rfd.getPosY()));
-                    values.put(COLUMN_NAME_Z, String.valueOf(rfd.getPosZ()));
+                    values.put(COLUMN_NAME_X, Float.toString(rfd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(rfd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(rfd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(rfd.getLandscape() ? 1 : 0));
                     // Insert the new row, returning the primary key value of the new row
                     if(db.insert(TABLE_NAME, null, values) <= 0) {
                         bRes = false;
@@ -403,7 +411,8 @@ public class SQLContract
                                 COLUMN_NAME_TAG,
                                 COLUMN_NAME_X,
                                 COLUMN_NAME_Y,
-                                COLUMN_NAME_Z
+                                COLUMN_NAME_Z,
+                                COLUMN_NAME_LANDSCAPE
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -448,7 +457,8 @@ public class SQLContract
                                 COLUMN_NAME_TAG,
                                 COLUMN_NAME_X,
                                 COLUMN_NAME_Y,
-                                COLUMN_NAME_Z
+                                COLUMN_NAME_Z,
+                                COLUMN_NAME_LANDSCAPE
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -473,9 +483,10 @@ public class SQLContract
                         rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
                         rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));
                         rfd.setTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
-                        rfd.setPosX(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_X)));
-                        rfd.setPosY(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Y)));
-                        rfd.setPosZ(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_Z)));
+                        rfd.setPosX(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))));
+                        rfd.setPosY(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))));
+                        rfd.setPosZ(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))));
+                        rfd.setLandscape((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true);
 
                         // Chiudo il cursore
                         cursor.close();
