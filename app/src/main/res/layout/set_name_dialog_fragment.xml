@@ -15,7 +15,7 @@
 -->
 
     <EditText
-        android:id="@+id/id_et_room_name"
+        android:id="@+id/id_et_name"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="@string/hint_tv_room_name" />
+        android:hint="@string/text_tv_hint_name" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"

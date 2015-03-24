@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity
 
     public void onSectionAttached(int number, long id) {
         if(id > 0){
-            mTitle = SQLContract.RoomEntry.getTAG(this, id);
+            mTitle = SQLContract.RoomEntry.getTag(this, id);
         } else {
             mTitle = "";
         }

@@ -11,7 +11,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitchData;
 import com.pretolesi.easydomotic.RoomFragmentData;
-import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  * Created by RPRETOLESI on 28/01/2015.
@@ -332,6 +331,55 @@ public class SQLContract
 
         }
 
+        public static boolean isTagPresent(Context context, String strTag) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                boolean bRes = false;
+
+                if(context != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String selection = COLUMN_NAME_TAG + " = ?";
+
+                    String[] selectionArgs = {String.valueOf(strTag)};
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            selection,                                      // The columns for the WHERE clause
+                            selectionArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        bRes = true;
+                        // Chiudo il cursore
+                        cursor.close();
+                    }
+                }
+
+                return bRes;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
     }
 
     public static abstract class RoomEntry implements BaseColumns
@@ -482,7 +530,7 @@ public class SQLContract
                         cursor.moveToFirst();
                         rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
                         rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));
-                        rfd.setTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
+                        rfd.setTag(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
                         rfd.setPosX(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))));
                         rfd.setPosY(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))));
                         rfd.setPosZ(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))));
@@ -502,7 +550,7 @@ public class SQLContract
             }
         }
 
-        public static String getTAG(Context context, long id) {
+        public static String getTag(Context context, long id) {
 
             try
             {
@@ -548,6 +596,56 @@ public class SQLContract
                 }
 
                 return strTAG;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean isTagPresent(Context context, String strTag) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                boolean bRes = false;
+
+                if(context != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String selection = COLUMN_NAME_TAG + " = ?";
+
+                    String[] selectionArgs = {String.valueOf(strTag)};
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            selection,                                      // The columns for the WHERE clause
+                            selectionArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        bRes = true;
+                        // Chiudo il cursore
+                        cursor.close();
+                    }
+                }
+
+                return bRes;
             }
             finally
             {

@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.pretolesi.SQL.SQLContract;
 
 import java.util.ArrayList;
@@ -22,13 +24,13 @@ import java.util.ArrayList;
 /**
  * Settings Activity and Settings Navigation Drawer
  */
-public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks, SetNameDialogFragment.SetNameDialogFragmentCallbacks {
+public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks, SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
-    private SetNameDialogFragment m_sndf;
+    private SetNameAndOrientDialogFragment m_sndf;
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -66,13 +68,18 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), false);
+            m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), false);
             m_sndf.show(getSupportFragmentManager(), "");
         }
 
         if(position == 1){
-            m_sndf = SetNameDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), false);
-            m_sndf.show(getSupportFragmentManager(), "");
+            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            if(rf != null) {
+                m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), false);
+                m_sndf.show(getSupportFragmentManager(), "");
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.text_toast_room_not_exist, Toast.LENGTH_LONG).show();
+            }
         }
         if(position == 2){
         }
@@ -87,31 +94,38 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
     }
 
     @Override
-    public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape) {
+    public void onSetNameAndOrientDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape) {
         if(position == 0){
-            // Controllo orientamento prima di costruire il frame....
-            if(bLandscape){
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
+            // Verifico che il nome sia valido
+            if(isTagRoomValid(strName)){
+                // Controllo orientamento prima di costruire il frame....
+                if(bLandscape){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
 
-            // Costruisco i dati...
-            RoomFragmentData rfd = new RoomFragmentData();
-            rfd.setTAG(strName);
-            rfd.setLandscape(bLandscape);
-            // Costruisco il frame...
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            ArrayList<LightSwitchData> allsd = new ArrayList<>();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd ), rfd.getTAG())
-                    .commit();
+                // Costruisco i dati...
+                // Room
+                RoomFragmentData rfd = new RoomFragmentData();
+                rfd.setTag(strName);
+                rfd.setLandscape(bLandscape);
+                // LightSwitch
+                ArrayList<LightSwitchData> allsd = new ArrayList<>();
+                // Costruisco il frame...
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd), rfd.getTAG())
+                        .commit();
+            }
         }
         if(position == 1){
-            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            if(rf != null) {
-                LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 10, 10, 0, false);
-                rf.addLightSwitch(lsd);
+            if(isTagSwitchValid(strName)){
+                BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+                if(rf != null) {
+                    LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 0, 0, 0, false);
+                    rf.addLightSwitch(lsd);
+                }
             }
         }
     }
@@ -224,6 +238,37 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             ((SettingsActivity) activity).restoreActionBar();
         }
 
+    }
+
+    // Helper method
+    private boolean isTagRoomValid(String strTag) {
+        if(strTag != null){
+            if(!strTag.equals("")){
+                if(!SQLContract.RoomEntry.isTagPresent(getApplicationContext(), strTag)){
+                    return true;
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            }
+        }
+        Toast.makeText(getApplicationContext(), R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    private boolean isTagSwitchValid(String strTag) {
+        if(strTag != null){
+            if(!strTag.equals("")){
+                if(!SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), strTag)){
+                    return true;
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_switch_already_exist, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            }
+        }
+        Toast.makeText(getApplicationContext(), R.string.text_toast_switch_not_valid, Toast.LENGTH_LONG).show();
+        return false;
     }
 
     public static Intent makeSettingsActivity(Context context)

@@ -14,9 +14,9 @@ import android.widget.RadioButton;
 /**
  * Created by RPRETOLESI on 20/03/2015.
  */
-public class SetNameDialogFragment extends DialogFragment {
+public class SetNameAndOrientDialogFragment extends DialogFragment {
 
-    private SetNameDialogFragmentCallbacks mCallbacks;
+    private SetNameAndOrientDialogFragmentCallbacks mCallbacks;
     private AlertDialog m_AD;
     private EditText m_et;
     private RadioButton m_rl;
@@ -30,8 +30,8 @@ public class SetNameDialogFragment extends DialogFragment {
     private static final String TITLE = "title";
     private static final String DEFAULT_ORIENTATION = "default_orientation";
 
-    public static SetNameDialogFragment newInstance(int position, String strTitle, boolean bLandscape) {
-        SetNameDialogFragment fragment = new SetNameDialogFragment();
+    public static SetNameAndOrientDialogFragment newInstance(int position, String strTitle, boolean bLandscape) {
+        SetNameAndOrientDialogFragment fragment = new SetNameAndOrientDialogFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
         args.putString(TITLE, strTitle);
@@ -40,14 +40,14 @@ public class SetNameDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    public SetNameDialogFragment() {
+    public SetNameAndOrientDialogFragment() {
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (SetNameDialogFragmentCallbacks) activity;
+            mCallbacks = (SetNameAndOrientDialogFragmentCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement SetNameDialogFragmentCallbacks.");
         }
@@ -63,7 +63,7 @@ public class SetNameDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = getActivity().getLayoutInflater().inflate(R.layout.set_name_dialog_fragment, null);
-        m_et = (EditText)view.findViewById(R.id.id_et_room_name);
+        m_et = (EditText)view.findViewById(R.id.id_et_name);
         m_rl = (RadioButton)view.findViewById(R.id.radioButtonLandscape);
         m_rp = (RadioButton)view.findViewById(R.id.radioButtonPortrait);
         if(getArguments().getBoolean(DEFAULT_ORIENTATION)){
@@ -92,13 +92,13 @@ public class SetNameDialogFragment extends DialogFragment {
                             if (m_rl != null) {
                                 bLandscape = m_rl.isChecked();;
                             }
-                            mCallbacks.onSetNameDialogFragmentClickListener(SetNameDialogFragment.this, getArguments().getInt(POSITION), getArguments().getString(TITLE), str, bLandscape);
+                            mCallbacks.onSetNameAndOrientDialogFragmentClickListener(SetNameAndOrientDialogFragment.this, getArguments().getInt(POSITION), getArguments().getString(TITLE), str, bLandscape);
                         }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SetNameDialogFragment.this.getDialog().cancel();
+                        SetNameAndOrientDialogFragment.this.getDialog().cancel();
                     }
                 });
         m_AD = builder.create();
@@ -107,10 +107,10 @@ public class SetNameDialogFragment extends DialogFragment {
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface SetNameDialogFragmentCallbacks {
+    public static interface SetNameAndOrientDialogFragmentCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle,  String strName, boolean bLandscape);
+        void onSetNameAndOrientDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape);
     }
 }

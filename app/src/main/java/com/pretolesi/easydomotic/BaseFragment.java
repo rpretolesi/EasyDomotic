@@ -100,8 +100,8 @@ public class BaseFragment extends Fragment {
             if(m_allsd != null){
                 for(LightSwitchData lsd : m_allsd){
                     LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+                    setViewPosition(ls,lsd.getPosX(),lsd.getPosY());
                     m_rl.addView(ls);
-                    ls.animate().translationX(lsd.getPosX()).translationY(lsd.getPosY()).setDuration(1000).start();
                 }
             }
         }
@@ -173,8 +173,11 @@ public class BaseFragment extends Fragment {
         if(m_rl != null && lsd != null){
             m_allsd.add(lsd);
             LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+            verificare se e' possibile settare il RelativeLayout all'interno del Light  switch
+            setViewPosition(ls, 0, 0);
             m_rl.addView(ls);
-            ls.animate().translationX(lsd.getPosX()).translationY(lsd.getPosY()).setDuration(0).start();
+
+            Log.d(TAG, this.toString() + ": " + "addLightSwitch()");
         }
     }
 
@@ -193,19 +196,26 @@ public class BaseFragment extends Fragment {
             }
         }
 
+        Log.d(TAG, this.toString() + ": " + "getLightSwitchData()");
+
         return m_allsd;
     }
-/*
-    public void setRoomFragmentData(RoomFragmentData rfd) {
-        if(rfd != null & m_rl != null & m_tvRoomName != null) {
-            m_tvRoomName.setText(rfd.getTAG());
-        }
-    }
 
-    public void setLightSwitchData(ArrayList<LightSwitchData> alllsd) {
-        for (LightSwitchData lsd : alllsd) {
-            addLightSwitch(lsd);
+    public static void setViewPosition(View viev, float fPosX, float fPosY){
+        RelativeLayout.LayoutParams rllp;
+        if(viev != null){
+            if(viev.getLayoutParams() ==  null){
+                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                viev.setLayoutParams(rllp);
+            }
+            if(viev.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                rllp = (RelativeLayout.LayoutParams)viev.getLayoutParams();
+                if(rllp != null) {
+                    rllp.leftMargin = (int) fPosX;
+                    rllp.topMargin = (int) fPosY;
+                    viev.setLayoutParams(rllp);
+                }
+            }
         }
     }
-*/
 }

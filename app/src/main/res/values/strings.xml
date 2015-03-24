@@ -15,11 +15,14 @@
         SetNameDialogFragment
     -->
     <string name="text_tv_room_name">Room Name</string>
-    <string name="hint_tv_room_name">My Room Name</string>
-
+    <string name="text_toast_room_name_not_valid">Room Name not valid.</string>
+    <string name="text_toast_room_name_already_exist">Room Name already exist.</string>
+    <string name="text_toast_room_not_exist">Before add objects, you should create a Room.</string>
     <string name="text_tv_switch_name">Switch Name</string>
-    <string name="hint_tv_switch_name">My Switch Name</string>
+    <string name="text_toast_switch_not_valid">Switch Name not valid.</string>
+    <string name="text_toast_switch_already_exist">Switch Name not exist.</string>
 
+    <string name="text_tv_hint_name">My Name</string>
     <string name="text_orientation_landscape">Landscape</string>
     <string name="text_orientation_vertical">Vertical</string>
 

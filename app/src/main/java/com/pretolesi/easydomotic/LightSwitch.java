@@ -2,10 +2,8 @@ package com.pretolesi.easydomotic;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
@@ -31,8 +29,9 @@ public class LightSwitch extends Switch {
     public LightSwitchData getLightSwitchData() {
         float fPosX = 0.0f;
         float fPosY = 0.0f;
-        RelativeLayout.LayoutParams rllp =  (RelativeLayout.LayoutParams)this.getLayoutParams();
-        if(rllp != null){
+
+        if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
             fPosX = rllp.leftMargin;
             fPosY = rllp.topMargin;
         }
@@ -61,8 +60,15 @@ public class LightSwitch extends Switch {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                mLastTouchX = event.getRawX();
-                mLastTouchY = event.getRawY();
+                if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                    RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+                    mLastTouchX = event.getRawX() - rllp.leftMargin;
+                    mLastTouchY = event.getRawY() - rllp.topMargin;
+                }
+
+
+                Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
+
                 break;
             }
 
@@ -72,20 +78,10 @@ public class LightSwitch extends Switch {
                 // Calculate the distance moved
                 final float dx = x - mLastTouchX;
                 final float dy = y - mLastTouchY;
-/*
-                ViewParent v = this.getParent();
-                if(v instanceof RelativeLayout){
-                    RelativeLayout rl = (RelativeLayout)v;
-                    RelativeLayout.LayoutParams rllp =  (RelativeLayout.LayoutParams)rl.getLayoutParams();
-                    float f =rllp.topMargin;
 
-                }
-*/
-                this.animate().translationXBy(dx).translationYBy(dy).setDuration(0).start();
+                BaseFragment.setViewPosition(this,(int)dx,(int)dy);
 
-                // Remember this touch position for the next move event
-                mLastTouchX = x;
-                mLastTouchY = y;
+                Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
 
                 break;
             }

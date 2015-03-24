@@ -53,7 +53,7 @@ public class RoomFragmentData implements Parcelable {
         this.m_strHouseTAG = strHouseTAG;
     }
 
-    public void setTAG(String strTAG) {
+    public void setTag(String strTAG) {
         this.m_strTAG = strTAG;
     }
 
