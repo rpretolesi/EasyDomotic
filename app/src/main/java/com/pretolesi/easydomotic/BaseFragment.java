@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Log.d(TAG, "onAttach()");
+        Log.d(TAG, this.toString() + ": " + "onAttach()");
     }
 
     @Override
@@ -86,12 +87,11 @@ public class BaseFragment extends Fragment {
         }
 
 
-        // Log.d(TAG, "onCreate()");
+        Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Log.d(TAG, "onCreateView()");
         if(m_rl != null & m_tvRoomName != null) {
             if(m_rfd != null){
                 m_tvRoomName.setText(m_rfd.getTAG());
@@ -105,69 +105,64 @@ public class BaseFragment extends Fragment {
                 }
             }
         }
-        if(m_rfd != null){
-            if(m_rfd.getLandscape()){
-                getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                getActivity().setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-        }
+
+        Log.d(TAG, this.toString() + ": " + "onCreateView()");
         return m_rl;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Log.d(TAG, "onActivityCreated()");
+        Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        // Log.d(TAG, "onViewStateRestored()");
+        Log.d(TAG, this.toString() + ": " + "onViewStateRestored()");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Log.d(TAG, "onStart()");
+        Log.d(TAG, this.toString() + ": " + "onStart()");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Log.d(TAG, "onResume()");
+        Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // Log.d(TAG, "onPause()");
+        Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Log.d(TAG, "onStop()");
+        Log.d(TAG, this.toString() + ": " + "onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Log.d(TAG, "onDestroyView()");
+        Log.d(TAG, this.toString() + ": " + "onDestroyView()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Log.d(TAG, "onDestroy()");
+        Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        // Log.d(TAG, "onDetach()");
+        Log.d(TAG, this.toString() + ": " + "onDetach()");
     }
 
     /*

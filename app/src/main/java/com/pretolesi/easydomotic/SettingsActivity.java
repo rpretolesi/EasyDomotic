@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -78,18 +79,29 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         if(position == 7){
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            SQLContract.RoomEntry.save(getApplicationContext(), rf.getRoomFragmentData());
-            SQLContract.LightSwitchEntry.save(getApplicationContext(),rf.getLightSwitchData());
+            if(rf != null){
+                SQLContract.RoomEntry.save(getApplicationContext(), rf.getRoomFragmentData());
+                SQLContract.LightSwitchEntry.save(getApplicationContext(),rf.getLightSwitchData());
+            }
         }
     }
 
     @Override
     public void onSetNameDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape) {
         if(position == 0){
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            // Controllo orientamento prima di costruire il frame....
+            if(bLandscape){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
+            // Costruisco i dati...
             RoomFragmentData rfd = new RoomFragmentData();
             rfd.setTAG(strName);
             rfd.setLandscape(bLandscape);
+            // Costruisco il frame...
+            FragmentManager fragmentManager = getSupportFragmentManager();
             ArrayList<LightSwitchData> allsd = new ArrayList<>();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd ), rfd.getTAG())

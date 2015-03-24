@@ -2,6 +2,7 @@ package com.pretolesi.easydomotic;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -47,13 +48,20 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position, long id) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Prelevo i dati e TAG
+        // Prelevo i dati e TAG per Room
         RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
+        // Controllo orientamento prima di costruire il frame....
+        if(rfd.getLandscape()){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        // Prelevo i dati per gli altri oggetti della Room
         ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, rfd.getTAG());
 
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getSupportFragmentManager();
         // Costruisco l'istanza
         fragmentManager.beginTransaction()
                 .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
