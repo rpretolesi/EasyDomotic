@@ -101,8 +101,8 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                 android.R.id.text1,
                 new String[]{
                         getString(R.string.settings_title_section_new_room),
+                        getString(R.string.settings_title_section_open_room),
                         getString(R.string.settings_title_section_add_switch),
-                        getString(R.string.settings_title_section_disp),
                         getString(R.string.settings_title_section_disp),
                         getString(R.string.settings_title_section_disp),
                         getString(R.string.settings_title_section_disp),

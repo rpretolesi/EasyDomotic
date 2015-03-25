@@ -24,7 +24,10 @@ import java.util.ArrayList;
 /**
  * Settings Activity and Settings Navigation Drawer
  */
-public class SettingsActivity extends BaseActivity implements SettingsNavigationDrawerFragment.NavigationDrawerCallbacks, SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks {
+public class SettingsActivity extends BaseActivity implements
+        SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
+        SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
+        RoomListFragment.ListRoomFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -73,6 +76,14 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         }
 
         if(position == 1){
+            // Costruisco il frame...
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, RoomListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
+                    .commit();
+        }
+
+        if(position == 2){
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), false);
@@ -80,8 +91,6 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             } else {
                 Toast.makeText(getApplicationContext(), R.string.text_toast_room_not_exist, Toast.LENGTH_LONG).show();
             }
-        }
-        if(position == 2){
         }
 
         if(position == 7){
@@ -115,11 +124,11 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
                 // Costruisco il frame...
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, RoomFragment.newInstance(position + 1, 0, rfd, allsd), rfd.getTAG())
+                        .replace(R.id.container, RoomFragment.newInstance(position + 1, position, rfd, allsd), rfd.getTAG())
                         .commit();
             }
         }
-        if(position == 1){
+        if(position == 2){
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 if(isTagSwitchValid(rf, strName)){
@@ -127,6 +136,30 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
                     rf.addLightSwitch(lsd);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onListRoomFragmentClickListener(int sectionNumber, int position, long id) {
+        if(position == 1){
+            // Prelevo i dati e TAG per Room
+            RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
+            // Controllo orientamento prima di costruire il frame....
+            if(rfd.getLandscape()){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+            // Prelevo i dati per gli altri oggetti della Room
+            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, rfd.getTAG());
+
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            // Costruisco l'istanza
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                    .commit();
+
         }
     }
 
@@ -197,6 +230,8 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * Room Fragment for build my custom fragment
@@ -278,5 +313,4 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         intent.setClass(context, SettingsActivity.class);
         return intent;
     }
-
 }

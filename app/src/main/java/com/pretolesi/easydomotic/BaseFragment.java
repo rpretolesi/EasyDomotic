@@ -26,6 +26,7 @@ public class BaseFragment extends Fragment {
      * fragment.
      */
     protected static final String ARG_SECTION_NUMBER = "section_number";
+    protected static final String POSITION = "position";
     protected static final String _ID = "id";
     protected static final String ARG_ROOM_DATA = "Room_Data";
     protected static final String ARG_LIGHT_SWITCH_DATA = "Room_Light_Switch_Data";

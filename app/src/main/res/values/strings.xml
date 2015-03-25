@@ -6,6 +6,7 @@
     -->
     <string name="settings_title_dialog_section_new_room">Room</string>
     <string name="settings_title_section_new_room">New Room</string>
+    <string name="settings_title_section_open_room">Open Room</string>
     <string name="settings_title_dialog_section_add_switch">Switch</string>
     <string name="settings_title_section_add_switch">Add Switch</string>
     <string name="settings_title_section_disp"> </string>

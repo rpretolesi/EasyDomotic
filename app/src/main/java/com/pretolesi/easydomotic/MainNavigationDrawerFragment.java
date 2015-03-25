@@ -62,7 +62,7 @@ public class MainNavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    SimpleCursorAdapter mAdapter;
+    private SimpleCursorAdapter mAdapter;
 
     public MainNavigationDrawerFragment() {
     }

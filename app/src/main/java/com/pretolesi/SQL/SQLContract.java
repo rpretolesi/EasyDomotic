@@ -411,7 +411,7 @@ public class SQLContract
 
         public static boolean save(Context context, RoomFragmentData rfd)  {
 
-            boolean bRes = true;
+            boolean bRes = false;
             try
             {
                 m_LockCommandHolder.lock();
@@ -425,9 +425,21 @@ public class SQLContract
                     values.put(COLUMN_NAME_Y, Float.toString(rfd.getPosY()));
                     values.put(COLUMN_NAME_Z, Float.toString(rfd.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(rfd.getLandscape() ? 1 : 0));
-                    // Insert the new row, returning the primary key value of the new row
-                    if(db.insert(TABLE_NAME, null, values) <= 0) {
-                        bRes = false;
+
+                    String selection = COLUMN_NAME_TAG + " = ?";
+
+                    String[] selectionArgs = {String.valueOf(rfd.getTAG())};
+                    // Update the Parameter
+                    if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0)
+                    {
+                        // The Parameter doesn't exist, i will add it
+                        if (db.insert(TABLE_NAME, null, values) > 0)
+                        {
+                            bRes =  true;
+                        }
+                    } else
+                    {
+                        bRes =  true;
                     }
                 }
             } finally {
@@ -435,7 +447,6 @@ public class SQLContract
             }
 
             return bRes;
-
         }
 
         public static Cursor load(Context context)
