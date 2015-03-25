@@ -139,7 +139,10 @@ public class MainActivity extends BaseActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-/*
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
         public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -154,12 +157,11 @@ public class MainActivity extends BaseActivity
 
         public RoomFragment() {
         }
-*/
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.main_fragment, container, false);
-            return rootView;
+            return super.onCreateView(inflater, container, savedInstanceState);
         }
 
         @Override

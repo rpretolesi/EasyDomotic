@@ -331,7 +331,7 @@ public class SQLContract
 
         }
 
-        public static boolean isTagPresent(Context context, String strTag) {
+        public static boolean isTagPresent(Context context, String strRoomTag, String strTag) {
 
             try
             {
@@ -353,9 +353,11 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection = COLUMN_NAME_TAG + " = ?";
+                    String selection =
+                            COLUMN_NAME_ROOM_TAG + " = ? AND " +
+                            COLUMN_NAME_TAG + " = ?" ;
 
-                    String[] selectionArgs = {String.valueOf(strTag)};
+                    String[] selectionArgs = { String.valueOf(strRoomTag), String.valueOf(strTag) };
 
                     Cursor cursor = db.query(
                             TABLE_NAME,  // The table to query

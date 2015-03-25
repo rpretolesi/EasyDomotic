@@ -1,5 +1,6 @@
 package com.pretolesi.easydomotic;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -34,25 +35,6 @@ public class BaseFragment extends Fragment {
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
-
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static BaseFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
-        BaseFragment fragment = new BaseFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putLong(_ID, id);
-        args.putParcelable(ARG_ROOM_DATA, rfd);
-        args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
-        args.putBoolean(EDIT_MODE, false);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public BaseFragment() {
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -92,16 +74,14 @@ public class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(m_rl != null & m_tvRoomName != null) {
+        if(m_rl != null && m_tvRoomName != null) {
             if(m_rfd != null){
                 m_tvRoomName.setText(m_rfd.getTAG());
                 m_rl.addView(m_tvRoomName);
             }
             if(m_allsd != null){
                 for(LightSwitchData lsd : m_allsd){
-                    LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
-                    setViewPosition(ls,lsd.getPosX(),lsd.getPosY());
-                    m_rl.addView(ls);
+                    newLightSwitch(lsd);
                 }
             }
         }
@@ -168,17 +148,13 @@ public class BaseFragment extends Fragment {
     /*
         Add a new Light Switch
      */
-    public void addLightSwitch(LightSwitchData lsd){
+    public boolean addLightSwitch(LightSwitchData lsd){
         // Define the switch
-        if(m_rl != null && lsd != null){
+        if(m_allsd != null && newLightSwitch(lsd)){
             m_allsd.add(lsd);
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
-            verificare se e' possibile settare il RelativeLayout all'interno del Light  switch
-            setViewPosition(ls, 0, 0);
-            m_rl.addView(ls);
-
-            Log.d(TAG, this.toString() + ": " + "addLightSwitch()");
+            return true;
         }
+        return false;
     }
 
     public RoomFragmentData getRoomFragmentData() {
@@ -201,21 +177,88 @@ public class BaseFragment extends Fragment {
         return m_allsd;
     }
 
-    public static void setViewPosition(View viev, float fPosX, float fPosY){
-        RelativeLayout.LayoutParams rllp;
-        if(viev != null){
-            if(viev.getLayoutParams() ==  null){
-                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                viev.setLayoutParams(rllp);
-            }
-            if(viev.getLayoutParams() instanceof RelativeLayout.LayoutParams){
-                rllp = (RelativeLayout.LayoutParams)viev.getLayoutParams();
-                if(rllp != null) {
-                    rllp.leftMargin = (int) fPosX;
-                    rllp.topMargin = (int) fPosY;
-                    viev.setLayoutParams(rllp);
+    public boolean isLightSwitchTagPresent(String strLightSwitchTag) {
+        boolean bRes = false;
+        if(m_allsd != null && strLightSwitchTag != null){
+            for(LightSwitchData lsd : m_allsd) {
+                if(strLightSwitchTag.equals(lsd.getTAG())){
+                    bRes = true;
                 }
             }
         }
+        return bRes;
+    }
+
+    // Helper function
+    private boolean newLightSwitch(LightSwitchData lsd){
+        // Define the switch
+        if(m_rl != null && lsd != null){
+            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+            if(lsd.getLandscape()){
+                ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+            }
+            setViewPosition(ls, lsd.getPosX(), lsd.getPosY());
+            m_rl.addView(ls);
+
+            return true;
+        }
+        return false;
+    }
+
+    // Static
+    public static void setViewPosition(View view, float fPosX, float fPosY){
+        RelativeLayout.LayoutParams rllp;
+        if(view != null){
+            if(view.getLayoutParams() ==  null){
+                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                view.setLayoutParams(rllp);
+            }
+            if(view.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                rllp = (RelativeLayout.LayoutParams)view.getLayoutParams();
+                if(rllp != null) {
+                    rllp.leftMargin = (int) fPosX;
+                    rllp.topMargin = (int) fPosY;
+                    view.setLayoutParams(rllp);
+                }
+            }
+        }
+    }
+
+    public static float getViewPositionX(View view){
+        RelativeLayout.LayoutParams rllp;
+        float fRes = 0.0f;
+        if(view != null){
+            if(view.getLayoutParams() ==  null){
+                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                view.setLayoutParams(rllp);
+            }
+            if(view.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                rllp = (RelativeLayout.LayoutParams)view.getLayoutParams();
+                if(rllp != null) {
+                    fRes = rllp.leftMargin;
+                }
+            }
+        }
+
+        return fRes;
+    }
+
+    public static float getViewPositionY(View view){
+        RelativeLayout.LayoutParams rllp;
+        float fRes = 0.0f;
+        if(view != null){
+            if(view.getLayoutParams() ==  null){
+                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                view.setLayoutParams(rllp);
+            }
+            if(view.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                rllp = (RelativeLayout.LayoutParams)view.getLayoutParams();
+                if(rllp != null) {
+                    fRes = rllp.topMargin;
+                }
+            }
+        }
+
+        return fRes;
     }
 }

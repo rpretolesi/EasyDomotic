@@ -120,10 +120,10 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
             }
         }
         if(position == 1){
-            if(isTagSwitchValid(strName)){
-                BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-                if(rf != null) {
-                    LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 0, 0, 0, false);
+            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            if(rf != null) {
+                if(isTagSwitchValid(rf, strName)){
+                    LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 30, 30, 0, bLandscape);
                     rf.addLightSwitch(lsd);
                 }
             }
@@ -207,20 +207,21 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         * Returns a new instance of this fragment for the given section
         * number.
         */
-/*
-        public static RoomFragment newInstance(int sectionNumber, long id, boolean editMode) {
-         RoomFragment fragment = new RoomFragment();
-         Bundle args = new Bundle();
-         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-         args.putLong(_ID, id);
-         args.putBoolean(EDIT_MODE, editMode);
-         fragment.setArguments(args);
-         return fragment;
+        public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
+            RoomFragment fragment = new RoomFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putLong(_ID, id);
+            args.putParcelable(ARG_ROOM_DATA, rfd);
+            args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
+            args.putBoolean(EDIT_MODE, false);
+            fragment.setArguments(args);
+            return fragment;
         }
 
         public RoomFragment() {
         }
-*/
+
         @Override
         public void  onCreate (Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
@@ -256,10 +257,10 @@ public class SettingsActivity extends BaseActivity implements SettingsNavigation
         return false;
     }
 
-    private boolean isTagSwitchValid(String strTag) {
-        if(strTag != null){
+    private boolean isTagSwitchValid(BaseFragment bf, String strTag) {
+        if(bf != null && strTag != null){
             if(!strTag.equals("")){
-                if(!SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), strTag)){
+                if(!bf.isLightSwitchTagPresent(strTag) && !SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), bf.getTag(), strTag)){
                     return true;
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.text_toast_switch_already_exist, Toast.LENGTH_LONG).show();
