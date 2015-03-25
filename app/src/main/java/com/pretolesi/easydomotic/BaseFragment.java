@@ -2,7 +2,6 @@ package com.pretolesi.easydomotic;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -166,7 +165,7 @@ public class BaseFragment extends Fragment {
         LightSwitch ls;
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd) {
-                ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTAG());
+                ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTag());
                 if(ls != null){
                     lsd.update(ls.getLightSwitchData());
                 }
@@ -182,7 +181,7 @@ public class BaseFragment extends Fragment {
         boolean bRes = false;
         if(m_allsd != null && strLightSwitchTag != null){
             for(LightSwitchData lsd : m_allsd) {
-                if(strLightSwitchTag.equals(lsd.getTAG())){
+                if(strLightSwitchTag.equals(lsd.getTag())){
                     bRes = true;
                 }
             }

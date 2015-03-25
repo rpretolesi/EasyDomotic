@@ -40,7 +40,7 @@ public class LightSwitchData implements Parcelable {
         if(lsd != null){
             this.m_ID = lsd.getID();
             this.m_strRoomTAG = lsd.getRoomTAG();
-            this.m_strTAG = lsd.getTAG();
+            this.m_strTAG = lsd.getTag();
             this.m_fPosX = lsd.getPosX();
             this.m_fPosY = lsd.getPosY();
             this.m_fPosZ = lsd.getPosZ();
@@ -80,7 +80,7 @@ public class LightSwitchData implements Parcelable {
         return m_strRoomTAG;
     }
 
-    public String getTAG() {
+    public String getTag() {
         return m_strTAG;
     }
 

@@ -239,14 +239,24 @@ public class SQLContract
                     ContentValues values = new ContentValues();
                     for(LightSwitchData lsdTemp:lsd){
                         values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
-                        values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTAG()));
+                        values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
                         values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
                         values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
                         values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
                         values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
-                        // Insert the new row, returning the primary key value of the new row
-                        if(db.insert(TABLE_NAME, null, values) <= 0) {
-                            bRes = false;
+
+                        String selection =
+                                COLUMN_NAME_ROOM_TAG + " = ? AND " +
+                                COLUMN_NAME_TAG + " = ?" ;
+
+                        String[] selectionArgs = { String.valueOf(lsdTemp.getRoomTAG()), String.valueOf(lsdTemp.getTag()) };
+
+                        // Update the Parameter
+                        if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0) {
+                            // The Parameter doesn't exist, i will add it
+                            if (db.insert(TABLE_NAME, null, values) <= 0) {
+                                bRes = false;
+                            }
                         }
                     }
                 }
@@ -411,7 +421,7 @@ public class SQLContract
 
         public static boolean save(Context context, RoomFragmentData rfd)  {
 
-            boolean bRes = false;
+            boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
@@ -433,13 +443,10 @@ public class SQLContract
                     if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0)
                     {
                         // The Parameter doesn't exist, i will add it
-                        if (db.insert(TABLE_NAME, null, values) > 0)
+                        if (db.insert(TABLE_NAME, null, values) <= 0)
                         {
-                            bRes =  true;
+                            bRes = false;
                         }
-                    } else
-                    {
-                        bRes =  true;
                     }
                 }
             } finally {

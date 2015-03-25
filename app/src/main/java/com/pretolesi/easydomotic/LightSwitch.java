@@ -22,7 +22,7 @@ public class LightSwitch extends Switch {
     public LightSwitch(Context context, LightSwitchData lsd) {
         super(context);
         this.m_lsd = lsd;
-        this.setTag(lsd.getTAG());
+        this.setTag(lsd.getTag());
     }
     public LightSwitchData getLightSwitchData() {
 /*
