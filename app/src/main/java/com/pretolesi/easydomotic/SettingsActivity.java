@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -28,13 +27,15 @@ import java.util.ArrayList;
 public class SettingsActivity extends BaseActivity implements
         SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
-        RoomListFragment.ListRoomFragmentCallbacks {
+        RoomListFragment.ListRoomFragmentCallbacks,
+        YesNoDialogFragment.YesNoDialogFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
     private SetNameAndOrientDialogFragment m_sndf;
+    private YesNoDialogFragment m_yndf;
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -61,10 +62,13 @@ public class SettingsActivity extends BaseActivity implements
         if(m_sndf != null){
             m_sndf.dismiss();
         }
+        if(m_yndf != null){
+            m_yndf.dismiss();
+        }
     }
 
     @Override
-    protected void  onSaveInstanceState (Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
 
     }
 
@@ -95,24 +99,8 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 7){
-            Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
-            if(f instanceof BaseFragment){
-                BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-                boolean bRes = true;
-                if(!SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData())){
-                    bRes = false;
-                }
-                if(!SQLContract.LightSwitchEntry.save(getApplicationContext(),bf.getLightSwitchData())){
-                    bRes = false;
-                }
-                if(bRes){
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
-            }
+            // Save
+            saveRoomData();
         }
     }
 
@@ -146,10 +134,46 @@ public class SettingsActivity extends BaseActivity implements
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 if(isTagSwitchValid(rf, strName)){
-                    LightSwitchData lsd = new LightSwitchData(false, rf.getTag(), strName, 30, 30, 0, bLandscape);
+                    LightSwitchData lsd = new LightSwitchData(false, false, -1, rf.getTag(), strName, 30, 30, 0, bLandscape);
                     rf.addLightSwitch(lsd);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onYesNoDialogFragmentClickListener(int position, boolean bYes, boolean bNo) {
+        if(position == 7){
+            if(bYes) {
+                // Save
+                saveRoomData();
+                super.onBackPressed();
+            }
+            if(bNo) {
+                super.onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+        if(f instanceof BaseFragment) {
+            BaseFragment bf = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+            if(!bf.getDataSaved()){
+                        m_yndf = YesNoDialogFragment.newInstance(
+                        7,
+                        getString(R.string.text_title_room_not_saved),
+                        getString(R.string.text_message_room_save_confirmation),
+                        getString(R.string.text_btn_yes),
+                        getString(R.string.text_btn_no)
+                );
+                m_yndf.show(getSupportFragmentManager(), "");
+            } else {
+                super.onBackPressed();
+            }
+        }else {
+            super.onBackPressed();
         }
     }
 
@@ -245,7 +269,26 @@ public class SettingsActivity extends BaseActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
+    private void saveRoomData() {
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+        if(f instanceof BaseFragment){
+            BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            boolean bRes = true;
+            if(!SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData())){
+                bRes = false;
+            }
+            if(!SQLContract.LightSwitchEntry.save(getApplicationContext(),bf.getLightSwitchData())){
+                bRes = false;
+            }
+            if(bRes){
+                Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
+        }
+    }
 
     /**
      * Room Fragment for build my custom fragment

@@ -60,14 +60,13 @@ public class BaseFragment extends Fragment {
         try {
             m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
         } catch (Exception ex){
-            m_rfd = new RoomFragmentData(false, "PRETOLESI", getTag(), 0, 0, 0, false);
+            m_rfd = new RoomFragmentData(false, false, -1, "PRETOLESI", getTag(), 0, 0, 0, false);
         }
         try {
             m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
         } catch (Exception ex){
             m_allsd = new ArrayList<>();
         }
-
 
         Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
@@ -81,7 +80,9 @@ public class BaseFragment extends Fragment {
             }
             if(m_allsd != null){
                 for(LightSwitchData lsd : m_allsd){
-                    newLightSwitch(lsd);
+                    if(lsd != null){
+                        newLightSwitch(lsd);
+                    }
                 }
             }
         }
@@ -160,8 +161,28 @@ public class BaseFragment extends Fragment {
     public RoomFragmentData getRoomFragmentData() {
         return m_rfd;
     }
+    public boolean getDataSaved() {
+        boolean bRes = true;
+        if(m_rfd != null){
+            if(!m_rfd.getSaved()) {
+                bRes = false;
+            }
+        }
+        if(m_allsd != null){
+            for(LightSwitchData lsd : m_allsd){
+                if(lsd != null){
+                    if(!lsd.getSaved()) {
+                        bRes = false;
+                    }
+                }
+            }
+        }
+
+        return bRes;
+    }
 
     public ArrayList<LightSwitchData> getLightSwitchData() {
+/*
         LightSwitch ls;
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd) {
@@ -173,7 +194,7 @@ public class BaseFragment extends Fragment {
                 }
             }
         }
-
+*/
         Log.d(TAG, this.toString() + ": " + "getLightSwitchData()");
 
         return m_allsd;

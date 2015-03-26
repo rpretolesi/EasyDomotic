@@ -259,6 +259,9 @@ public class SQLContract
                                     bRes = false;
                                 }
                             }
+                            if(bRes){
+                                lsdTemp.setSaved(true);
+                            }
                         }
                     }
                 }
@@ -319,6 +322,7 @@ public class SQLContract
                         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                         {
                             lsd = new LightSwitchData(
+                                    true,
                                     false,
                                     cursor.getLong(cursor.getColumnIndex(_ID)),
                                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG)),
@@ -451,6 +455,9 @@ public class SQLContract
                             bRes = false;
                         }
                     }
+                    if(bRes){
+                        rfd.setSaved(true);
+                    }
                 }
             } finally {
                 m_LockCommandHolder.unlock();
@@ -551,6 +558,7 @@ public class SQLContract
                     );
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
+                        rfd.setSaved(true);
                         rfd.setSelected(false);
                         rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
                         rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));

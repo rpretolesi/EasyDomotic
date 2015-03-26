@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 public class RoomFragmentData implements Parcelable {
 
+    private boolean m_bSaved;
     private boolean m_bSelected;
     private long m_ID;
     private String m_strHouseTAG;
@@ -18,8 +19,9 @@ public class RoomFragmentData implements Parcelable {
     private boolean m_bLandscape;
 
 
-    public RoomFragmentData(boolean bSaved, long id, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
-        this.m_bSelected = bSaved;
+    public RoomFragmentData(boolean bSaved, boolean bSelected, long id, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+        this.m_bSaved = bSaved;
+        this.m_bSelected = bSelected;
         this.m_ID = id;
         this.m_strHouseTAG = strHouseTAG;
         this.m_strTAG = strTAG;
@@ -29,18 +31,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_bLandscape = bLandscape;
     }
 
-    public RoomFragmentData(boolean bSaved, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
-        this.m_bSelected = bSaved;
-        this.m_ID = 0;
-        this.m_strHouseTAG = strHouseTAG;
-        this.m_strTAG = strTAG;
-        this.m_fPosX = fPosX;
-        this.m_fPosY = fPosY;
-        this.m_fPosZ = fPosZ;
-        this.m_bLandscape = bLandscape;
-    }
-
     public RoomFragmentData() {
+        this.m_bSaved = false;
         this.m_bSelected = false;
         this.m_ID = 0;
         this.m_strHouseTAG = "";
@@ -50,6 +42,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_fPosZ = 0;
         this.m_bLandscape = false;
     }
+
+    public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
     public void setSelected(boolean bSaved) { this.m_bSelected = bSaved; }
 
@@ -79,6 +73,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_bLandscape = bLandscape;
     }
 
+    public boolean getSaved() { return m_bSaved; }
+
     public boolean getSelected() { return m_bSelected; }
 
     public String getHouseTAG() {
@@ -106,6 +102,7 @@ public class RoomFragmentData implements Parcelable {
     }
 
     protected RoomFragmentData(Parcel in) {
+        m_bSaved = in.readByte() != 0;
         m_bSelected = in.readByte() != 0;
         m_ID = in.readLong();
         m_strHouseTAG = in.readString();
@@ -123,7 +120,8 @@ public class RoomFragmentData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (m_bLandscape ? 1 : 0));
+        dest.writeByte((byte) (m_bSaved ? 1 : 0));
+        dest.writeByte((byte) (m_bSelected ? 1 : 0));
         dest.writeLong(m_ID);
         dest.writeString(m_strHouseTAG);
         dest.writeString(m_strTAG);

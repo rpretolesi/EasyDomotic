@@ -18,8 +18,10 @@
     <string name="text_tv_room_name">Room Name</string>
     <string name="text_toast_room_name_not_valid">Room Name not valid.</string>
     <string name="text_toast_room_name_already_exist">Room Name already exist.</string>
-    <string name="text_toast_room_add_not_exist">Before Sdd objects, you should Create a New Room or Open an existing one.</string>
+    <string name="text_toast_room_add_not_exist">Before Add objects, you should Create a New Room or Open an existing one.</string>
     <string name="text_toast_room_save_not_exist">Before Save objects, you should Create a New Room or Open an existing one.</string>
+    <string name="text_title_room_not_saved">Room not saved.</string>
+    <string name="text_message_room_save_confirmation">Do you want to save it ?</string>
     <string name="text_toast_room_saved_ok">Room saved.</string>
     <string name="text_toast_room_saved_error">Error Saving Room.</string>
     <string name="text_tv_switch_name">Switch Name</string>
@@ -30,6 +32,11 @@
     <string name="text_orientation_landscape">Landscape</string>
     <string name="text_orientation_vertical">Vertical</string>
 
+    <!--
+        YesNoDialogFragment
+    -->
+    <string name="text_btn_yes">Yes</string>
+    <string name="text_btn_no">No</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
