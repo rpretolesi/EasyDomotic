@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 public class RoomFragmentData implements Parcelable {
 
+    private boolean m_bSaved;
     private long m_ID;
     private String m_strHouseTAG;
     private String m_strTAG;
@@ -17,7 +18,8 @@ public class RoomFragmentData implements Parcelable {
     private boolean m_bLandscape;
 
 
-    public RoomFragmentData(long id, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public RoomFragmentData(boolean bSaved, long id, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+        this.m_bSaved = bSaved;
         this.m_ID = id;
         this.m_strHouseTAG = strHouseTAG;
         this.m_strTAG = strTAG;
@@ -27,7 +29,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_bLandscape = bLandscape;
     }
 
-    public RoomFragmentData(String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public RoomFragmentData(boolean bSaved, String strHouseTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+        this.m_bSaved = bSaved;
         this.m_ID = 0;
         this.m_strHouseTAG = strHouseTAG;
         this.m_strTAG = strTAG;
@@ -38,6 +41,7 @@ public class RoomFragmentData implements Parcelable {
     }
 
     public RoomFragmentData() {
+        this.m_bSaved = false;
         this.m_ID = 0;
         this.m_strHouseTAG = "";
         this.m_strTAG = "";
@@ -46,6 +50,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_fPosZ = 0;
         this.m_bLandscape = false;
     }
+
+    public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
     public void setID(long id) { this.m_ID = id; }
 
@@ -73,6 +79,8 @@ public class RoomFragmentData implements Parcelable {
         this.m_bLandscape = bLandscape;
     }
 
+    public boolean getSaved() { return m_bSaved; }
+
     public String getHouseTAG() {
         return m_strHouseTAG;
     }
@@ -98,6 +106,7 @@ public class RoomFragmentData implements Parcelable {
     }
 
     protected RoomFragmentData(Parcel in) {
+        m_bSaved = in.readByte() != 0;
         m_ID = in.readLong();
         m_strHouseTAG = in.readString();
         m_strTAG = in.readString();
@@ -114,6 +123,7 @@ public class RoomFragmentData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (m_bLandscape ? 1 : 0));
         dest.writeLong(m_ID);
         dest.writeString(m_strHouseTAG);
         dest.writeString(m_strTAG);

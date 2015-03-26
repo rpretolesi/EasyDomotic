@@ -60,7 +60,7 @@ public class BaseFragment extends Fragment {
         try {
             m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
         } catch (Exception ex){
-            m_rfd = new RoomFragmentData("PRETOLESI", getTag(), 0, 0, 0, false);
+            m_rfd = new RoomFragmentData(false, "PRETOLESI", getTag(), 0, 0, 0, false);
         }
         try {
             m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
@@ -165,9 +165,11 @@ public class BaseFragment extends Fragment {
         LightSwitch ls;
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd) {
-                ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTag());
-                if(ls != null){
-                    lsd.update(ls.getLightSwitchData());
+                if(lsd != null) {
+                    ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTag());
+                    if (ls != null) {
+                        lsd.update(ls.getLightSwitchData());
+                    }
                 }
             }
         }
@@ -181,8 +183,10 @@ public class BaseFragment extends Fragment {
         boolean bRes = false;
         if(m_allsd != null && strLightSwitchTag != null){
             for(LightSwitchData lsd : m_allsd) {
-                if(strLightSwitchTag.equals(lsd.getTag())){
-                    bRes = true;
+                if(lsd != null) {
+                    if (strLightSwitchTag.equals(lsd.getTag())) {
+                        bRes = true;
+                    }
                 }
             }
         }

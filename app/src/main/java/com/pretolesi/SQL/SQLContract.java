@@ -227,35 +227,37 @@ public class SQLContract
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
-        public static boolean save(Context context, ArrayList<LightSwitchData> lsd)  {
+        public static boolean save(Context context, ArrayList<LightSwitchData> allsd)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && lsd != null) {
+                if(context != null && allsd != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    for(LightSwitchData lsdTemp:lsd){
-                        values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
-                        values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
-                        values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
-                        values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
-                        values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
-                        values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
+                    for(LightSwitchData lsdTemp:allsd){
+                        if(lsdTemp != null) {
+                            values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
+                            values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
+                            values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
 
-                        String selection =
-                                COLUMN_NAME_ROOM_TAG + " = ? AND " +
-                                COLUMN_NAME_TAG + " = ?" ;
+                            String selection =
+                                    COLUMN_NAME_ROOM_TAG + " = ? AND " +
+                                            COLUMN_NAME_TAG + " = ?";
 
-                        String[] selectionArgs = { String.valueOf(lsdTemp.getRoomTAG()), String.valueOf(lsdTemp.getTag()) };
+                            String[] selectionArgs = {String.valueOf(lsdTemp.getRoomTAG()), String.valueOf(lsdTemp.getTag())};
 
-                        // Update the Parameter
-                        if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0) {
-                            // The Parameter doesn't exist, i will add it
-                            if (db.insert(TABLE_NAME, null, values) <= 0) {
-                                bRes = false;
+                            // Update the Parameter
+                            if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0) {
+                                // The Parameter doesn't exist, i will add it
+                                if (db.insert(TABLE_NAME, null, values) <= 0) {
+                                    bRes = false;
+                                }
                             }
                         }
                     }

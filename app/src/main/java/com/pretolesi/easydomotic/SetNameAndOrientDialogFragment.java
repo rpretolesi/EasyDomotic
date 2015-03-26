@@ -28,13 +28,15 @@ public class SetNameAndOrientDialogFragment extends DialogFragment {
      */
     private static final String POSITION = "position";
     private static final String TITLE = "title";
+    private static final String NAME = "name";
     private static final String DEFAULT_ORIENTATION = "default_orientation";
 
-    public static SetNameAndOrientDialogFragment newInstance(int position, String strTitle, boolean bLandscape) {
+    public static SetNameAndOrientDialogFragment newInstance(int position, String strTitle, String strName,  boolean bLandscape) {
         SetNameAndOrientDialogFragment fragment = new SetNameAndOrientDialogFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
         args.putString(TITLE, strTitle);
+        args.putString(NAME, strName);
         args.putBoolean(DEFAULT_ORIENTATION, bLandscape);
         fragment.setArguments(args);
         return fragment;
@@ -66,6 +68,9 @@ public class SetNameAndOrientDialogFragment extends DialogFragment {
         m_et = (EditText)view.findViewById(R.id.id_et_name);
         m_rl = (RadioButton)view.findViewById(R.id.radioButtonLandscape);
         m_rp = (RadioButton)view.findViewById(R.id.radioButtonPortrait);
+        if(m_et != null && getArguments().getString(NAME) != null && !getArguments().getString(NAME).equals("")){
+            m_et.setText(getArguments().getString(NAME));
+        }
         if(getArguments().getBoolean(DEFAULT_ORIENTATION)){
             if (m_rl != null) {
                 m_rl.setChecked(true);
@@ -92,7 +97,7 @@ public class SetNameAndOrientDialogFragment extends DialogFragment {
                             if (m_rl != null) {
                                 bLandscape = m_rl.isChecked();;
                             }
-                            mCallbacks.onSetNameAndOrientDialogFragmentClickListener(SetNameAndOrientDialogFragment.this, getArguments().getInt(POSITION), getArguments().getString(TITLE), str, bLandscape);
+                            mCallbacks.onSetNameAndOrientDialogFragmentClickListener(getArguments().getInt(POSITION), getArguments().getString(TITLE), str, bLandscape);
                         }
                     }
                 })
@@ -111,6 +116,6 @@ public class SetNameAndOrientDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onSetNameAndOrientDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape);
+        void onSetNameAndOrientDialogFragmentClickListener(int position, String strTitle, String strName, boolean bLandscape);
     }
 }

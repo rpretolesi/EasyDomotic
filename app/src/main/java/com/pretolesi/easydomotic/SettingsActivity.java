@@ -71,7 +71,7 @@ public class SettingsActivity extends BaseActivity implements
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position == 0){
-            m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), false);
+            m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), "", false);
             m_sndf.show(getSupportFragmentManager(), "");
         }
 
@@ -86,7 +86,7 @@ public class SettingsActivity extends BaseActivity implements
         if(position == 2){
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
-                m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), false);
+                m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), "", false);
                 m_sndf.show(getSupportFragmentManager(), "");
             } else {
                 Toast.makeText(getApplicationContext(), R.string.text_toast_room_not_exist, Toast.LENGTH_LONG).show();
@@ -103,7 +103,7 @@ public class SettingsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onSetNameAndOrientDialogFragmentClickListener(DialogFragment dialog, int position, String strTitle, String strName, boolean bLandscape) {
+    public void onSetNameAndOrientDialogFragmentClickListener(int position, String strTitle, String strName, boolean bLandscape) {
         if(position == 0){
             // Verifico che il nome sia valido
             if(isTagRoomValid(strName)){
@@ -132,7 +132,7 @@ public class SettingsActivity extends BaseActivity implements
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 if(isTagSwitchValid(rf, strName)){
-                    LightSwitchData lsd = new LightSwitchData(rf.getTag(), strName, 30, 30, 0, bLandscape);
+                    LightSwitchData lsd = new LightSwitchData(false, rf.getTag(), strName, 30, 30, 0, bLandscape);
                     rf.addLightSwitch(lsd);
                 }
             }

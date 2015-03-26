@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 public class LightSwitchData implements Parcelable {
 
+    private boolean m_bSaved;
     private long m_ID;
     private String m_strRoomTAG;
     private String m_strTAG;
@@ -17,7 +18,8 @@ public class LightSwitchData implements Parcelable {
     private boolean m_bLandscape;
 
 
-    public LightSwitchData(long id, String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public LightSwitchData(boolean bSaved, long id, String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+        this.m_bSaved = bSaved;
         this.m_ID = id;
         this.m_strRoomTAG = strRoomTAG;
         this.m_strTAG = strTAG;
@@ -27,7 +29,8 @@ public class LightSwitchData implements Parcelable {
         this.m_bLandscape = bLandscape;
     }
 
-    public LightSwitchData(String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public LightSwitchData(boolean bSaved, String strRoomTAG, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+        this.m_bSaved = bSaved;
         this.m_ID = 0;
         this.m_strRoomTAG = strRoomTAG;
         this.m_strTAG = strTAG;
@@ -38,6 +41,7 @@ public class LightSwitchData implements Parcelable {
     }
     public void update(LightSwitchData lsd){
         if(lsd != null){
+            this.m_bSaved = lsd.getSaved();
             this.m_ID = lsd.getID();
             this.m_strRoomTAG = lsd.getRoomTAG();
             this.m_strTAG = lsd.getTag();
@@ -47,6 +51,8 @@ public class LightSwitchData implements Parcelable {
             this.m_bLandscape = lsd.getLandscape();
         }
     }
+
+    public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
     public void setID(long id) {
         this.m_ID = id;
@@ -74,6 +80,8 @@ public class LightSwitchData implements Parcelable {
         this.m_bLandscape = bLandScape;
     }
 
+    public boolean getSaved() { return m_bSaved; }
+
     public long getID() { return m_ID; }
 
     public String getRoomTAG() {
@@ -99,6 +107,7 @@ public class LightSwitchData implements Parcelable {
     }
 
     protected LightSwitchData(Parcel in) {
+        m_bSaved = in.readByte() != 0;
         m_ID = in.readLong();
         m_strRoomTAG = in.readString();
         m_strTAG = in.readString();
@@ -115,6 +124,7 @@ public class LightSwitchData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (m_bLandscape ? 1 : 0));
         dest.writeLong(m_ID);
         dest.writeString(m_strRoomTAG);
         dest.writeString(m_strTAG);
