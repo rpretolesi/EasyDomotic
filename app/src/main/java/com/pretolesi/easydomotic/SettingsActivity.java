@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -84,20 +85,33 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 2){
-            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            if(rf != null) {
+            Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+            if(f instanceof BaseFragment){
                 m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), "", false);
                 m_sndf.show(getSupportFragmentManager(), "");
             } else {
-                Toast.makeText(getApplicationContext(), R.string.text_toast_room_not_exist, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.text_toast_room_add_not_exist, Toast.LENGTH_LONG).show();
             }
         }
 
         if(position == 7){
-            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            if(rf != null){
-                SQLContract.RoomEntry.save(getApplicationContext(), rf.getRoomFragmentData());
-                SQLContract.LightSwitchEntry.save(getApplicationContext(),rf.getLightSwitchData());
+            Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+            if(f instanceof BaseFragment){
+                BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+                boolean bRes = true;
+                if(!SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData())){
+                    bRes = false;
+                }
+                if(!SQLContract.LightSwitchEntry.save(getApplicationContext(),bf.getLightSwitchData())){
+                    bRes = false;
+                }
+                if(bRes){
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -18,7 +18,10 @@
     <string name="text_tv_room_name">Room Name</string>
     <string name="text_toast_room_name_not_valid">Room Name not valid.</string>
     <string name="text_toast_room_name_already_exist">Room Name already exist.</string>
-    <string name="text_toast_room_not_exist">Before add objects, you should create a Room.</string>
+    <string name="text_toast_room_add_not_exist">Before Sdd objects, you should Create a New Room or Open an existing one.</string>
+    <string name="text_toast_room_save_not_exist">Before Save objects, you should Create a New Room or Open an existing one.</string>
+    <string name="text_toast_room_saved_ok">Room saved.</string>
+    <string name="text_toast_room_saved_error">Error Saving Room.</string>
     <string name="text_tv_switch_name">Switch Name</string>
     <string name="text_toast_switch_not_valid">Switch Name not valid.</string>
     <string name="text_toast_switch_already_exist">Switch Name already exist.</string>

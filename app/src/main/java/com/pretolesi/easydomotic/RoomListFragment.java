@@ -1,11 +1,21 @@
 package com.pretolesi.easydomotic;
 
 import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -15,10 +25,19 @@ import com.pretolesi.SQL.SQLContract;
 /**
  * Created by RPRETOLESI on 25/03/2015.
  */
-public class RoomListFragment extends ListFragment {
+public class RoomListFragment extends ListFragment implements
+        SearchView.OnQueryTextListener,
+        SearchView.OnCloseListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
+
     private static final String TAG = "ListRoomFragment";
     private ListRoomFragmentCallbacks mCallbacks;
     private SimpleCursorAdapter mAdapter;
+    // The SearchView for doing filtering.
+    SearchView mSearchView;
+
+    // If non-null, this is the current filter the user has provided.
+    String mCurFilter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -41,8 +60,15 @@ public class RoomListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Give some text to display if there is no data.  In a real
+        // application this would come from a resource.
+        setEmptyText("No Rooms");
+
+        // We have a menu item to show in action bar.
+        setHasOptionsMenu(true);
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_2,
@@ -51,6 +77,45 @@ public class RoomListFragment extends ListFragment {
                 new int[] {android.R.id.text1}, 0);
 
         setListAdapter(mAdapter);
+
+        // Start out with a progress indicator.
+        setListShown(false);
+
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    public static class ListSearchView extends SearchView {
+        public ListSearchView(Context context) {
+            super(context);
+        }
+
+        // The normal SearchView doesn't clear its search text when
+        // collapsed, so we will do this for it.
+        @Override
+        public void onActionViewCollapsed() {
+            setQuery("", false);
+            super.onActionViewCollapsed();
+        }
+    }
+
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Place an action bar item for searching.
+        MenuItem item = menu.add("Search");
+        item.setIcon(android.R.drawable.ic_menu_search);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        mSearchView = new ListSearchView(getActivity());
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setIconifiedByDefault(true);
+        item.setActionView(mSearchView);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -68,21 +133,91 @@ public class RoomListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.swapCursor(SQLContract.RoomEntry.load(getActivity()));
-
+//        getLoaderManager().initLoader(0, null, this);
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mAdapter.swapCursor(null);
+//        getLoaderManager().destroyLoader(0);
 
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
+
+    @Override
+    public boolean onClose() {
+        if (!TextUtils.isEmpty(mSearchView.getQuery())) {
+            mSearchView.setQuery(null, true);
+        }
+        return true;
+    }
+
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         mCallbacks.onListRoomFragmentClickListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        // Called when the action bar search text has changed.  Update
+        // the search filter, and restart the loader to do a new query
+        // with this filter.
+        String newFilter = !TextUtils.isEmpty(s) ? s : null;
+        // Don't do anything if the filter hasn't actually changed.
+        // Prevents restarting the loader when restoring state.
+        if (mCurFilter == null && newFilter == null) {
+            return true;
+        }
+        if (mCurFilter != null && mCurFilter.equals(newFilter)) {
+            return true;
+        }
+        mCurFilter = newFilter;
+        getLoaderManager().restartLoader(0, null, this);
+
+        Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
+
+        return true;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
+        return new CursorLoader(getActivity()){
+            @Override
+            public Cursor loadInBackground() {
+                return SQLContract.RoomEntry.load(getActivity());
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        // Swap the new cursor in.  (The framework will take care of closing the
+        // old cursor once we return.)
+        mAdapter.swapCursor(cursor);
+
+        // The list should now be shown.
+        if (isResumed()) {
+            setListShown(true);
+        } else {
+            setListShownNoAnimation(true);
+        }
+        Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        // This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed.  We need to make sure we are no
+        // longer using it.
+        mAdapter.swapCursor(null);
+        Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
     }
 
     /**

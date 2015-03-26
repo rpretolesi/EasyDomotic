@@ -67,7 +67,7 @@ public class LightSwitch extends Switch implements
         final int action = MotionEventCompat.getActionMasked(event);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-/*
+
                 if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
                     RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
                     mLastTouchX = event.getRawX() - rllp.leftMargin;
@@ -76,12 +76,12 @@ public class LightSwitch extends Switch implements
 
 
                 Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
-*/
+
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
-/*
+
                 final float x = event.getRawX();
                 final float y = event.getRawY();
                 // Calculate the distance moved
@@ -94,7 +94,7 @@ public class LightSwitch extends Switch implements
                     m_lsd.setPosY(dy);
                 }
                 Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
-*/
+
                 break;
             }
 
@@ -110,8 +110,8 @@ public class LightSwitch extends Switch implements
                 break;
             }
         }
-//        return true;
-        return super.onTouchEvent(event);
+        return true;
+//        return super.onTouchEvent(event);
     }
 
     @Override
@@ -131,14 +131,7 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onDown(MotionEvent event) {
-        if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
-            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
-            mLastTouchX = event.getRawX() - rllp.leftMargin;
-            mLastTouchY = event.getRawY() - rllp.topMargin;
-        }
-
-        Log.d(TAG, this.toString() + ": " + "onTouchEvent: onDown(...) mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
-        return true;
+        return false;
     }
 
     @Override
@@ -163,21 +156,7 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-
-        final float x = event1.getRawX();
-        final float y = event1.getRawY();
-        // Calculate the distance moved
-        final float dx = x - mLastTouchX;
-        final float dy = y - mLastTouchY;
-
-        BaseFragment.setViewPosition(this,(int)dx,(int)dy);
-        if(m_lsd != null) {
-            m_lsd.setPosX(dx);
-            m_lsd.setPosY(dy);
-        }
-        Log.d(TAG, this.toString() + ": " + "onTouchEvent: onFling(...) dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
-
-        return true;
+        return false;
     }
 
     private void addGestureListener(){

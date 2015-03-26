@@ -319,6 +319,7 @@ public class SQLContract
                         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                         {
                             lsd = new LightSwitchData(
+                                    false,
                                     cursor.getLong(cursor.getColumnIndex(_ID)),
                                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG)),
                                     cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
@@ -550,6 +551,7 @@ public class SQLContract
                     );
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
+                        rfd.setSelected(false);
                         rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
                         rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));
                         rfd.setTag(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
