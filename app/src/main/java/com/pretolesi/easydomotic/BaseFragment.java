@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
+
 import java.util.ArrayList;
 
 /**

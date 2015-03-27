@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic;
+package com.pretolesi.easydomotic.LightSwitch;
 
 import android.os.Parcel;
 import android.os.Parcelable;

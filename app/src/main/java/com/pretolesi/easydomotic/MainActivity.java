@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 
 import java.util.ArrayList;
 

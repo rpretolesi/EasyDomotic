@@ -8,8 +8,8 @@ import android.provider.BaseColumns;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-import com.pretolesi.easydomotic.LightSwitch;
-import com.pretolesi.easydomotic.LightSwitchData;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.RoomFragmentData;
 
 /**

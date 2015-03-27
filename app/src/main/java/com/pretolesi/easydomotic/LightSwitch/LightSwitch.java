@@ -1,16 +1,13 @@
-package com.pretolesi.easydomotic;
+package com.pretolesi.easydomotic.LightSwitch;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+
+import com.pretolesi.easydomotic.BaseFragment;
 
 /**
  * Created by RPRETOLESI on 17/03/2015.
@@ -67,10 +64,15 @@ public class LightSwitch extends Switch implements
         // Let the ScaleGestureDetector inspect all events.
         this.mDetector.onTouchEvent(event);
 
+        return true;
+//        return super.onTouchEvent(event);
+
+/*
         // Be sure to call the superclass implementation
-        final int action = MotionEventCompat.getActionMasked(event);
-        switch (action) {
-            case MotionEvent.ACTION_DOWN: {
+       final int action = MotionEventCompat.getActionMasked(event);
+       switch (action) {
+           case MotionEvent.ACTION_DOWN: {
+
                 if(m_lsd != null) {
                     m_lsd.setSaved(false);
                 }
@@ -117,8 +119,9 @@ public class LightSwitch extends Switch implements
                 break;
             }
         }
-        return true;
-//        return super.onTouchEvent(event);
+//        return true;
+        return super.onTouchEvent(event);
+*/
     }
 
     @Override
@@ -132,6 +135,7 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
+
         return false;
     }
 
@@ -142,7 +146,19 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onDown(MotionEvent event) {
-        return false;
+        if(m_lsd != null) {
+            m_lsd.setSaved(false);
+        }
+
+        if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+            mLastTouchX = event.getRawX() - rllp.leftMargin;
+            mLastTouchY = event.getRawY() - rllp.topMargin;
+        }
+
+//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
+
+        return true;
     }
 
     @Override
@@ -157,7 +173,21 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
+        final float x = e2.getRawX();
+        final float y = e2.getRawY();
+        // Calculate the distance moved
+        final float dx = x - mLastTouchX;
+        final float dy = y - mLastTouchY;
+
+        if(m_lsd != null && !m_lsd.getSelected()) {
+            BaseFragment.setViewPosition(this, (int) dx, (int) dy);
+            m_lsd.setPosX(dx);
+            m_lsd.setPosY(dy);
+        }
+
+//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
+
+        return true;
     }
 
     @Override
