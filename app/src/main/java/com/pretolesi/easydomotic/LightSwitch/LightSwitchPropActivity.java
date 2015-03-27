@@ -51,7 +51,7 @@ public class LightSwitchPropActivity extends Activity  implements
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         boolean bNewLightSwitch = true;
-        finire qui... e controllare il nome
+        finire qui... e controllare il nome qui
         Intent intent = getIntent();
         if(intent != null)
         {
