@@ -38,6 +38,13 @@
     <string name="text_btn_yes">Yes</string>
     <string name="text_btn_no">No</string>
 
+    <!--
+        Menu Title
+    -->
+    <string name="title_item_menu_delete">Delete</string>
+    <string name="title_item_menu_cancel">Cancel</string>
+    <string name="title_item_menu_save">Save</string>
+
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

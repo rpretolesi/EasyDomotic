@@ -1,6 +1,7 @@
 package com.pretolesi.easydomotic.LightSwitch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -8,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  * Created by RPRETOLESI on 17/03/2015.
@@ -195,6 +197,10 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             m_lsd.setSelected(true);
             this.setChecked(true);
+
+            Intent intent = LightSwitchPropertyActivity.makeLightSwitchPropertyActivity(this.getContext());
+            this.getContext().startActivity(intent);
+
         }
     }
 

@@ -221,7 +221,7 @@ public class BaseFragment extends Fragment {
     private boolean newLightSwitch(LightSwitchData lsd){
         // Define the switch
         if(m_rl != null && lsd != null){
-            LightSwitch ls = new LightSwitch(getActivity().getApplicationContext(), lsd);
+            LightSwitch ls = new LightSwitch(getActivity(), lsd);
             if(lsd.getLandscape()){
                 ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
             }

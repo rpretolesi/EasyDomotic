@@ -1,22 +1,19 @@
 package com.pretolesi.easydomotic.LightSwitch;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.pretolesi.easydomotic.MainNavigationDrawerFragment;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  *
  */
-public class LightSwitchPropertyActivity extends ActionBarActivity {
+public class LightSwitchPropertyActivity extends Activity {
     private static final String TAG = "LightSwitchPropertyActivity";
 
     private CharSequence mTitle;
@@ -24,32 +21,34 @@ public class LightSwitchPropertyActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-
+        setContentView(R.layout.light_switch_property_activity);
+        setTitle("AAA");
         mTitle = getTitle();
+        restoreActionBar();
 
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-/*
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+
+//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
+            getMenuInflater().inflate(R.menu.menu_light_switch_property_activity, menu);
+//            restoreActionBar();
             return true;
-        }
-*/
-        return super.onCreateOptionsMenu(menu);
+//        }
+
+//        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

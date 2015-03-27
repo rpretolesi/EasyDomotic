@@ -24,6 +24,13 @@
             android:name="com.pretolesi.easydomotic.SettingsActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/android:Theme.Holo"
+            android:name="com.pretolesi.easydomotic.LightSwitch.LightSwitchPropertyActivity"
+            android:label="@string/app_name" >
+        </activity>
+
     </application>
 
 </manifest>
