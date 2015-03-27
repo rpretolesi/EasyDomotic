@@ -33,6 +33,15 @@
     <string name="text_orientation_vertical">Vertical</string>
 
     <!--
+    light_switch_prop_activity
+    -->
+    <string name="text_tv_light_switch_name">Name</string>
+    <string name="hint_et_light_switch_name">Type a Name</string>
+    <string name="text_tv_orientation">Orientation</string>
+    <string name="text_rb_portrait">Portrait</string>
+    <string name="text_rb_landscape">Landscape</string>
+
+    <!--
         YesNoDialogFragment
     -->
     <string name="text_btn_yes">Yes</string>
@@ -42,7 +51,6 @@
         Menu Title
     -->
     <string name="title_item_menu_delete">Delete</string>
-    <string name="title_item_menu_cancel">Cancel</string>
     <string name="title_item_menu_save">Save</string>
 
     <string name="title_section1">Section 1</string>

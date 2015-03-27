@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  * Created by RPRETOLESI on 17/03/2015.
@@ -198,7 +197,7 @@ public class LightSwitch extends Switch implements
             m_lsd.setSelected(true);
             this.setChecked(true);
 
-            Intent intent = LightSwitchPropertyActivity.makeLightSwitchPropertyActivity(this.getContext());
+            Intent intent = LightSwitchPropActivity.makeLightSwitchPropertyActivity(this.getContext());
             this.getContext().startActivity(intent);
 
         }

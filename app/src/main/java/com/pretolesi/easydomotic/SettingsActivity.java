@@ -83,7 +83,8 @@ public class SettingsActivity extends BaseActivity implements
 
         if(position == 1){
             // Costruisco il frame...
-            FragmentManager fragmentManager = getSupportFragmentManager();
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
                     .commit();

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".LightSwitchPropertyActivity">
     <item android:id="@+id/id_item_menu_delete"
         android:title="@string/title_item_menu_delete"
-        app:showAsAction="withText|ifRoom"/>
-    <item android:id="@+id/id_item_menu_cancel"
-        android:title="@string/title_item_menu_cancel"
-        app:showAsAction="withText|ifRoom"/>
+        android:showAsAction="ifRoom|withText"/>
     <item android:id="@+id/id_item_menu_save"
         android:title="@string/title_item_menu_save"
-        app:showAsAction="withText|ifRoom"/>
+        android:showAsAction="ifRoom|withText"/>
 </menu>

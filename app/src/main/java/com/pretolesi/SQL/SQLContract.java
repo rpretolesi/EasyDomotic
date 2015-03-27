@@ -273,6 +273,63 @@ public class SQLContract
 
         }
 
+        public static Cursor load(Context context, String strRoomTag, String strTag)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                if(context != null)
+                {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    LightSwitch ls = null;
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_ROOM_TAG,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String selection =
+                            COLUMN_NAME_ROOM_TAG + " = ? AND " +
+                                    COLUMN_NAME_TAG + " = ?" ;
+
+                    String[] selectionArgs = { String.valueOf(strRoomTag), String.valueOf(strTag) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            selection,                  // The columns for the WHERE clause
+                            selectionArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
         public static ArrayList<LightSwitchData> get(Context context, String strRoomTAG)
         {
             try
