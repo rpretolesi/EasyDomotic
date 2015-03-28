@@ -77,9 +77,9 @@ public class RoomFragmentData implements Parcelable {
 
     public boolean getSelected() { return m_bSelected; }
 
-    public String getHouseTAG() {
-        return m_strHouseTAG;
-    }
+    public long getID() { return m_ID; }
+
+    public String getHouseTAG() { return m_strHouseTAG;  }
 
     public String getTAG() {
         return m_strTAG;

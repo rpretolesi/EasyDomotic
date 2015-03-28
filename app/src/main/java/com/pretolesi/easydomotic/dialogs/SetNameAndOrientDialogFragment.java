@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic;
+package com.pretolesi.easydomotic.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+
+import com.pretolesi.easydomotic.R;
 
 /**
  * Created by RPRETOLESI on 20/03/2015.

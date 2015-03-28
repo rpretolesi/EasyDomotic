@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
+import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
+import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 
@@ -136,8 +138,11 @@ public class SettingsActivity extends BaseActivity implements
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 if(isTagSwitchValid(rf, strName)){
-                    LightSwitchData lsd = new LightSwitchData(false, false, -1, rf.getTag(), strName, 30, 30, 0, bLandscape);
-                    rf.addLightSwitch(lsd);
+                    RoomFragmentData rfd = rf.getRoomFragmentData();
+                    if(rfd != null){
+                        LightSwitchData lsd = new LightSwitchData(false, false, -1, rfd.getID(), strName, 30, 30, 0, bLandscape);
+                        rf.addLightSwitch(lsd);
+                    }
                 }
             }
         }
@@ -183,23 +188,26 @@ public class SettingsActivity extends BaseActivity implements
     public void onListRoomFragmentClickListener(int sectionNumber, int position, long id) {
         if(position == 1){
             // Prelevo i dati e TAG per Room
-            RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
+            RoomFragmentData rfd = SQLContract.RoomEntry.load(this, id);
             // Controllo orientamento prima di costruire il frame....
-            if(rfd.getLandscape()){
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            if(rfd != null){
+                if(rfd.getLandscape()){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+                // Prelevo i dati per gli altri oggetti della Room
+                ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
+                if(allsd != null){
+                    // update the main content by replacing fragments
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    // Costruisco l'istanza
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                            .commit();
+
+                }
             }
-            // Prelevo i dati per gli altri oggetti della Room
-            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, rfd.getTAG());
-
-            // update the main content by replacing fragments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            // Costruisco l'istanza
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
-                    .commit();
-
         }
     }
 
@@ -353,12 +361,15 @@ public class SettingsActivity extends BaseActivity implements
 
     private boolean isTagSwitchValid(BaseFragment bf, String strTag) {
         if(bf != null && strTag != null){
-            if(!strTag.equals("")){
-                if(!bf.isLightSwitchTagPresent(strTag) && !SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), bf.getTag(), strTag)){
-                    return true;
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_switch_already_exist, Toast.LENGTH_LONG).show();
-                    return false;
+            RoomFragmentData rfd = bf.getRoomFragmentData();
+            if(rfd != null){
+                if(!strTag.equals("")){
+                    if(!bf.isLightSwitchTagPresent(strTag) && !SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), bf.getTag(), rfd.getID())){
+                        return true;
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.text_toast_switch_already_exist, Toast.LENGTH_LONG).show();
+                        return false;
+                    }
                 }
             }
         }

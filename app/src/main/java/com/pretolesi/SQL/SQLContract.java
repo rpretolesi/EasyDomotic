@@ -204,8 +204,8 @@ public class SQLContract
     /* Inner class that defines the table contents */
     public static abstract class LightSwitchEntry implements BaseColumns {
         public static final String TABLE_NAME = "LightSwitch";
-        public static final String COLUMN_NAME_ROOM_TAG = "Room_TAG";
         public static final String COLUMN_NAME_TAG = "TAG";
+        public static final String COLUMN_NAME_ROOM_ID = "Room_ID";
         public static final String COLUMN_NAME_X = "X";
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
@@ -215,8 +215,8 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_ROOM_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ROOM_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
@@ -239,28 +239,23 @@ public class SQLContract
                     ContentValues values = new ContentValues();
                     for(LightSwitchData lsdTemp:allsd){
                         if(lsdTemp != null) {
-                            values.put(COLUMN_NAME_ROOM_TAG, lsdTemp.getRoomTAG());
                             values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
+                            values.put(COLUMN_NAME_ROOM_ID, lsdTemp.getRoomID());
                             values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
                             values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
                             values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
                             values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
 
-                            String selection =
-                                    COLUMN_NAME_ROOM_TAG + " = ? AND " +
-                                            COLUMN_NAME_TAG + " = ?";
+                            String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
-                            String[] selectionArgs = {String.valueOf(lsdTemp.getRoomTAG()), String.valueOf(lsdTemp.getTag())};
-
-                            // Update the Parameter
-                            if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0) {
-                                // The Parameter doesn't exist, i will add it
-                                if (db.insert(TABLE_NAME, null, values) <= 0) {
-                                    bRes = false;
-                                }
-                            }
-                            if(bRes){
+                            String[] whereArgs = {String.valueOf(lsdTemp.getID()), String.valueOf(lsdTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                            // Update or Save
+                            if (id > 0) {
+                                lsdTemp.setID(id);
                                 lsdTemp.setSaved(true);
+                            } else {
+                                bRes = false;
                             }
                         }
                     }
@@ -273,6 +268,43 @@ public class SQLContract
 
         }
 
+        public static boolean save(Context context,LightSwitchData lsd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+                if(context != null && lsd != null) {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTag()));
+                    values.put(COLUMN_NAME_ROOM_ID, lsd.getRoomID());
+                    values.put(COLUMN_NAME_X, Float.toString(lsd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(lsd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
+
+                    String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] whereArgs = {String.valueOf(lsd.getID()), String.valueOf(lsd.getRoomID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                    // Update or Save
+                    if (id > 0) {
+                        lsd.setID(id);
+                        lsd.setSaved(true);
+                    } else {
+                        bRes = false;
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+/*
         public static Cursor load(Context context, String strRoomTag, String strTag)
         {
             try
@@ -292,8 +324,8 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_ROOM_TAG,
                                     COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
@@ -305,7 +337,7 @@ public class SQLContract
 
                     // Which row to get based on WHERE
                     String selection =
-                            COLUMN_NAME_ROOM_TAG + " = ? AND " +
+                            COLUMN_NAME_ROOM_ID + " = ? AND " +
                                     COLUMN_NAME_TAG + " = ?" ;
 
                     String[] selectionArgs = { String.valueOf(strRoomTag), String.valueOf(strTag) };
@@ -329,28 +361,26 @@ public class SQLContract
                 m_LockCommandHolder.unlock();
             }
         }
-
-        public static ArrayList<LightSwitchData> get(Context context, String strRoomTAG)
+*/
+        public static Cursor load(Context context, long lID, long lRoomID)
         {
             try
             {
                 m_LockCommandHolder.lock();
 
-                ArrayList<LightSwitchData> allsd = new ArrayList<>();
+                Cursor cursor = null;
 
-                if(context != null && strRoomTAG != null)
+                if(context != null)
                 {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
-
-                    LightSwitchData lsd = null;
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_ROOM_TAG,
                                     COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
@@ -361,15 +391,70 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection = COLUMN_NAME_ROOM_TAG + " = ?";
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
 
-                    String[] selectionArgs = { String.valueOf(strRoomTAG)};
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static ArrayList<LightSwitchData> load(Context context, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                ArrayList<LightSwitchData> allsd = null;
+
+                if(context != null)
+                {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                    LightSwitchData lsd = null;
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] whereArgs = { String.valueOf(lRoomID)};
 
                     Cursor cursor = db.query(
                             TABLE_NAME,                 // The table to query
                             projection,                 // The columns to return
-                            selection,                  // The columns for the WHERE clause
-                            selectionArgs,              // The values for the WHERE clause
+                            whereClause,                  // The columns for the WHERE clause
+                            whereArgs,              // The values for the WHERE clause
                             null,                       // don't group the rows
                             null,                       // don't filter by row groups
                             sortOrder                   // The sort order
@@ -378,17 +463,10 @@ public class SQLContract
                     {
                         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                         {
-                            lsd = new LightSwitchData(
-                                    true,
-                                    false,
-                                    cursor.getLong(cursor.getColumnIndex(_ID)),
-                                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ROOM_TAG)),
-                                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
-                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
-                                    Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
-                                    ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
-                            );
+                            if(allsd == null){
+                                allsd = new ArrayList<>();
+                            }
+                            lsd = get(cursor);
                             allsd.add(lsd);
                         }
 
@@ -405,7 +483,7 @@ public class SQLContract
 
         }
 
-        public static boolean isTagPresent(Context context, String strRoomTag, String strTag) {
+        public static boolean isTagPresent(Context context, String strTag, long lRoomID) {
 
             try
             {
@@ -427,17 +505,15 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection =
-                            COLUMN_NAME_ROOM_TAG + " = ? AND " +
-                            COLUMN_NAME_TAG + " = ?" ;
+                    String whereClause = COLUMN_NAME_TAG + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
 
-                    String[] selectionArgs = { String.valueOf(strRoomTag), String.valueOf(strTag) };
+                    String[] whereArgs = { String.valueOf(strTag), String.valueOf(lRoomID) };
 
                     Cursor cursor = db.query(
                             TABLE_NAME,  // The table to query
                             projection,                               // The columns to return
-                            selection,                                      // The columns for the WHERE clause
-                            selectionArgs,                                      // The values for the WHERE clause
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
                             null,                                     // don't group the rows
                             null,                                     // don't filter by row groups
                             sortOrder                                 // The sort order
@@ -456,13 +532,31 @@ public class SQLContract
                 m_LockCommandHolder.unlock();
             }
         }
+
+        public static LightSwitchDataa get(Cursor cursor){
+            LightSwitchData lsd = null;
+            if (cursor != null){
+                lsd = new LightSwitchData(
+                        true,
+                        false,
+                        cursor.getLong(cursor.getColumnIndex(_ID)),
+                        cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                        ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                );
+            }
+            return lsd;
+        }
     }
 
     public static abstract class RoomEntry implements BaseColumns
     {
         public static final String TABLE_NAME = "Room";
-        public static final String COLUMN_NAME_HOUSE_TAG = "House_TAG";
         public static final String COLUMN_NAME_TAG = "TAG";
+        public static final String COLUMN_NAME_HOUSE_TAG = "House_TAG";
         public static final String COLUMN_NAME_X = "X";
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
@@ -472,8 +566,8 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_HOUSE_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_HOUSE_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
@@ -493,27 +587,23 @@ public class SQLContract
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_HOUSE_TAG, rfd.getHouseTAG());
                     values.put(COLUMN_NAME_TAG, String.valueOf(rfd.getTAG()));
+                    values.put(COLUMN_NAME_HOUSE_TAG, rfd.getHouseTAG());
                     values.put(COLUMN_NAME_X, Float.toString(rfd.getPosX()));
                     values.put(COLUMN_NAME_Y, Float.toString(rfd.getPosY()));
                     values.put(COLUMN_NAME_Z, Float.toString(rfd.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(rfd.getLandscape() ? 1 : 0));
 
-                    String selection = COLUMN_NAME_TAG + " = ?";
+                    String whereClause = _ID + " = ? AND " +  COLUMN_NAME_HOUSE_TAG + " = ?";
 
-                    String[] selectionArgs = {String.valueOf(rfd.getTAG())};
-                    // Update the Parameter
-                    if (db.update(TABLE_NAME, values, selection, selectionArgs) == 0)
-                    {
-                        // The Parameter doesn't exist, i will add it
-                        if (db.insert(TABLE_NAME, null, values) <= 0)
-                        {
-                            bRes = false;
-                        }
-                    }
-                    if(bRes){
+                    String[] whereArgs = {String.valueOf(rfd.getID()), String.valueOf(rfd.getHouseTAG())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                    // Update or Save
+                    if (id > 0) {
+                        rfd.setID(id);
                         rfd.setSaved(true);
+                    } else {
+                        bRes = false;
                     }
                 }
             } finally {
@@ -535,15 +625,13 @@ public class SQLContract
                 {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
-                    LightSwitch ls = null;
-
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
                     String[] projection =
                             {
                                 _ID,
-                                COLUMN_NAME_HOUSE_TAG,
                                 COLUMN_NAME_TAG,
+                                COLUMN_NAME_HOUSE_TAG,
                                 COLUMN_NAME_X,
                                 COLUMN_NAME_Y,
                                 COLUMN_NAME_Z,
@@ -573,12 +661,12 @@ public class SQLContract
             }
         }
 
-        public static RoomFragmentData get(Context context, long id) {
+        public static RoomFragmentData load(Context context, long id) {
             try
             {
                 m_LockCommandHolder.lock();
 
-                RoomFragmentData rfd = new RoomFragmentData();
+                RoomFragmentData rfd = null;
 
                 if(context != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
@@ -588,8 +676,8 @@ public class SQLContract
                     String[] projection =
                             {
                                 _ID,
-                                COLUMN_NAME_HOUSE_TAG,
                                 COLUMN_NAME_TAG,
+                                COLUMN_NAME_HOUSE_TAG,
                                 COLUMN_NAME_X,
                                 COLUMN_NAME_Y,
                                 COLUMN_NAME_Z,
@@ -600,30 +688,23 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection = _ID + " = ?";
+                    String whereClause = _ID + " = ?";
 
-                    String[] selectionArgs = {String.valueOf(id)};
+                    String[] whereArgs = {String.valueOf(id)};
 
                     Cursor cursor = db.query(
                             TABLE_NAME,  // The table to query
                             projection,                               // The columns to return
-                            selection,                                      // The columns for the WHERE clause
-                            selectionArgs,                                      // The values for the WHERE clause
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
                             null,                                     // don't group the rows
                             null,                                     // don't filter by row groups
                             sortOrder                                 // The sort order
                     );
                     if ((cursor != null) && (cursor.getCount() > 0)) {
                         cursor.moveToFirst();
-                        rfd.setSaved(true);
-                        rfd.setSelected(false);
-                        rfd.setID(cursor.getLong(cursor.getColumnIndex(_ID)));
-                        rfd.setHouseTAG(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)));
-                        rfd.setTag(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)));
-                        rfd.setPosX(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))));
-                        rfd.setPosY(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))));
-                        rfd.setPosZ(Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))));
-                        rfd.setLandscape((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true);
+
+                        rfd = RoomEntry.get(cursor);
 
                         // Chiudo il cursore
                         cursor.close();
@@ -661,15 +742,15 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection = _ID + " = ?";
+                    String whereClause = _ID + " = ?";
 
-                    String[] selectionArgs = {String.valueOf(id)};
+                    String[] whereArgs = {String.valueOf(id)};
 
                     Cursor cursor = db.query(
                             TABLE_NAME,  // The table to query
                             projection,                               // The columns to return
-                            selection,                                      // The columns for the WHERE clause
-                            selectionArgs,                                      // The values for the WHERE clause
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
                             null,                                     // don't group the rows
                             null,                                     // don't filter by row groups
                             sortOrder                                 // The sort order
@@ -714,15 +795,15 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String selection = COLUMN_NAME_TAG + " = ?";
+                    String whereClause = COLUMN_NAME_TAG + " = ?";
 
-                    String[] selectionArgs = {String.valueOf(strTag)};
+                    String[] whereArgs = {String.valueOf(strTag)};
 
                     Cursor cursor = db.query(
                             TABLE_NAME,  // The table to query
                             projection,                               // The columns to return
-                            selection,                                      // The columns for the WHERE clause
-                            selectionArgs,                                      // The values for the WHERE clause
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
                             null,                                     // don't group the rows
                             null,                                     // don't filter by row groups
                             sortOrder                                 // The sort order
@@ -742,52 +823,37 @@ public class SQLContract
             }
         }
 
-        public static String getFirstTAG(Context context) {
-
-            try
-            {
-                m_LockCommandHolder.lock();
-
-                String strTAG = "";
-
-                if(context != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection =
-                            {
-                                    COLUMN_NAME_TAG
-                            };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder = "";
-
-                    Cursor cursor = db.query(
-                            TABLE_NAME,  // The table to query
-                            projection,                               // The columns to return
-                            null,                                      // The columns for the WHERE clause
-                            null,                                      // The values for the WHERE clause
-                            null,                                     // don't group the rows
-                            null,                                     // don't filter by row groups
-                            sortOrder                                 // The sort order
-                    );
-                    if ((cursor != null) && (cursor.getCount() > 0)) {
-                        cursor.moveToFirst();
-                        strTAG = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG));
-
-                        // Chiudo il cursore
-                        cursor.close();
-                    }
-
-                }
-
-                return strTAG;
+        public static RoomFragmentData get(Cursor cursor){
+            RoomFragmentData rfd = null;
+            if (cursor != null){
+                rfd = new RoomFragmentData(
+                        true,
+                        false,
+                        cursor.getLong(cursor.getColumnIndex(_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                        ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                );
             }
-            finally
-            {
-                m_LockCommandHolder.unlock();
+            return rfd;
+        }
+    }
+
+    public static long save(SQLiteDatabase db, String table, ContentValues values, String whereClause, String[] whereArgs ){
+        long m_lID = -1;
+        if(db != null) {
+            if (db.update(table, values, whereClause, whereArgs) == 0) {
+                // The Parameter doesn't exist, i will add it
+                m_lID = db.insert(table, null, values);
+            } else {
+                if (values != null) {
+                    m_lID = (long) values.get(BaseColumns._ID);
+                }
             }
         }
+        return m_lID;
     }
 }

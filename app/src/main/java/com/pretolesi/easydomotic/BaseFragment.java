@@ -164,6 +164,7 @@ public class BaseFragment extends Fragment {
     public RoomFragmentData getRoomFragmentData() {
         return m_rfd;
     }
+
     public boolean getDataSaved() {
         boolean bRes = true;
         if(m_rfd != null){

@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic;
+package com.pretolesi.easydomotic.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 /**
- * Created by RPRETOLESI on 26/03/2015.
+ *
  */
-public class YesNoDialogFragment extends DialogFragment {
+public class OkDialogFragment extends DialogFragment {
 
-    private YesNoDialogFragmentCallbacks mCallbacks;
+    private OkDialogFragmentCallbacks mCallbacks;
 
     /**
      * The fragment argument representing the section number for this
@@ -21,33 +21,32 @@ public class YesNoDialogFragment extends DialogFragment {
     private static final String POSITION = "position";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
-    private static final String YES_BTN_TEXT = "yes_btn_text";
-    private static final String NO_BTN_TEXT = "no_btn_text";
+    private static final String OK_BTN_TEXT = "ok_btn_text";
 
-    public static YesNoDialogFragment newInstance(int position, String strTitle, String strMessage, String strYesButtonText, String strNoButtonText) {
-        YesNoDialogFragment fragment = new YesNoDialogFragment();
+    public static OkDialogFragment newInstance(int position, String strTitle, String strMessage, String strOkButtonText) {
+        OkDialogFragment fragment = new OkDialogFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
         args.putString(TITLE, strTitle);
         args.putString(MESSAGE, strMessage);
-        args.putString(YES_BTN_TEXT, strYesButtonText);
-        args.putString(NO_BTN_TEXT, strNoButtonText);
+        args.putString(OK_BTN_TEXT, strOkButtonText);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public YesNoDialogFragment() {
+    public OkDialogFragment() {
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (YesNoDialogFragmentCallbacks) activity;
+            mCallbacks = (OkDialogFragmentCallbacks) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement YesNoDialogFragmentCallbacks.");
+            throw new ClassCastException("Activity must implement OkDialogFragmentCallbacks.");
         }
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -59,26 +58,22 @@ public class YesNoDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getArguments().getString(TITLE));
         builder.setMessage(getArguments().getString(MESSAGE));
-        builder.setPositiveButton(getArguments().getString(YES_BTN_TEXT), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getArguments().getString(OK_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(POSITION), true, false);
-            }
-        });
-        builder.setNegativeButton(getArguments().getString(NO_BTN_TEXT), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(POSITION), false, true);
+                mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(POSITION), true, false);
             }
         });
 
         return builder.create();
     }
+
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface YesNoDialogFragmentCallbacks {
+    public static interface OkDialogFragmentCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onYesNoDialogFragmentClickListener(int position, boolean bYes, boolean bNo);
+        void onOkDialogFragmentClickListener(int position, boolean bYes, boolean bNo);
     }
 }

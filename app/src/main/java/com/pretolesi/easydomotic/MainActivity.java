@@ -51,23 +51,26 @@ public class MainActivity extends BaseActivity
     public void onNavigationDrawerItemSelected(int position, long id) {
 
         // Prelevo i dati e TAG per Room
-        RoomFragmentData rfd = SQLContract.RoomEntry.get(this, id);
-        // Controllo orientamento prima di costruire il frame....
-        if(rfd.getLandscape()){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        RoomFragmentData rfd = SQLContract.RoomEntry.load(this, id);
+        if(rfd != null){
+            // Controllo orientamento prima di costruire il frame....
+            if(rfd.getLandscape()){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+            // Prelevo i dati per gli altri oggetti della Room
+            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
+            if(allsd != null){
+                // update the main content by replacing fragments
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                // Costruisco l'istanza
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                        .commit();
+
+            }
         }
-        // Prelevo i dati per gli altri oggetti della Room
-        ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(this, rfd.getTAG());
-
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        // Costruisco l'istanza
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
-                .commit();
-
     }
 
     public void onSectionAttached(int number, long id) {

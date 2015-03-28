@@ -11,7 +11,7 @@ import android.widget.Switch;
 import com.pretolesi.easydomotic.BaseFragment;
 
 /**
- * Created by RPRETOLESI on 17/03/2015.
+ *
  */
 public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
@@ -197,7 +197,7 @@ public class LightSwitch extends Switch implements
             m_lsd.setSelected(true);
             this.setChecked(true);
 
-            Intent intent = LightSwitchPropActivity.makeLightSwitchPropertyActivity(this.getContext());
+            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(),m_lsd.getRoomID(), m_lsd.getID() );
             this.getContext().startActivity(intent);
 
         }
