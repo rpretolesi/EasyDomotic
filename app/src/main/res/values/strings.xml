@@ -21,12 +21,30 @@
     <string name="text_toast_room_add_not_exist">Before Add objects, you should Create a New Room or Open an existing one.</string>
     <string name="text_toast_room_save_not_exist">Before Save objects, you should Create a New Room or Open an existing one.</string>
     <string name="text_title_room_not_saved">Room not saved.</string>
+    <string name="text_title_room_id_not_valid">Room identification not valid.</string>
     <string name="text_message_room_save_confirmation">Do you want to save it ?</string>
     <string name="text_toast_room_saved_ok">Room saved.</string>
     <string name="text_toast_room_saved_error">Error Saving Room.</string>
     <string name="text_tv_switch_name">Switch Name</string>
-    <string name="text_toast_switch_not_valid">Switch Name not valid.</string>
-    <string name="text_toast_switch_already_exist">Switch Name already exist.</string>
+    <string name="text_toast_light_switch_not_valid">Switch Name not valid.</string>
+    <string name="text_toast_light_switch_already_exist">Switch Name already exist.</string>
+
+    <!--
+        OkDialogFragment
+    -->
+    <string name="text_odf_title_room_data_not_present">Room data not present.</string>
+    <string name="text_odf_message_room_data_not_presenta">Please try to create a new Room.</string>
+
+    <string name="text_odf_title_orientation_not_set">Orientation not Set.</string>
+    <string name="text_odf_message_orientation_not_set">Please set the orientation.</string>
+
+    <string name="text_odf_title_light_switch_name_error">Light Switch Name Error.</string>
+    <string name="text_odf_message_light_switch_name_not_valid">Switch Name not valid.</string>
+    <string name="text_odf_message_light_switch_name_already_exist">Switch Name already exist.</string>
+
+    <string name="text_odf_message_ok_button">Ok</string>
+
+
 
     <string name="text_tv_hint_name">My Name</string>
     <string name="text_orientation_landscape">Landscape</string>

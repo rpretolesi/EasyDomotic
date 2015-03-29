@@ -19,6 +19,18 @@ public class LightSwitchData implements Parcelable {
     private boolean m_bLandscape;
 
 
+    public LightSwitchData() {
+        this.m_bSaved = false;
+        this.m_bSelected = false;
+        this.m_ID = -1;
+        this.m_lRoomID = -1;
+        this.m_strTAG = "";
+        this.m_fPosX = 0.0f;
+        this.m_fPosY = 0.0f;
+        this.m_fPosZ = 0.0f;
+        this.m_bLandscape = false;
+    }
+
     public LightSwitchData(boolean bSaved, boolean bSelected, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         this.m_bSaved = bSaved;
         this.m_bSelected = bSelected;

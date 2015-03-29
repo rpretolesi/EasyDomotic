@@ -681,12 +681,12 @@ public class SQLContract
             }
         }
 
-        public static RoomFragmentData load(Context context, long id) {
+        public static Cursor load(Context context, long id) {
             try
             {
                 m_LockCommandHolder.lock();
 
-                RoomFragmentData rfd = null;
+                Cursor cursor = null;
 
                 if(context != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
@@ -712,7 +712,7 @@ public class SQLContract
 
                     String[] whereArgs = {String.valueOf(id)};
 
-                    Cursor cursor = db.query(
+                    cursor = db.query(
                             TABLE_NAME,  // The table to query
                             projection,                               // The columns to return
                             whereClause,                                      // The columns for the WHERE clause
@@ -722,16 +722,9 @@ public class SQLContract
                             sortOrder                                 // The sort order
                     );
 
-                    rfd = RoomEntry.get(cursor);
-
-                    if (cursor != null) {
-                        // Chiudo il cursore
-                        cursor.close();
-                    }
-
                 }
 
-                return rfd;
+                return cursor;
             }
             finally
             {
@@ -745,7 +738,7 @@ public class SQLContract
             {
                 m_LockCommandHolder.lock();
 
-                String strTAG = "";
+                String strTAG = null;
 
                 if(context != null) {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
@@ -844,22 +837,29 @@ public class SQLContract
 
         public static ArrayList<RoomFragmentData> get(Cursor cursor){
             RoomFragmentData rfd = null;
+            ArrayList<RoomFragmentData> alrfd = null;
             if((cursor != null) && (cursor.getCount() > 0))
             {
-                cursor.moveToFirst();
-                rfd = new RoomFragmentData(
-                        true,
-                        false,
-                        cursor.getLong(cursor.getColumnIndex(_ID)),
-                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)),
-                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
-                        ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
-                );
+                for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                {
+                    if(alrfd == null){
+                        alrfd = new ArrayList<>();
+                    }
+                    rfd = new RoomFragmentData(
+                            true,
+                            false,
+                            cursor.getLong(cursor.getColumnIndex(_ID)),
+                            cursor.getString(cursor.getColumnIndex(COLUMN_NAME_HOUSE_TAG)),
+                            cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                            ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                    );
+                    alrfd.add(rfd);
+                }
             }
-            return rfd;
+            return alrfd;
         }
     }
 

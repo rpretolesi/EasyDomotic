@@ -3,9 +3,9 @@ package com.pretolesi.easydomotic.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 
 /**
  *
@@ -42,8 +42,7 @@ public class OkDialogFragment extends DialogFragment {
         super.onAttach(activity);
         try {
             mCallbacks = (OkDialogFragmentCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement OkDialogFragmentCallbacks.");
+        } catch (ClassCastException ignore) {
         }
     }
 
@@ -60,7 +59,9 @@ public class OkDialogFragment extends DialogFragment {
         builder.setMessage(getArguments().getString(MESSAGE));
         builder.setPositiveButton(getArguments().getString(OK_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(POSITION), true, false);
+                if(mCallbacks != null){
+                    mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(POSITION));
+                }
             }
         });
 
@@ -74,6 +75,6 @@ public class OkDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onOkDialogFragmentClickListener(int position, boolean bYes, boolean bNo);
+        void onOkDialogFragmentClickListener(int position);
     }
 }

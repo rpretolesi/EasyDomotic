@@ -16,18 +16,21 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
+import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 
 import java.util.ArrayList;
 
 /**
  *
  */
-public class LightSwitchPropActivity extends Activity  implements
+public class LightSwitchPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "LightSwitchPropActivity";
 
@@ -107,15 +110,20 @@ public class LightSwitchPropActivity extends Activity  implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-/*
+
         switch (item.getItemId()) {
 
-                // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+            // Respond to the action bar's Up/Home button
+            case R.id.id_item_menu_delete:
+
+                return true;
+
+            case R.id.id_item_menu_save:
+                // Save Data
+                saveLightSwitchData();
                 return true;
         }
-*/
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -126,7 +134,6 @@ public class LightSwitchPropActivity extends Activity  implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-
                     return SQLContract.RoomEntry.load(getContext());
                 }
             };
@@ -150,15 +157,19 @@ public class LightSwitchPropActivity extends Activity  implements
         // The list should now be shown.
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(cursor);
-        }
+            for(int i = 0; i < m_id_spn_room.getCount(); i++){
+                if(m_id_spn_room.getItemIdAtPosition(i) == m_lRoomID){
+                    m_id_spn_room.setSelection(i);
+                }
+            }
+         }
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
             if(allsd != null && !allsd.isEmpty()){
                 m_lsd = allsd.get(0);
+                updateLightSwitch();
             }
         }
-
-       updateLightSwitch();
 
        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
 
@@ -173,9 +184,9 @@ public class LightSwitchPropActivity extends Activity  implements
         Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
     }
 
-    private void updateLightSwitch(){
-        if(m_lsd != null) {
-            if(m_id_et_light_switch_name != null){
+    private void updateLightSwitch() {
+        if (m_lsd != null) {
+            if (m_id_et_light_switch_name != null) {
                 m_id_et_light_switch_name.setText(m_lsd.getTag());
             }
 
@@ -197,8 +208,68 @@ public class LightSwitchPropActivity extends Activity  implements
         }
     }
 
+    private void saveLightSwitchData(){
+        if(!isLightSwitchTagValid()){
+            return ;
+        }
+        if(getOrientation() == Orientation.UNDEFINED ) {
+            OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button));
+            odf.show(getFragmentManager(), "");
+            return ;
+        }
 
-    public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID)
+        if (m_lsd == null) {
+            m_lsd = new LightSwitchData();
+        }
+        if (m_id_et_light_switch_name != null) {
+            m_lsd.setTAG(m_id_et_light_switch_name.getText().toString());
+        }
+
+        if(getOrientation() == Orientation.PORTRAIT ){
+            m_lsd.setLandscape(false);
+        }
+        if(getOrientation() == Orientation.LANDSCAPE ){
+            m_lsd.setLandscape(true);
+        }
+        salvare e fare il controllo del salvataggio ok con dialog box
+        return ;
+    }
+
+    private boolean isLightSwitchTagValid() {
+        if(m_lRoomID > 0) {
+            if (m_id_et_light_switch_name != null && !m_id_et_light_switch_name.getText().toString().equals("")) {
+                if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), m_lRoomID)) {
+                    return true;
+                } else {
+                    OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_already_exist), getString(R.string.text_odf_message_ok_button));
+                    odf.show(getFragmentManager(), "");
+                }
+            } else {
+                OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+                odf.show(getFragmentManager(), "");
+            }
+        } else {
+            OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+            odf.show(getFragmentManager(), "");
+        }
+        return false;
+    }
+
+    private Orientation getOrientation() {
+        if (m_id_rb_landscape != null && m_id_rb_portrait != null) {
+            if(m_id_rb_landscape.isChecked() && !m_id_rb_portrait.isChecked()) {
+                return Orientation.LANDSCAPE;
+            }
+            if(!m_id_rb_landscape.isChecked() && m_id_rb_portrait.isChecked()) {
+                return Orientation.PORTRAIT;
+            }
+        }
+
+        return Orientation.UNDEFINED;
+    }
+
+
+        public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID)
     {
         Intent intent = new Intent();
         intent.setClass(context, LightSwitchPropActivity.class);

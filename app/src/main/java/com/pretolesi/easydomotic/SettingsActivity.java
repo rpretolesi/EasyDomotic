@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
@@ -93,6 +95,22 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 2){
+            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            if(rf != null) {
+                RoomFragmentData rfd = rf.getRoomFragmentData();
+                if(rfd != null) {
+                    Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this, rfd.getID(), -1);
+                    startActivity(intent);
+/*
+                    if (isLightSwitchTagValid(strName, rfd.getID())) {
+                        LightSwitchData lsd = new LightSwitchData(false, false, -1, rfd.getID(), strName, 30, 30, 0, bLandscape);
+                        rf.addLightSwitch(lsd);
+                    }
+*/
+                }
+            }
+
+/*
             Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
             if(f instanceof BaseFragment){
                 m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), "", false);
@@ -100,6 +118,7 @@ public class SettingsActivity extends BaseActivity implements
             } else {
                 Toast.makeText(getApplicationContext(), R.string.text_toast_room_add_not_exist, Toast.LENGTH_LONG).show();
             }
+*/
         }
 
         if(position == 7){
@@ -132,25 +151,27 @@ public class SettingsActivity extends BaseActivity implements
                     // Costruisco il frame...
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction()
-                            .replace(R.id.container, RoomFragment.newInstance(position + 1, iRoomID, null, null), rfd.getTAG())
+                            .replace(R.id.container, RoomFragment.newInstance(position + 1, iRoomID), rfd.getTAG())
                             .commit();
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
                 }
             }
         }
         if(position == 2){
+/*
             BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
-                if(isTagSwitchValid(rf, strName)){
-                    RoomFragmentData rfd = rf.getRoomFragmentData();
-                    if(rfd != null){
+                RoomFragmentData rfd = rf.getRoomFragmentData();
+                if(rfd != null) {
+                    if (isLightSwitchTagValid(strName, rfd.getID())) {
                         LightSwitchData lsd = new LightSwitchData(false, false, -1, rfd.getID(), strName, 30, 30, 0, bLandscape);
                         rf.addLightSwitch(lsd);
                     }
                 }
             }
+*/
         }
     }
 
@@ -194,24 +215,36 @@ public class SettingsActivity extends BaseActivity implements
     public void onListRoomFragmentClickListener(int sectionNumber, int position, long id) {
         if(position == 1){
             // Prelevo i dati e TAG per Room
-            RoomFragmentData rfd = SQLContract.RoomEntry.load(this, id);
-            // Controllo orientamento prima di costruire il frame....
-            if(rfd != null){
-                if(rfd.getLandscape()){
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } else {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                }
-                // Prelevo i dati per gli altri oggetti della Room
-                ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
-                if(allsd != null){
-                    // update the main content by replacing fragments
+            Cursor cursor = SQLContract.RoomEntry.load(this, id);
+            ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
+            if(alrfd != null && !alrfd.isEmpty()) {
+                RoomFragmentData rfd = alrfd.get(0);
+                // Controllo orientamento prima di costruire il frame....
+                if (rfd != null) {
+                    if (rfd.getLandscape()) {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    }
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     // Costruisco l'istanza
                     fragmentManager.beginTransaction()
-                            .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                            .replace(R.id.container, RoomFragment.newInstance(position + 1, id), rfd.getTAG())
                             .commit();
 
+/*
+                    // Prelevo i dati per gli altri oggetti della Room
+                    ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
+                    if (allsd != null) {
+                        // update the main content by replacing fragments
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        // Costruisco l'istanza
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd), rfd.getTAG())
+                                .commit();
+
+                    }
+*/
                 }
             }
         }
@@ -290,19 +323,19 @@ public class SettingsActivity extends BaseActivity implements
         if(f instanceof BaseFragment){
             BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             boolean bRes = true;
-            if(SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData()) > 0){
+            if(SQLContract.RoomEntry.save(this, bf.getRoomFragmentData()) > 0){
                 bRes = false;
             }
-            if(!SQLContract.LightSwitchEntry.save(getApplicationContext(),bf.getLightSwitchData())){
+            if(!SQLContract.LightSwitchEntry.save(this,bf.getLightSwitchData())){
                 bRes = false;
             }
             if(bRes){
-                Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(getApplicationContext(), R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -315,6 +348,7 @@ public class SettingsActivity extends BaseActivity implements
         * Returns a new instance of this fragment for the given section
         * number.
         */
+/*
         public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -322,6 +356,16 @@ public class SettingsActivity extends BaseActivity implements
             args.putLong(_ID, id);
             args.putParcelable(ARG_ROOM_DATA, rfd);
             args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
+            args.putBoolean(EDIT_MODE, false);
+            fragment.setArguments(args);
+            return fragment;
+        }
+*/
+        public static RoomFragment newInstance(int sectionNumber, long id) {
+            RoomFragment fragment = new RoomFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putLong(_ID, id);
             args.putBoolean(EDIT_MODE, false);
             fragment.setArguments(args);
             return fragment;
@@ -362,24 +406,6 @@ public class SettingsActivity extends BaseActivity implements
             }
         }
         Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
-        return false;
-    }
-
-    private boolean isTagSwitchValid(BaseFragment bf, String strTag) {
-        if(bf != null && strTag != null){
-            RoomFragmentData rfd = bf.getRoomFragmentData();
-            if(rfd != null){
-                if(!strTag.equals("")){
-                    if(!bf.isLightSwitchTagPresent(strTag) && !SQLContract.LightSwitchEntry.isTagPresent(getApplicationContext(), bf.getTag(), rfd.getID())){
-                        return true;
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.text_toast_switch_already_exist, Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-                }
-            }
-        }
-        Toast.makeText(getApplicationContext(), R.string.text_toast_switch_not_valid, Toast.LENGTH_LONG).show();
         return false;
     }
 

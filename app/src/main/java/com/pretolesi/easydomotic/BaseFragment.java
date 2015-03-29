@@ -20,6 +20,8 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
+import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,8 @@ import java.util.ArrayList;
  *
  */
 public class BaseFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        OkDialogFragment.OkDialogFragmentCallbacks {
 
     private static final String TAG = "BaseFragment";
 
@@ -38,8 +41,8 @@ public class BaseFragment extends Fragment implements
     protected static final String ARG_SECTION_NUMBER = "section_number";
     protected static final String POSITION = "position";
     protected static final String _ID = "id";
-    protected static final String ARG_ROOM_DATA = "Room_Data";
-    protected static final String ARG_LIGHT_SWITCH_DATA = "Room_Light_Switch_Data";
+//    protected static final String ARG_ROOM_DATA = "Room_Data";
+//    protected static final String ARG_LIGHT_SWITCH_DATA = "Room_Light_Switch_Data";
     protected static final String EDIT_MODE = "edit_mode";
 
     protected TextView m_tvRoomName;
@@ -99,16 +102,16 @@ public class BaseFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
-        if(m_rfd != null){
-            updateRoom();
-        } else {
+//        m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
+//        if(m_rfd != null){
+//            updateRoom();
+//        } else {
             // Prepare the loader.  Either re-connect with an existing one,
             // or start a new one.
             getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-        }
+//        }
 
-        m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
+//        m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
 
         Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
@@ -181,9 +184,21 @@ public class BaseFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // The list should now be shown.
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
-            m_rfd = SQLContract.RoomEntry.get(cursor);
-            updateRoom();
+            ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
+            if(alrfd != null && !alrfd.isEmpty()) {
+                m_rfd = alrfd.get(0);
+                if(m_rfd != null){
+                    updateRoom();
+                    // Ok
+                    return;
+                }
+            }
         }
+/*
+        // No valid data, finish
+        OkDialogFragment odf = OkDialogFragment.newInstance(1, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present) , getString(R.string.text_odf_message_ok_button));
+        odf.show(getFragmentManager(), "");
+*/
 /*
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
@@ -203,6 +218,13 @@ public class BaseFragment extends Fragment implements
 
         }
         Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
+    }
+
+    @Override
+    public void onOkDialogFragmentClickListener(int position) {
+        if(position == 1){
+
+        }
     }
 
     private void updateRoom(){
@@ -273,7 +295,7 @@ public class BaseFragment extends Fragment implements
 
         return m_allsd;
     }
-
+/*
     public boolean isLightSwitchTagPresent(String strLightSwitchTag) {
         boolean bRes = false;
         if(m_allsd != null && strLightSwitchTag != null){
@@ -287,7 +309,7 @@ public class BaseFragment extends Fragment implements
         }
         return bRes;
     }
-
+*/
     // Helper function
     private boolean newLightSwitch(LightSwitchData lsd){
         // Define the switch

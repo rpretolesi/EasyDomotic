@@ -51,25 +51,18 @@ public class MainActivity extends BaseActivity
     public void onNavigationDrawerItemSelected(int position, long id) {
 
         // Prelevo i dati e TAG per Room
-        RoomFragmentData rfd = SQLContract.RoomEntry.load(this, id);
-        if(rfd != null){
-            // Controllo orientamento prima di costruire il frame....
-            if(rfd.getLandscape()){
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-            // Prelevo i dati per gli altri oggetti della Room
-            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
-            if(allsd != null){
+        String strTag = SQLContract.RoomEntry.getTag(this, id);
+        if(strTag != null){
+//            // Prelevo i dati per gli altri oggetti della Room
+//            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
+//            if(allsd != null){
                 // update the main content by replacing fragments
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 // Costruisco l'istanza
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd ), rfd.getTAG())
+                        .replace(R.id.container, RoomFragment.newInstance(position + 1, id ), strTag)
                         .commit();
-
-            }
+//            }
         }
     }
 
@@ -143,10 +136,7 @@ public class MainActivity extends BaseActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+/*
         public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -154,6 +144,16 @@ public class MainActivity extends BaseActivity
             args.putLong(_ID, id);
             args.putParcelable(ARG_ROOM_DATA, rfd);
             args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
+            args.putBoolean(EDIT_MODE, false);
+            fragment.setArguments(args);
+            return fragment;
+        }
+*/
+        public static RoomFragment newInstance(int sectionNumber, long id) {
+            RoomFragment fragment = new RoomFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putLong(_ID, id);
             args.putBoolean(EDIT_MODE, false);
             fragment.setArguments(args);
             return fragment;
