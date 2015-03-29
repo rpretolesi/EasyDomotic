@@ -2,8 +2,13 @@ package com.pretolesi.easydomotic;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +16,18 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
+import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 
 import java.util.ArrayList;
 
 /**
  *
  */
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "BaseFragment";
 
@@ -60,16 +68,6 @@ public class BaseFragment extends Fragment {
             rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
             m_tvRoomName.setLayoutParams(rlp);
         }
-        try {
-            m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
-        } catch (Exception ex){
-            m_rfd = new RoomFragmentData(false, false, -1, "PRETOLESI", getTag(), 0, 0, 0, false);
-        }
-        try {
-            m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
-        } catch (Exception ex){
-            m_allsd = new ArrayList<>();
-        }
 
         Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
@@ -77,10 +75,13 @@ public class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(m_rl != null && m_tvRoomName != null) {
+            m_rl.addView(m_tvRoomName);
+/*
             if(m_rfd != null){
                 m_tvRoomName.setText(m_rfd.getTAG());
                 m_rl.addView(m_tvRoomName);
             }
+*/
             if(m_allsd != null){
                 for(LightSwitchData lsd : m_allsd){
                     if(lsd != null){
@@ -97,6 +98,18 @@ public class BaseFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
+        if(m_rfd != null){
+            updateRoom();
+        } else {
+            // Prepare the loader.  Either re-connect with an existing one,
+            // or start a new one.
+            getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+        }
+
+        m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
+
         Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
 
@@ -149,16 +162,73 @@ public class BaseFragment extends Fragment {
         Log.d(TAG, this.toString() + ": " + "onDetach()");
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        if(id == Loaders.ROOM_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.RoomEntry.load(getContext(), getArguments().getLong(_ID, -1));
+                }
+            };
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // The list should now be shown.
+        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
+            m_rfd = SQLContract.RoomEntry.get(cursor);
+            updateRoom();
+        }
+/*
+        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
+            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
+            if(allsd != null && !allsd.isEmpty()){
+                m_lsd = allsd.get(0);
+            }
+        }
+*/
+
+
+        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
+
+        }
+        Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
+    }
+
+    private void updateRoom(){
+        if(m_rfd != null) {
+            if(m_tvRoomName != null){
+                m_tvRoomName.setText(m_rfd.getTAG());
+            }
+            // Controllo orientamento prima di costruire il frame....
+            if(m_rfd.getLandscape()){
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+        }
+    }
     /*
         Add a new Light Switch
      */
-    public boolean addLightSwitch(LightSwitchData lsd){
-        // Define the switch
-        if(m_allsd != null && newLightSwitch(lsd)){
-            m_allsd.add(lsd);
-            return true;
+    public void addLightSwitch(LightSwitchData lsd){
+        if(m_allsd == null){
+            m_allsd = new ArrayList<>();
         }
-        return false;
+        // Define the switch
+        if(newLightSwitch(lsd)){
+            m_allsd.add(lsd);
+        }
     }
 
     public RoomFragmentData getRoomFragmentData() {

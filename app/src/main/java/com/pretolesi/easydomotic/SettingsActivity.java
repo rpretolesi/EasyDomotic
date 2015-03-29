@@ -113,25 +113,31 @@ public class SettingsActivity extends BaseActivity implements
         if(position == 0){
             // Verifico che il nome sia valido
             if(isTagRoomValid(strName)){
+/*
                 // Controllo orientamento prima di costruire il frame....
                 if(bLandscape){
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
-
-                // Costruisco i dati...
-                // Room
+*/
+                // Room Data
                 RoomFragmentData rfd = new RoomFragmentData();
                 rfd.setTag(strName);
                 rfd.setLandscape(bLandscape);
-                // LightSwitch
-                ArrayList<LightSwitchData> allsd = new ArrayList<>();
-                // Costruisco il frame...
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, RoomFragment.newInstance(position + 1, position, rfd, allsd), rfd.getTAG())
-                        .commit();
+
+                // Salvo
+                long iRoomID = SQLContract.RoomEntry.save(this, rfd);
+                if(iRoomID > 0){
+                    // Costruisco il frame...
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, RoomFragment.newInstance(position + 1, iRoomID, null, null), rfd.getTAG())
+                            .commit();
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+                }
             }
         }
         if(position == 2){
@@ -284,7 +290,7 @@ public class SettingsActivity extends BaseActivity implements
         if(f instanceof BaseFragment){
             BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
             boolean bRes = true;
-            if(!SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData())){
+            if(SQLContract.RoomEntry.save(getApplicationContext(), bf.getRoomFragmentData()) > 0){
                 bRes = false;
             }
             if(!SQLContract.LightSwitchEntry.save(getApplicationContext(),bf.getLightSwitchData())){
@@ -347,15 +353,15 @@ public class SettingsActivity extends BaseActivity implements
     private boolean isTagRoomValid(String strTag) {
         if(strTag != null){
             if(!strTag.equals("")){
-                if(!SQLContract.RoomEntry.isTagPresent(getApplicationContext(), strTag)){
+                if(!SQLContract.RoomEntry.isTagPresent(this, strTag)){
                     return true;
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
                     return false;
                 }
             }
         }
-        Toast.makeText(getApplicationContext(), R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
         return false;
     }
 

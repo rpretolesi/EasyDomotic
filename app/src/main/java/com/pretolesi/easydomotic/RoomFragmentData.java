@@ -34,7 +34,7 @@ public class RoomFragmentData implements Parcelable {
     public RoomFragmentData() {
         this.m_bSaved = false;
         this.m_bSelected = false;
-        this.m_ID = 0;
+        this.m_ID = -1;
         this.m_strHouseTAG = "";
         this.m_strTAG = "";
         this.m_fPosX = 0;

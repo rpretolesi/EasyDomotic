@@ -459,18 +459,11 @@ public class SQLContract
                             null,                       // don't filter by row groups
                             sortOrder                   // The sort order
                     );
-                    if((cursor != null) && (cursor.getCount() > 0))
-                    {
-                        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-                        {
-                            if(allsd == null){
-                                allsd = new ArrayList<>();
-                            }
-                            lsd = get(cursor);
-                            allsd.add(lsd);
-                        }
 
-                        // Chiudo il cursore
+                    allsd = get(cursor);
+
+                    if(cursor != null){
+                        // Chiudo il cursore1
                         cursor.close();
                     }
                 }
@@ -532,10 +525,11 @@ public class SQLContract
                 m_LockCommandHolder.unlock();
             }
         }
-
-        public static LightSwitchDataa get(Cursor cursor){
+/*
+        public static LightSwitchData get(Cursor cursor){
             LightSwitchData lsd = null;
-            if (cursor != null){
+            if ((cursor != null) && (cursor.getCount() > 0)) {
+                cursor.moveToFirst();
                 lsd = new LightSwitchData(
                         true,
                         false,
@@ -550,6 +544,34 @@ public class SQLContract
             }
             return lsd;
         }
+*/
+        public static ArrayList<LightSwitchData> get(Cursor cursor){
+            LightSwitchData lsd = null;
+            ArrayList<LightSwitchData> allsd = null;
+            if((cursor != null) && (cursor.getCount() > 0))
+            {
+                for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                {
+                    if(allsd == null){
+                        allsd = new ArrayList<>();
+                    }
+                    lsd = new LightSwitchData(
+                            true,
+                            false,
+                            cursor.getLong(cursor.getColumnIndex(_ID)),
+                            cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
+                            cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                            ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                    );
+                    allsd.add(lsd);
+                }
+            }
+            return allsd;
+        }
+
     }
 
     public static abstract class RoomEntry implements BaseColumns
@@ -577,9 +599,9 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(Context context, RoomFragmentData rfd)  {
+        public static long save(Context context, RoomFragmentData rfd)  {
 
-            boolean bRes = true;
+            long id = -1;
             try
             {
                 m_LockCommandHolder.lock();
@@ -597,20 +619,18 @@ public class SQLContract
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_HOUSE_TAG + " = ?";
 
                     String[] whereArgs = {String.valueOf(rfd.getID()), String.valueOf(rfd.getHouseTAG())};
-                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                    id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
                     // Update or Save
                     if (id > 0) {
                         rfd.setID(id);
                         rfd.setSaved(true);
-                    } else {
-                        bRes = false;
                     }
                 }
             } finally {
                 m_LockCommandHolder.unlock();
             }
 
-            return bRes;
+            return id;
         }
 
         public static Cursor load(Context context)
@@ -701,11 +721,10 @@ public class SQLContract
                             null,                                     // don't filter by row groups
                             sortOrder                                 // The sort order
                     );
-                    if ((cursor != null) && (cursor.getCount() > 0)) {
-                        cursor.moveToFirst();
 
-                        rfd = RoomEntry.get(cursor);
+                    rfd = RoomEntry.get(cursor);
 
+                    if (cursor != null) {
                         // Chiudo il cursore
                         cursor.close();
                     }
@@ -823,9 +842,11 @@ public class SQLContract
             }
         }
 
-        public static RoomFragmentData get(Cursor cursor){
+        public static ArrayList<RoomFragmentData> get(Cursor cursor){
             RoomFragmentData rfd = null;
-            if (cursor != null){
+            if((cursor != null) && (cursor.getCount() > 0))
+            {
+                cursor.moveToFirst();
                 rfd = new RoomFragmentData(
                         true,
                         false,

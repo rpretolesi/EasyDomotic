@@ -18,8 +18,11 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -28,10 +31,8 @@ public class LightSwitchPropActivity extends Activity  implements
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "LightSwitchPropActivity";
 
-    private static final int ROOM_LOADER_ID = 1;
     private static final String ROOM_ID = "Room_ID";
     private long m_lRoomID;
-    private static final int LIGHT_SWITCH_LOADER_ID = 2;
     private static final String LIGHT_SWITCH_ID = "Light_Switch_ID";
     private long m_lID;
 
@@ -78,8 +79,8 @@ public class LightSwitchPropActivity extends Activity  implements
 
         m_id_spn_room.setAdapter(m_SCAdapter);
 
-        getLoaderManager().initLoader(ROOM_LOADER_ID, null, this);
-        getLoaderManager().initLoader(LIGHT_SWITCH_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
     }
 
     public void setActionBar() {
@@ -121,7 +122,7 @@ public class LightSwitchPropActivity extends Activity  implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
-        if(id == ROOM_LOADER_ID){
+        if(id == Loaders.ROOM_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -131,7 +132,7 @@ public class LightSwitchPropActivity extends Activity  implements
             };
         }
 
-        if(id == LIGHT_SWITCH_LOADER_ID){
+        if(id == Loaders.LIGHT_SWITCH_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -147,21 +148,25 @@ public class LightSwitchPropActivity extends Activity  implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         // The list should now be shown.
-        if(loader.getId() == ROOM_LOADER_ID) {
+        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(cursor);
         }
-        if(loader.getId() == LIGHT_SWITCH_LOADER_ID) {
-            m_lsd = SQLContract.LightSwitchEntry.get(cursor);
+        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
+            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
+            if(allsd != null && !allsd.isEmpty()){
+                m_lsd = allsd.get(0);
+            }
         }
 
-        updateLightSwitch();
+       updateLightSwitch();
 
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+       Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(loader.getId() == ROOM_LOADER_ID) {
+        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(null);
         }
 
