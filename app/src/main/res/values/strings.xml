@@ -39,6 +39,9 @@
     <string name="text_odf_message_light_switch_name_not_valid">Light Switch Name not valid.</string>
     <string name="text_odf_message_light_switch_name_already_exist">LightSwitch Name already exist.</string>
 
+    <string name="text_odf_title_position_not_valid">Position value are not valid.</string>
+    <string name="text_odf_message_position_not_valid">Please set the Position value.</string>
+
     <string name="text_odf_title_saving">Saving &#8230; </string>
     <string name="text_odf_message_saving_ok">Saving OK.</string>
     <string name="text_odf_message_saving_error">Saving Error.</string>
@@ -75,6 +78,10 @@
     <string name="text_tv_orientation">Orientation</string>
     <string name="text_rb_portrait">Portrait</string>
     <string name="text_rb_landscape">Landscape</string>
+    <string name="text_tv_position">Position</string>
+    <string name="text_tv_position_x">X:</string>
+    <string name="text_tv_position_y">Y:</string>
+    <string name="text_tv_position_z">Z:</string>
 
     <!--
         Menu Title

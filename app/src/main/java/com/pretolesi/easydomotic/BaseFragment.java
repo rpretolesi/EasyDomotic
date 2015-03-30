@@ -85,13 +85,7 @@ public class BaseFragment extends Fragment implements
                 m_rl.addView(m_tvRoomName);
             }
 */
-            if(m_allsd != null){
-                for(LightSwitchData lsd : m_allsd){
-                    if(lsd != null){
-                        newLightSwitch(lsd);
-                    }
-                }
-            }
+
         }
 
         Log.d(TAG, this.toString() + ": " + "onCreateView()");
@@ -109,6 +103,7 @@ public class BaseFragment extends Fragment implements
             // Prepare the loader.  Either re-connect with an existing one,
             // or start a new one.
             getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 //        }
 
 //        m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
@@ -177,6 +172,15 @@ public class BaseFragment extends Fragment implements
             };
         }
 
+        if(id == Loaders.LIGHT_SWITCH_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.LightSwitchEntry.load(getContext(), getArguments().getLong(_ID, -1));
+                }
+            };
+        }
+
         return null;
     }
 
@@ -189,10 +193,13 @@ public class BaseFragment extends Fragment implements
                 m_rfd = alrfd.get(0);
                 if(m_rfd != null){
                     updateRoom();
-                    // Ok
-                    return;
                 }
             }
+        }
+
+        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
+            m_allsd = SQLContract.LightSwitchEntry.get(cursor);
+            newLightSwitch();
         }
 /*
         // No valid data, finish
@@ -238,18 +245,6 @@ public class BaseFragment extends Fragment implements
             } else {
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
-        }
-    }
-    /*
-        Add a new Light Switch
-     */
-    public void addLightSwitch(LightSwitchData lsd){
-        if(m_allsd == null){
-            m_allsd = new ArrayList<>();
-        }
-        // Define the switch
-        if(newLightSwitch(lsd)){
-            m_allsd.add(lsd);
         }
     }
 
@@ -311,19 +306,20 @@ public class BaseFragment extends Fragment implements
     }
 */
     // Helper function
-    private boolean newLightSwitch(LightSwitchData lsd){
+    private void newLightSwitch(){
         // Define the switch
-        if(m_rl != null && lsd != null){
-            LightSwitch ls = new LightSwitch(getActivity(), lsd);
-            if(lsd.getLandscape()){
-                ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+        if(m_rl != null && m_allsd != null){
+            for(LightSwitchData lsd : m_allsd){
+                if(lsd != null){
+                    LightSwitch ls = new LightSwitch(getActivity(), lsd);
+                    if(lsd.getLandscape()){
+                        ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+                    }
+                    setViewPosition(ls, lsd.getPosX(), lsd.getPosY());
+                    m_rl.addView(ls);
+                }
             }
-            setViewPosition(ls, lsd.getPosX(), lsd.getPosY());
-            m_rl.addView(ls);
-
-            return true;
         }
-        return false;
     }
 
     // Static

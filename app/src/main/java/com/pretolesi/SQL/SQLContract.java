@@ -362,6 +362,7 @@ public class SQLContract
             }
         }
 */
+
         public static Cursor load(Context context, long lID, long lRoomID)
         {
             try
@@ -415,19 +416,17 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<LightSwitchData> load(Context context, long lRoomID)
+        public static Cursor load(Context context, long lRoomID)
         {
             try
             {
                 m_LockCommandHolder.lock();
 
-                ArrayList<LightSwitchData> allsd = null;
+                Cursor cursor = null;
 
                 if(context != null)
                 {
                     SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
-
-                    LightSwitchData lsd = null;
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -448,32 +447,26 @@ public class SQLContract
                     // Which row to get based on WHERE
                     String whereClause = COLUMN_NAME_ROOM_ID + " = ?";
 
-                    String[] whereArgs = { String.valueOf(lRoomID)};
+                    String[] wherenArgs = { String.valueOf(lRoomID) };
 
-                    Cursor cursor = db.query(
+                    cursor = db.query(
                             TABLE_NAME,                 // The table to query
                             projection,                 // The columns to return
                             whereClause,                  // The columns for the WHERE clause
-                            whereArgs,              // The values for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
                             null,                       // don't group the rows
                             null,                       // don't filter by row groups
                             sortOrder                   // The sort order
                     );
 
-                    allsd = get(cursor);
-
-                    if(cursor != null){
-                        // Chiudo il cursore1
-                        cursor.close();
-                    }
                 }
-                return allsd;
+
+                return cursor;
             }
             finally
             {
                 m_LockCommandHolder.unlock();
             }
-
         }
 
         public static boolean delete(Context context, long lID, long lRoomID)

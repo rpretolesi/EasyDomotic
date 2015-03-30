@@ -1,77 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/id_tv_room_name"
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:text="@string/text_tv_room_name"/>
+        android:layout_height="wrap_content">
 
-    <Spinner
-        android:id="@+id/id_spn_room"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_below="@id/id_tv_room_name" />
+        <TextView
+            android:id="@+id/id_tv_room_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/text_tv_room_name"/>
 
-    <TextView
-        android:id="@+id/id_tv_light_switch_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_below="@id/id_spn_room"
-        android:layout_marginTop="10dp"
-        android:text="@string/text_tv_light_switch_name"/>
+        <Spinner
+            android:id="@+id/id_spn_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/id_tv_room_name" />
 
-    <EditText
-        android:id="@+id/id_et_light_switch_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_below="@id/id_tv_light_switch_name"
-        android:hint="@string/hint_et_light_switch_name" />
+        <TextView
+            android:id="@+id/id_tv_light_switch_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/id_spn_room"
+            android:layout_marginTop="10dp"
+            android:text="@string/text_tv_light_switch_name"/>
 
-    <TextView
-        android:id="@+id/id_tv_orientation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_below="@id/id_et_light_switch_name"
-        android:layout_marginTop="10dp"
-        android:text="@string/text_tv_orientation"/>
+        <EditText
+            android:id="@+id/id_et_light_switch_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/id_tv_light_switch_name"
+            android:hint="@string/hint_et_light_switch_name" />
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+        <TextView
+            android:id="@+id/id_tv_orientation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/id_et_light_switch_name"
+            android:layout_marginTop="10dp"
+            android:text="@string/text_tv_orientation"/>
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/id_rg_pl"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_below="@id/id_tv_orientation"
+                    android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/id_rb_portrait"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_below="@id/id_tv_orientation"
-                android:orientation="horizontal">
+                android:text="@string/text_rb_portrait" />
 
-        <RadioButton
-            android:id="@+id/id_rb_portrait"
+            <RadioButton
+                android:id="@+id/id_rb_landscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@string/text_rb_landscape" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/id_tv_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_rb_portrait" />
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/id_rg_pl"
+            android:layout_marginTop="10dp"
+            android:text="@string/text_tv_position"/>
 
-        <RadioButton
-            android:id="@+id/id_rb_landscape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="@string/text_rb_landscape" />
+        <LinearLayout
+            android:id="@+id/id_ll_position"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:layout_below="@+id/id_tv_position"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp">
 
-    </RadioGroup>
+            <TextView
+                android:id="@+id/id_tv_position_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_tv_position_x"
+                android:labelFor="@+id/id_et_position_x" />
 
-</RelativeLayout>
+            <EditText
+                android:id="@+id/id_et_position_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:inputType="number" />
+
+            <TextView
+                android:id="@+id/id_tv_position_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:text="@string/text_tv_position_y"
+                android:labelFor="@+id/id_et_position_y" />
+
+            <EditText
+                android:id="@+id/id_et_position_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:inputType="number"/>
+
+            <TextView
+                android:id="@+id/id_tv_position_z"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:text="@string/text_tv_position_z"
+                android:labelFor="@+id/id_et_position_z"/>
+
+            <EditText
+                android:id="@+id/id_et_position_z"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+
+            </LinearLayout>
+
+
+    </RelativeLayout>
+
+</ScrollView>

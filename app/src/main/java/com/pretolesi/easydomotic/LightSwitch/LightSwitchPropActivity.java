@@ -47,6 +47,9 @@ public class LightSwitchPropActivity extends Activity implements
     private EditText m_id_et_light_switch_name;
     private RadioButton m_id_rb_portrait;
     private RadioButton m_id_rb_landscape;
+    private EditText m_id_et_position_x;
+    private EditText m_id_et_position_y;
+    private EditText m_id_et_position_z;
     private LightSwitchData m_lsd;
 
     @Override
@@ -57,6 +60,9 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_light_switch_name = (EditText)findViewById(R.id.id_et_light_switch_name);
         m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
         m_id_rb_landscape = (RadioButton)findViewById(R.id.id_rb_landscape);
+        m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
+        m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
+        m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
         setActionBar();
 /*
@@ -272,6 +278,15 @@ public class LightSwitchPropActivity extends Activity implements
                     m_id_rb_portrait.setChecked(true);
                 }
             }
+            if (m_id_et_position_x != null) {
+                m_id_et_position_x.setText(Float.toString(m_lsd.getPosX()));
+            }
+            if (m_id_et_position_y != null) {
+                m_id_et_position_y.setText(Float.toString(m_lsd.getPosY()));
+            }
+            if (m_id_et_position_z != null) {
+                m_id_et_position_z.setText(Float.toString(m_lsd.getPosZ()));
+            }
         }
     }
 
@@ -280,7 +295,7 @@ public class LightSwitchPropActivity extends Activity implements
             return ;
         }
         if(getOrientation() == Orientation.UNDEFINED ) {
-            OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(OkDialogFragment.ORIENTATION_ERROR_ID, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
             .show(getFragmentManager(), "");
             return ;
         }
@@ -298,6 +313,22 @@ public class LightSwitchPropActivity extends Activity implements
         if(getOrientation() == Orientation.LANDSCAPE ){
             m_lsd.setLandscape(true);
         }
+        try {
+            if (m_id_et_position_x != null) {
+                m_lsd.setPosX(Float.parseFloat(m_id_et_position_x.getText().toString()));
+            }
+            if (m_id_et_position_y != null) {
+                m_lsd.setPosY(Float.parseFloat(m_id_et_position_y.getText().toString()));
+            }
+            if (m_id_et_position_z != null) {
+                m_lsd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
+            }
+        } catch (Exception ex) {
+            OkDialogFragment.newInstance(OkDialogFragment.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+            return ;
+        }
+        verificare che non viene impostato l'id della room...'
         if(SQLContract.LightSwitchEntry.save(this,m_lsd)){
             OkDialogFragment.newInstance(OkDialogFragment.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");

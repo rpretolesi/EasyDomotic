@@ -20,6 +20,10 @@ public class OkDialogFragment extends DialogFragment {
     public static final int SAVING_ERROR_ID = 101;
     public static final int DELETING_OK_ID = 102;
     public static final int DELETING_ERROR_ID = 103;
+
+    public static final int ROOM_ERROR_ID = 110;
+    public static final int ORIENTATION_ERROR_ID = 111;
+    public static final int POSITION_ERROR_ID = 112;
     private OkDialogFragmentCallbacks mCallbacks;
 
     /**
