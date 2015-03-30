@@ -3,14 +3,20 @@ package com.pretolesi.easydomotic.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 
 /**
  *
  */
 public class YesNoDialogFragment extends DialogFragment {
+
+    private static final String TAG = "YesNoDialogFragment";
+
+    public static final int SAVE_CONFIRM_ID = 100;
+    public static final int SAVE_CONFIRM_FROM_BACK_BUTTON_ID = 101;
+    public static final int DELETE_CONFIRM_ID = 102;
 
     private YesNoDialogFragmentCallbacks mCallbacks;
 
@@ -18,16 +24,16 @@ public class YesNoDialogFragment extends DialogFragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String POSITION = "position";
+    private static final String DLG_ID = "dlg_id";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
     private static final String YES_BTN_TEXT = "yes_btn_text";
     private static final String NO_BTN_TEXT = "no_btn_text";
 
-    public static YesNoDialogFragment newInstance(int position, String strTitle, String strMessage, String strYesButtonText, String strNoButtonText) {
+    public static YesNoDialogFragment newInstance(int dlgID, String strTitle, String strMessage, String strYesButtonText, String strNoButtonText) {
         YesNoDialogFragment fragment = new YesNoDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(POSITION, position);
+        args.putInt(DLG_ID, dlgID);
         args.putString(TITLE, strTitle);
         args.putString(MESSAGE, strMessage);
         args.putString(YES_BTN_TEXT, strYesButtonText);
@@ -61,12 +67,12 @@ public class YesNoDialogFragment extends DialogFragment {
         builder.setMessage(getArguments().getString(MESSAGE));
         builder.setPositiveButton(getArguments().getString(YES_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(POSITION), true, false);
+                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(DLG_ID), true, false);
             }
         });
         builder.setNegativeButton(getArguments().getString(NO_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(POSITION), false, true);
+                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(DLG_ID), false, true);
             }
         });
 
@@ -79,6 +85,6 @@ public class YesNoDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onYesNoDialogFragmentClickListener(int position, boolean bYes, boolean bNo);
+        void onYesNoDialogFragmentClickListener(int dlgID, boolean bYes, boolean bNo);
     }
 }

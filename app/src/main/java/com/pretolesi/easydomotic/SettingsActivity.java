@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
@@ -191,6 +190,7 @@ public class SettingsActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
+/*
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
         if(f instanceof BaseFragment) {
             BaseFragment bf = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.container);
@@ -199,8 +199,8 @@ public class SettingsActivity extends BaseActivity implements
                         7,
                         getString(R.string.text_title_room_not_saved),
                         getString(R.string.text_message_room_save_confirmation),
-                        getString(R.string.text_btn_yes),
-                        getString(R.string.text_btn_no)
+                        getString(R.string.text_yndf_btn_yes),
+                        getString(R.string.text_yndf_btn_no)
                 );
                 m_yndf.show(getSupportFragmentManager(), "");
             } else {
@@ -209,6 +209,7 @@ public class SettingsActivity extends BaseActivity implements
         }else {
             super.onBackPressed();
         }
+*/
     }
 
     @Override

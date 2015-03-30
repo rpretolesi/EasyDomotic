@@ -20,9 +20,6 @@
     <string name="text_toast_room_name_already_exist">Room Name already exist.</string>
     <string name="text_toast_room_add_not_exist">Before Add objects, you should Create a New Room or Open an existing one.</string>
     <string name="text_toast_room_save_not_exist">Before Save objects, you should Create a New Room or Open an existing one.</string>
-    <string name="text_title_room_not_saved">Room not saved.</string>
-    <string name="text_title_room_id_not_valid">Room identification not valid.</string>
-    <string name="text_message_room_save_confirmation">Do you want to save it ?</string>
     <string name="text_toast_room_saved_ok">Room saved.</string>
     <string name="text_toast_room_saved_error">Error Saving Room.</string>
     <string name="text_tv_switch_name">Switch Name</string>
@@ -39,11 +36,31 @@
     <string name="text_odf_message_orientation_not_set">Please set the orientation.</string>
 
     <string name="text_odf_title_light_switch_name_error">Light Switch Name Error.</string>
-    <string name="text_odf_message_light_switch_name_not_valid">Switch Name not valid.</string>
-    <string name="text_odf_message_light_switch_name_already_exist">Switch Name already exist.</string>
+    <string name="text_odf_message_light_switch_name_not_valid">Light Switch Name not valid.</string>
+    <string name="text_odf_message_light_switch_name_already_exist">LightSwitch Name already exist.</string>
 
-    <string name="text_odf_message_ok_button">Ok</string>
+    <string name="text_odf_title_saving">Saving &#8230; </string>
+    <string name="text_odf_message_saving_ok">Saving OK.</string>
+    <string name="text_odf_message_saving_error">Saving Error.</string>
 
+    <string name="text_odf_title_deleting">Deleting &#8230; </string>
+    <string name="text_odf_message_deleting_ok">Deleting OK.</string>
+    <string name="text_odf_message_deleting_error">Deleting Error.</string>
+
+    <string name="text_odf_message_ok_button">OK</string>
+
+    <!--
+        YesNoDialogFragment
+        <string name="text_title_room_id_not_valid">Room identification not valid.</string>
+    -->
+    <string name="text_yndf_title_data_not_saved">Data not saved.</string>
+    <string name="text_yndf_message_data_save_confirmation">Do you want to save it ?</string>
+
+    <string name="text_yndf_title_data_delete">Data is deleting &#8230; </string>
+    <string name="text_yndf_message_data_delete_confirmation">Are you sure ?</string>
+
+    <string name="text_yndf_btn_yes">Yes</string>
+    <string name="text_yndf_btn_no">No</string>
 
 
     <string name="text_tv_hint_name">My Name</string>
@@ -58,12 +75,6 @@
     <string name="text_tv_orientation">Orientation</string>
     <string name="text_rb_portrait">Portrait</string>
     <string name="text_rb_landscape">Landscape</string>
-
-    <!--
-        YesNoDialogFragment
-    -->
-    <string name="text_btn_yes">Yes</string>
-    <string name="text_btn_no">No</string>
 
     <!--
         Menu Title

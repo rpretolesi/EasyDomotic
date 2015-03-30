@@ -16,14 +16,12 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
-
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.RoomFragmentData;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
+import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 
@@ -31,7 +29,9 @@ import java.util.ArrayList;
  *
  */
 public class LightSwitchPropActivity extends Activity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        OkDialogFragment.OkDialogFragmentCallbacks,
+        YesNoDialogFragment.YesNoDialogFragmentCallbacks{
     private static final String TAG = "LightSwitchPropActivity";
 
     private static final String ROOM_ID = "Room_ID";
@@ -115,7 +115,8 @@ public class LightSwitchPropActivity extends Activity implements
 
             // Respond to the action bar's Up/Home button
             case R.id.id_item_menu_delete:
-
+                // Delete Data
+                deleteLightSwitchData();
                 return true;
 
             case R.id.id_item_menu_save:
@@ -184,6 +185,71 @@ public class LightSwitchPropActivity extends Activity implements
         Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
     }
 
+    @Override
+    public void onOkDialogFragmentClickListener(int dlgID) {
+        if(dlgID == OkDialogFragment.SAVING_OK_ID){
+            // Save ok, exit
+            finish();
+        }
+        if(dlgID == OkDialogFragment.DELETING_OK_ID){
+            // Save ok, exit
+            finish();
+        }
+    }
+
+    @Override
+    public void onYesNoDialogFragmentClickListener(int dlgID, boolean bYes, boolean bNo) {
+        if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ID || dlgID == YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID) {
+            if(bYes) {
+                // Save ok, exit
+                saveLightSwitchData();
+            }
+            if(bNo) {
+                if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ID) {
+                    finish();
+                }
+
+                if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID) {
+                    super.onBackPressed();
+                }
+            }
+        }
+        if(dlgID == YesNoDialogFragment.DELETE_CONFIRM_ID) {
+            if(bYes) {
+                // Delete ok, exit
+                SQLContract.LightSwitchEntry.delete(this, m_lID, m_lRoomID);
+                OkDialogFragment.newInstance(OkDialogFragment.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+            }
+            if(bNo) {
+                // No action...
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean bAskForSave = false;
+        if (m_lsd != null) {
+            if(!m_lsd.getSaved()){
+                bAskForSave = true;
+            }
+        } else {
+            bAskForSave = true;
+        }
+        if(bAskForSave){
+            YesNoDialogFragment.newInstance(
+                    YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID,
+                    getString(R.string.text_yndf_title_data_not_saved),
+                    getString(R.string.text_yndf_message_data_save_confirmation),
+                    getString(R.string.text_yndf_btn_yes),
+                    getString(R.string.text_yndf_btn_no)
+            ).show(getFragmentManager(), "");
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void updateLightSwitch() {
         if (m_lsd != null) {
             if (m_id_et_light_switch_name != null) {
@@ -213,8 +279,8 @@ public class LightSwitchPropActivity extends Activity implements
             return ;
         }
         if(getOrientation() == Orientation.UNDEFINED ) {
-            OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button));
-            odf.show(getFragmentManager(), "");
+            OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
+            .show(getFragmentManager(), "");
             return ;
         }
 
@@ -231,8 +297,23 @@ public class LightSwitchPropActivity extends Activity implements
         if(getOrientation() == Orientation.LANDSCAPE ){
             m_lsd.setLandscape(true);
         }
-        salvare e fare il controllo del salvataggio ok con dialog box
-        return ;
+        if(SQLContract.LightSwitchEntry.save(this,m_lsd)){
+            OkDialogFragment.newInstance(OkDialogFragment.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+        } else {
+            OkDialogFragment.newInstance(OkDialogFragment.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+        }
+    }
+
+    private void deleteLightSwitchData(){
+        YesNoDialogFragment.newInstance(
+                YesNoDialogFragment.DELETE_CONFIRM_ID,
+                getString(R.string.text_yndf_title_data_delete),
+                getString(R.string.text_yndf_message_data_delete_confirmation),
+                getString(R.string.text_yndf_btn_yes),
+                getString(R.string.text_yndf_btn_no)
+        ).show(getFragmentManager(), "");
     }
 
     private boolean isLightSwitchTagValid() {
@@ -277,4 +358,5 @@ public class LightSwitchPropActivity extends Activity implements
         intent.putExtra(LightSwitchPropActivity.LIGHT_SWITCH_ID, lID);
         return intent;
     }
+
 }

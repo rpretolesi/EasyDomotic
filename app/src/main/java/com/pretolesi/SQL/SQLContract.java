@@ -249,7 +249,7 @@ public class SQLContract
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
                             String[] whereArgs = {String.valueOf(lsdTemp.getID()), String.valueOf(lsdTemp.getRoomID())};
-                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsdTemp.getID());
                             // Update or Save
                             if (id > 0) {
                                 lsdTemp.setID(id);
@@ -288,7 +288,7 @@ public class SQLContract
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
 
                     String[] whereArgs = {String.valueOf(lsd.getID()), String.valueOf(lsd.getRoomID())};
-                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsd.getID());
                     // Update or Save
                     if (id > 0) {
                         lsd.setID(id);
@@ -476,6 +476,36 @@ public class SQLContract
 
         }
 
+        public static boolean delete(Context context, long lID, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                if(context != null)
+                {
+                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
         public static boolean isTagPresent(Context context, String strTag, long lRoomID) {
 
             try
@@ -619,7 +649,7 @@ public class SQLContract
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_HOUSE_TAG + " = ?";
 
                     String[] whereArgs = {String.valueOf(rfd.getID()), String.valueOf(rfd.getHouseTAG())};
-                    id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs);
+                    id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, rfd.getID());
                     // Update or Save
                     if (id > 0) {
                         rfd.setID(id);
@@ -863,16 +893,14 @@ public class SQLContract
         }
     }
 
-    public static long save(SQLiteDatabase db, String table, ContentValues values, String whereClause, String[] whereArgs ){
+    public static long save(SQLiteDatabase db, String table, ContentValues values, String whereClause, String[] whereArgs, long lID ){
         long m_lID = -1;
         if(db != null) {
             if (db.update(table, values, whereClause, whereArgs) == 0) {
                 // The Parameter doesn't exist, i will add it
                 m_lID = db.insert(table, null, values);
             } else {
-                if (values != null) {
-                    m_lID = (long) values.get(BaseColumns._ID);
-                }
+                m_lID = lID;
             }
         }
         return m_lID;

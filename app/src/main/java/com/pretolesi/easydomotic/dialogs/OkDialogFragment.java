@@ -6,27 +6,35 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 /**
  *
  */
 public class OkDialogFragment extends DialogFragment {
 
+    private static final String TAG = "OkDialogFragment";
+
+
+    public static final int SAVING_OK_ID = 100;
+    public static final int SAVING_ERROR_ID = 101;
+    public static final int DELETING_OK_ID = 102;
+    public static final int DELETING_ERROR_ID = 103;
     private OkDialogFragmentCallbacks mCallbacks;
 
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String POSITION = "position";
+    private static final String DLG_ID = "dlg_id";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
     private static final String OK_BTN_TEXT = "ok_btn_text";
 
-    public static OkDialogFragment newInstance(int position, String strTitle, String strMessage, String strOkButtonText) {
+    public static OkDialogFragment newInstance(int dlgID, String strTitle, String strMessage, String strOkButtonText) {
         OkDialogFragment fragment = new OkDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(POSITION, position);
+        args.putInt(DLG_ID, dlgID);
         args.putString(TITLE, strTitle);
         args.putString(MESSAGE, strMessage);
         args.putString(OK_BTN_TEXT, strOkButtonText);
@@ -60,8 +68,20 @@ public class OkDialogFragment extends DialogFragment {
         builder.setPositiveButton(getArguments().getString(OK_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if(mCallbacks != null){
-                    mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(POSITION));
+                    mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(DLG_ID));
                 }
+            }
+        });
+        builder.setOnKeyListener(new Dialog.OnKeyListener() {
+
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                // TODO Auto-generated method stub
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    // Back button must not close the Dialog.
+                }
+                return true;
             }
         });
 
@@ -75,6 +95,6 @@ public class OkDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onOkDialogFragmentClickListener(int position);
+        void onOkDialogFragmentClickListener(int dlgID);
     }
 }
