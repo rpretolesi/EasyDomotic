@@ -161,6 +161,7 @@ public class LightSwitchPropActivity extends Activity implements
             for(int i = 0; i < m_id_spn_room.getCount(); i++){
                 if(m_id_spn_room.getItemIdAtPosition(i) == m_lRoomID){
                     m_id_spn_room.setSelection(i);
+                    m_id_spn_room.setEnabled(false);
                 }
             }
          }
