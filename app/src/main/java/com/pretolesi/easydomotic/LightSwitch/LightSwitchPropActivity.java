@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
@@ -35,9 +36,8 @@ public class LightSwitchPropActivity extends Activity implements
     private static final String TAG = "LightSwitchPropActivity";
 
     private static final String ROOM_ID = "Room_ID";
-    private long m_lRoomID;
     private static final String LIGHT_SWITCH_ID = "Light_Switch_ID";
-    private long m_lID;
+    private static final String LIGHT_SWITCH_DATA = "Light_Switch_Data";
 
  //   private CharSequence mTitle;
 
@@ -51,11 +51,15 @@ public class LightSwitchPropActivity extends Activity implements
     private EditText m_id_et_position_y;
     private EditText m_id_et_position_z;
     private LightSwitchData m_lsd;
+    long m_lRoomIDParameter;
+    long m_lIDParameter;
+    private LightSwitchData m_lsdParameter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.light_switch_property_activity);
+
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
         m_id_et_light_switch_name = (EditText)findViewById(R.id.id_et_light_switch_name);
         m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
@@ -72,11 +76,18 @@ public class LightSwitchPropActivity extends Activity implements
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         Intent intent = getIntent();
-        if(intent != null)
-        {
-            m_lRoomID = intent.getLongExtra(ROOM_ID, 0);
-            m_lID = intent.getLongExtra(LIGHT_SWITCH_ID, 0);
-
+        if(intent != null) {
+            m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
+            m_lIDParameter = intent.getLongExtra(LIGHT_SWITCH_ID, -1);
+            m_lsdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
+/*
+            if(lsd != null){
+                m_lsd.update(lsd);
+            } else {
+                m_lsd.setRoomID(lRoomID);
+                m_lsd.setID(lID);
+            }
+*/
         }
 
         m_SCAdapter = new SimpleCursorAdapter(
@@ -127,7 +138,20 @@ public class LightSwitchPropActivity extends Activity implements
 
             case R.id.id_item_menu_save:
                 // Save Data
-                saveLightSwitchData();
+                if(m_id_et_light_switch_name != null && m_lsd != null){
+                    if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), m_lsd.getRoomID())) {
+                        saveLightSwitchData();
+                    } else {
+                        YesNoDialogFragment.newInstance(
+                                YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID,
+                                getString(R.string.text_yndf_title_light_switch_name_already_exist),
+                                getString(R.string.text_yndf_message_light_switch_name_already_exist_confirmation),
+                                getString(R.string.text_yndf_btn_yes),
+                                getString(R.string.text_yndf_btn_no)
+                        ).show(getFragmentManager(), "");
+                    }
+                }
+
                 return true;
         }
 
@@ -150,7 +174,13 @@ public class LightSwitchPropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.LightSwitchEntry.load(getContext(), m_lID, m_lRoomID);
+                    Cursor cursor;
+                    if(m_lsdParameter != null){
+                        cursor = SQLContract.LightSwitchEntry.loadFromLightSwitchData(m_lsdParameter);
+                    } else {
+                        cursor = SQLContract.LightSwitchEntry.load(getContext(), m_lIDParameter, m_lRoomIDParameter);
+                    }
+                    return cursor;
                 }
             };
         }
@@ -164,10 +194,12 @@ public class LightSwitchPropActivity extends Activity implements
         // The list should now be shown.
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(cursor);
-            for(int i = 0; i < m_id_spn_room.getCount(); i++){
-                if(m_id_spn_room.getItemIdAtPosition(i) == m_lRoomID){
-                    m_id_spn_room.setSelection(i);
-                    m_id_spn_room.setEnabled(false);
+            if(m_id_spn_room != null) {
+                for (int i = 0; i < m_id_spn_room.getCount(); i++) {
+                    if (m_id_spn_room.getItemIdAtPosition(i) == m_lsd.getRoomID()) {
+                        m_id_spn_room.setSelection(i);
+                        m_id_spn_room.setEnabled(false);
+                    }
                 }
             }
          }
@@ -221,12 +253,24 @@ public class LightSwitchPropActivity extends Activity implements
                 }
             }
         }
+
+        if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID) {
+            if(bYes) {
+                // Save ok, exit
+                saveLightSwitchData();
+            }
+            if(bNo) {
+            }
+        }
+
         if(dlgID == YesNoDialogFragment.DELETE_CONFIRM_ID) {
             if(bYes) {
                 // Delete ok, exit
-                SQLContract.LightSwitchEntry.delete(this, m_lID, m_lRoomID);
-                OkDialogFragment.newInstance(OkDialogFragment.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
-                        .show(getFragmentManager(), "");
+                if(m_lsd != null) {
+                    SQLContract.LightSwitchEntry.delete(this, m_lsd.getID(), m_lsd.getRoomID());
+                    OkDialogFragment.newInstance(OkDialogFragment.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+                }
             }
             if(bNo) {
                 // No action...
@@ -291,18 +335,30 @@ public class LightSwitchPropActivity extends Activity implements
     }
 
     private void saveLightSwitchData(){
-        if(!isLightSwitchTagValid()){
+        if (m_lsd == null) {
+            m_lsd = new LightSwitchData();
+        }
+
+        if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
+            OkDialogFragment.newInstance(OkDialogFragment.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
             return ;
         }
+        if (m_id_et_light_switch_name == null || m_id_et_light_switch_name.getText().toString().equals("")) {
+            OkDialogFragment odf = OkDialogFragment.newInstance(OkDialogFragment.LIGHT_SWITCH_NAME_ERROR, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+            odf.show(getFragmentManager(), "");
+            return ;
+        }
+
         if(getOrientation() == Orientation.UNDEFINED ) {
             OkDialogFragment.newInstance(OkDialogFragment.ORIENTATION_ERROR_ID, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
             .show(getFragmentManager(), "");
             return ;
         }
 
-        if (m_lsd == null) {
-            m_lsd = new LightSwitchData();
-        }
+        // Set the selected Room
+        m_lsd.setRoomID(m_id_spn_room.getSelectedItemId());
+
         if (m_id_et_light_switch_name != null) {
             m_lsd.setTAG(m_id_et_light_switch_name.getText().toString());
         }
@@ -328,7 +384,7 @@ public class LightSwitchPropActivity extends Activity implements
                     .show(getFragmentManager(), "");
             return ;
         }
-        verificare che non viene impostato l'id della room...'
+
         if(SQLContract.LightSwitchEntry.save(this,m_lsd)){
             OkDialogFragment.newInstance(OkDialogFragment.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
@@ -348,26 +404,6 @@ public class LightSwitchPropActivity extends Activity implements
         ).show(getFragmentManager(), "");
     }
 
-    private boolean isLightSwitchTagValid() {
-        if(m_lRoomID > 0) {
-            if (m_id_et_light_switch_name != null && !m_id_et_light_switch_name.getText().toString().equals("")) {
-                if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), m_lRoomID)) {
-                    return true;
-                } else {
-                    OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_already_exist), getString(R.string.text_odf_message_ok_button));
-                    odf.show(getFragmentManager(), "");
-                }
-            } else {
-                OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
-                odf.show(getFragmentManager(), "");
-            }
-        } else {
-            OkDialogFragment odf = OkDialogFragment.newInstance(2, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
-            odf.show(getFragmentManager(), "");
-        }
-        return false;
-    }
-
     private Orientation getOrientation() {
         if (m_id_rb_landscape != null && m_id_rb_portrait != null) {
             if(m_id_rb_landscape.isChecked() && !m_id_rb_portrait.isChecked()) {
@@ -382,12 +418,18 @@ public class LightSwitchPropActivity extends Activity implements
     }
 
 
-        public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID)
-    {
+    public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID) {
         Intent intent = new Intent();
         intent.setClass(context, LightSwitchPropActivity.class);
         intent.putExtra(LightSwitchPropActivity.ROOM_ID, lRoomID);
         intent.putExtra(LightSwitchPropActivity.LIGHT_SWITCH_ID, lID);
+        return intent;
+    }
+
+    public static Intent makeLightSwitchPropActivity(Context context, LightSwitchData lsd) {
+        Intent intent = new Intent();
+        intent.setClass(context, LightSwitchPropActivity.class);
+        intent.putExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA, lsd);
         return intent;
     }
 

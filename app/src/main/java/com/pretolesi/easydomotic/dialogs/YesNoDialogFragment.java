@@ -16,7 +16,8 @@ public class YesNoDialogFragment extends DialogFragment {
 
     public static final int SAVE_CONFIRM_ID = 100;
     public static final int SAVE_CONFIRM_FROM_BACK_BUTTON_ID = 101;
-    public static final int DELETE_CONFIRM_ID = 102;
+    public static final int SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID = 103;
+    public static final int DELETE_CONFIRM_ID = 110;
 
     private YesNoDialogFragmentCallbacks mCallbacks;
 

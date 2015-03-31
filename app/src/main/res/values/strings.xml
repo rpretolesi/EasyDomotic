@@ -30,7 +30,7 @@
         OkDialogFragment
     -->
     <string name="text_odf_title_room_data_not_present">Room data not present.</string>
-    <string name="text_odf_message_room_data_not_presenta">Please try to create a new Room.</string>
+    <string name="text_odf_message_room_data_not_present">Please try to create a new Room or Select an exist one.</string>
 
     <string name="text_odf_title_orientation_not_set">Orientation not Set.</string>
     <string name="text_odf_message_orientation_not_set">Please set the orientation.</string>
@@ -61,6 +61,9 @@
 
     <string name="text_yndf_title_data_delete">Data is deleting &#8230; </string>
     <string name="text_yndf_message_data_delete_confirmation">Are you sure ?</string>
+
+    <string name="text_yndf_title_light_switch_name_already_exist">Light Switch name already exist.</string>
+    <string name="text_yndf_message_light_switch_name_already_exist_confirmation">Do yuo want to overwrite it ?</string>
 
     <string name="text_yndf_btn_yes">Yes</string>
     <string name="text_yndf_btn_no">No</string>

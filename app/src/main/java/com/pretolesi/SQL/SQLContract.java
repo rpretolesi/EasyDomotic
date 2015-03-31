@@ -3,6 +3,7 @@ package com.pretolesi.SQL;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
@@ -362,6 +363,46 @@ public class SQLContract
             }
         }
 */
+        public static Cursor loadFromLightSwitchData(LightSwitchData lsd)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                MatrixCursor cursor = null;
+
+                if(lsd != null){
+
+                    String[] columns = new String[] {
+                            _ID,
+                            COLUMN_NAME_TAG,
+                            COLUMN_NAME_ROOM_ID,
+                            COLUMN_NAME_X,
+                            COLUMN_NAME_Y,
+                            COLUMN_NAME_Z,
+                            COLUMN_NAME_LANDSCAPE
+                    };
+
+                    cursor = new MatrixCursor(columns);
+                    cursor.addRow(new Object[] {
+                            lsd.getID(),
+                            lsd.getTag(),
+                            lsd.getRoomID(),
+                            lsd.getPosX(),
+                            lsd.getPosY(),
+                            lsd.getPosZ(),
+                            Integer.valueOf(lsd.getLandscape() ? 1 : 0)
+                    });
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
 
         public static Cursor load(Context context, long lID, long lRoomID)
         {

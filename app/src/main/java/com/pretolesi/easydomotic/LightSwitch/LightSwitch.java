@@ -197,7 +197,7 @@ public class LightSwitch extends Switch implements
             m_lsd.setSelected(true);
             this.setChecked(true);
 
-            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(),m_lsd.getRoomID(), m_lsd.getID() );
+            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(),m_lsd );
             this.getContext().startActivity(intent);
 
         }
