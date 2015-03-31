@@ -2,13 +2,13 @@ package com.pretolesi.easydomotic;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +59,7 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (m_rl == null) {
             m_rl = new RelativeLayout(getActivity().getApplicationContext());
             //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);

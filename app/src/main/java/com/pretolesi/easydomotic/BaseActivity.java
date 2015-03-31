@@ -1,12 +1,12 @@
 package com.pretolesi.easydomotic;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.util.Log;
 
 /**
  * Created by ricca_000 on 14/03/2015.
  */
-public class BaseActivity extends ActionBarActivity {
+public class BaseActivity extends Activity {
     private static final String TAG = "BaseActivity";
 
     @Override

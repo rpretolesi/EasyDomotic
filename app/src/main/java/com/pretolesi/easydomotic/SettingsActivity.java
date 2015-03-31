@@ -1,20 +1,20 @@
 package com.pretolesi.easydomotic;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
@@ -51,7 +51,7 @@ public class SettingsActivity extends BaseActivity implements
         setContentView(R.layout.settings_activity);
 
         mNavigationDrawerFragment = (SettingsNavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -81,7 +81,7 @@ public class SettingsActivity extends BaseActivity implements
         // update the main content by replacing fragments
         if(position == 0){
             m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_new_room), "", false);
-            m_sndf.show(getSupportFragmentManager(), "");
+            m_sndf.show(getFragmentManager(), "");
         }
 
         if(position == 1){
@@ -94,7 +94,7 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 2){
-            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            BaseFragment rf = (BaseFragment)getFragmentManager().findFragmentById(R.id.container);
             if(rf != null) {
                 RoomFragmentData rfd = rf.getRoomFragmentData();
                 if(rfd != null) {
@@ -148,7 +148,7 @@ public class SettingsActivity extends BaseActivity implements
                 long iRoomID = SQLContract.RoomEntry.save(this, rfd);
                 if(iRoomID > 0){
                     // Costruisco il frame...
-                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, RoomFragment.newInstance(position + 1, iRoomID), rfd.getTAG())
                             .commit();
@@ -227,7 +227,7 @@ public class SettingsActivity extends BaseActivity implements
                     } else {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     }
-                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentManager fragmentManager = getFragmentManager();
                     // Costruisco l'istanza
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, RoomFragment.newInstance(position + 1, id), rfd.getTAG())
@@ -284,7 +284,7 @@ public class SettingsActivity extends BaseActivity implements
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
@@ -320,9 +320,9 @@ public class SettingsActivity extends BaseActivity implements
     }
 
     private void saveRoomData() {
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+        Fragment f = getFragmentManager().findFragmentById(R.id.container);
         if(f instanceof BaseFragment){
-            BaseFragment bf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
+            BaseFragment bf = (BaseFragment)getFragmentManager().findFragmentById(R.id.container);
             boolean bRes = true;
             if(SQLContract.RoomEntry.save(this, bf.getRoomFragmentData()) > 0){
                 bRes = false;

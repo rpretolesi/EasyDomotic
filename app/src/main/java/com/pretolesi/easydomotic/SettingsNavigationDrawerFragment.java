@@ -1,16 +1,15 @@
 package com.pretolesi.easydomotic;
 
 import android.app.Activity;
+import android.app.ActionBar;
+import android.app.Fragment;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
 
 /**
  * Settings
@@ -151,7 +152,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                     return;
                 }
 
-                getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+                getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
             @Override
@@ -170,7 +171,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
 
-                getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+                getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
         };
 
@@ -270,8 +271,9 @@ public class SettingsNavigationDrawerFragment extends Fragment {
     }
 
     private ActionBar getActionBar() {
-        return ((ActionBarActivity) getActivity()).getSupportActionBar();
+        return getActivity().getActionBar();
     }
+
 
     /**
      * Callbacks interface that all activities using this fragment must implement.

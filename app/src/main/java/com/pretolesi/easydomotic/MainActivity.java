@@ -1,10 +1,9 @@
 package com.pretolesi.easydomotic;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,10 +13,6 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
-
-import java.util.ArrayList;
-
 
 public class MainActivity extends BaseActivity
         implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -37,8 +32,7 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        mNavigationDrawerFragment = (MainNavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (MainNavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -57,7 +51,7 @@ public class MainActivity extends BaseActivity
 //            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
 //            if(allsd != null){
                 // update the main content by replacing fragments
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentManager fragmentManager = getFragmentManager();
                 // Costruisco l'istanza
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, RoomFragment.newInstance(position + 1, id ), strTag)
@@ -88,7 +82,7 @@ public class MainActivity extends BaseActivity
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
