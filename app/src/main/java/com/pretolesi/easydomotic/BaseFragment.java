@@ -41,8 +41,6 @@ public class BaseFragment extends Fragment implements
     protected static final String ARG_SECTION_NUMBER = "section_number";
     protected static final String POSITION = "position";
     protected static final String _ID = "id";
-//    protected static final String ARG_ROOM_DATA = "Room_Data";
-//    protected static final String ARG_LIGHT_SWITCH_DATA = "Room_Light_Switch_Data";
     protected static final String EDIT_MODE = "edit_mode";
 
     protected TextView m_tvRoomName;
@@ -61,12 +59,10 @@ public class BaseFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         if (m_rl == null) {
-            m_rl = new RelativeLayout(getActivity().getApplicationContext());
-            //               RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            //               m_rl.setLayoutParams(rllp);
+            m_rl = new RelativeLayout(getActivity());
         }
         if (m_tvRoomName == null) {
-            m_tvRoomName = new TextView(getActivity().getApplicationContext());
+            m_tvRoomName = new TextView(getActivity());
             RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
             rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -80,13 +76,6 @@ public class BaseFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(m_rl != null && m_tvRoomName != null) {
             m_rl.addView(m_tvRoomName);
-/*
-            if(m_rfd != null){
-                m_tvRoomName.setText(m_rfd.getTAG());
-                m_rl.addView(m_tvRoomName);
-            }
-*/
-
         }
 
         Log.d(TAG, this.toString() + ": " + "onCreateView()");
@@ -97,17 +86,8 @@ public class BaseFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        m_rfd = getArguments().getParcelable(ARG_ROOM_DATA);
-//        if(m_rfd != null){
-//            updateRoom();
-//        } else {
-            // Prepare the loader.  Either re-connect with an existing one,
-            // or start a new one.
-            getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-            getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
-//        }
-
-//        m_allsd = getArguments().getParcelableArrayList(ARG_LIGHT_SWITCH_DATA);
+        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
@@ -202,20 +182,6 @@ public class BaseFragment extends Fragment implements
             m_allsd = SQLContract.LightSwitchEntry.get(cursor);
             newLightSwitch();
         }
-/*
-        // No valid data, finish
-        OkDialogFragment odf = OkDialogFragment.newInstance(1, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present) , getString(R.string.text_odf_message_ok_button));
-        odf.show(getFragmentManager(), "");
-*/
-/*
-        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
-            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
-            if(allsd != null && !allsd.isEmpty()){
-                m_lsd = allsd.get(0);
-            }
-        }
-*/
-
 
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
@@ -253,59 +219,6 @@ public class BaseFragment extends Fragment implements
         return m_rfd;
     }
 
-    public boolean getDataSaved() {
-        boolean bRes = true;
-        if(m_rfd != null){
-            if(!m_rfd.getSaved()) {
-                bRes = false;
-            }
-        }
-        if(m_allsd != null){
-            for(LightSwitchData lsd : m_allsd){
-                if(lsd != null){
-                    if(!lsd.getSaved()) {
-                        bRes = false;
-                    }
-                }
-            }
-        }
-
-        return bRes;
-    }
-
-    public ArrayList<LightSwitchData> getLightSwitchData() {
-/*
-        LightSwitch ls;
-        if(m_rl != null && m_allsd != null){
-            for(LightSwitchData lsd : m_allsd) {
-                if(lsd != null) {
-                    ls = (LightSwitch) m_rl.findViewWithTag(lsd.getTag());
-                    if (ls != null) {
-                        lsd.update(ls.getLightSwitchData());
-                    }
-                }
-            }
-        }
-*/
-        Log.d(TAG, this.toString() + ": " + "getLightSwitchData()");
-
-        return m_allsd;
-    }
-/*
-    public boolean isLightSwitchTagPresent(String strLightSwitchTag) {
-        boolean bRes = false;
-        if(m_allsd != null && strLightSwitchTag != null){
-            for(LightSwitchData lsd : m_allsd) {
-                if(lsd != null) {
-                    if (strLightSwitchTag.equals(lsd.getTag())) {
-                        bRes = true;
-                    }
-                }
-            }
-        }
-        return bRes;
-    }
-*/
     // Helper function
     private void newLightSwitch(){
         // Define the switch
@@ -340,43 +253,5 @@ public class BaseFragment extends Fragment implements
                 }
             }
         }
-    }
-
-    public static float getViewPositionX(View view){
-        RelativeLayout.LayoutParams rllp;
-        float fRes = 0.0f;
-        if(view != null){
-            if(view.getLayoutParams() ==  null){
-                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                view.setLayoutParams(rllp);
-            }
-            if(view.getLayoutParams() instanceof RelativeLayout.LayoutParams){
-                rllp = (RelativeLayout.LayoutParams)view.getLayoutParams();
-                if(rllp != null) {
-                    fRes = rllp.leftMargin;
-                }
-            }
-        }
-
-        return fRes;
-    }
-
-    public static float getViewPositionY(View view){
-        RelativeLayout.LayoutParams rllp;
-        float fRes = 0.0f;
-        if(view != null){
-            if(view.getLayoutParams() ==  null){
-                rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                view.setLayoutParams(rllp);
-            }
-            if(view.getLayoutParams() instanceof RelativeLayout.LayoutParams){
-                rllp = (RelativeLayout.LayoutParams)view.getLayoutParams();
-                if(rllp != null) {
-                    fRes = rllp.topMargin;
-                }
-            }
-        }
-
-        return fRes;
     }
 }

@@ -146,6 +146,24 @@ public class RoomListFragment extends ListFragment implements
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, this.toString() + ": " + "onStop()");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, this.toString() + ": " + "onDestroyView()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, this.toString() + ": " + "onDestroy()");
+    }
+
+    @Override
     public boolean onClose() {
         if (!TextUtils.isEmpty(mSearchView.getQuery())) {
             mSearchView.setQuery(null, true);

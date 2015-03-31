@@ -47,16 +47,12 @@ public class MainActivity extends BaseActivity
         // Prelevo i dati e TAG per Room
         String strTag = SQLContract.RoomEntry.getTag(this, id);
         if(strTag != null){
-//            // Prelevo i dati per gli altri oggetti della Room
-//            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
-//            if(allsd != null){
-                // update the main content by replacing fragments
-                FragmentManager fragmentManager = getFragmentManager();
-                // Costruisco l'istanza
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, RoomFragment.newInstance(position + 1, id ), strTag)
-                        .commit();
-//            }
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getFragmentManager();
+            // Costruisco l'istanza
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, RoomFragment.newInstance(position + 1, id ), strTag)
+                    .commit();
         }
     }
 

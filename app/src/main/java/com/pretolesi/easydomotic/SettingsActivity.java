@@ -87,7 +87,7 @@ public class SettingsActivity extends BaseActivity implements
         if(position == 1){
             // Costruisco il frame...
 //            FragmentManager fragmentManager = getSupportFragmentManager();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
                     .commit();
@@ -121,8 +121,7 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 7){
-            // Save
-            saveRoomData();
+
         }
     }
 
@@ -178,38 +177,15 @@ public class SettingsActivity extends BaseActivity implements
     public void onYesNoDialogFragmentClickListener(int position, boolean bYes, boolean bNo) {
         if(position == 7){
             if(bYes) {
-                // Save
-                saveRoomData();
-                super.onBackPressed();
             }
             if(bNo) {
-                super.onBackPressed();
             }
         }
     }
 
     @Override
     public void onBackPressed() {
-/*
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
-        if(f instanceof BaseFragment) {
-            BaseFragment bf = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-            if(!bf.getDataSaved()){
-                        m_yndf = YesNoDialogFragment.newInstance(
-                        7,
-                        getString(R.string.text_title_room_not_saved),
-                        getString(R.string.text_message_room_save_confirmation),
-                        getString(R.string.text_yndf_btn_yes),
-                        getString(R.string.text_yndf_btn_no)
-                );
-                m_yndf.show(getSupportFragmentManager(), "");
-            } else {
-                super.onBackPressed();
-            }
-        }else {
-            super.onBackPressed();
-        }
-*/
+        super.onBackPressed();
     }
 
     @Override
@@ -317,27 +293,6 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void saveRoomData() {
-        Fragment f = getFragmentManager().findFragmentById(R.id.container);
-        if(f instanceof BaseFragment){
-            BaseFragment bf = (BaseFragment)getFragmentManager().findFragmentById(R.id.container);
-            boolean bRes = true;
-            if(SQLContract.RoomEntry.save(this, bf.getRoomFragmentData()) > 0){
-                bRes = false;
-            }
-            if(!SQLContract.LightSwitchEntry.save(this,bf.getLightSwitchData())){
-                bRes = false;
-            }
-            if(bRes){
-                Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Toast.makeText(this, R.string.text_toast_room_save_not_exist, Toast.LENGTH_LONG).show();
-        }
     }
 
     /**

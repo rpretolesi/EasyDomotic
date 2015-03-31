@@ -138,8 +138,15 @@ public class LightSwitchPropActivity extends Activity implements
 
             case R.id.id_item_menu_save:
                 // Save Data
-                if(m_id_et_light_switch_name != null && m_lsd != null){
-                    if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), m_lsd.getRoomID())) {
+                if(m_id_et_light_switch_name != null){
+                    long lRoomID;
+                    if(m_lsdParameter != null){
+                        lRoomID = m_lsdParameter.getRoomID();
+                    } else {
+                        lRoomID = m_lRoomIDParameter;
+                    }
+
+                    if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), lRoomID)) {
                         saveLightSwitchData();
                     } else {
                         YesNoDialogFragment.newInstance(
@@ -195,8 +202,14 @@ public class LightSwitchPropActivity extends Activity implements
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(cursor);
             if(m_id_spn_room != null) {
+                long lRoomID;
+                if(m_lsdParameter != null){
+                    lRoomID = m_lsdParameter.getRoomID();
+                } else {
+                    lRoomID = m_lRoomIDParameter;
+                }
                 for (int i = 0; i < m_id_spn_room.getCount(); i++) {
-                    if (m_id_spn_room.getItemIdAtPosition(i) == m_lsd.getRoomID()) {
+                    if (m_id_spn_room.getItemIdAtPosition(i) == lRoomID) {
                         m_id_spn_room.setSelection(i);
                         m_id_spn_room.setEnabled(false);
                     }

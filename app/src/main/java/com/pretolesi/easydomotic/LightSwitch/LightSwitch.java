@@ -195,7 +195,6 @@ public class LightSwitch extends Switch implements
     public void onLongPress(MotionEvent e) {
         if(m_lsd != null) {
             m_lsd.setSelected(true);
-            this.setChecked(true);
 
             Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(),m_lsd );
             this.getContext().startActivity(intent);
