@@ -75,7 +75,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
-        // selectItem(mCurrentSelectedPosition);
+       // selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -203,6 +203,18 @@ public class SettingsNavigationDrawerFragment extends Fragment {
         if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
+    }
+
+    @Override
+    public void onResume (){
+        super.onResume();
+        // Select either the default item (0) or the last selected item.
+//        selectItem(mCurrentSelectedPosition);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override

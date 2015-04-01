@@ -22,11 +22,6 @@ public class MainActivity extends BaseActivity
      */
     private MainNavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +46,18 @@ public class MainActivity extends BaseActivity
             FragmentManager fragmentManager = getFragmentManager();
             // Costruisco l'istanza
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, RoomFragment.newInstance(position + 1, id ), strTag)
+                    .replace(R.id.container, BaseFragment.newInstance(position + 1, id, false), strTag)
                     .commit();
         }
     }
-
+/*
     public void onSectionAttached(int number, long id) {
         if(id > 0){
             mTitle = SQLContract.RoomEntry.getTag(this, id);
         } else {
             mTitle = "";
         }
+*/
 /*
         switch (number) {
             case 1:
@@ -75,15 +71,15 @@ public class MainActivity extends BaseActivity
                 break;
         }
 */
-    }
-
+//    }
+/*
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,16 +112,17 @@ public class MainActivity extends BaseActivity
 
         return super.onOptionsItemSelected(item);
     }
-
+/*
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class RoomFragment extends BaseFragment {
+ //   public static class RoomFragment extends BaseFragment {
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+ //       /**
+ //        * Returns a new instance of this fragment for the given section
+ //        * number.
+  //       */
+
 /*
         public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
             RoomFragment fragment = new RoomFragment();
@@ -139,6 +136,7 @@ public class MainActivity extends BaseActivity
             return fragment;
         }
 */
+/*
         public static RoomFragment newInstance(int sectionNumber, long id) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -165,5 +163,5 @@ public class MainActivity extends BaseActivity
                     getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getLong(_ID));
         }
     }
-
+*/
 }

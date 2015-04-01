@@ -48,9 +48,22 @@ public class BaseFragment extends Fragment implements
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
 
+    public static BaseFragment newInstance(int sectionNumber, long id, boolean bEditMode) {
+        BaseFragment fragment = new BaseFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putLong(_ID, id);
+        args.putBoolean(EDIT_MODE, bEditMode);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        ((BaseActivity) activity).onSectionAttached(getTag());
+        ((BaseActivity) activity).restoreActionBar();
+
         Log.d(TAG, this.toString() + ": " + "onAttach()");
     }
 
@@ -107,6 +120,9 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
+
+//        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+//        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
@@ -225,7 +241,7 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd){
                 if(lsd != null){
-                    LightSwitch ls = new LightSwitch(getActivity(), lsd);
+                    LightSwitch ls = new LightSwitch(getActivity(), lsd, getArguments().getBoolean(EDIT_MODE, false));
                     if(lsd.getLandscape()){
                         ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
                     }

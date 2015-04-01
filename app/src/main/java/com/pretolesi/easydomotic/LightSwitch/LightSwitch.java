@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.LightSwitch;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
@@ -25,20 +26,21 @@ public class LightSwitch extends Switch implements
     private float mLastTouchX;
     private float mLastTouchY;
 
+    private boolean m_bEditMode;
+
     public LightSwitch(Context context) {
         super(context);
         this.m_lsd = null;
-
-        addGestureListener();
+        this.m_bEditMode = false;
     }
-    public LightSwitch(Context context, LightSwitchData lsd) {
+
+    public LightSwitch(Context context, LightSwitchData lsd, boolean bEditMode) {
         super(context);
         if(lsd != null) {
             this.m_lsd = lsd;
             this.setTag(lsd.getTag());
         }
-
-        addGestureListener();
+        this.m_bEditMode = bEditMode;
     }
     public LightSwitchData getLightSwitchData() {
         return m_lsd;
@@ -62,76 +64,48 @@ public class LightSwitch extends Switch implements
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        // Let the ScaleGestureDetector inspect all events.
-        this.mDetector.onTouchEvent(event);
+        if(m_bEditMode){
+            if(mDetector == null){
+                // Instantiate the gesture detector with the
+                // application context and an implementation of
+                // GestureDetector.OnGestureListener
+                mDetector = new GestureDetectorCompat(getContext(),this);
+                // Set the gesture detector as the double tap
+                // listener.
+                mDetector.setOnDoubleTapListener(this);
+            }
+            final int action = MotionEventCompat.getActionMasked(event);
 
-        return true;
-//        return super.onTouchEvent(event);
+            switch (action) {
 
-/*
-        // Be sure to call the superclass implementation
-       final int action = MotionEventCompat.getActionMasked(event);
-       switch (action) {
-           case MotionEvent.ACTION_DOWN: {
-
-                if(m_lsd != null) {
-                    m_lsd.setSaved(false);
+                case MotionEvent.ACTION_DOWN: {
+                    break;
                 }
 
-                if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
-                    RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
-                    mLastTouchX = event.getRawX() - rllp.leftMargin;
-                    mLastTouchY = event.getRawY() - rllp.topMargin;
+                case MotionEvent.ACTION_MOVE: {
+                    break;
                 }
 
-                Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
-
-                break;
-            }
-
-            case MotionEvent.ACTION_MOVE: {
-
-                final float x = event.getRawX();
-                final float y = event.getRawY();
-                // Calculate the distance moved
-                final float dx = x - mLastTouchX;
-                final float dy = y - mLastTouchY;
-
-                if(m_lsd != null && !m_lsd.getSelected()) {
-                    BaseFragment.setViewPosition(this,(int)dx,(int)dy);
-                    m_lsd.setPosX(dx);
-                    m_lsd.setPosY(dy);
+                case MotionEvent.ACTION_UP: {
+                    if(m_lsd != null) {
+                        Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_lsd);
+                        this.getContext().startActivity(intent);
+                    }
+                    break;
                 }
-
-                Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
-
-                break;
             }
 
-            case MotionEvent.ACTION_UP: {
-                break;
-            }
+            this.mDetector.onTouchEvent(event);
 
-            case MotionEvent.ACTION_CANCEL: {
-                break;
-            }
-
-            case MotionEvent.ACTION_POINTER_UP: {
-                break;
-            }
+            return true;
         }
-//        return true;
+
         return super.onTouchEvent(event);
-*/
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if(m_lsd != null) {
-            m_lsd.setSelected(false);
-            this.setChecked(false);
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -180,7 +154,7 @@ public class LightSwitch extends Switch implements
         final float dx = x - mLastTouchX;
         final float dy = y - mLastTouchY;
 
-        if(m_lsd != null && !m_lsd.getSelected()) {
+        if(m_lsd != null) {
             BaseFragment.setViewPosition(this, (int) dx, (int) dy);
             m_lsd.setPosX(dx);
             m_lsd.setPosY(dy);
@@ -193,28 +167,16 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onLongPress(MotionEvent e) {
+/*
         if(m_lsd != null) {
-            m_lsd.setSelected(true);
-
-            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(),m_lsd );
+            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_lsd);
             this.getContext().startActivity(intent);
-
         }
+*/
     }
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
-
-    private void addGestureListener(){
-        // Instantiate the gesture detector with the
-        // application context and an implementation of
-        // GestureDetector.OnGestureListener
-        mDetector = new GestureDetectorCompat(getContext(),this);
-        // Set the gesture detector as the double tap
-        // listener.
-        mDetector.setOnDoubleTapListener(this);
-    }
-
 }

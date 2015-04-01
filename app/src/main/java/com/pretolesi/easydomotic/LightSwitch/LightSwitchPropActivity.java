@@ -138,27 +138,8 @@ public class LightSwitchPropActivity extends Activity implements
 
             case R.id.id_item_menu_save:
                 // Save Data
-                if(m_id_et_light_switch_name != null){
-                    long lRoomID;
-                    if(m_lsdParameter != null){
-                        lRoomID = m_lsdParameter.getRoomID();
-                    } else {
-                        lRoomID = m_lRoomIDParameter;
-                    }
-
-                    if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), lRoomID)) {
-                        saveLightSwitchData();
-                    } else {
-                        YesNoDialogFragment.newInstance(
-                                YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID,
-                                getString(R.string.text_yndf_title_light_switch_name_already_exist),
-                                getString(R.string.text_yndf_message_light_switch_name_already_exist_confirmation),
-                                getString(R.string.text_yndf_btn_yes),
-                                getString(R.string.text_yndf_btn_no)
-                        ).show(getFragmentManager(), "");
-                    }
-                }
-
+                saveFromMenu();
+finire questo discorso del back button
                 return true;
         }
 
@@ -295,7 +276,7 @@ public class LightSwitchPropActivity extends Activity implements
     public void onBackPressed() {
         boolean bAskForSave = false;
         if (m_lsd != null) {
-            if(!m_lsd.getSaved()){
+            if(m_lsd.getSaved()){
                 bAskForSave = true;
             }
         } else {
@@ -343,6 +324,29 @@ public class LightSwitchPropActivity extends Activity implements
             }
             if (m_id_et_position_z != null) {
                 m_id_et_position_z.setText(Float.toString(m_lsd.getPosZ()));
+            }
+        }
+    }
+
+    private void saveFromMenu() {
+        if(m_id_et_light_switch_name != null){
+            long lRoomID;
+            if(m_lsdParameter != null){
+                lRoomID = m_lsdParameter.getRoomID();
+            } else {
+                lRoomID = m_lRoomIDParameter;
+            }
+
+            if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), lRoomID)) {
+                saveLightSwitchData();
+            } else {
+                YesNoDialogFragment.newInstance(
+                        YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID,
+                        getString(R.string.text_yndf_title_light_switch_name_already_exist),
+                        getString(R.string.text_yndf_message_light_switch_name_already_exist_confirmation),
+                        getString(R.string.text_yndf_btn_yes),
+                        getString(R.string.text_yndf_btn_no)
+                ).show(getFragmentManager(), "");
             }
         }
     }

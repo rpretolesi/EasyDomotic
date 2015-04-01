@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public class LightSwitchData implements Parcelable {
 
     private boolean m_bSaved;
-    private boolean m_bSelected;
+    private boolean m_bDisp;
     private long m_ID;
     private long m_lRoomID;
     private String m_strTAG;
@@ -21,7 +21,7 @@ public class LightSwitchData implements Parcelable {
 
     public LightSwitchData() {
         this.m_bSaved = false;
-        this.m_bSelected = false;
+        this.m_bDisp = false;
         this.m_ID = -1;
         this.m_lRoomID = -1;
         this.m_strTAG = "";
@@ -31,9 +31,9 @@ public class LightSwitchData implements Parcelable {
         this.m_bLandscape = false;
     }
 
-    public LightSwitchData(boolean bSaved, boolean bSelected, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public LightSwitchData(boolean bSaved, boolean bDisp, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         this.m_bSaved = bSaved;
-        this.m_bSelected = bSelected;
+        this.m_bDisp = bDisp;
         this.m_ID = id;
         this.m_lRoomID = lRoomID;
         this.m_strTAG = strTAG;
@@ -46,7 +46,7 @@ public class LightSwitchData implements Parcelable {
     public void update(LightSwitchData lsd){
         if(lsd != null){
             this.m_bSaved = lsd.getSaved();
-            this.m_bSelected = lsd.getSelected();
+            this.m_bDisp = lsd.getDisp();
             this.m_ID = lsd.getID();
             this.m_lRoomID = lsd.getRoomID();
             this.m_strTAG = lsd.getTag();
@@ -59,7 +59,7 @@ public class LightSwitchData implements Parcelable {
 
     public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
-    public void setSelected(boolean bSelected) { this.m_bSelected = bSelected; }
+    public void setDisp(boolean bDisp) { this.m_bDisp = bDisp; }
 
     public void setID(long id) {
         this.m_ID = id;
@@ -89,7 +89,7 @@ public class LightSwitchData implements Parcelable {
 
     public boolean getSaved() { return m_bSaved; }
 
-    public boolean getSelected() { return m_bSelected; }
+    public boolean getDisp() { return m_bDisp; }
 
     public long getID() { return m_ID; }
 
@@ -117,7 +117,7 @@ public class LightSwitchData implements Parcelable {
 
     protected LightSwitchData(Parcel in) {
         m_bSaved = in.readByte() != 0;
-        m_bSelected = in.readByte() != 0;
+        m_bDisp = in.readByte() != 0;
         m_ID = in.readLong();
         m_lRoomID = in.readLong();
         m_strTAG = in.readString();
@@ -135,7 +135,7 @@ public class LightSwitchData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
-        dest.writeByte((byte) (m_bSelected ? 1 : 0));
+        dest.writeByte((byte) (m_bDisp ? 1 : 0));
         dest.writeLong(m_ID);
         dest.writeLong(m_lRoomID);
         dest.writeString(m_strTAG);

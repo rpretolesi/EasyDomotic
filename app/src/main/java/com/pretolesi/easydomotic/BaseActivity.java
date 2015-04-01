@@ -1,5 +1,6 @@
 package com.pretolesi.easydomotic;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.util.Log;
 
@@ -8,6 +9,11 @@ import android.util.Log;
  */
 public class BaseActivity extends Activity {
     private static final String TAG = "BaseActivity";
+
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    protected CharSequence mTitle;
 
     @Override
     protected void onStart() {
@@ -38,5 +44,16 @@ public class BaseActivity extends Activity {
         super.onDestroy();
         // The activity is about to be destroyed.
         Log.d(TAG, this.toString() + ": " + "onDestroy()");
+    }
+
+    public void onSectionAttached(String strTitle) {
+        mTitle = strTitle;
+    }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
     }
 }

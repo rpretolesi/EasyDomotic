@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
+import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
@@ -100,24 +101,11 @@ public class SettingsActivity extends BaseActivity implements
                 if(rfd != null) {
                     Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this, rfd.getID(), -1);
                     startActivity(intent);
-/*
-                    if (isLightSwitchTagValid(strName, rfd.getID())) {
-                        LightSwitchData lsd = new LightSwitchData(false, false, -1, rfd.getID(), strName, 30, 30, 0, bLandscape);
-                        rf.addLightSwitch(lsd);
-                    }
-*/
                 }
-            }
-
-/*
-            Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
-            if(f instanceof BaseFragment){
-                m_sndf = SetNameAndOrientDialogFragment.newInstance(position, getString(R.string.settings_title_dialog_section_add_switch), "", false);
-                m_sndf.show(getSupportFragmentManager(), "");
             } else {
-                Toast.makeText(getApplicationContext(), R.string.text_toast_room_add_not_exist, Toast.LENGTH_LONG).show();
+                OkDialogFragment.newInstance(OkDialogFragment.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
             }
-*/
         }
 
         if(position == 7){
@@ -149,7 +137,7 @@ public class SettingsActivity extends BaseActivity implements
                     // Costruisco il frame...
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
-                            .replace(R.id.container, RoomFragment.newInstance(position + 1, iRoomID), rfd.getTAG())
+                            .replace(R.id.container, BaseFragment.newInstance(position + 1, iRoomID, true), rfd.getTAG())
                             .commit();
                     Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
                 } else {
@@ -206,7 +194,7 @@ public class SettingsActivity extends BaseActivity implements
                     FragmentManager fragmentManager = getFragmentManager();
                     // Costruisco l'istanza
                     fragmentManager.beginTransaction()
-                            .replace(R.id.container, RoomFragment.newInstance(position + 1, id), rfd.getTAG())
+                            .replace(R.id.container, BaseFragment.newInstance(position + 1, id, true), rfd.getTAG())
                             .commit();
 
 /*
@@ -295,10 +283,26 @@ public class SettingsActivity extends BaseActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Room Fragment for build my custom fragment
-     */
-    public static class RoomFragment extends BaseFragment {
+    // Helper method
+    private boolean isTagRoomValid(String strTag) {
+        if(strTag != null){
+            if(!strTag.equals("")){
+                if(!SQLContract.RoomEntry.isTagPresent(this, strTag)){
+                    return true;
+                } else {
+                    Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            }
+        }
+        Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+//    /**
+//     * Room Fragment for build my custom fragment
+//     */
+//    public static class RoomFragment extends BaseFragment {
 
         /**
         * Returns a new instance of this fragment for the given section
@@ -317,6 +321,7 @@ public class SettingsActivity extends BaseActivity implements
             return fragment;
         }
 */
+        /*
         public static RoomFragment newInstance(int sectionNumber, long id) {
             RoomFragment fragment = new RoomFragment();
             Bundle args = new Bundle();
@@ -348,23 +353,7 @@ public class SettingsActivity extends BaseActivity implements
         }
 
     }
-
-    // Helper method
-    private boolean isTagRoomValid(String strTag) {
-        if(strTag != null){
-            if(!strTag.equals("")){
-                if(!SQLContract.RoomEntry.isTagPresent(this, strTag)){
-                    return true;
-                } else {
-                    Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
-                    return false;
-                }
-            }
-        }
-        Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
-        return false;
-    }
-
+*/
     public static Intent makeSettingsActivity(Context context)
     {
         Intent intent = new Intent();

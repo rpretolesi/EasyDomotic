@@ -22,9 +22,9 @@ public class OkDialogFragment extends DialogFragment {
     public static final int DELETING_ERROR_ID = 103;
 
     public static final int ROOM_ERROR_ID = 110;
-    public static final int LIGHT_SWITCH_NAME_ERROR = 111;
-    public static final int ORIENTATION_ERROR_ID = 112;
-    public static final int POSITION_ERROR_ID = 113;
+    public static final int LIGHT_SWITCH_NAME_ERROR = 112;
+    public static final int ORIENTATION_ERROR_ID = 113;
+    public static final int POSITION_ERROR_ID = 114;
     private OkDialogFragmentCallbacks mCallbacks;
 
     /**
