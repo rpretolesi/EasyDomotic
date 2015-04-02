@@ -82,14 +82,6 @@ public class LightSwitchPropActivity extends Activity implements
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
             m_lIDParameter = intent.getLongExtra(LIGHT_SWITCH_ID, -1);
             m_lsdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
-/*
-            if(lsd != null){
-                m_lsd.update(lsd);
-            } else {
-                m_lsd.setRoomID(lRoomID);
-                m_lsd.setID(lID);
-            }
-*/
         }
 
         m_SCAdapter = new SimpleCursorAdapter(
@@ -115,14 +107,7 @@ public class LightSwitchPropActivity extends Activity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.menu_light_switch_property_activity, menu);
-//            restoreActionBar();
-
-//        }
+        getMenuInflater().inflate(R.menu.menu_light_switch_property_activity, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -179,7 +164,7 @@ public class LightSwitchPropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.RoomEntry.load(getContext());
+                    return SQLContract.RoomEntry.load();
                 }
             };
         }
@@ -192,7 +177,7 @@ public class LightSwitchPropActivity extends Activity implements
                     if(m_lsdParameter != null){
                         cursor = SQLContract.LightSwitchEntry.loadFromLightSwitchData(m_lsdParameter);
                     } else {
-                        cursor = SQLContract.LightSwitchEntry.load(getContext(), m_lIDParameter, m_lRoomIDParameter);
+                        cursor = SQLContract.LightSwitchEntry.load(m_lIDParameter, m_lRoomIDParameter);
                     }
                     return cursor;
                 }
@@ -351,7 +336,7 @@ public class LightSwitchPropActivity extends Activity implements
                 lRoomID = m_lRoomIDParameter;
             }
 
-            if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), lRoomID)) {
+            if (!SQLContract.LightSwitchEntry.isTagPresent(m_id_et_light_switch_name.getText().toString(), lRoomID)) {
                 saveLightSwitchData(iDialogOriginID);
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
@@ -416,7 +401,7 @@ public class LightSwitchPropActivity extends Activity implements
             return ;
         }
 
-        if(SQLContract.LightSwitchEntry.save(this,m_lsd)){
+        if(SQLContract.LightSwitchEntry.save(m_lsd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         } else {
@@ -437,7 +422,7 @@ public class LightSwitchPropActivity extends Activity implements
     }
     private void deleteLightSwitchData(int iDialogOriginID) {
         if(m_lsd != null) {
-            SQLContract.LightSwitchEntry.delete(this, m_lsd.getID(), m_lsd.getRoomID());
+            SQLContract.LightSwitchEntry.delete(m_lsd.getID(), m_lsd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }

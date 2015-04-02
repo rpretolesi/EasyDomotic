@@ -132,7 +132,7 @@ public class SettingsActivity extends BaseActivity implements
                 rfd.setLandscape(bLandscape);
 
                 // Salvo
-                long iRoomID = SQLContract.RoomEntry.save(this, rfd);
+                long iRoomID = SQLContract.RoomEntry.save(rfd);
                 if(iRoomID > 0){
                     // Costruisco il frame...
                     FragmentManager fragmentManager = getFragmentManager();
@@ -170,7 +170,7 @@ public class SettingsActivity extends BaseActivity implements
     public void onListRoomFragmentClickListener(int sectionNumber, int position, long id) {
         if(position == 1){
             // Prelevo i dati e TAG per Room
-            Cursor cursor = SQLContract.RoomEntry.load(this, id);
+            Cursor cursor = SQLContract.RoomEntry.load(id);
             ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
             if(alrfd != null && !alrfd.isEmpty()) {
                 RoomFragmentData rfd = alrfd.get(0);
@@ -277,7 +277,7 @@ public class SettingsActivity extends BaseActivity implements
     private boolean isTagRoomValid(String strTag) {
         if(strTag != null){
             if(!strTag.equals("")){
-                if(!SQLContract.RoomEntry.isTagPresent(this, strTag)){
+                if(!SQLContract.RoomEntry.isTagPresent(strTag)){
                     return true;
                 } else {
                     Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();

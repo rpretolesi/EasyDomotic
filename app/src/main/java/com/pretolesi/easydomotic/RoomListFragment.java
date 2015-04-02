@@ -209,7 +209,7 @@ public class RoomListFragment extends ListFragment implements
         return new CursorLoader(getActivity()){
             @Override
             public Cursor loadInBackground() {
-                return SQLContract.RoomEntry.load(getActivity());
+                return SQLContract.RoomEntry.load();
             }
         };
     }

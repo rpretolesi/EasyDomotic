@@ -157,8 +157,8 @@ public class LightSwitch extends Switch implements
 
         if(m_lsd != null) {
             BaseFragment.setViewPosition(this, (int) dx, (int) dy);
-            m_lsd.setPosX(dx);
-            m_lsd.setPosY(dy);
+            m_lsd.setPosX((int)dx);
+            m_lsd.setPosY((int)dy);
         }
 
 //        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);

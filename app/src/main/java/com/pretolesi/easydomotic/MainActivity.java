@@ -1,18 +1,14 @@
 package com.pretolesi.easydomotic;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.SQL.SQLHelper;
 
 public class MainActivity extends BaseActivity
         implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -27,6 +23,9 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+        // Initialize the SQL Instance
+        SQLHelper.getInstance(getApplicationContext());
+
         mNavigationDrawerFragment = (MainNavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -40,7 +39,7 @@ public class MainActivity extends BaseActivity
     public void onNavigationDrawerItemSelected(int position, long id) {
 
         // Prelevo i dati e TAG per Room
-        String strTag = SQLContract.RoomEntry.getTag(this, id);
+        String strTag = SQLContract.RoomEntry.getTag(id);
         if(strTag != null){
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getFragmentManager();

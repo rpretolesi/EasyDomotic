@@ -113,7 +113,8 @@
                     android:id="@+id/id_et_position_x"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                     android:inputType="number" />
+                    android:text="0"
+                    android:inputType="number" />
 
                 <TextView
                     android:id="@+id/id_tv_position_y"
@@ -127,7 +128,8 @@
                     android:id="@+id/id_et_position_y"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                     android:inputType="number"/>
+                    android:text="0"
+                    android:inputType="number"/>
 
                 <TextView
                     android:id="@+id/id_tv_position_z"
@@ -141,6 +143,7 @@
                     android:id="@+id/id_et_position_z"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:inputType="number"/>
 
                 </LinearLayout>

@@ -1,7 +1,6 @@
 package com.pretolesi.SQL;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,16 +8,15 @@ import android.provider.BaseColumns;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.RoomFragmentData;
 
 /**
- * Created by RPRETOLESI on 28/01/2015.
+ *
  */
 public class SQLContract
 {
-    private static ReentrantLock m_LockCommandHolder = new ReentrantLock();;
+    private static ReentrantLock m_LockCommandHolder = new ReentrantLock();
 
     public static final String DATABASE_NAME = "easydomotic.db";
     public static final int DATABASE_VERSION = 1;
@@ -84,16 +82,17 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean setParameter(Context context, AppParameter pType, String strpValue)
+        public static boolean setParameter(AppParameter pType, String strpValue)
         {
             m_LockCommandHolder.lock();
 
             ContentValues values = null;
             try
             {
-                if (context != null && pType != null && strpValue != null)
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if (db != null && pType != null && strpValue != null)
                 {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     values = new ContentValues();
                     values.put(COLUMN_NAME_PARAMETER_ID, pType.getValue());
@@ -134,7 +133,7 @@ public class SQLContract
             return false;
         }
 
-        public static String getParameter(Context context, AppParameter pType)
+        public static String getParameter(AppParameter pType)
         {
             m_LockCommandHolder.lock();
 
@@ -142,9 +141,10 @@ public class SQLContract
             String strRes = "";
             try
             {
-                if(context != null && pType != null)
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && pType != null)
                 {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -231,14 +231,16 @@ public class SQLContract
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
-        public static boolean save(Context context, ArrayList<LightSwitchData> allsd)  {
+        public static boolean save(ArrayList<LightSwitchData> allsd)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && allsd != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && allsd != null) {
 
                     ContentValues values = new ContentValues();
                     for(LightSwitchData lsdTemp:allsd){
@@ -272,14 +274,14 @@ public class SQLContract
 
         }
 
-        public static boolean save(Context context,LightSwitchData lsd)  {
+        public static boolean save(LightSwitchData lsd)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && lsd != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null && lsd != null) {
 
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTag()));
@@ -354,7 +356,7 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(Context context, long lID, long lRoomID)
+        public static Cursor load(long lID, long lRoomID)
         {
             try
             {
@@ -362,9 +364,8 @@ public class SQLContract
 
                 Cursor cursor = null;
 
-                if(context != null)
-                {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -407,7 +408,7 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(Context context, long lRoomID)
+        public static Cursor load(long lRoomID)
         {
             try
             {
@@ -415,9 +416,8 @@ public class SQLContract
 
                 Cursor cursor = null;
 
-                if(context != null)
-                {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -460,16 +460,14 @@ public class SQLContract
             }
         }
 
-        public static boolean delete(Context context, long lID, long lRoomID)
+        public static boolean delete(long lID, long lRoomID)
         {
             try
             {
                 m_LockCommandHolder.lock();
-
-                if(context != null)
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
                 {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
-
 
                     // Which row to get based on WHERE
                     String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
@@ -490,7 +488,7 @@ public class SQLContract
             }
         }
 
-        public static boolean isTagPresent(Context context, String strTag, long lRoomID) {
+        public static boolean isTagPresent(String strTag, long lRoomID) {
 
             try
             {
@@ -498,8 +496,8 @@ public class SQLContract
 
                 boolean bRes = false;
 
-                if(context != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -602,14 +600,15 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static long save(Context context, RoomFragmentData rfd)  {
+        public static long save(RoomFragmentData rfd)  {
 
             long id = -1;
             try
             {
                 m_LockCommandHolder.lock();
-                if(context != null && rfd != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && rfd != null) {
 
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_NAME_TAG, String.valueOf(rfd.getTAG()));
@@ -636,17 +635,17 @@ public class SQLContract
             return id;
         }
 
-        public static Cursor load(Context context)
+        public static Cursor load()
         {
             try
             {
                 m_LockCommandHolder.lock();
 
-               Cursor cursor = null;
+                Cursor cursor = null;
 
-                if(context != null)
-                {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -684,15 +683,16 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(Context context, long id) {
+        public static Cursor load(long id) {
             try
             {
                 m_LockCommandHolder.lock();
 
                 Cursor cursor = null;
 
-                if(context != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -735,7 +735,7 @@ public class SQLContract
             }
         }
 
-        public static String getTag(Context context, long id) {
+        public static String getTag(long id) {
 
             try
             {
@@ -743,8 +743,8 @@ public class SQLContract
 
                 String strTAG = null;
 
-                if(context != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.
@@ -788,7 +788,7 @@ public class SQLContract
             }
         }
 
-        public static boolean isTagPresent(Context context, String strTag) {
+        public static boolean isTagPresent(String strTag) {
 
             try
             {
@@ -796,8 +796,9 @@ public class SQLContract
 
                 boolean bRes = false;
 
-                if(context != null) {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null) {
 
                     // Define a projection that specifies which columns from the database
                     // you will actually use after this query.

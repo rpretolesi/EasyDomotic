@@ -21,7 +21,6 @@ import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
-import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 
 import java.util.ArrayList;
 
@@ -124,6 +123,8 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null){
             m_rl.removeAllViews();
         }
+        getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
 
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
@@ -159,7 +160,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.RoomEntry.load(getContext(), getArguments().getLong(_ID, -1));
+                    return SQLContract.RoomEntry.load(getArguments().getLong(_ID, -1));
                 }
             };
         }
@@ -168,7 +169,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.LightSwitchEntry.load(getContext(), getArguments().getLong(_ID, -1));
+                    return SQLContract.LightSwitchEntry.load(getArguments().getLong(_ID, -1));
                 }
             };
         }
@@ -199,9 +200,7 @@ public class BaseFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
 
-        }
         Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
     }
 

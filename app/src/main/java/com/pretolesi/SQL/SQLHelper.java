@@ -11,7 +11,6 @@ import com.pretolesi.SQL.SQLContract;
  */
 public class SQLHelper extends SQLiteOpenHelper {
     // Member for Singletone
-    private final Context m_Context;
     private static SQLHelper m_Instance;
     private static SQLiteDatabase m_Db;
 
@@ -25,7 +24,6 @@ public class SQLHelper extends SQLiteOpenHelper {
     private SQLHelper(Context context)
     {
         super(context, SQLContract.DATABASE_NAME, null, SQLContract.DATABASE_VERSION);
-        this.m_Context = context;
     }
 
     /**
@@ -40,6 +38,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         {
             m_Instance = new SQLHelper(context);
         }
+        return m_Instance;
+    }
+
+    public static SQLHelper getInstance()
+    {
         return m_Instance;
     }
 

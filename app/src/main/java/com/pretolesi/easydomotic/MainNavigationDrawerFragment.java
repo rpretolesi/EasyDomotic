@@ -219,7 +219,7 @@ public class MainNavigationDrawerFragment extends Fragment {
     @Override
     public void onResume (){
         super.onResume();
-        mAdapter.swapCursor(SQLContract.RoomEntry.load(getActivity()));
+        mAdapter.swapCursor(SQLContract.RoomEntry.load());
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition, mCurrentSelectedID);
