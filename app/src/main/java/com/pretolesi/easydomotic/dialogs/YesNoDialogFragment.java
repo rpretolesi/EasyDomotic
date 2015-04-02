@@ -14,10 +14,6 @@ public class YesNoDialogFragment extends DialogFragment {
 
     private static final String TAG = "YesNoDialogFragment";
 
-    public static final int SAVE_CONFIRM_ID = 100;
-    public static final int SAVE_CONFIRM_FROM_BACK_BUTTON_ID = 101;
-    public static final int SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID = 103;
-    public static final int DELETE_CONFIRM_ID = 110;
 
     private YesNoDialogFragmentCallbacks mCallbacks;
 
@@ -25,16 +21,18 @@ public class YesNoDialogFragment extends DialogFragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String DLG_ID = "dlg_id";
+    private static final String ORIGIN_ID = "origin_id";
+    private static final String ACTION_ID = "action_id";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
     private static final String YES_BTN_TEXT = "yes_btn_text";
     private static final String NO_BTN_TEXT = "no_btn_text";
 
-    public static YesNoDialogFragment newInstance(int dlgID, String strTitle, String strMessage, String strYesButtonText, String strNoButtonText) {
+    public static YesNoDialogFragment newInstance(int iDialogOriginID, int iDialogActionID, String strTitle, String strMessage, String strYesButtonText, String strNoButtonText) {
         YesNoDialogFragment fragment = new YesNoDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(DLG_ID, dlgID);
+        args.putInt(ORIGIN_ID, iDialogOriginID);
+        args.putInt(ACTION_ID, iDialogActionID);
         args.putString(TITLE, strTitle);
         args.putString(MESSAGE, strMessage);
         args.putString(YES_BTN_TEXT, strYesButtonText);
@@ -51,8 +49,7 @@ public class YesNoDialogFragment extends DialogFragment {
         super.onAttach(activity);
         try {
             mCallbacks = (YesNoDialogFragmentCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement YesNoDialogFragmentCallbacks.");
+        } catch (ClassCastException ignore) {
         }
     }
     @Override
@@ -68,12 +65,16 @@ public class YesNoDialogFragment extends DialogFragment {
         builder.setMessage(getArguments().getString(MESSAGE));
         builder.setPositiveButton(getArguments().getString(YES_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(DLG_ID), true, false);
+                if(mCallbacks != null){
+                    mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(ORIGIN_ID), getArguments().getInt(ACTION_ID), true, false);
+                }
             }
         });
         builder.setNegativeButton(getArguments().getString(NO_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(DLG_ID), false, true);
+                if(mCallbacks != null){
+                    mCallbacks.onYesNoDialogFragmentClickListener(getArguments().getInt(ORIGIN_ID), getArguments().getInt(ACTION_ID), false, true);
+                }
             }
         });
 
@@ -86,6 +87,6 @@ public class YesNoDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onYesNoDialogFragmentClickListener(int dlgID, boolean bYes, boolean bNo);
+        void onYesNoDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID,  boolean bYes, boolean bNo);
     }
 }

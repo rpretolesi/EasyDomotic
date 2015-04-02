@@ -15,31 +15,23 @@ public class OkDialogFragment extends DialogFragment {
 
     private static final String TAG = "OkDialogFragment";
 
-
-    public static final int SAVING_OK_ID = 100;
-    public static final int SAVING_ERROR_ID = 101;
-    public static final int DELETING_OK_ID = 102;
-    public static final int DELETING_ERROR_ID = 103;
-
-    public static final int ROOM_ERROR_ID = 110;
-    public static final int LIGHT_SWITCH_NAME_ERROR = 112;
-    public static final int ORIENTATION_ERROR_ID = 113;
-    public static final int POSITION_ERROR_ID = 114;
     private OkDialogFragmentCallbacks mCallbacks;
 
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String DLG_ID = "dlg_id";
+    private static final String ORIGIN_ID = "origin_id";
+    private static final String ACTION_ID = "action_id";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
     private static final String OK_BTN_TEXT = "ok_btn_text";
 
-    public static OkDialogFragment newInstance(int dlgID, String strTitle, String strMessage, String strOkButtonText) {
+    public static OkDialogFragment newInstance(int iDialogOriginID, int iDialogActionID, String strTitle, String strMessage, String strOkButtonText) {
         OkDialogFragment fragment = new OkDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(DLG_ID, dlgID);
+        args.putInt(ORIGIN_ID, iDialogOriginID);
+        args.putInt(ACTION_ID, iDialogActionID);
         args.putString(TITLE, strTitle);
         args.putString(MESSAGE, strMessage);
         args.putString(OK_BTN_TEXT, strOkButtonText);
@@ -73,7 +65,7 @@ public class OkDialogFragment extends DialogFragment {
         builder.setPositiveButton(getArguments().getString(OK_BTN_TEXT), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if(mCallbacks != null){
-                    mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(DLG_ID));
+                    mCallbacks.onOkDialogFragmentClickListener(getArguments().getInt(ORIGIN_ID), getArguments().getInt(ACTION_ID));
                 }
             }
         });
@@ -100,6 +92,6 @@ public class OkDialogFragment extends DialogFragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onOkDialogFragmentClickListener(int dlgID);
+        void onOkDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID);
     }
 }

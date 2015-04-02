@@ -71,24 +71,13 @@ public class BaseFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (m_rl == null) {
-            m_rl = new RelativeLayout(getActivity());
-        }
-        if (m_tvRoomName == null) {
-            m_tvRoomName = new TextView(getActivity());
-            RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-            rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            m_tvRoomName.setLayoutParams(rlp);
-        }
-
         Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(m_rl != null && m_tvRoomName != null) {
-            m_rl.addView(m_tvRoomName);
+        if (m_rl == null) {
+            m_rl = new RelativeLayout(getActivity());
         }
 
         Log.d(TAG, this.toString() + ": " + "onCreateView()");
@@ -99,8 +88,8 @@ public class BaseFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+//        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+//        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
@@ -121,8 +110,8 @@ public class BaseFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
-//        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-//        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
@@ -130,6 +119,12 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+
+        // remove all object
+        if(m_rl != null){
+            m_rl.removeAllViews();
+        }
+
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
@@ -196,7 +191,7 @@ public class BaseFragment extends Fragment implements
 
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             m_allsd = SQLContract.LightSwitchEntry.get(cursor);
-            newLightSwitch();
+            updateLightSwitchs();
         }
 
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -211,17 +206,25 @@ public class BaseFragment extends Fragment implements
     }
 
     @Override
-    public void onOkDialogFragmentClickListener(int position) {
-        if(position == 1){
+    public void onOkDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID) {
 
-        }
     }
 
     private void updateRoom(){
-        if(m_rfd != null) {
-            if(m_tvRoomName != null){
-                m_tvRoomName.setText(m_rfd.getTAG());
+        if(m_rl != null && m_rfd != null) {
+            if (m_tvRoomName == null) {
+                m_tvRoomName = new TextView(getActivity());
+
+                RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                m_tvRoomName.setLayoutParams(rlp);
             }
+
+            m_tvRoomName.setText(m_rfd.getTAG());
+
+            m_rl.addView(m_tvRoomName);
+
             // Controllo orientamento prima di costruire il frame....
             if(m_rfd.getLandscape()){
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -236,7 +239,7 @@ public class BaseFragment extends Fragment implements
     }
 
     // Helper function
-    private void newLightSwitch(){
+    private void updateLightSwitchs(){
         // Define the switch
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd){

@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
+import com.pretolesi.easydomotic.dialogs.DialogActionID;
+import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
@@ -32,8 +34,7 @@ import java.util.ArrayList;
 public class SettingsActivity extends BaseActivity implements
         SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
-        RoomListFragment.ListRoomFragmentCallbacks,
-        YesNoDialogFragment.YesNoDialogFragmentCallbacks {
+        RoomListFragment.ListRoomFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -87,7 +88,6 @@ public class SettingsActivity extends BaseActivity implements
 
         if(position == 1){
             // Costruisco il frame...
-//            FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, RoomListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
@@ -95,21 +95,21 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 2){
-            BaseFragment rf = (BaseFragment)getFragmentManager().findFragmentById(R.id.container);
-            if(rf != null) {
-                RoomFragmentData rfd = rf.getRoomFragmentData();
+            Fragment f = getFragmentManager().findFragmentById(R.id.container);
+            if(f != null && f instanceof BaseFragment){
+                BaseFragment bf = (BaseFragment)f;
+                RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
                     Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this, rfd.getID(), -1);
                     startActivity(intent);
+                }else {
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
                 }
             } else {
-                OkDialogFragment.newInstance(OkDialogFragment.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
             }
-        }
-
-        if(position == 7){
-
         }
     }
 
@@ -158,16 +158,6 @@ public class SettingsActivity extends BaseActivity implements
                 }
             }
 */
-        }
-    }
-
-    @Override
-    public void onYesNoDialogFragmentClickListener(int position, boolean bYes, boolean bNo) {
-        if(position == 7){
-            if(bYes) {
-            }
-            if(bNo) {
-            }
         }
     }
 

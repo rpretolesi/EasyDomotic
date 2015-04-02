@@ -21,6 +21,8 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
+import com.pretolesi.easydomotic.dialogs.DialogActionID;
+import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
@@ -133,17 +135,41 @@ public class LightSwitchPropActivity extends Activity implements
             // Respond to the action bar's Up/Home button
             case R.id.id_item_menu_delete:
                 // Delete Data
-                deleteLightSwitchData();
+                delete(DialogOriginID.ORIGIN_MENU_BUTTON_ID);
                 return true;
 
             case R.id.id_item_menu_save:
                 // Save Data
-                saveFromMenu();
-finire questo discorso del back button
+                save(DialogOriginID.ORIGIN_MENU_BUTTON_ID);
+
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean bAskForSave = false;
+        if (m_lsd != null) {
+            if(!m_lsd.getSaved()){
+                bAskForSave = true;
+            }
+        } else {
+            bAskForSave = true;
+        }
+        if(bAskForSave){
+            YesNoDialogFragment.newInstance(DialogOriginID.ORIGIN_BACK_BUTTON_ID,
+                    DialogActionID.SAVE_ITEM_NOT_SAVED_CONFIRM_ID,
+                    getString(R.string.text_yndf_title_data_not_saved),
+                    getString(R.string.text_yndf_message_data_save_confirmation),
+                    getString(R.string.text_yndf_btn_yes),
+                    getString(R.string.text_yndf_btn_no)
+            ).show(getFragmentManager(), "");
+
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -219,79 +245,67 @@ finire questo discorso del back button
     }
 
     @Override
-    public void onOkDialogFragmentClickListener(int dlgID) {
-        if(dlgID == OkDialogFragment.SAVING_OK_ID){
-            // Save ok, exit
-            finish();
-        }
-        if(dlgID == OkDialogFragment.DELETING_OK_ID){
-            // Save ok, exit
-            finish();
-        }
-    }
-
-    @Override
-    public void onYesNoDialogFragmentClickListener(int dlgID, boolean bYes, boolean bNo) {
-        if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ID || dlgID == YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID) {
-            if(bYes) {
-                // Save ok, exit
-                saveLightSwitchData();
-            }
-            if(bNo) {
-                if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ID) {
-                    finish();
+    public void onYesNoDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID, boolean bYes, boolean bNo) {
+        if(iDialogOriginID == DialogOriginID.ORIGIN_MENU_BUTTON_ID) {
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
+                if(bYes) {
+                    // Save ok, exit
+                    saveLightSwitchData(iDialogOriginID);
                 }
+                if(bNo) {
+                    // no action
+                }
+            }
 
-                if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID) {
+            if(iDialogActionID == DialogActionID.DELETE_CONFIRM_ID) {
+                if(bYes) {
+                    // Delete
+                    deleteLightSwitchData(iDialogOriginID);                }
+                if(bNo) {
+                    // No action...
+                }
+            }
+        }
+
+        if(iDialogOriginID == DialogOriginID.ORIGIN_BACK_BUTTON_ID) {
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
+                if(bYes) {
+                    // Save ok, exit
+                    saveLightSwitchData(iDialogOriginID);
+                }
+                if(bNo) {
+                    super.onBackPressed();
+                }
+            }
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_NOT_SAVED_CONFIRM_ID) {
+                if(bYes) {
+                    // Save
+                    save(iDialogOriginID);
+                }
+                if(bNo) {
                     super.onBackPressed();
                 }
             }
         }
-
-        if(dlgID == YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID) {
-            if(bYes) {
-                // Save ok, exit
-                saveLightSwitchData();
-            }
-            if(bNo) {
-            }
-        }
-
-        if(dlgID == YesNoDialogFragment.DELETE_CONFIRM_ID) {
-            if(bYes) {
-                // Delete ok, exit
-                if(m_lsd != null) {
-                    SQLContract.LightSwitchEntry.delete(this, m_lsd.getID(), m_lsd.getRoomID());
-                    OkDialogFragment.newInstance(OkDialogFragment.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
-                            .show(getFragmentManager(), "");
-                }
-            }
-            if(bNo) {
-                // No action...
-            }
-        }
     }
 
     @Override
-    public void onBackPressed() {
-        boolean bAskForSave = false;
-        if (m_lsd != null) {
-            if(m_lsd.getSaved()){
-                bAskForSave = true;
+    public void onOkDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID) {
+        if(iDialogOriginID == DialogOriginID.ORIGIN_MENU_BUTTON_ID){
+            if(iDialogActionID == DialogActionID.SAVING_OK_ID) {
+                // Save ok, exit
+                finish();
             }
-        } else {
-            bAskForSave = true;
+            if(iDialogActionID == DialogActionID.DELETING_OK_ID){
+                // Save ok, exit
+                finish();
+            }
         }
-        if(bAskForSave){
-            YesNoDialogFragment.newInstance(
-                    YesNoDialogFragment.SAVE_CONFIRM_FROM_BACK_BUTTON_ID,
-                    getString(R.string.text_yndf_title_data_not_saved),
-                    getString(R.string.text_yndf_message_data_save_confirmation),
-                    getString(R.string.text_yndf_btn_yes),
-                    getString(R.string.text_yndf_btn_no)
-            ).show(getFragmentManager(), "");
-        } else {
-            super.onBackPressed();
+        if(iDialogOriginID == DialogOriginID.ORIGIN_BACK_BUTTON_ID){
+            if(iDialogActionID == DialogActionID.SAVING_OK_ID) {
+                // Save ok, exit
+                super.onBackPressed();
+            }
         }
     }
 
@@ -328,7 +342,7 @@ finire questo discorso del back button
         }
     }
 
-    private void saveFromMenu() {
+    private void save(int iDialogOriginID) {
         if(m_id_et_light_switch_name != null){
             long lRoomID;
             if(m_lsdParameter != null){
@@ -338,10 +352,10 @@ finire questo discorso del back button
             }
 
             if (!SQLContract.LightSwitchEntry.isTagPresent(this, m_id_et_light_switch_name.getText().toString(), lRoomID)) {
-                saveLightSwitchData();
+                saveLightSwitchData(iDialogOriginID);
             } else {
-                YesNoDialogFragment.newInstance(
-                        YesNoDialogFragment.SAVE_CONFIRM_ITEM_ALREADY_EXSIST_ID,
+                YesNoDialogFragment.newInstance(iDialogOriginID,
+                        DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
                         getString(R.string.text_yndf_title_light_switch_name_already_exist),
                         getString(R.string.text_yndf_message_light_switch_name_already_exist_confirmation),
                         getString(R.string.text_yndf_btn_yes),
@@ -351,24 +365,24 @@ finire questo discorso del back button
         }
     }
 
-    private void saveLightSwitchData(){
+    private void saveLightSwitchData(int iDialogOriginID){
         if (m_lsd == null) {
             m_lsd = new LightSwitchData();
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
-            OkDialogFragment.newInstance(OkDialogFragment.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return ;
         }
         if (m_id_et_light_switch_name == null || m_id_et_light_switch_name.getText().toString().equals("")) {
-            OkDialogFragment odf = OkDialogFragment.newInstance(OkDialogFragment.LIGHT_SWITCH_NAME_ERROR, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+            OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.LIGHT_SWITCH_ERROR_NAME, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
             odf.show(getFragmentManager(), "");
             return ;
         }
 
         if(getOrientation() == Orientation.UNDEFINED ) {
-            OkDialogFragment.newInstance(OkDialogFragment.ORIENTATION_ERROR_ID, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.ORIENTATION_ERROR_ID, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
             .show(getFragmentManager(), "");
             return ;
         }
@@ -397,30 +411,37 @@ finire questo discorso del back button
                 m_lsd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
             }
         } catch (Exception ex) {
-            OkDialogFragment.newInstance(OkDialogFragment.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return ;
         }
 
         if(SQLContract.LightSwitchEntry.save(this,m_lsd)){
-            OkDialogFragment.newInstance(OkDialogFragment.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         } else {
-            OkDialogFragment.newInstance(OkDialogFragment.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }
     }
 
-    private void deleteLightSwitchData(){
+    private void delete(int iDialogOriginID){
         YesNoDialogFragment.newInstance(
-                YesNoDialogFragment.DELETE_CONFIRM_ID,
+                iDialogOriginID,
+                DialogActionID.DELETE_CONFIRM_ID,
                 getString(R.string.text_yndf_title_data_delete),
                 getString(R.string.text_yndf_message_data_delete_confirmation),
                 getString(R.string.text_yndf_btn_yes),
                 getString(R.string.text_yndf_btn_no)
         ).show(getFragmentManager(), "");
     }
-
+    private void deleteLightSwitchData(int iDialogOriginID) {
+        if(m_lsd != null) {
+            SQLContract.LightSwitchEntry.delete(this, m_lsd.getID(), m_lsd.getRoomID());
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+        }
+    }
     private Orientation getOrientation() {
         if (m_id_rb_landscape != null && m_id_rb_portrait != null) {
             if(m_id_rb_landscape.isChecked() && !m_id_rb_portrait.isChecked()) {

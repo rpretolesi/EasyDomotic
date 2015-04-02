@@ -212,6 +212,9 @@ public class SQLContract
         public static final String COLUMN_NAME_Z = "Z";
         public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
 
+        // Used only in MatrixCursor
+        public static final String COLUMN_NAME_ORIGIN = "Origin";
+
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
@@ -305,64 +308,7 @@ public class SQLContract
             return bRes;
 
         }
-/*
-        public static Cursor load(Context context, String strRoomTag, String strTag)
-        {
-            try
-            {
-                m_LockCommandHolder.lock();
 
-                Cursor cursor = null;
-
-                if(context != null)
-                {
-                    SQLiteDatabase db = SQLHelper.getInstance(context).getDB();
-
-                    LightSwitch ls = null;
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection =
-                            {
-                                    _ID,
-                                    COLUMN_NAME_TAG,
-                                    COLUMN_NAME_ROOM_ID,
-                                    COLUMN_NAME_X,
-                                    COLUMN_NAME_Y,
-                                    COLUMN_NAME_Z,
-                                    COLUMN_NAME_LANDSCAPE
-                            };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder = "";
-
-                    // Which row to get based on WHERE
-                    String selection =
-                            COLUMN_NAME_ROOM_ID + " = ? AND " +
-                                    COLUMN_NAME_TAG + " = ?" ;
-
-                    String[] selectionArgs = { String.valueOf(strRoomTag), String.valueOf(strTag) };
-
-                    cursor = db.query(
-                            TABLE_NAME,                 // The table to query
-                            projection,                 // The columns to return
-                            selection,                  // The columns for the WHERE clause
-                            selectionArgs,              // The values for the WHERE clause
-                            null,                       // don't group the rows
-                            null,                       // don't filter by row groups
-                            sortOrder                   // The sort order
-                    );
-
-                }
-
-                return cursor;
-            }
-            finally
-            {
-                m_LockCommandHolder.unlock();
-            }
-        }
-*/
         public static Cursor loadFromLightSwitchData(LightSwitchData lsd)
         {
             try
@@ -380,7 +326,9 @@ public class SQLContract
                             COLUMN_NAME_X,
                             COLUMN_NAME_Y,
                             COLUMN_NAME_Z,
-                            COLUMN_NAME_LANDSCAPE
+                            COLUMN_NAME_LANDSCAPE,
+
+                            COLUMN_NAME_ORIGIN
                     };
 
                     cursor = new MatrixCursor(columns);
@@ -391,7 +339,9 @@ public class SQLContract
                             lsd.getPosX(),
                             lsd.getPosY(),
                             lsd.getPosZ(),
-                            Integer.valueOf(lsd.getLandscape() ? 1 : 0)
+                            Integer.valueOf(lsd.getLandscape() ? 1 : 0),
+
+                            0   // Origin
                     });
 
                 }
@@ -589,26 +539,7 @@ public class SQLContract
                 m_LockCommandHolder.unlock();
             }
         }
-/*
-        public static LightSwitchData get(Cursor cursor){
-            LightSwitchData lsd = null;
-            if ((cursor != null) && (cursor.getCount() > 0)) {
-                cursor.moveToFirst();
-                lsd = new LightSwitchData(
-                        true,
-                        false,
-                        cursor.getLong(cursor.getColumnIndex(_ID)),
-                        cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
-                        cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
-                        ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
-                );
-            }
-            return lsd;
-        }
-*/
+
         public static ArrayList<LightSwitchData> get(Cursor cursor){
             LightSwitchData lsd = null;
             ArrayList<LightSwitchData> allsd = null;
@@ -619,8 +550,16 @@ public class SQLContract
                     if(allsd == null){
                         allsd = new ArrayList<>();
                     }
+                    // Origin
+                    boolean bSaved = true;
+                    if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
+                        if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
+                            // Data come direct from LightSwithData Class
+                            bSaved = false;
+                        }
+                    }
                     lsd = new LightSwitchData(
-                            true,
+                            bSaved,
                             false,
                             cursor.getLong(cursor.getColumnIndex(_ID)),
                             cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
