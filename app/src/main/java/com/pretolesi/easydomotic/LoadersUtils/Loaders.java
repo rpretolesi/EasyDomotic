@@ -6,6 +6,7 @@ package com.pretolesi.easydomotic.LoadersUtils;
 public class Loaders {
     public static final int ROOM_LOADER_ID = 1;
     public static final int LIGHT_SWITCH_LOADER_ID = 2;
+    public static final int TCP_IP_CLIENT_PARAMETER_ID = 3;
 
 
 }
