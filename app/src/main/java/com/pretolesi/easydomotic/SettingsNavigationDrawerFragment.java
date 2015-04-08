@@ -106,9 +106,9 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                         getString(R.string.settings_title_section_add_switch),
                         getString(R.string.settings_title_section_disp),
                         getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_tcp_ip_client_config),
                         getString(R.string.settings_title_section_disp),
-                        getString(R.string.settings_title_section_disp),
-                        getString(R.string.settings_title_section_save)
+                        getString(R.string.settings_title_section_disp)
                 }));
         //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

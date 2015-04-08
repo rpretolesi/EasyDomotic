@@ -7,8 +7,12 @@
     <string name="settings_title_dialog_section_new_room">Room</string>
     <string name="settings_title_section_new_room">New Room</string>
     <string name="settings_title_section_open_room">Open Room</string>
+
     <string name="settings_title_dialog_section_add_switch">Switch</string>
     <string name="settings_title_section_add_switch">Add Switch</string>
+
+    <string name="settings_title_section_tcp_ip_client_config">TCP IP Client Config</string>
+
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
 
@@ -104,7 +108,8 @@
     <string name="action_settings">Settings</string>
 
     <!-- EDEditText string -->
-    <string name="text_edad_title_value_out_of_range">Value out of range.</string>
+    <string name="text_edad_dlg_title_value_out_of_range">Value out of range.</string>
+    <string name="text_edad_dlg_message_value_not_valid">Value not valid.</string>
     <string name="text_edad_btn_ok">OK</string>
 
     <!-- setting_tcp_ip_client_activity string -->
@@ -116,6 +121,7 @@
     <string name="hint_stica_et_timeout">3000</string>
     <string name="text_stica_tv_comm_send_data_delay">Send data delay(ms)</string>
     <string name="hint_stica_et_comm_send_data_delay">4</string>
+    <string name="text_stica_tv_protocol">Protocol</string>
 
     <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
 

@@ -26,10 +26,17 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:parentActivityName = "com.pretolesi.easydomotic.SettingsActivity"
+            android:parentActivityName = "com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name=".LightSwitch.LightSwitchPropActivity"
+            android:name="com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:parentActivityName = "com.pretolesi.easydomotic.TcpIpClient.TCPIPClientConfigActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/android:Theme.Holo"
+            android:name="com.pretolesi.easydomotic.TcpIpClient.TCPIPClientConfigActivity"
             android:label="@string/app_name" >
         </activity>
 

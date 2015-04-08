@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientConfigActivity;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -110,6 +111,11 @@ public class SettingsActivity extends BaseActivity implements
                 OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
             }
+        }
+
+        if(position == 5){
+            Intent intent = TCPIPClientConfigActivity.makeTCPIPClientConfigActivity(this);
+            startActivity(intent);
         }
     }
 

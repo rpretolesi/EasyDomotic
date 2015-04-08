@@ -1,23 +1,20 @@
-package com.pretolesi.easydomotic.TcpClient;
+package com.pretolesi.easydomotic.TcpIpClient;
 
 import android.content.Context;
 import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
-import java.util.Arrays;
 
 /**
  *
  */
-public class TCPClient {
-    private static final String TAG = "TCPClient";
+public class TCPIPClient {
+    private static final String TAG = "TCPIPClient";
 
     private Context m_context = null;
     private Socket m_clientSocket = null;
@@ -29,7 +26,7 @@ public class TCPClient {
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsGet = 0;
 
-    public TCPClient(Context context, Protocol protocol){
+    public TCPIPClient(Context context, Protocol protocol){
         m_context = context;
         m_protocol = protocol;
     }
@@ -80,7 +77,7 @@ public class TCPClient {
         }
         return bRes;
     }
-
+/*
     public boolean send(byte[] byteToSend)
     {
         boolean bRes = false;
@@ -106,6 +103,7 @@ public class TCPClient {
 
         return bRes;
     }
+*/
 /*
     public byte[] getData()
     {
@@ -226,8 +224,21 @@ public class TCPClient {
     }
 
     public static enum Protocol {
-        TCP_IP_FREE,
-        TCP_IP_MODBUS
+        FREE("Free"),
+        MODBUS_RTU("Modbus RTU"),
+        MODBUS_ASCII("Modbus ASCII"),
+        KNX("KNX");
+
+        private String m_strProtocol;
+
+        Protocol(String strProtocol) {
+            m_strProtocol = strProtocol;
+        }
+
+        @Override
+        public String toString() {
+            return m_strProtocol;
+        }
     }
 
 }

@@ -30,14 +30,14 @@ public class SQLContract
     private SQLContract()
     {
     }
-    public enum AppParameter
+    public enum SettingID
     {
         SCHEDULED_REMINDER_FREQUENCY(0, "0"),
         SCHEDULED_UPDATE_FREQUENCY(1, "0"),
-        IP_ADDRESS(2, "192.168.1.1"),
-        PORT(3, "502"),
-        TIMEOUT(4, "30000"),
-        COMM_FRAME_DELAY(5, "100"),
+        TCP_IP_CLIENT_ADDRESS(2, "192.168.1.1"),
+        TCP_IP_CLIENT_PORT(3, "502"),
+        TCP_IP_CLIENT_TIMEOUT(4, "30000"),
+        TCP_IP_CLIENT_COMM_SEND_DATA_DELAY(5, "100"),
         SET_SENSOR_FEEDBACK_AMPL_K(10, "500.0"),
         SET_SENSOR_LOW_PASS_FILTER_K(11, "0.5"),
         SET_SENSOR_MAX_OUTPUT_VALUE(12, "250"),
@@ -49,7 +49,7 @@ public class SQLContract
         private int value;
         private String defaultValue;
 
-        private AppParameter(int value, String defaultValue) {
+        private SettingID(int value, String defaultValue) {
             this.value = value;
             this.defaultValue = defaultValue;
         }
@@ -82,7 +82,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean setParameter(AppParameter pType, String strpValue)
+        public static boolean set(SettingID pType, String strpValue)
         {
             m_LockCommandHolder.lock();
 
@@ -133,7 +133,7 @@ public class SQLContract
             return false;
         }
 
-        public static String getParameter(AppParameter pType)
+        public static String get(SettingID pType)
         {
             m_LockCommandHolder.lock();
 
