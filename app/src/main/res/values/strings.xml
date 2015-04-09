@@ -89,6 +89,7 @@
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>
     <string name="text_tv_position_z">Z:</string>
+    <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
 
     <!--
         Menu Title
@@ -122,9 +123,6 @@
     <string name="text_stica_tv_comm_send_data_delay">Send data delay(ms)</string>
     <string name="hint_stica_et_comm_send_data_delay">4</string>
     <string name="text_stica_tv_protocol">Protocol</string>
-
-    <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
-
 
     <!-- General string -->
     <string name="ok">Ok</string>

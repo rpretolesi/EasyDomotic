@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
@@ -21,6 +24,7 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -52,6 +56,9 @@ public class LightSwitchPropActivity extends Activity implements
     private EditText m_id_et_position_x;
     private EditText m_id_et_position_y;
     private EditText m_id_et_position_z;
+    private CheckBox m_id_lspa_cb_enable_tcp_ip_client_protocol;
+    private Spinner m_id_lspa_spn_tcp_ip_client_protocol;
+
     private LightSwitchData m_lsd;
     long m_lRoomIDParameter;
     long m_lIDParameter;
@@ -69,12 +76,23 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
+        m_id_lspa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_lspa_cb_enable_tcp_ip_client_protocol);
+        m_id_lspa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_lspa_spn_tcp_ip_client_protocol);
+        m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
+
+        m_id_lspa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //is chkIos checked?
+//                if (((CheckBox) v).isChecked()) {
+//                }
+                    m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
+            }
+        });
 
         setActionBar();
-/*
-        mTitle = getTitle();
-        restoreActionBar();
-*/
+
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         Intent intent = getIntent();
@@ -83,6 +101,9 @@ public class LightSwitchPropActivity extends Activity implements
             m_lIDParameter = intent.getLongExtra(LIGHT_SWITCH_ID, -1);
             m_lsdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
         }
+
+        m_id_lspa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, TCPIPClient.Protocol.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,
@@ -207,7 +228,8 @@ public class LightSwitchPropActivity extends Activity implements
                     }
                 }
             }
-         }
+        }
+
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
             if(allsd != null && !allsd.isEmpty()){
@@ -324,6 +346,13 @@ public class LightSwitchPropActivity extends Activity implements
             if (m_id_et_position_z != null) {
                 m_id_et_position_z.setText(Float.toString(m_lsd.getPosZ()));
             }
+            if (m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
+                m_id_lspa_cb_enable_tcp_ip_client_protocol.setChecked(m_lsd.getTcpIpClientEnable());
+            }
+            if (m_id_lspa_spn_tcp_ip_client_protocol != null) {
+                m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_lsd.getTcpIpClientEnable());
+                m_id_lspa_spn_tcp_ip_client_protocol.setSelection(m_lsd.getTcpIpClientProtocol());
+            }
         }
     }
 
@@ -399,6 +428,14 @@ public class LightSwitchPropActivity extends Activity implements
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return ;
+        }
+
+        if(m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
+            m_lsd.setTcpIpClientEnable(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
+        }
+
+        if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
+            m_lsd.setTcpIpClientProtocol(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemPosition());
         }
 
         if(SQLContract.LightSwitchEntry.save(m_lsd)){

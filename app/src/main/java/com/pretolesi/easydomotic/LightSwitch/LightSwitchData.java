@@ -17,6 +17,8 @@ public class LightSwitchData implements Parcelable {
     private float m_fPosY;
     private float m_fPosZ;
     private boolean m_bLandscape;
+    private boolean m_bTcpIpClientEnable;
+    private int m_iTcpIpClientProtocol;
 
 
     public LightSwitchData() {
@@ -29,9 +31,11 @@ public class LightSwitchData implements Parcelable {
         this.m_fPosY = 0.0f;
         this.m_fPosZ = 0.0f;
         this.m_bLandscape = false;
+        this.m_bTcpIpClientEnable = false;
+        this.m_iTcpIpClientProtocol = -1;
     }
 
-    public LightSwitchData(boolean bSaved, boolean bDisp, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public LightSwitchData(boolean bSaved, boolean bDisp, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape, boolean bTcpIpClientEnable, int iTcpIpClientProtocol) {
         this.m_bSaved = bSaved;
         this.m_bDisp = bDisp;
         this.m_ID = id;
@@ -41,6 +45,8 @@ public class LightSwitchData implements Parcelable {
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
         this.m_bLandscape = bLandscape;
+        this.m_bTcpIpClientEnable = bTcpIpClientEnable;
+        this.m_iTcpIpClientProtocol = iTcpIpClientProtocol;
     }
 
     public void update(LightSwitchData lsd){
@@ -54,6 +60,8 @@ public class LightSwitchData implements Parcelable {
             this.m_fPosY = lsd.getPosY();
             this.m_fPosZ = lsd.getPosZ();
             this.m_bLandscape = lsd.getLandscape();
+            this.m_bTcpIpClientEnable = lsd.getTcpIpClientEnable();
+            this.m_iTcpIpClientProtocol = lsd.getTcpIpClientProtocol();
         }
     }
 
@@ -87,6 +95,14 @@ public class LightSwitchData implements Parcelable {
         this.m_bLandscape = bLandScape;
     }
 
+    public void setTcpIpClientEnable(boolean bTcpIpClientEnable) {
+        this.m_bTcpIpClientEnable = bTcpIpClientEnable;
+    }
+
+    public void setTcpIpClientProtocol(int iTcpIpClientProtocol) {
+        this.m_iTcpIpClientProtocol = iTcpIpClientProtocol;
+    }
+
     public boolean getSaved() { return m_bSaved; }
 
     public boolean getDisp() { return m_bDisp; }
@@ -115,6 +131,14 @@ public class LightSwitchData implements Parcelable {
         return m_bLandscape;
     }
 
+    public boolean getTcpIpClientEnable() {
+        return m_bTcpIpClientEnable;
+    }
+
+    public int getTcpIpClientProtocol() {
+        return m_iTcpIpClientProtocol;
+    }
+
     protected LightSwitchData(Parcel in) {
         m_bSaved = in.readByte() != 0;
         m_bDisp = in.readByte() != 0;
@@ -125,6 +149,8 @@ public class LightSwitchData implements Parcelable {
         m_fPosY = in.readFloat();
         m_fPosZ = in.readFloat();
         m_bLandscape = in.readByte() != 0;
+        m_bTcpIpClientEnable = in.readByte() != 0;
+        m_iTcpIpClientProtocol = in.readInt();
     }
 
     @Override
@@ -143,6 +169,8 @@ public class LightSwitchData implements Parcelable {
         dest.writeFloat(m_fPosY);
         dest.writeFloat(m_fPosZ);
         dest.writeByte((byte) (m_bLandscape ? 1 : 0));
+        dest.writeByte((byte) (m_bTcpIpClientEnable ? 1 : 0));
+        dest.writeInt(m_iTcpIpClientProtocol);
     }
 
     @SuppressWarnings("unused")

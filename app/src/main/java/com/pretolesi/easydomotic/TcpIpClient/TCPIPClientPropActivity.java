@@ -4,31 +4,28 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
-import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +33,11 @@ import java.util.List;
 /**
  *
  */
-public class TCPIPClientConfigActivity extends Activity implements
+public class TCPIPClientPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks {
 
-    private static final String TAG = "TCPIPClientConfigActivity";
+    private static final String TAG = "TCPIPClientPropActivity";
 
     private TextView m_id_stica_tv_title;
     private TextView m_id_stica_tv_server_ip_address;
@@ -62,16 +59,16 @@ public class TCPIPClientConfigActivity extends Activity implements
         m_id_stica_tv_title = (TextView)findViewById(R.id.id_stica_tv_title);
         m_id_stica_tv_server_ip_address = (TextView)findViewById(R.id.id_stica_tv_server_ip_address);
         m_id_stica_et_server_ip_address = (EDEditText)findViewById(R.id.id_stica_et_server_ip_address);
-        m_id_stica_et_server_ip_address.setInputLimit(7, 15);
+        m_id_stica_et_server_ip_address.setInputLimit(SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS.getMinValue(), SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS.getMaxValue());
         m_id_stica_tv_server_port = (TextView)findViewById(R.id.id_stica_tv_server_port);
         m_id_stica_et_server_port = (EDEditText)findViewById(R.id.id_stica_et_server_port);
-        m_id_stica_et_server_port.setInputLimit(1, 65535);
+        m_id_stica_et_server_port.setInputLimit(SQLContract.SettingID.TCP_IP_CLIENT_PORT.getMinValue(), SQLContract.SettingID.TCP_IP_CLIENT_PORT.getMaxValue());
         m_id_stica_tv_timeout = (TextView)findViewById(R.id.id_stica_tv_timeout);
         m_id_stica_et_timeout = (EDEditText)findViewById(R.id.id_stica_et_timeout);
-        m_id_stica_et_timeout.setInputLimit(1, 60000);
+        m_id_stica_et_timeout.setInputLimit(SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT.getMinValue(), SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT.getMaxValue());
         m_id_stica_tv_comm_send_data_delay = (TextView)findViewById(R.id.id_stica_tv_comm_send_data_delay);
         m_id_stica_et_comm_send_data_delay = (EDEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
-        m_id_stica_et_comm_send_data_delay.setInputLimit(1, 60000);
+        m_id_stica_et_comm_send_data_delay.setInputLimit(SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY.getMinValue(), SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY.getMaxValue());
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
 
         setActionBar();
@@ -81,7 +78,11 @@ public class TCPIPClientConfigActivity extends Activity implements
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, TCPIPClient.Protocol.values()));
 
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS.getValue(), null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PORT.getValue(), null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT.getValue(), null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY.getValue(), null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL.getValue(), null, this);
     }
 
     public void setActionBar() {
@@ -123,13 +124,88 @@ public class TCPIPClientConfigActivity extends Activity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        finire qui caricando i valori...
+        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        if(id == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS.getValue()){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.Settings.load(SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS);
+                }
+            };
+        }
+        if(id == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PORT.getValue()){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.Settings.load(SQLContract.SettingID.TCP_IP_CLIENT_PORT);
+                }
+            };
+        }
+        if(id == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT.getValue()){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.Settings.load(SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT);
+                }
+            };
+        }
+        if(id == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY.getValue()){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.Settings.load(SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY);
+                }
+            };
+        }
+        if(id == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL.getValue()){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.Settings.load(SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL);
+                }
+            };
+        }
+
         return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS.getValue()) {
+            if(m_id_stica_et_server_ip_address != null) {
 
+                m_id_stica_et_server_ip_address.setText(SQLContract.Settings.get(cursor, SQLContract.SettingID.TCP_IP_CLIENT_ADDRESS));
+            }
+        }
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PORT.getValue()) {
+            if(m_id_stica_et_server_port != null) {
+
+                m_id_stica_et_server_port.setText(SQLContract.Settings.get(cursor, SQLContract.SettingID.TCP_IP_CLIENT_PORT));
+            }
+        }
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT.getValue()) {
+            if(m_id_stica_et_timeout != null) {
+
+                m_id_stica_et_timeout.setText(SQLContract.Settings.get(cursor, SQLContract.SettingID.TCP_IP_CLIENT_TIMEOUT));
+            }
+        }
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY.getValue()) {
+            if(m_id_stica_et_comm_send_data_delay != null) {
+
+                m_id_stica_et_comm_send_data_delay.setText(SQLContract.Settings.get(cursor, SQLContract.SettingID.TCP_IP_CLIENT_COMM_SEND_DATA_DELAY));
+            }
+        }
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_PARAMETER_ID + SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL.getValue()) {
+            if(m_id_stica_spn_protocol != null) {
+                int iItem = -1;
+                try{
+                    iItem = Integer.parseInt(SQLContract.Settings.get(cursor, SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL));
+                } catch (Exception ignore) { }
+                m_id_stica_spn_protocol.setSelection(iItem);
+            }
+        }
+
+        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override
@@ -172,6 +248,12 @@ public class TCPIPClientConfigActivity extends Activity implements
             return;
         }
 
+        if(m_id_stica_spn_protocol == null || !SQLContract.Settings.set(SQLContract.SettingID.TCP_IP_CLIENT_PROTOCOL, String.valueOf(m_id_stica_spn_protocol.getSelectedItemPosition()))) {
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+            return;
+        }
+
         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                 .show(getFragmentManager(), "");
 
@@ -204,7 +286,7 @@ public class TCPIPClientConfigActivity extends Activity implements
 
     public static Intent makeTCPIPClientConfigActivity(Context context) {
         Intent intent = new Intent();
-        intent.setClass(context, TCPIPClientConfigActivity.class);
+        intent.setClass(context, TCPIPClientPropActivity.class);
         return intent;
     }
 

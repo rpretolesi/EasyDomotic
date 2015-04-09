@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
+import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
 
 /**
@@ -32,35 +33,52 @@ public class SQLContract
     }
     public enum SettingID
     {
-        SCHEDULED_REMINDER_FREQUENCY(0, "0"),
-        SCHEDULED_UPDATE_FREQUENCY(1, "0"),
-        TCP_IP_CLIENT_ADDRESS(2, "192.168.1.1"),
-        TCP_IP_CLIENT_PORT(3, "502"),
-        TCP_IP_CLIENT_TIMEOUT(4, "30000"),
-        TCP_IP_CLIENT_COMM_SEND_DATA_DELAY(5, "100"),
-        SET_SENSOR_FEEDBACK_AMPL_K(10, "500.0"),
-        SET_SENSOR_LOW_PASS_FILTER_K(11, "0.5"),
-        SET_SENSOR_MAX_OUTPUT_VALUE(12, "250"),
-        SET_SENSOR_MIN_VALUE_START_OUTPUT(13, "10"),
-        SET_SENSOR_ORIENTATION_LANDSCAPE(14, "10"),
-        LAST_ROOM_TAG(100, ""),
-        DEFAULT_ROOM_TAG(100, "");
+        TCP_IP_CLIENT_ADDRESS(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15),
+        TCP_IP_CLIENT_PORT(R.string.text_stica_tv_server_port, 2, "502", 1 ,65535),
+        TCP_IP_CLIENT_TIMEOUT(R.string.text_stica_tv_timeout, 3, "30000", 1 ,60000),
+        TCP_IP_CLIENT_COMM_SEND_DATA_DELAY(R.string.text_stica_tv_comm_send_data_delay, 4, "100", 1 ,60000),
+        TCP_IP_CLIENT_PROTOCOL(R.string.text_stica_tv_protocol, 5, "-1", 0 ,3);
+//        SET_SENSOR_FEEDBACK_AMPL_K(10, "500.0", 0 ,0),
+//        SET_SENSOR_LOW_PASS_FILTER_K(11, "0.5", 0 ,0),
+//        SET_SENSOR_MAX_OUTPUT_VALUE(12, "250", 0 ,0),
+//        SET_SENSOR_MIN_VALUE_START_OUTPUT(13, "10", 0 ,0),
+//        SET_SENSOR_ORIENTATION_LANDSCAPE(14, "10", 0 ,0),
+//        LAST_ROOM_TAG(R.string.text_stica_tv_comm_send_data_delay, 100, "", 0 ,0),
+//        DEFAULT_ROOM_TAG(R.string.text_stica_tv_comm_send_data_delay, 100, "", 0 ,0);
 
-        private int value;
-        private String defaultValue;
+        private int m_resDescript;
+        private int m_value;
+        private String m_defaultValue;
+        private float m_fmin;
+        private float m_fmax;
 
-        private SettingID(int value, String defaultValue) {
-            this.value = value;
-            this.defaultValue = defaultValue;
+        private SettingID(int resDescript, int value, String defaultValue, float fmin, float fmax) {
+            this.m_resDescript = resDescript;
+            this.m_value = value;
+            this.m_defaultValue = defaultValue;
+            this.m_fmin = fmin;
+            this.m_fmax = fmax;
+        }
+
+        public int getResDescript() {
+            return m_resDescript;
         }
 
         public int getValue() {
-            return value;
+            return m_value;
         }
 
-        public String getDefaultValue() {
-            return defaultValue;
+        public String getDefaultValue() { return m_defaultValue; }
+
+        public float getMinValue() {
+            return m_fmin;
         }
+
+        public float getMaxValue() {
+            return m_fmax;
+        }
+
+
     }
     /*
      * Parametri dell'app
@@ -84,11 +102,12 @@ public class SQLContract
 
         public static boolean set(SettingID pType, String strpValue)
         {
-            m_LockCommandHolder.lock();
-
-            ContentValues values = null;
             try
             {
+                m_LockCommandHolder.lock();
+
+                ContentValues values = null;
+
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
 
                 if (db != null && pType != null && strpValue != null)
@@ -116,17 +135,8 @@ public class SQLContract
                     }
                 }
             }
-            catch (Exception ex)
-            {
-
-            }
             finally
             {
-                if(values != null)
-                {
-                    values.clear();
-                }
-
                 m_LockCommandHolder.unlock();
             }
 
@@ -200,6 +210,78 @@ public class SQLContract
 
             return strRes;
         }
+
+        public static Cursor load(SettingID pType)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && pType != null)
+                {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    COLUMN_NAME_PARAMETER_ID,
+                                    COLUMN_NAME_PARAMETER_VALUE
+                            };
+
+                    String selection = COLUMN_NAME_PARAMETER_ID + " = ?";
+
+                    String[] selectionArgs = { String.valueOf(pType.getValue())  };
+
+                    String strDefaultValue = pType.getDefaultValue();
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            selection,                                // The columns for the WHERE clause
+                            selectionArgs,                            // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static String get(Cursor cursor, SettingID pType){
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                String str = pType.getDefaultValue();
+
+                if((cursor != null) && (cursor.getCount() > 0))
+                {
+                    for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                    {
+                        str = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PARAMETER_VALUE));
+                    }
+                }
+                return str;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
     }
 
     /* Inner class that defines the table contents */
@@ -211,6 +293,10 @@ public class SQLContract
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
         public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
+        public static final String COLUMN_NAME_TCP_IP_CLIENT_ENABLE = "TcpIpClientEnable";
+        public static final String COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL = "TcpIpClientProtocol";
+
+
 
         // Used only in MatrixCursor
         public static final String COLUMN_NAME_ORIGIN = "Origin";
@@ -224,7 +310,9 @@ public class SQLContract
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_LANDSCAPE + INT_TYPE +
+                        COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -251,6 +339,8 @@ public class SQLContract
                             values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
                             values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
                             values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
+                            values.put(COLUMN_NAME_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL, lsdTemp.getTcpIpClientProtocol());
 
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
@@ -290,6 +380,8 @@ public class SQLContract
                     values.put(COLUMN_NAME_Y, Float.toString(lsd.getPosY()));
                     values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
+                    values.put(COLUMN_NAME_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL, lsd.getTcpIpClientProtocol());
 
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
 
@@ -329,6 +421,8 @@ public class SQLContract
                             COLUMN_NAME_Y,
                             COLUMN_NAME_Z,
                             COLUMN_NAME_LANDSCAPE,
+                            COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
+                            COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL,
 
                             COLUMN_NAME_ORIGIN
                     };
@@ -342,6 +436,8 @@ public class SQLContract
                             lsd.getPosY(),
                             lsd.getPosZ(),
                             Integer.valueOf(lsd.getLandscape() ? 1 : 0),
+                            Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0),
+                            lsd.getTcpIpClientProtocol(),
 
                             0   // Origin
                     });
@@ -377,7 +473,9 @@ public class SQLContract
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
-                                    COLUMN_NAME_LANDSCAPE
+                                    COLUMN_NAME_LANDSCAPE,
+                                    COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -429,7 +527,9 @@ public class SQLContract
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
-                                    COLUMN_NAME_LANDSCAPE
+                                    COLUMN_NAME_LANDSCAPE,
+                                    COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -539,38 +639,49 @@ public class SQLContract
         }
 
         public static ArrayList<LightSwitchData> get(Cursor cursor){
-            LightSwitchData lsd = null;
-            ArrayList<LightSwitchData> allsd = null;
-            if((cursor != null) && (cursor.getCount() > 0))
+            try
             {
-                for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                m_LockCommandHolder.lock();
+
+                LightSwitchData lsd = null;
+                ArrayList<LightSwitchData> allsd = null;
+                if((cursor != null) && (cursor.getCount() > 0))
                 {
-                    if(allsd == null){
-                        allsd = new ArrayList<>();
-                    }
-                    // Origin
-                    boolean bSaved = true;
-                    if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
-                        if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
-                            // Data come direct from LightSwithData Class
-                            bSaved = false;
+                    for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                    {
+                        if(allsd == null){
+                            allsd = new ArrayList<>();
                         }
+                        // Origin
+                        boolean bSaved = true;
+                        if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
+                            if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
+                                // Data come direct from LightSwithData Class
+                                bSaved = false;
+                            }
+                        }
+                        lsd = new LightSwitchData(
+                                bSaved,
+                                false,
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TCP_IP_CLIENT_PROTOCOL))
+                        );
+                        allsd.add(lsd);
                     }
-                    lsd = new LightSwitchData(
-                            bSaved,
-                            false,
-                            cursor.getLong(cursor.getColumnIndex(_ID)),
-                            cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
-                            cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
-                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
-                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
-                            Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
-                            ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
-                    );
-                    allsd.add(lsd);
                 }
+                return allsd;
             }
-            return allsd;
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
         }
 
     }

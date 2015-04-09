@@ -1,7 +1,6 @@
 package com.pretolesi.easydomotic;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -9,17 +8,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientConfigActivity;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -114,7 +110,7 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 5){
-            Intent intent = TCPIPClientConfigActivity.makeTCPIPClientConfigActivity(this);
+            Intent intent = TCPIPClientPropActivity.makeTCPIPClientConfigActivity(this);
             startActivity(intent);
         }
     }
