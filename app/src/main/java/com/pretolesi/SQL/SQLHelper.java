@@ -66,6 +66,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL(SQLContract.Settings.SQL_CREATE_ENTRIES);
+        db.execSQL(SQLContract.TcpIpClientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.LightSwitchEntry.SQL_CREATE_ENTRIES);
     }
@@ -74,6 +75,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         db.execSQL(SQLContract.Settings.SQL_DELETE_ENTRIES);
+        db.execSQL(SQLContract.TcpIpClientEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.LightSwitchEntry.SQL_DELETE_ENTRIES);
 

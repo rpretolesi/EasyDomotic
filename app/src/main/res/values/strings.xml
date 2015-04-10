@@ -123,6 +123,9 @@
     <string name="text_stica_tv_comm_send_data_delay">Send data delay(ms)</string>
     <string name="hint_stica_et_comm_send_data_delay">4</string>
     <string name="text_stica_tv_protocol">Protocol</string>
+    <string name="text_stica_tv_protocol_field_1">HEAD WORD(2 byte long)</string>
+    <string name="text_stica_tv_protocol_field_2">TAIL WORD(2 byte long)</string>
+
 
     <!-- General string -->
     <string name="ok">Ok</string>

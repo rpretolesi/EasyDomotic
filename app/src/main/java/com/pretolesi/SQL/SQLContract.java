@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 
 /**
  *
@@ -33,11 +34,12 @@ public class SQLContract
     }
     public enum SettingID
     {
-        TCP_IP_CLIENT_ADDRESS(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15),
-        TCP_IP_CLIENT_PORT(R.string.text_stica_tv_server_port, 2, "502", 1 ,65535),
-        TCP_IP_CLIENT_TIMEOUT(R.string.text_stica_tv_timeout, 3, "30000", 1 ,60000),
-        TCP_IP_CLIENT_COMM_SEND_DATA_DELAY(R.string.text_stica_tv_comm_send_data_delay, 4, "100", 1 ,60000),
-        TCP_IP_CLIENT_PROTOCOL(R.string.text_stica_tv_protocol, 5, "-1", 0 ,3);
+        DEFAULT(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15);
+//        TCP_IP_CLIENT_ADDRESS(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15),
+//        TCP_IP_CLIENT_PORT(R.string.text_stica_tv_server_port, 2, "502", 1 ,65535),
+//        TCP_IP_CLIENT_TIMEOUT(R.string.text_stica_tv_timeout, 3, "30000", 1 ,60000),
+//        TCP_IP_CLIENT_COMM_SEND_DATA_DELAY(R.string.text_stica_tv_comm_send_data_delay, 4, "100", 1 ,60000),
+//        TCP_IP_CLIENT_PROTOCOL(R.string.text_stica_tv_protocol, 5, "-1", 0 ,3);
 //        SET_SENSOR_FEEDBACK_AMPL_K(10, "500.0", 0 ,0),
 //        SET_SENSOR_LOW_PASS_FILTER_K(11, "0.5", 0 ,0),
 //        SET_SENSOR_MAX_OUTPUT_VALUE(12, "250", 0 ,0),
@@ -282,6 +284,303 @@ public class SQLContract
                 m_LockCommandHolder.unlock();
             }
         }
+    }
+
+    /* Inner class that defines the table contents */
+    public static abstract class TcpIpClientEntry implements BaseColumns {
+        public static final String TABLE_NAME = "TcpIpClient";
+        public static final String COLUMN_NAME_ENABLE = "Enable";
+        public static final String COLUMN_NAME_ADDRESS = "Address";
+        public static final String COLUMN_NAME_PORT = "Port";
+        public static final String COLUMN_NAME_TIMEOUT = "Timeout";
+        public static final String COLUMN_NAME_COMM_SEND_DATA_DELAY = "CommSendDataDelay";
+        public static final String COLUMN_NAME_PROTOCOL = "Protocol";
+        public static final String COLUMN_NAME_HEAD = "Head";
+        public static final String COLUMN_NAME_TAIL = "Tail";
+
+        // Used only in MatrixCursor
+        public static final String COLUMN_NAME_ORIGIN = "Origin";
+
+        public static final String SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + TABLE_NAME +
+                        " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_NAME_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PORT + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TIMEOUT + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_COMM_SEND_DATA_DELAY + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROTOCOL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_HEAD + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TAIL + INT_TYPE +
+                        " )";
+
+        public static final String SQL_DELETE_ENTRIES =
+                "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+        public static boolean save(TCPIPClientData ticd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null && ticd != null) {
+
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_NAME_ENABLE, Integer.valueOf(ticd.getEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_ADDRESS, ticd.getAddress());
+                    values.put(COLUMN_NAME_PORT, ticd.getPort());
+                    values.put(COLUMN_NAME_TIMEOUT, ticd.getTimeout());
+                    values.put(COLUMN_NAME_COMM_SEND_DATA_DELAY, ticd.getCommSendDelayData());
+                    values.put(COLUMN_NAME_PROTOCOL, ticd.getProtocol());
+                    values.put(COLUMN_NAME_HEAD, ticd.getHead());
+                    values.put(COLUMN_NAME_TAIL, ticd.getTail());
+
+                    String whereClause = _ID + " = ? ";
+
+                    String[] whereArgs = {String.valueOf(ticd.getID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, ticd.getID());
+                    // Update or Save
+                    if (id > 0) {
+                        ticd.setID(id);
+                        ticd.setSaved(true);
+                    } else {
+                        bRes = false;
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+
+        public static Cursor loadFromTCPIPClientData(TCPIPClientData ticd)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                MatrixCursor cursor = null;
+
+                if(ticd != null){
+
+                    String[] columns = new String[] {
+                            _ID,
+                            COLUMN_NAME_ENABLE,
+                            COLUMN_NAME_ADDRESS,
+                            COLUMN_NAME_PORT,
+                            COLUMN_NAME_TIMEOUT,
+                            COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                            COLUMN_NAME_PROTOCOL,
+                            COLUMN_NAME_HEAD,
+                            COLUMN_NAME_TAIL,
+
+                            COLUMN_NAME_ORIGIN
+                    };
+
+                    cursor = new MatrixCursor(columns);
+                    cursor.addRow(new Object[] {
+                            ticd.getID(),
+                            ticd.getEnable(),
+                            ticd.getPort(),
+                            ticd.getTimeout(),
+                            ticd.getCommSendDelayData(),
+                            ticd.getProtocol(),
+
+                            0   // Origin
+                    });
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(long lID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_ENABLE,
+                                    COLUMN_NAME_ADDRESS,
+                                    COLUMN_NAME_PORT,
+                                    COLUMN_NAME_TIMEOUT,
+                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_HEAD,
+                                    COLUMN_NAME_TAIL
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(lID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load()
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_ENABLE,
+                                    COLUMN_NAME_ADDRESS,
+                                    COLUMN_NAME_PORT,
+                                    COLUMN_NAME_TIMEOUT,
+                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_HEAD,
+                                    COLUMN_NAME_TAIL
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            null,                       // The columns for the WHERE clause
+                            null,                       // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean delete(long lID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
+                {
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(lID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static ArrayList<TCPIPClientData> get(Cursor cursor){
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                TCPIPClientData ticd = null;
+                ArrayList<TCPIPClientData> alticd = null;
+                if((cursor != null) && (cursor.getCount() > 0))
+                {
+                    for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                    {
+                        if(alticd == null){
+                            alticd = new ArrayList<>();
+                        }
+                        // Origin
+                        boolean bSaved = true;
+                        if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
+                            if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
+                                // Data come direct from LightSwithData Class
+                                bSaved = false;
+                            }
+                        }
+
+                        ticd = new TCPIPClientData(
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
+                                bSaved,
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ADDRESS)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PORT)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TIMEOUT)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_SEND_DATA_DELAY)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROTOCOL)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_HEAD)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TAIL))
+
+                        );
+                        alticd.add(ticd);
+                    }
+                }
+                return alticd;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
     }
 
     /* Inner class that defines the table contents */
