@@ -26,9 +26,10 @@ public class LightSwitchData implements Parcelable {
     aggiungere:
     1-identificativo(2 byte)
         2-valore in long
-    3-valore in indeterminate
-    4-valore in off
-    5-inviocontinuo o su cambio.
+    3-valore in indeterminate da off a on
+    4-valore in indeterminate da on a off
+    5-valore in off
+    6-inviocontinuo o su cambio.
 
 
     public LightSwitchData() {
