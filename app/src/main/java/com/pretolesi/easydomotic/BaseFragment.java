@@ -37,8 +37,8 @@ public class BaseFragment extends Fragment implements
      * The fragment argument representing the section number for this
      * fragment.
      */
-    protected static final String ARG_SECTION_NUMBER = "section_number";
-    protected static final String POSITION = "position";
+    public static final String ARG_SECTION_NUMBER = "section_number";
+    public static final String POSITION = "position";
     protected static final String _ID = "id";
     protected static final String EDIT_MODE = "edit_mode";
 
@@ -60,8 +60,8 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((BaseActivity) activity).onSectionAttached(getTag());
-        ((BaseActivity) activity).restoreActionBar();
+        ((BaseActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
+ //       ((BaseActivity) activity).restoreActionBar();
 
         Log.d(TAG, this.toString() + ": " + "onAttach()");
     }

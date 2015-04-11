@@ -8,30 +8,42 @@ import android.os.Parcelable;
  */
 public class TCPIPClientData implements Parcelable {
 
+    public static int NameMinChar = 1;
+    public static int NameMaxChar = 128;
+    public static String NameDefaultValue = "My Name";
+
     public static int AddressMinChar = 7;
     public static int AddressMaxChar = 15;
+    public static String AddressDefaultValue = "192.168.1.1";
 
     public static int PortMinValue = 1;
     public static int PortMaxValue = 65535;
+    public static String PortDefaultValue = "502";
 
     public static int TimeoutMinValue = 1;
     public static int TimeoutMaxValue = 60000;
+    public static String TimeouDefaultValue = "3000";
 
     public static int CommSendDelayDataMinValue = 1;
     public static int CommSendDelayDataMaxValue = 60000;
+    public static String CommSendDelayDataDefaultValue = "4";
 
     public static int ProtocolMinValue = 0;
     public static int ProtocolMaxValue = 3;
+    public static int ProtocolDefaulValue = -1;
 
     public static int HeadMinValue = 0;
     public static int HeadMaxValue = 32768;
+    public static String HeadDefaulValue = "0";
 
     public static int TailMinValue = 0;
     public static int TailMaxValue = 32768;
+    public static String TailDefaulValue = "0";
 
     private long m_ID;
     private boolean m_bSaved;
     private boolean m_bEnable;
+    private String m_strName;
     private String m_strAddress;
     private int m_iPort;
     private int m_iTimeout;
@@ -44,7 +56,8 @@ public class TCPIPClientData implements Parcelable {
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
-        this.m_strAddress = "";
+        this.m_strName = null;
+        this.m_strAddress = null;
         this.m_iPort = 0;
         this.m_iTimeout = 0;
         this.m_iCommSendDelayData = 0;
@@ -53,8 +66,9 @@ public class TCPIPClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public TCPIPClientData(long id, boolean bSaved, boolean bEnable, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iProtocol, int iHead, int iTail) {
+    public TCPIPClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iProtocol, int iHead, int iTail) {
         this.m_ID = id;
+        this.m_strName = strName;
         this.m_bSaved = bSaved;
         this.m_bEnable = bEnable;
         this.m_strAddress = strAddress;
@@ -71,6 +85,7 @@ public class TCPIPClientData implements Parcelable {
             this.m_ID = lsd.getID();
             this.m_bSaved = lsd.getSaved();
             this.m_bEnable = lsd.getEnable();
+            this.m_strName = lsd.getName();
             this.m_strAddress = lsd.getAddress();
             this.m_iPort = lsd.getPort();
             this.m_iTimeout = lsd.getTimeout();
@@ -88,6 +103,10 @@ public class TCPIPClientData implements Parcelable {
     public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
     public void setEnable(boolean bEnable) { this.m_bEnable = bEnable; }
+
+    public void setName(String strName) {
+        this.m_strName = strName;
+    }
 
     public void setAddress(String strAddress) {
         this.m_strAddress = strAddress;
@@ -123,6 +142,10 @@ public class TCPIPClientData implements Parcelable {
         return m_bEnable;
     }
 
+    public String getName() {
+        return m_strName;
+    }
+
     public String getAddress() {
         return m_strAddress;
     }
@@ -149,6 +172,7 @@ public class TCPIPClientData implements Parcelable {
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_bEnable = in.readByte() != 0;
+        m_strName = in.readString();
         m_strAddress = in.readString();
         m_iPort = in.readInt();
         m_iTimeout = in.readInt();
@@ -168,6 +192,7 @@ public class TCPIPClientData implements Parcelable {
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeByte((byte) (m_bEnable ? 1 : 0));
+        dest.writeString(m_strName);
         dest.writeString(m_strAddress);
         dest.writeInt(m_iPort);
         dest.writeInt(m_iTimeout);

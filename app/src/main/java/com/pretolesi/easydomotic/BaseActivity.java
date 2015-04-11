@@ -46,8 +46,35 @@ public class BaseActivity extends Activity {
         Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
-    public void onSectionAttached(String strTitle) {
-        mTitle = strTitle;
+    public void onSectionAttached(int number) {
+
+        switch (number) {
+            case 1:
+                mTitle = getString(R.string.settings_title_section_new_room);
+                break;
+            case 2:
+                mTitle = getString(R.string.settings_title_section_open_room);
+                break;
+            case 3:
+                mTitle = getString(R.string.settings_title_section_add_switch);
+                break;
+            case 4:
+                mTitle = getString(R.string.settings_title_section_disp);
+                break;
+            case 5:
+                mTitle = getString(R.string.settings_title_section_save);
+                break;
+            case 6:
+                mTitle = getString(R.string.settings_title_section_new_tcp_ip_client);
+                break;
+            case 7:
+                mTitle = getString(R.string.settings_title_section_open_tcp_ip_client);
+                break;
+            case 8:
+                mTitle = getString(R.string.settings_title_section_save);
+                break;
+        }
+
     }
 
     public void restoreActionBar() {

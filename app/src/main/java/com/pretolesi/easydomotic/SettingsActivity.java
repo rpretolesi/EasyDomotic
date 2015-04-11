@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientListFragment;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -31,7 +32,8 @@ import java.util.ArrayList;
 public class SettingsActivity extends BaseActivity implements
         SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
-        RoomListFragment.ListRoomFragmentCallbacks {
+        RoomListFragment.ListRoomFragmentCallbacks,
+        TcpIpClientListFragment.ListTcpIpClientFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -39,10 +41,6 @@ public class SettingsActivity extends BaseActivity implements
     private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
     private SetNameAndOrientDialogFragment m_sndf;
     private YesNoDialogFragment m_yndf;
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,9 +108,17 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 5){
-            Intent intent = TCPIPClientPropActivity.makeTCPIPClientConfigActivity(this);
+            Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, -1);
             startActivity(intent);
         }
+        if(position == 6){
+            // Costruisco il frame...
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, TcpIpClientListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
+                    .commit();
+        }
+
     }
 
     @Override
@@ -120,14 +126,6 @@ public class SettingsActivity extends BaseActivity implements
         if(position == 0){
             // Verifico che il nome sia valido
             if(isTagRoomValid(strName)){
-/*
-                // Controllo orientamento prima di costruire il frame....
-                if(bLandscape){
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } else {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                }
-*/
                 // Room Data
                 RoomFragmentData rfd = new RoomFragmentData();
                 rfd.setTag(strName);
@@ -148,18 +146,7 @@ public class SettingsActivity extends BaseActivity implements
             }
         }
         if(position == 2){
-/*
-            BaseFragment rf = (BaseFragment)getSupportFragmentManager().findFragmentById(R.id.container);
-            if(rf != null) {
-                RoomFragmentData rfd = rf.getRoomFragmentData();
-                if(rfd != null) {
-                    if (isLightSwitchTagValid(strName, rfd.getID())) {
-                        LightSwitchData lsd = new LightSwitchData(false, false, -1, rfd.getID(), strName, 30, 30, 0, bLandscape);
-                        rf.addLightSwitch(lsd);
-                    }
-                }
-            }
-*/
+
         }
     }
 
@@ -169,7 +156,7 @@ public class SettingsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onListRoomFragmentClickListener(int sectionNumber, int position, long id) {
+    public void onListRoomFragmentCallbacksListener(int sectionNumber, int position, long id) {
         if(position == 1){
             // Prelevo i dati e TAG per Room
             Cursor cursor = SQLContract.RoomEntry.load(id);
@@ -189,54 +176,22 @@ public class SettingsActivity extends BaseActivity implements
                             .replace(R.id.container, BaseFragment.newInstance(position + 1, id, true), rfd.getTAG())
                             .commit();
 
-/*
-                    // Prelevo i dati per gli altri oggetti della Room
-                    ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.load(this, rfd.getID());
-                    if (allsd != null) {
-                        // update the main content by replacing fragments
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        // Costruisco l'istanza
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.container, RoomFragment.newInstance(position + 1, id, rfd, allsd), rfd.getTAG())
-                                .commit();
-
-                    }
-*/
                 }
             }
         }
     }
 
-    public void onSectionAttached(String strTitle) {
-        mTitle = strTitle;
-/*
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.settings_title_section_new_room);
-                break;
-            case 2:
-                mTitle = getString(R.string.settings_title_section_add_switch);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-            case 4:
-                mTitle = getString(R.string.settings_title_section_disp);
-                break;
-            case 5:
-                mTitle = getString(R.string.settings_title_section_disp);
-                break;
-            case 6:
-                mTitle = getString(R.string.settings_title_section_disp);
-                break;
-            case 7:
-                mTitle = getString(R.string.settings_title_section_disp);
-                break;
-            case 8:
-                mTitle = getString(R.string.settings_title_section_save);
-                break;
+    @Override
+    public void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id) {
+        if(position == 6){
+            Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, id);
+            startActivity(intent);
         }
-*/
+    }
+/*
+    @Override
+    public void onSectionAttached(int number) {
+
     }
 
     public void restoreActionBar() {
@@ -245,7 +200,7 @@ public class SettingsActivity extends BaseActivity implements
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -257,6 +212,7 @@ public class SettingsActivity extends BaseActivity implements
             restoreActionBar();
             return true;
         }
+
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic;
+package com.pretolesi.easydomotic.TcpIpClient;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -21,17 +21,21 @@ import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.R;
+import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  * Created by RPRETOLESI on 25/03/2015.
  */
-public class RoomListFragment extends ListFragment implements
+public class TcpIpClientListFragment extends ListFragment implements
 //        SearchView.OnQueryTextListener,
 //        SearchView.OnCloseListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "ListRoomFragment";
-    private ListRoomFragmentCallbacks mCallbacks;
+    private ListTcpIpClientFragmentCallbacks mCallbacks;
     private SimpleCursorAdapter mAdapter;
     // The SearchView for doing filtering.
     SearchView mSearchView;
@@ -43,8 +47,8 @@ public class RoomListFragment extends ListFragment implements
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static RoomListFragment newInstance(int sectionNumber, int position) {
-        RoomListFragment fragment = new RoomListFragment();
+    public static TcpIpClientListFragment newInstance(int sectionNumber, int position) {
+        TcpIpClientListFragment fragment = new TcpIpClientListFragment();
         Bundle args = new Bundle();
         args.putInt(BaseFragment.ARG_SECTION_NUMBER, sectionNumber);
         args.putInt(BaseFragment.POSITION, position);
@@ -52,7 +56,7 @@ public class RoomListFragment extends ListFragment implements
         return fragment;
     }
 
-    public RoomListFragment() {
+    public TcpIpClientListFragment() {
     }
 
     @Override
@@ -65,7 +69,7 @@ public class RoomListFragment extends ListFragment implements
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        setEmptyText("No Rooms");
+        setEmptyText("No Tcp Ip Server");
 
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);
@@ -73,7 +77,7 @@ public class RoomListFragment extends ListFragment implements
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[] {SQLContract.RoomEntry.COLUMN_NAME_TAG},
+                new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
 
         setListAdapter(mAdapter);
@@ -83,7 +87,7 @@ public class RoomListFragment extends ListFragment implements
 
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
-        getLoaderManager().initLoader(0, null, this);
+       // getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
     }
 /*
     public static class ListSearchView extends SearchView {
@@ -123,24 +127,25 @@ public class RoomListFragment extends ListFragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((SettingsActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
+//        ((SettingsActivity) activity).restoreActionBar();
         try {
-            mCallbacks = (ListRoomFragmentCallbacks) activity;
+            mCallbacks = (ListTcpIpClientFragmentCallbacks) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement ListRoomFragmentCallbacks.");
+            throw new ClassCastException("Activity must implement ListTcpIpClientFragmentCallbacks.");
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
-//        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        getLoaderManager().destroyLoader(0);
-
+        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
@@ -164,7 +169,8 @@ public class RoomListFragment extends ListFragment implements
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mCallbacks.onListRoomFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id);
+        mCallbacks.onListTcpIpClientFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id);
+        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
     }
 /*
     @Override
@@ -195,7 +201,7 @@ public class RoomListFragment extends ListFragment implements
             return true;
         }
         mCurFilter = newFilter;
-        getLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
 
@@ -203,47 +209,57 @@ public class RoomListFragment extends ListFragment implements
     }
 */
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
-        return new CursorLoader(getActivity()){
-            @Override
-            public Cursor loadInBackground() {
-                return SQLContract.RoomEntry.load();
-            }
-        };
+        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.TcpIpClientEntry.load();
+                }
+            };
+        }
+
+        return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        mAdapter.swapCursor(cursor);
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            mAdapter.swapCursor(cursor);
 
-        // The list should now be shown.
-        if (isResumed()) {
-            setListShown(true);
-        } else {
-            setListShownNoAnimation(true);
+            // The list should now be shown.
+            if (isResumed()) {
+                setListShown(true);
+            } else {
+                setListShownNoAnimation(true);
+            }
         }
+
         Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
         // This is called when the last Cursor provided to onLoadFinished()
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
-        mAdapter.swapCursor(null);
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            mAdapter.swapCursor(null);
+        }
+
         Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
     }
 
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface ListRoomFragmentCallbacks {
+    public static interface ListTcpIpClientFragmentCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onListRoomFragmentCallbacksListener(int sectionNumber, int position, long id);
+        void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id);
     }
 }

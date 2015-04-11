@@ -25,6 +25,7 @@ import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -60,9 +61,10 @@ public class LightSwitchPropActivity extends Activity implements
     private Spinner m_id_lspa_spn_tcp_ip_client_protocol;
 
     private LightSwitchData m_lsd;
-    long m_lRoomIDParameter;
-    long m_lIDParameter;
+    private long m_lRoomIDParameter;
+    private long m_lIDParameter;
     private LightSwitchData m_lsdParameter;
+    private SimpleCursorAdapter m_TcpIpClientAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
         m_id_lspa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_lspa_cb_enable_tcp_ip_client_protocol);
         m_id_lspa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_lspa_spn_tcp_ip_client_protocol);
-        m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
+        m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(false);
 
         m_id_lspa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
 
@@ -96,6 +98,7 @@ public class LightSwitchPropActivity extends Activity implements
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         Intent intent = getIntent();
+        m_lIDParameter = -1;
         if(intent != null) {
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
             m_lIDParameter = intent.getLongExtra(LIGHT_SWITCH_ID, -1);
@@ -114,14 +117,24 @@ public class LightSwitchPropActivity extends Activity implements
 
         m_id_spn_room.setAdapter(m_SCAdapter);
 
+        m_TcpIpClientAdapter = new SimpleCursorAdapter(
+                this,
+                android.R.layout.simple_list_item_2,
+                null,
+                new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
+                new int[] {android.R.id.text1}, 0);
+
+        m_id_lspa_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
+
+        // Primo
         getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
     }
 
     public void setActionBar() {
         ActionBar actionBar = getActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
         }
     }
 
@@ -205,6 +218,15 @@ public class LightSwitchPropActivity extends Activity implements
             };
         }
 
+        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.TcpIpClientEntry.load();
+                }
+            };
+        }
+
         return null;
     }
 
@@ -228,17 +250,26 @@ public class LightSwitchPropActivity extends Activity implements
                     }
                 }
             }
+            // Secondo
+            getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
         }
 
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
             if(allsd != null && !allsd.isEmpty()){
                 m_lsd = allsd.get(0);
-                updateLightSwitch();
             }
+
+            // Terzo
+            getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
         }
 
-       Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            m_TcpIpClientAdapter.swapCursor(cursor);
+            updateLightSwitch();
+        }
+
+        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
 
     }
 
@@ -246,6 +277,9 @@ public class LightSwitchPropActivity extends Activity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(null);
+        }
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            m_TcpIpClientAdapter.swapCursor(null);
         }
 
         Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
@@ -346,12 +380,18 @@ public class LightSwitchPropActivity extends Activity implements
             if (m_id_et_position_z != null) {
                 m_id_et_position_z.setText(Float.toString(m_lsd.getPosZ()));
             }
-            if (m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
-                m_id_lspa_cb_enable_tcp_ip_client_protocol.setChecked(m_lsd.getTcpIpClientEnable());
-            }
-            if (m_id_lspa_spn_tcp_ip_client_protocol != null) {
-                m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_lsd.getTcpIpClientEnable());
-                m_id_lspa_spn_tcp_ip_client_protocol.setSelection(m_lsd.getTcpIpClientProtocol());
+            if (m_id_lspa_spn_tcp_ip_client_protocol != null && m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
+                for (int i = 0; i < m_id_lspa_spn_tcp_ip_client_protocol.getCount(); i++) {
+                    Cursor value = (Cursor) m_id_lspa_spn_tcp_ip_client_protocol.getItemAtPosition(i);
+                    if (value != null) {
+                        long id = value.getLong(value.getColumnIndex("_id"));
+                        if (id == m_lsd.getTcpIpClientID()) {
+                            m_id_lspa_cb_enable_tcp_ip_client_protocol.setChecked(m_lsd.getTcpIpClientEnable());
+                            m_id_lspa_spn_tcp_ip_client_protocol.setSelection(i);
+                            m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_lsd.getTcpIpClientEnable());
+                        }
+                    }
+                }
             }
         }
     }
@@ -435,7 +475,7 @@ public class LightSwitchPropActivity extends Activity implements
         }
 
         if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
-            m_lsd.setTcpIpClientProtocol(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemPosition());
+            m_lsd.setTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
         }
 
         if(SQLContract.LightSwitchEntry.save(m_lsd)){

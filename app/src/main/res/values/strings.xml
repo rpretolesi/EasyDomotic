@@ -10,8 +10,12 @@
 
     <string name="settings_title_dialog_section_add_switch">Switch</string>
     <string name="settings_title_section_add_switch">Add Switch</string>
+    <string name="settings_title_section_open_switch">Open Switch</string>
+    <string name="settings_title_section_edit_switch">Edit Switch</string>
 
-    <string name="settings_title_section_tcp_ip_client_config">TCP IP Client Config</string>
+    <string name="settings_title_section_new_tcp_ip_client">New TCP IP Client</string>
+    <string name="settings_title_section_open_tcp_ip_client">Open TCP IP Client</string>
+    <string name="settings_title_section_edit_tcp_ip_client">Edit TCP IP Client</string>
 
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
@@ -67,7 +71,10 @@
     <string name="text_yndf_message_data_delete_confirmation">Are you sure ?</string>
 
     <string name="text_yndf_title_light_switch_name_already_exist">Light Switch name already exist.</string>
-    <string name="text_yndf_message_light_switch_name_already_exist_confirmation">Do yuo want to overwrite it ?</string>
+    <string name="text_yndf_message_light_switch_name_already_exist_confirmation">Do you want to overwrite it ?</string>
+
+    <string name="text_yndf_title_tcp_ip_client_name_already_exist">Tcp Ip Client name already exist.</string>
+    <string name="text_yndf_message_tcp_ip_client_name_already_exist_confirmation">Do you want to overwrite it ?</string>
 
     <string name="text_yndf_btn_yes">Yes</string>
     <string name="text_yndf_btn_no">No</string>
@@ -114,6 +121,8 @@
     <string name="text_edad_btn_ok">OK</string>
 
     <!-- setting_tcp_ip_client_activity string -->
+    <string name="text_stica_tv_server_name">TCP IP Server Name</string>
+    <string name="hint_stica_et_server_name">Server Name</string>
     <string name="text_stica_tv_server_ip_address">TCP IP Server Address</string>
     <string name="hint_stica_et_server_ip_address">192.168.1.1</string>
     <string name="text_stica_tv_server_port">TCP IP Server Port</string>
