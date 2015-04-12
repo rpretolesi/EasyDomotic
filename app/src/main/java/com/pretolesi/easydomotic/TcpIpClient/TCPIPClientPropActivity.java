@@ -36,7 +36,7 @@ import java.util.List;
 public class TCPIPClientPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
-    YesNoDialogFragment.YesNoDialogFragmentCallbacks{
+        YesNoDialogFragment.YesNoDialogFragmentCallbacks{
 
     private static final String TAG = "TCPIPClientPropActivity";
 
