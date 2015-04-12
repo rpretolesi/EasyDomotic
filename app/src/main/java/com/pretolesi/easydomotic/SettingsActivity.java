@@ -1,6 +1,5 @@
 package com.pretolesi.easydomotic;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;

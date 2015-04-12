@@ -288,7 +288,7 @@ public class SQLContract
 
     /* Inner class that defines the table contents */
     public static abstract class TcpIpClientEntry implements BaseColumns {
-        public static final String TABLE_NAME = "TcpIpClient";
+        public static final String TABLE_NAME = "TCPIPClient";
         public static final String COLUMN_NAME_ENABLE = "Enable";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_ADDRESS = "Address";
@@ -707,10 +707,15 @@ public class SQLContract
         public static final String COLUMN_NAME_Y = "Y";
         public static final String COLUMN_NAME_Z = "Z";
         public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
-        public static final String COLUMN_NAME_TCP_IP_CLIENT_ENABLE = "TcpIpClientEnable";
-        public static final String COLUMN_NAME_TCP_IP_CLIENT_ID = "TcpIpClientID";
-
-
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE = "ProtTcpIpClientEnable";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ID = "ProtTcpIpClientID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF = "ProtTcpIpClientValueOFF";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON = "ProtTcpIpClientValueOFFON";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF = "ProtTcpIpClientValueONOFF";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON = "ProtTcpIpClientValueON";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE = "ProtTcpIpClientSendDataOnChange";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA = "ProtTcpIpClientWaitAnswerBeforeSendNextData";
 
         // Used only in MatrixCursor
         public static final String COLUMN_NAME_ORIGIN = "Origin";
@@ -725,8 +730,15 @@ public class SQLContract
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_TCP_IP_CLIENT_ID + INT_TYPE +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -753,8 +765,16 @@ public class SQLContract
                             values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
                             values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
                             values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
-                            values.put(COLUMN_NAME_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_TCP_IP_CLIENT_ID, lsdTemp.getTcpIpClientID());
+
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsdTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsdTemp.getProtTcpIpClientValueOFF());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsdTemp.getProtTcpIpClientValueOFFON());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFFN());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsdTemp.getProtTcpIpClientValueON());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
 
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
@@ -794,8 +814,16 @@ public class SQLContract
                     values.put(COLUMN_NAME_Y, Float.toString(lsd.getPosY()));
                     values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
-                    values.put(COLUMN_NAME_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_TCP_IP_CLIENT_ID, lsd.getTcpIpClientID());
+
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsd.getTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsd.getProtTcpIpClientValueID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsd.getProtTcpIpClientValueOFF());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsd.getProtTcpIpClientValueOFFON());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFFN());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsd.getProtTcpIpClientValueON());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
 
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
 
@@ -835,8 +863,16 @@ public class SQLContract
                             COLUMN_NAME_Y,
                             COLUMN_NAME_Z,
                             COLUMN_NAME_LANDSCAPE,
-                            COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
-                            COLUMN_NAME_TCP_IP_CLIENT_ID,
+
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
 
                             COLUMN_NAME_ORIGIN
                     };
@@ -850,8 +886,16 @@ public class SQLContract
                             lsd.getPosY(),
                             lsd.getPosZ(),
                             Integer.valueOf(lsd.getLandscape() ? 1 : 0),
+
                             Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0),
                             lsd.getTcpIpClientID(),
+                            lsd.getProtTcpIpClientValueID(),
+                            lsd.getProtTcpIpClientValueOFF(),
+                            lsd.getProtTcpIpClientValueOFFON(),
+                            lsd.getProtTcpIpClientValueONOFFN(),
+                            lsd.getProtTcpIpClientValueON(),
+                            Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
+                            Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
 
                             0   // Origin
                     });
@@ -888,8 +932,16 @@ public class SQLContract
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
                                     COLUMN_NAME_LANDSCAPE,
-                                    COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_TCP_IP_CLIENT_ID
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -942,8 +994,16 @@ public class SQLContract
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
                                     COLUMN_NAME_LANDSCAPE,
-                                    COLUMN_NAME_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_TCP_IP_CLIENT_ID
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -1083,9 +1143,19 @@ public class SQLContract
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TCP_IP_CLIENT_ID))
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                        );
+
+                        lsd.setProtTcpIpClient(
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
                         );
                         allsd.add(lsd);
                     }

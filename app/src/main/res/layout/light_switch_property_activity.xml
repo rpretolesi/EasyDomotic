@@ -169,17 +169,17 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/id_lspa_tv_protocol"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"/>
 
         <Spinner
             android:id="@+id/id_lspa_spn_tcp_ip_client_protocol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/id_lspa_cb_enable_tcp_ip_client_protocol"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="40dp"
             android:layout_below="@id/id_lspa_tv_protocol" />
 
-        aggiunger qui i campi da spedire che identificano questo switch
 
     </RelativeLayout>
 </ScrollView>

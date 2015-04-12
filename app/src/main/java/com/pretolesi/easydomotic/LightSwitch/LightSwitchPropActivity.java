@@ -25,7 +25,6 @@ import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -471,11 +470,11 @@ public class LightSwitchPropActivity extends Activity implements
         }
 
         if(m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
-            m_lsd.setTcpIpClientEnable(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
+            m_lsd.setProtTcpIpClientEnable(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
         }
 
         if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
-            m_lsd.setTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
+            m_lsd.setProtTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
         }
 
         if(SQLContract.LightSwitchEntry.save(m_lsd)){
