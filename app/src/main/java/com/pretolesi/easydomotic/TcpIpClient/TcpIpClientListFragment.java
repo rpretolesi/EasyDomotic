@@ -27,7 +27,7 @@ import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
- * Created by RPRETOLESI on 25/03/2015.
+ *
  */
 public class TcpIpClientListFragment extends ListFragment implements
 //        SearchView.OnQueryTextListener,
@@ -38,10 +38,10 @@ public class TcpIpClientListFragment extends ListFragment implements
     private ListTcpIpClientFragmentCallbacks mCallbacks;
     private SimpleCursorAdapter mAdapter;
     // The SearchView for doing filtering.
-    SearchView mSearchView;
+//    SearchView mSearchView;
 
     // If non-null, this is the current filter the user has provided.
-    String mCurFilter;
+//    String mCurFilter;
 
     /**
      * Returns a new instance of this fragment for the given section

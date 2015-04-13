@@ -47,8 +47,11 @@
     <string name="text_odf_message_light_switch_name_not_valid">Light Switch Name not valid.</string>
     <string name="text_odf_message_light_switch_name_already_exist">LightSwitch Name already exist.</string>
 
-    <string name="text_odf_title_position_not_valid">Position value are not valid.</string>
-    <string name="text_odf_message_position_not_valid">Please set the Position value.</string>
+    <string name="text_odf_title_position_not_valid">Position values are not valid.</string>
+    <string name="text_odf_message_position_not_valid">Please set a valid Position values.</string>
+
+    <string name="text_odf_title_protocol_not_valid">Protocol values are not valid.</string>
+    <string name="text_odf_message_protocol_not_valid">Please set a valid Protocol values.</string>
 
     <string name="text_odf_title_saving">Saving &#8230; </string>
     <string name="text_odf_message_saving_ok">Saving OK.</string>
@@ -96,6 +99,12 @@
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>
     <string name="text_tv_position_z">Z:</string>
+    <string name="text_lspa_tv_protocol_field_1">IDENTIFIER WORD(2 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_2">OFF BYTE(1 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_3">OFF-ON BYTE(1 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_4">ON-OFF BYTE(1 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_5">ON BYTE(1 byte long)</string>
+
     <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
 
     <!--

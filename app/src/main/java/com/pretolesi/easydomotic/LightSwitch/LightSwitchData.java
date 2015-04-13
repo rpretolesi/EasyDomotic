@@ -12,6 +12,26 @@ public class LightSwitchData implements Parcelable {
     public static int TAGMaxChar = 128;
     public static String TAGDefaultValue = "My Name";
 
+    public static int ProtTcpIpClientIDMinValue = 0;
+    public static int ProtTcpIpClientIDMaxValue = 32768;
+    public static String ProtTcpIpClientIDDefaulValue = "1";
+
+    public static int ProtTcpIpClientValueOFFMinValue = 0;
+    public static int ProtTcpIpClientValueOFFMaxValue = 255;
+    public static String ProtTcpIpClientValueOFFDefaulValue = "1";
+
+    public static int ProtTcpIpClientValueOFFONMinValue = 0;
+    public static int ProtTcpIpClientValueOFFONMaxValue = 255;
+    public static String ProtTcpIpClientValueOFFONDefaulValue = "3";
+
+    public static int ProtTcpIpClientValueONOFFMinValue = 0;
+    public static int ProtTcpIpClientValueONOFFMaxValue = 255;
+    public static String ProtTcpIpClientValueONOFFDefaulValue = "7";
+
+    public static int ProtTcpIpClientValueONMinValue = 0;
+    public static int ProtTcpIpClientValueONMaxValue = 255;
+    public static String ProtTcpIpClientValueONDefaulValue = "4";
+
     private long m_ID;
     private boolean m_bSaved;
     private boolean m_bDisp;
@@ -140,11 +160,15 @@ public class LightSwitchData implements Parcelable {
     public void setProtTcpIpClientValueID(int iProtTcpIpClientValueID) { this.m_iProtTcpIpClientValueID = iProtTcpIpClientValueID; }
 
     public void setProtTcpIpClientValueOFF(int iProtTcpIpClientValueOFF) {
-        this.m_lProtTcpIpClientID = iProtTcpIpClientValueOFF;
+        this.m_iProtTcpIpClientValueOFF = iProtTcpIpClientValueOFF;
     }
 
     public void setProtTcpIpClientValueOFFON(int iProtTcpIpClientValueOFFON) {
         this.m_iProtTcpIpClientValueOFFON = iProtTcpIpClientValueOFFON;
+    }
+
+    public void setProtTcpIpClientValueONOFF(int iProtTcpIpClientValueONOFF) {
+        this.m_iProtTcpIpClientValueONOFF = iProtTcpIpClientValueONOFF;
     }
 
     public void setProtTcpIpClientValueON(int iProtTcpIpClientValueON) {
@@ -189,11 +213,11 @@ public class LightSwitchData implements Parcelable {
     }
 
     // Protocol
-    public boolean getTcpIpClientEnable() {
+    public boolean getProtTcpIpClientEnable() {
         return m_bProtTcpIpClientEnable;
     }
 
-    public long getTcpIpClientID() {
+    public long getProtTcpIpClientID() {
         return m_lProtTcpIpClientID;
     }
 
@@ -207,7 +231,7 @@ public class LightSwitchData implements Parcelable {
         return m_iProtTcpIpClientValueOFFON;
     }
 
-    public int getProtTcpIpClientValueONOFFN() {
+    public int getProtTcpIpClientValueONOFF() {
         return m_iProtTcpIpClientValueONOFF;
     }
 

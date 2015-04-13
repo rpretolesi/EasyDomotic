@@ -766,12 +766,12 @@ public class SQLContract
                             values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
                             values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
 
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getProtTcpIpClientID());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsdTemp.getProtTcpIpClientValueID());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsdTemp.getProtTcpIpClientValueOFF());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsdTemp.getProtTcpIpClientValueOFFON());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFFN());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFF());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsdTemp.getProtTcpIpClientValueON());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
@@ -815,12 +815,12 @@ public class SQLContract
                     values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsd.getTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsd.getProtTcpIpClientID());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsd.getProtTcpIpClientValueID());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsd.getProtTcpIpClientValueOFF());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsd.getProtTcpIpClientValueOFFON());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFFN());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFF());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsd.getProtTcpIpClientValueON());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
@@ -887,12 +887,12 @@ public class SQLContract
                             lsd.getPosZ(),
                             Integer.valueOf(lsd.getLandscape() ? 1 : 0),
 
-                            Integer.valueOf(lsd.getTcpIpClientEnable() ? 1 : 0),
-                            lsd.getTcpIpClientID(),
+                            Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0),
+                            lsd.getProtTcpIpClientID(),
                             lsd.getProtTcpIpClientValueID(),
                             lsd.getProtTcpIpClientValueOFF(),
                             lsd.getProtTcpIpClientValueOFFON(),
-                            lsd.getProtTcpIpClientValueONOFFN(),
+                            lsd.getProtTcpIpClientValueONOFF(),
                             lsd.getProtTcpIpClientValueON(),
                             Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
                             Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),

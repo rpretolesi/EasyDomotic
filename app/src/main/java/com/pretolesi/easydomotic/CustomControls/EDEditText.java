@@ -5,9 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.pretolesi.easydomotic.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Custom EditText
@@ -104,5 +109,30 @@ public class EDEditText extends EditText {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
+
+    public static boolean validateInputData(View viev){
+        List<View> visited = new ArrayList<>();
+        List<View> unvisited = new ArrayList<>();
+        unvisited.add(viev);
+
+        while (!unvisited.isEmpty()) {
+            View child = unvisited.remove(0);
+            visited.add(child);
+            if (!(child instanceof ViewGroup)) continue;
+            ViewGroup group = (ViewGroup) child;
+            final int childCount = group.getChildCount();
+            for (int i=0; i<childCount; i++) unvisited.add(group.getChildAt(i));
+        }
+
+        for(View v : visited){
+            if(v instanceof EDEditText){
+                if(!((EDEditText)v).validateInputLimit())
+                    return false;
+            }
+
+        }
+
+        return true;
     }
 }

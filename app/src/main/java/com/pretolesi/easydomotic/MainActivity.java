@@ -13,6 +13,9 @@ import com.pretolesi.SQL.SQLHelper;
 public class MainActivity extends BaseActivity
         implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    // Client Tcp Ip
+//    private List<> m_acs;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */

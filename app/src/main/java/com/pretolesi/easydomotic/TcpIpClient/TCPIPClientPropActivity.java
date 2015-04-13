@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -28,7 +26,6 @@ import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -301,7 +298,7 @@ public class TCPIPClientPropActivity extends Activity implements
     }
 
     private void save(int iDialogOriginID) {
-        if(!validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!EDEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
         if(m_id_stica_et_server_name != null) {
 
@@ -364,31 +361,6 @@ public class TCPIPClientPropActivity extends Activity implements
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }
-    }
-
-    private static boolean validateInputData(View v){
-        List<View> visited = new ArrayList<>();
-        List<View> unvisited = new ArrayList<>();
-        unvisited.add(v);
-
-        while (!unvisited.isEmpty()) {
-            View child = unvisited.remove(0);
-            visited.add(child);
-            if (!(child instanceof ViewGroup)) continue;
-            ViewGroup group = (ViewGroup) child;
-            final int childCount = group.getChildCount();
-            for (int i=0; i<childCount; i++) unvisited.add(group.getChildAt(i));
-        }
-
-        for(View vet : visited){
-            if(vet instanceof EDEditText){
-                if(!((EDEditText)vet).validateInputLimit())
-                    return false;
-            }
-
-        }
-
-        return true;
     }
 
     public static Intent makeTCPIPClientPropActivity(Context context, long lID) {
