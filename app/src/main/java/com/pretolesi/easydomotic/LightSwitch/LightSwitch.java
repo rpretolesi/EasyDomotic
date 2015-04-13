@@ -21,7 +21,7 @@ public class LightSwitch extends Switch implements
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
 
-    LightSwitchData m_lsd;
+    private LightSwitchData m_lsd;
 
     private float mLastTouchX;
     private float mLastTouchY;

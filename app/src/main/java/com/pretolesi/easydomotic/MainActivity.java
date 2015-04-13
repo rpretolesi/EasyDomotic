@@ -1,20 +1,34 @@
 package com.pretolesi.easydomotic;
 
 import android.app.FragmentManager;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.SQL.SQLHelper;
+import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 
-public class MainActivity extends BaseActivity
-        implements MainNavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.ArrayList;
+
+
+public class MainActivity extends BaseActivity implements
+        MainNavigationDrawerFragment.NavigationDrawerCallbacks,
+        LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String TAG = "MainActivity";
 
     // Client Tcp Ip
-//    private List<> m_acs;
+    private ArrayList<TCPIPClient> m_altic;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -36,6 +50,9 @@ public class MainActivity extends BaseActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+
     }
 
     @Override
@@ -113,6 +130,52 @@ public class MainActivity extends BaseActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+            return new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.TcpIpClientEntry.load();
+                }
+            };
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+            if(alticd != null && !alticd.isEmpty()){
+                // Initialize the List of TcpIpCLient
+                if(m_altic == null){
+                    m_altic = new ArrayList<>();
+                }
+                for(TCPIPClientData ticd : alticd){
+                    if(ticd != null){
+                        m_altic.add(new TCPIPClient(this, ticd));
+                    }
+                }
+            }
+        }
+
+        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if(m_altic != null){
+            for(TCPIPClient tic : m_altic){
+                if(tic != null){
+                    tic.
+                }
+            }
+        }
     }
 /*
     /**
