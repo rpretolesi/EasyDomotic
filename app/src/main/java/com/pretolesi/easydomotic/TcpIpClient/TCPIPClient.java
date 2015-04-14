@@ -23,13 +23,22 @@ public class TCPIPClient {
 
     private Context m_context = null;
     private Socket m_clientSocket = null;
-    private Protocol m_protocol;
     private SocketAddress m_socketAddress = null;
     private DataOutputStream m_dataOutputStream = null;
     private DataInputStream m_dataInputStream = null;
 
+    private TcpIpClientProtocol m_protocol;
+    private int m_SendDataField_1;
+    private int m_SendDataField_2;
+    private int m_SendDataField_3;
+    private int m_SendDataField_4;
+    private int m_SendDataField_5;
+
+
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsGet = 0;
+
+    private static CommunicationTask m_ct;
 
     public TCPIPClient(Context context, TCPIPClientData ticd){
         m_context = context;
@@ -58,6 +67,10 @@ public class TCPIPClient {
 
                 m_timeMillisecondsSend = System.currentTimeMillis();
                 m_timeMillisecondsGet = System.currentTimeMillis();
+
+                // Start Background communication
+                m_ct = new CommunicationTask();
+                m_ct.execute(m_clientSocket, m_Message);
 
                 Log.d(TAG,this.toString() + "startConnection()");
 
@@ -226,24 +239,7 @@ public class TCPIPClient {
         Log.d(TAG, this.toString() + "closeConnection()");
     }
 
-    public static enum Protocol {
-        FREE("Free"),
-        MODBUS_RTU("Modbus RTU"),
-        MODBUS_ASCII("Modbus ASCII"),
-        KNX("KNX");
-
-        private String m_strProtocol;
-
-        Protocol(String strProtocol) {
-            m_strProtocol = strProtocol;
-        }
-
-        @Override
-        public String toString() {
-            return m_strProtocol;
-        }
-    }
-    private class CommunicationTask extends AsyncTask<Object, ProgressUpdateData, Void> {
+    private class CommunicationTask extends AsyncTask<Object, Void, Void> {
         private static final String TAG = "CommunicationTask";
 /*
         private List<ProgressUpdate> m_lCSListener = new Vector<>();
@@ -282,6 +278,7 @@ public class TCPIPClient {
 */
         @Override
         protected Void doInBackground(Object...obj) {
+            TcpIpClientProtocol
 /*
             //Prendo i parametri
             ArduinoClientSocket acs = (ArduinoClientSocket) obj[0];
