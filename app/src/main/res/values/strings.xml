@@ -99,7 +99,7 @@
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>
     <string name="text_tv_position_z">Z:</string>
-    <string name="text_lspa_tv_protocol_field_1">IDENTIFIER WORD(2 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_1">IDENTIFIER(2 byte long)</string>
     <string name="text_lspa_tv_protocol_field_2">OFF BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_3">OFF-ON BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_4">ON-OFF BYTE(1 byte long)</string>
