@@ -95,7 +95,7 @@ public class TCPIPClientPropActivity extends Activity implements
         }
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TCPIPClient.Protocol.values()));
+                android.R.layout.simple_list_item_1, TcpIpClientProtocol.Protocol.values()));
 
         getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
     }

@@ -714,6 +714,8 @@ public class SQLContract
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON = "ProtTcpIpClientValueOFFON";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF = "ProtTcpIpClientValueONOFF";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON = "ProtTcpIpClientValueON";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS = "ProtTcpIpClientValueUpdateMillis";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE = "ProtTcpIpClientSendDataOnChange";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA = "ProtTcpIpClientWaitAnswerBeforeSendNextData";
 
@@ -737,6 +739,8 @@ public class SQLContract
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
                         " )";
@@ -773,6 +777,8 @@ public class SQLContract
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsdTemp.getProtTcpIpClientValueOFFON());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFF());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsdTemp.getProtTcpIpClientValueON());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsdTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsdTemp.getProtTcpIpClientValueUpdateMillis());
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
                             values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
 
@@ -822,6 +828,8 @@ public class SQLContract
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsd.getProtTcpIpClientValueOFFON());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFF());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsd.getProtTcpIpClientValueON());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsd.getProtTcpIpClientValueAddress());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsd.getProtTcpIpClientValueUpdateMillis());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
 
@@ -871,6 +879,8 @@ public class SQLContract
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
 
@@ -894,6 +904,8 @@ public class SQLContract
                             lsd.getProtTcpIpClientValueOFFON(),
                             lsd.getProtTcpIpClientValueONOFF(),
                             lsd.getProtTcpIpClientValueON(),
+                            lsd.getProtTcpIpClientValueAddress(),
+                            lsd.getProtTcpIpClientValueUpdateMillis(),
                             Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
                             Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
 
@@ -940,6 +952,8 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
                             };
@@ -1002,6 +1016,8 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
                             };
@@ -1154,6 +1170,10 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
                         );

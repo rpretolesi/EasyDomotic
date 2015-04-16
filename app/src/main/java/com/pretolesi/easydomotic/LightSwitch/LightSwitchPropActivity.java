@@ -26,6 +26,7 @@ import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocol;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -141,7 +142,7 @@ public class LightSwitchPropActivity extends Activity implements
         }
 
         m_id_lspa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TCPIPClient.Protocol.values()));
+                android.R.layout.simple_list_item_1, TcpIpClientProtocol.Protocol.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,

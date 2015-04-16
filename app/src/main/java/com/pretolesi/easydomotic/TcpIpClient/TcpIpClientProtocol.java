@@ -9,16 +9,10 @@ import java.util.ArrayList;
 public class TcpIpClientProtocol {
 
     private Protocol m_protocol;
-    private int m_iField_1;
-    private int m_iField_2;
-    private int m_iField_3;
-    private int m_iField_4;
-    private int m_iField_5;
-    private ArrayList<Byte> m_albytedata;
+    private byte[] m_bytedata;
 
     public TcpIpClientProtocol(Protocol protocol){
         m_protocol = protocol;
-        m_albytedata = new ArrayList<>();
     }
 
     /**
@@ -29,8 +23,10 @@ public class TcpIpClientProtocol {
      * @param iField_2 Protocol Identifier (2 bytes), must be 0;
      * @param iField_3 Length (2 bytes);
      * @param iField_4 Unit Identifier (1 byte);
+     * @param iField_5 Address (2 byte);
+     * @param iField_6 Value (2 byte);
      */
-    public void sendDataByte(int iField_1, int iField_2, int iField_3, int iField_4, int iByteToSend){
+    public void WriteSingleRegister(int iField_1, int iField_2, int iField_3, int iField_4, int iField_5, int iField_6){
         switch(m_protocol){
             case MODBUS_ON_TCP_IP:
                 ByteBuffer bb = ByteBuffer.allocate(6 + iField_3);
@@ -38,12 +34,17 @@ public class TcpIpClientProtocol {
                 bb.putShort((short)iField_2);
                 bb.putShort((short)iField_3);
                 bb.put((byte)iField_4);
-finire qui...
+                bb.putShort((short)iField_5);
+                bb.putShort((short)iField_6);
+
+                m_bytedata = bb.array();
+
                 break;
         }
+    }
 
-
-        m_iField_1 = iField_1;
+    public byte[] getData(){
+        return m_bytedata;
     }
 
     public static enum Protocol {

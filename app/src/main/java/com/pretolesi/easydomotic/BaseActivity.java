@@ -4,11 +4,18 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.util.Log;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  *
  */
 public class BaseActivity extends Activity {
     private static final String TAG = "BaseActivity";
+
+    /**
+     * Use to update
+     */
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.

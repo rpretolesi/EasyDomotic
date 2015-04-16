@@ -172,7 +172,7 @@ public class MainActivity extends BaseActivity implements
         if(m_altic != null){
             for(TCPIPClient tic : m_altic){
                 if(tic != null){
-                    tic.
+//                    tic.
                 }
             }
         }

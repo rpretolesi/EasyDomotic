@@ -2,8 +2,10 @@ package com.pretolesi.easydomotic.LightSwitch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
@@ -41,25 +43,54 @@ public class LightSwitch extends Switch implements
             this.setTag(lsd.getTag());
         }
         this.m_bEditMode = bEditMode;
+
     }
     public LightSwitchData getLightSwitchData() {
         return m_lsd;
     }
 
-
-/*
-    public LightSwitch(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    /*
+     * Begin
+     * Timer variable and function
+     */
+    Handler m_TimerHandler;
+    public void setTimerHandler() {
+        m_TimerHandler = new Handler();
+        m_TimerHandler.postDelayed(m_TimerRunnable, 2000);
     }
 
-    public LightSwitch(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public void resetTimerHandler() {
+        if(m_TimerHandler != null){
+            m_TimerHandler.removeCallbacks(m_TimerRunnable);
+        }
     }
 
-    public LightSwitch(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    private Runnable m_TimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            /** Do something **/
+            m_TimerHandler.postDelayed(m_TimerRunnable, 2000);
+        }
+    };
+    /*
+     * End
+     * Timer variable and function
+     */
+
+    @Override
+    public void onAttachedToWindow() {
+        setTimerHandler();
+
+        Log.d(TAG, this.toString() + ": " + "onPause()");
+
     }
-*/
+
+    @Override
+    public void onDetachedFromWindow() {
+        resetTimerHandler();
+
+        Log.d(TAG, this.toString() + ": " + "onResume()");
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -50,6 +50,8 @@ public class LightSwitchData implements Parcelable {
     private int m_iProtTcpIpClientValueOFFON;
     private int m_iProtTcpIpClientValueONOFF;
     private int m_iProtTcpIpClientValueON;
+    private int m_iProtTcpIpClientValueAddress;
+    private int m_iProtTcpIpClientValueUpdateMillis;
     private boolean m_bProtTcpIpClientSendDataOnChange;
     private boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData;
 
@@ -70,6 +72,9 @@ public class LightSwitchData implements Parcelable {
         this.m_iProtTcpIpClientValueOFFON = 0;
         this.m_iProtTcpIpClientValueONOFF = 0;
         this.m_iProtTcpIpClientValueON = 0;
+        this.m_iProtTcpIpClientValueAddress = 0;
+        this.m_iProtTcpIpClientValueUpdateMillis = 1000;
+
         this.m_bProtTcpIpClientSendDataOnChange = false;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = false;
     }
@@ -91,6 +96,8 @@ public class LightSwitchData implements Parcelable {
         this.m_iProtTcpIpClientValueOFFON = 0;
         this.m_iProtTcpIpClientValueONOFF = 0;
         this.m_iProtTcpIpClientValueON = 0;
+        this.m_iProtTcpIpClientValueAddress = 0;
+        this.m_iProtTcpIpClientValueUpdateMillis = 1000;
         this.m_bProtTcpIpClientSendDataOnChange = false;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = false;
     }
@@ -109,7 +116,7 @@ public class LightSwitchData implements Parcelable {
          }
     }
 
-    public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueOFF, int iProtTcpIpClientValueOFFON, int iProtTcpIpClientValueONOFF, int iProtTcpIpClientValueON, boolean bProtTcpIpClientSendDataOnChange, boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData) {
+    public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueOFF, int iProtTcpIpClientValueOFFON, int iProtTcpIpClientValueONOFF, int iProtTcpIpClientValueON, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueUpdateMillis, boolean bProtTcpIpClientSendDataOnChange, boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData) {
         this.m_bProtTcpIpClientEnable = bProtTcpIpClientEnable;
         this.m_lProtTcpIpClientID = lProtTcpIpClientID;
         this.m_iProtTcpIpClientValueID = iProtTcpIpClientValueID;
@@ -117,6 +124,8 @@ public class LightSwitchData implements Parcelable {
         this.m_iProtTcpIpClientValueOFFON = iProtTcpIpClientValueOFFON;
         this.m_iProtTcpIpClientValueONOFF = iProtTcpIpClientValueONOFF;
         this.m_iProtTcpIpClientValueON = iProtTcpIpClientValueON;
+        this.m_iProtTcpIpClientValueAddress = iProtTcpIpClientValueAddress;
+        this.m_iProtTcpIpClientValueUpdateMillis = iProtTcpIpClientValueUpdateMillis;
         this.m_bProtTcpIpClientSendDataOnChange = bProtTcpIpClientSendDataOnChange;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = m_bProtTcpIpClientWaitAnswerBeforeSendNextData;
     }
@@ -173,6 +182,14 @@ public class LightSwitchData implements Parcelable {
 
     public void setProtTcpIpClientValueON(int iProtTcpIpClientValueON) {
         this.m_iProtTcpIpClientValueON = iProtTcpIpClientValueON;
+    }
+
+    public void setProtTcpIpClientValueAddress(int iProtTcpIpClientValueAddress) {
+        this.m_iProtTcpIpClientValueAddress = iProtTcpIpClientValueAddress;
+    }
+
+    public void setProtTcpIpClientValueUpdateMillis(int iProtTcpIpClientValueUpdateMillis) {
+        this.m_iProtTcpIpClientValueUpdateMillis = iProtTcpIpClientValueUpdateMillis;
     }
 
     public void setProtTcpIpClientSendDataOnChange(boolean bProtTcpIpClientSendDataOnChange) {
@@ -239,6 +256,14 @@ public class LightSwitchData implements Parcelable {
         return m_iProtTcpIpClientValueON;
     }
 
+    public int getProtTcpIpClientValueAddress() {
+        return m_iProtTcpIpClientValueAddress;
+    }
+
+    public int getProtTcpIpClientValueUpdateMillis() {
+        return m_iProtTcpIpClientValueUpdateMillis;
+    }
+
     public boolean getProtTcpIpClientSendDataOnChange() {
         return m_bProtTcpIpClientSendDataOnChange;
     }
@@ -265,6 +290,8 @@ public class LightSwitchData implements Parcelable {
         m_iProtTcpIpClientValueOFFON = in.readInt();
         m_iProtTcpIpClientValueONOFF = in.readInt();
         m_iProtTcpIpClientValueON = in.readInt();
+        m_iProtTcpIpClientValueAddress = in.readInt();
+        m_iProtTcpIpClientValueUpdateMillis = in.readInt();
         m_bProtTcpIpClientSendDataOnChange = in.readByte() != 0;
         m_bProtTcpIpClientWaitAnswerBeforeSendNextData = in.readByte() != 0;
     }
@@ -293,6 +320,8 @@ public class LightSwitchData implements Parcelable {
         dest.writeInt(m_iProtTcpIpClientValueOFFON);
         dest.writeInt(m_iProtTcpIpClientValueONOFF);
         dest.writeInt(m_iProtTcpIpClientValueON);
+        dest.writeInt(m_iProtTcpIpClientValueAddress);
+        dest.writeInt(m_iProtTcpIpClientValueUpdateMillis);
         dest.writeByte((byte) (m_bProtTcpIpClientSendDataOnChange ? 1 : 0));
         dest.writeByte((byte) (m_bProtTcpIpClientWaitAnswerBeforeSendNextData ? 1 : 0));
     }

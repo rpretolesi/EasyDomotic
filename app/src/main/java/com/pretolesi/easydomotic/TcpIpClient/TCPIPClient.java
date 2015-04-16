@@ -70,7 +70,7 @@ public class TCPIPClient {
 
                 // Start Background communication
                 m_ct = new CommunicationTask();
-                m_ct.execute(m_clientSocket, m_Message);
+//                m_ct.execute(m_clientSocket, m_Message);
 
                 Log.d(TAG,this.toString() + "startConnection()");
 
@@ -278,7 +278,7 @@ public class TCPIPClient {
 */
         @Override
         protected Void doInBackground(Object...obj) {
-            TcpIpClientProtocol
+//            TcpIpClientProtocol
 /*
             //Prendo i parametri
             ArduinoClientSocket acs = (ArduinoClientSocket) obj[0];
