@@ -8,17 +8,21 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocol;
 
 /**
  *
  */
 public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener{
+        GestureDetector.OnDoubleTapListener,
+        ToggleButton.OnCheckedChangeListener{
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -55,8 +59,10 @@ public class LightSwitch extends Switch implements
      */
     Handler m_TimerHandler;
     public void setTimerHandler() {
-        m_TimerHandler = new Handler();
-        m_TimerHandler.postDelayed(m_TimerRunnable, 2000);
+        if(m_lsd != null) {
+            m_TimerHandler = new Handler();
+            m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
+        }
     }
 
     public void resetTimerHandler() {
@@ -68,8 +74,20 @@ public class LightSwitch extends Switch implements
     private Runnable m_TimerRunnable = new Runnable() {
         @Override
         public void run() {
-            /** Do something **/
-            m_TimerHandler.postDelayed(m_TimerRunnable, 2000);
+            if(m_lsd != null && m_TimerHandler != null) {
+                if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
+                    Switch s = (Switch)findViewById(getId());
+                    if(s != null){
+                        if(s.isChecked()){
+                            sendStatus(m_lsd.getProtTcpIpClientValueON());
+                        } else {
+                            sendStatus(m_lsd.getProtTcpIpClientValueOFF());
+                        }
+                    }
+
+                    m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
+                }
+            }
         }
     };
     /*
@@ -79,17 +97,44 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onAttachedToWindow() {
-        setTimerHandler();
+        super.onAttachedToWindow();
+        if(!m_bEditMode) {
+            setTimerHandler();
+        }
 
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
 
     }
 
     @Override
     public void onDetachedFromWindow() {
-        resetTimerHandler();
+        super.onDetachedFromWindow();
+        if(!m_bEditMode) {
+            resetTimerHandler();
+        }
 
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
+    }
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(m_lsd != null) {
+            if(isChecked){
+                sendStatus(m_lsd.getProtTcpIpClientValueON());
+            } else {
+                sendStatus(m_lsd.getProtTcpIpClientValueOFF());
+            }
+        }
+    }
+
+    private void sendStatus(int iStatusValue){
+        if(m_lsd != null) {
+            TcpIpClientProtocol ticp = new TcpIpClientProtocol();
+            ticp.WriteSingleRegister(m_lsd.getProtTcpIpClientValueID(), 0, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+
+            completare qui facendo la connessione TCP e quindi passando i dati, aggiungere indirizzo nella configurazione del light switch.
+        }
     }
 
     @Override
@@ -211,4 +256,5 @@ public class LightSwitch extends Switch implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
+
 }
