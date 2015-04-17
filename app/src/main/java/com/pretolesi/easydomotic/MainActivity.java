@@ -51,8 +51,24 @@ public class MainActivity extends BaseActivity implements
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
         getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
 
+        Log.d(TAG, this.toString() + ": " + "onResume()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
+
+        Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
@@ -158,6 +174,8 @@ public class MainActivity extends BaseActivity implements
                 }
                 for(TCPIPClientData ticd : alticd){
                     if(ticd != null){
+                        TCPIPClient tic = new TCPIPClient(this, ticd);
+                        tic.startConnection();
                         m_altic.add(new TCPIPClient(this, ticd));
                     }
                 }
@@ -172,9 +190,10 @@ public class MainActivity extends BaseActivity implements
         if(m_altic != null){
             for(TCPIPClient tic : m_altic){
                 if(tic != null){
-//                    tic.
+                    tic.stopConnection();
                 }
             }
+            m_altic.clear();
         }
     }
 /*

@@ -10,18 +10,20 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.Vector;
 
 /**
  *
  */
-public class TCPIPClient {
+public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private static final String TAG = "TCPIPClient";
 
-    private TCPIPClientData m_ticd;
-
     private Context m_context = null;
+    private Stack<TcpIpClientProtocol> m_sticp = null;
+    private TCPIPClientData m_ticd = null;
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
     private DataOutputStream m_dataOutputStream = null;
@@ -38,14 +40,7 @@ public class TCPIPClient {
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsGet = 0;
 
-    private static CommunicationTask m_ct;
-
-    public TCPIPClient(Context context, TCPIPClientData ticd){
-        m_context = context;
-        m_ticd = ticd;
-    }
-
-    public boolean startConnection()
+    private boolean startConnection()
     {
         if(m_ticd == null){
             Log.d(TAG,this.toString() + "startConnection()->" + "m_ticd == null");
@@ -54,11 +49,12 @@ public class TCPIPClient {
         try
         {
             // Prima chiudo la connessione
-            closeConnection();
+            stopConnection();
 
             m_socketAddress = new InetSocketAddress(m_ticd.getAddress() , m_ticd.getPort());
             if(m_clientSocket == null)
             {
+                m_sticp = new Stack<>();
                 m_clientSocket = new Socket();
                 m_clientSocket.setSoTimeout(m_ticd.getTimeout());
                 m_clientSocket.connect(m_socketAddress);
@@ -68,10 +64,6 @@ public class TCPIPClient {
                 m_timeMillisecondsSend = System.currentTimeMillis();
                 m_timeMillisecondsGet = System.currentTimeMillis();
 
-                // Start Background communication
-                m_ct = new CommunicationTask();
-//                m_ct.execute(m_clientSocket, m_Message);
-
                 Log.d(TAG,this.toString() + "startConnection()");
 
                 return true;
@@ -80,34 +72,38 @@ public class TCPIPClient {
         catch (Exception ex)
         {
             Log.d(TAG,this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
-            closeConnection();
+            stopConnection();
         }
 
         return false;
     }
 
-    public boolean isConnected() {
+    private boolean isConnected() {
         boolean bRes = false;
         if (m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null) {
             bRes = m_clientSocket.isConnected();
         }
         return bRes;
     }
-/*
-    public boolean send(byte[] byteToSend)
+
+    private boolean send(byte[] byteToSend)
     {
         boolean bRes = false;
 
-        if (m_dataOutputStream != null)       {
+        if (m_dataOutputStream != null && m_sticp != null)       {
             try
             {
-                if(!m_bWaitingForData)
-                {
+                try {
+                    m_sticp.pop();
+                }
+
+//                if(!m_bWaitingForData)
+//                {
                     if(byteToSend != null) {
                         m_dataOutputStream.write(byteToSend, 0, byteToSend.length);
-                        m_bWaitingForData = true;
+//                        m_bWaitingForData = true;
                     }
-                }
+//                }
                 bRes = true;
             }
             catch (Exception ex) {
@@ -119,9 +115,9 @@ public class TCPIPClient {
 
         return bRes;
     }
-*/
-/*
-    public byte[] getData()
+
+
+    private byte[] receive()
     {
         if (m_dataInputStream != null)
         {
@@ -192,8 +188,8 @@ public class TCPIPClient {
 
         return bRes;
     }
-*/
-    public void closeConnection()
+
+    private void stopConnection()
     {
 
         m_socketAddress = null;
@@ -237,6 +233,296 @@ public class TCPIPClient {
         m_dataInputStream = null;
 
         Log.d(TAG, this.toString() + "closeConnection()");
+    }
+
+    @Override
+    protected Void doInBackground(Object...obj) {
+        m_ticd = (TCPIPClientData) obj[0];
+
+        try {
+            while (!isCancelled() && m_ticd != null) {
+
+
+                if (!isConnected()) {
+                    // Start communication with Server
+                    if(startConnection()){
+
+                    } else {
+                        // attendo per non sovraccaricare CPU
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                } else {
+                    if(send(null)) {
+//                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
+                    } else {
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                    if(receive()) {
+//                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
+                    } else {
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }
+
+                    try {
+                        strIpAddress = SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.IP_ADDRESS);
+                        iPort = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.PORT));
+                        iTimeout = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.TIMEOUT));
+                        iCommFrameDelay = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.COMM_FRAME_DELAY));
+                    }
+                    catch (Exception ignored) {
+                    }
+                    if(!strIpAddress.equals("") && iPort > 0 && iTimeout > 0) {
+                        if (acs.connectToArduino(msg, strIpAddress, iPort, iTimeout)) {
+                            pud.setData(ProgressUpdateData.Status.CONNECTED,"", true);
+                            this.publishProgress(pud);
+                        } else {
+                            pud.setData(ProgressUpdateData.Status.ERROR,acs.getLastError(), false);
+                            this.publishProgress(pud);
+
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                Thread.sleep(3000, 0);
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                    }
+                    else
+                    {
+                        pud.setData(ProgressUpdateData.Status.ERROR,getString(R.string.db_data_server_error), false);
+                        this.publishProgress(pud);
+                        // attendo per non sovraccaricare CPU
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                } else {
+                    long lTime_1;
+                    long lTime_2;
+                    if(acs.sendData(msg)) {
+                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
+
+                        if(acs.getData(msg)) {
+                            lTime_2 = acs.getSendGetAnswerTimeMilliseconds();
+                            // Tutto Ok, posso leggere i dati ricevuti
+                            // Verifico se visualizzare le informazioni di comunicazione
+
+                            // Faccio avanzare una barra ad ogni frame
+                            iCommFrame = iCommFrame + 1;
+                            if(iCommFrame > 16) {
+                                iCommFrame = 1;
+                            }
+                            strError = "";
+                            for(int index = 0; index < 20; index++){
+                                if(index < iCommFrame) {
+                                    strError = strError + "-";
+                                }
+                                else
+                                {
+                                    strError = strError + " ";
+                                }
+                            }
+                            strError = strError + "\n" + "Send -> Rec. Elapsed time(ms): " + String.valueOf(lTime_2) + "/" + String.valueOf(iTimeout);
+
+                            // Log.i(TAG, "doInBackground->" + "Receive - Send Diff. Time (ms)" + lTime_1 + "Send - Receive Diff. Time (ms)" + lTime_2);
+                            pud.setData(ProgressUpdateData.Status.ONLINE, strError, true);
+                            this.publishProgress(pud);
+
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                if((iCommFrameDelay * 2) < 10)
+                                {
+                                    iCommFrameDelay = 10;
+                                }
+                                Thread.sleep((iCommFrameDelay * 2), 0);
+                            } catch (InterruptedException ignored) {
+                            }
+                        } else {
+
+                            pud.setData(ProgressUpdateData.Status.ERROR, acs.getLastError() , false);
+                            this.publishProgress(pud);
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                Thread.sleep(3000, 0);
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                    } else {
+                        pud.setData(ProgressUpdateData.Status.ERROR, acs.getLastError() , false);
+                        this.publishProgress(pud);
+                        // attendo per non sovraccaricare CPU
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                }
+            }
+            strError = "";
+        } catch (Exception ex) {
+            strError = ex.getMessage();
+        }
+
+//            TcpIpClientProtocol
+/*
+            //Prendo i parametri
+            ArduinoClientSocket acs = (ArduinoClientSocket) obj[0];
+            Message msg = (Message) obj[1];
+            String strError = "";
+            int iCommFrame = 0;
+
+            ProgressUpdateData pud = new ProgressUpdateData();
+
+            // Dati di set
+            String strIpAddress = "";
+            int iPort = 0;
+            int iTimeout = 0;
+            int iCommFrameDelay = 0;
+
+            try {
+                while (!isCancelled() && acs != null && msg != null) {
+
+                    if (!acs.isConnected()) {
+                        // Pubblico i dati
+                        pud.setData(ProgressUpdateData.Status.CONNECTING,"", false);
+                        this.publishProgress(pud);
+
+                        try {
+                            strIpAddress = SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.IP_ADDRESS);
+                            iPort = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.PORT));
+                            iTimeout = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.TIMEOUT));
+                            iCommFrameDelay = Integer.parseInt(SQLContract.Settings.getParameter(getApplicationContext(), SQLContract.Parameter.COMM_FRAME_DELAY));
+                        }
+                        catch (Exception ignored) {
+                        }
+                        if(!strIpAddress.equals("") && iPort > 0 && iTimeout > 0) {
+                            if (acs.connectToArduino(msg, strIpAddress, iPort, iTimeout)) {
+                                pud.setData(ProgressUpdateData.Status.CONNECTED,"", true);
+                                this.publishProgress(pud);
+                            } else {
+                                pud.setData(ProgressUpdateData.Status.ERROR,acs.getLastError(), false);
+                                this.publishProgress(pud);
+
+                                // attendo per non sovraccaricare CPU
+                                try {
+                                    Thread.sleep(3000, 0);
+                                } catch (InterruptedException ignored) {
+                                }
+                            }
+                        }
+                        else
+                        {
+                            pud.setData(ProgressUpdateData.Status.ERROR,getString(R.string.db_data_server_error), false);
+                            this.publishProgress(pud);
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                Thread.sleep(3000, 0);
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                    } else {
+                        long lTime_1;
+                        long lTime_2;
+                        if(acs.sendData(msg)) {
+                            lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
+
+                            if(acs.getData(msg)) {
+                                lTime_2 = acs.getSendGetAnswerTimeMilliseconds();
+                                // Tutto Ok, posso leggere i dati ricevuti
+                                // Verifico se visualizzare le informazioni di comunicazione
+
+                                // Faccio avanzare una barra ad ogni frame
+                                iCommFrame = iCommFrame + 1;
+                                if(iCommFrame > 16) {
+                                    iCommFrame = 1;
+                                }
+                                strError = "";
+                                for(int index = 0; index < 20; index++){
+                                    if(index < iCommFrame) {
+                                        strError = strError + "-";
+                                    }
+                                    else
+                                    {
+                                        strError = strError + " ";
+                                    }
+                                }
+                                strError = strError + "\n" + "Send -> Rec. Elapsed time(ms): " + String.valueOf(lTime_2) + "/" + String.valueOf(iTimeout);
+
+                                // Log.i(TAG, "doInBackground->" + "Receive - Send Diff. Time (ms)" + lTime_1 + "Send - Receive Diff. Time (ms)" + lTime_2);
+                                pud.setData(ProgressUpdateData.Status.ONLINE, strError, true);
+                                this.publishProgress(pud);
+
+                                // attendo per non sovraccaricare CPU
+                                try {
+                                    if((iCommFrameDelay * 2) < 10)
+                                    {
+                                        iCommFrameDelay = 10;
+                                    }
+                                    Thread.sleep((iCommFrameDelay * 2), 0);
+                                } catch (InterruptedException ignored) {
+                                }
+                            } else {
+
+                                pud.setData(ProgressUpdateData.Status.ERROR, acs.getLastError() , false);
+                                this.publishProgress(pud);
+                                // attendo per non sovraccaricare CPU
+                                try {
+                                    Thread.sleep(3000, 0);
+                                } catch (InterruptedException ignored) {
+                                }
+                            }
+                        } else {
+                            pud.setData(ProgressUpdateData.Status.ERROR, acs.getLastError() , false);
+                            this.publishProgress(pud);
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                Thread.sleep(3000, 0);
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                    }
+                }
+                strError = "";
+            } catch (Exception ex) {
+                strError = ex.getMessage();
+            }
+
+            // Pubblico i dati
+            if(acs != null){
+                acs.closeConnection(msg);
+            }
+            pud.setData(ProgressUpdateData.Status.CLOSED, "" , false);
+            this.publishProgress(pud);
+
+            // Log.d(TAG, "doInBackground()->return");
+*/
+        return null;
     }
 
     private class CommunicationTask extends AsyncTask<Object, Void, Void> {

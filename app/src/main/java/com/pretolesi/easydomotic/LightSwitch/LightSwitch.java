@@ -132,8 +132,6 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             TcpIpClientProtocol ticp = new TcpIpClientProtocol();
             ticp.WriteSingleRegister(m_lsd.getProtTcpIpClientValueID(), 0, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
-
-            completare qui facendo la connessione TCP e quindi passando i dati, aggiungere indirizzo nella configurazione del light switch.
         }
     }
 

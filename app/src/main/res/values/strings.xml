@@ -104,6 +104,7 @@
     <string name="text_lspa_tv_protocol_field_3">OFF-ON BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_4">ON-OFF BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_5">ON BYTE(1 byte long)</string>
+    <string name="text_lspa_tv_protocol_field_6">ADDRESS(2 byte long)</string>
 
     <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
 

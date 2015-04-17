@@ -285,6 +285,25 @@
                     android:text="0"
                     android:inputType="number"/>
 
+                <TextView
+                    android:id="@+id/id_lspa_tv_protocol_field_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/id_lspa_tv_protocol_field_5"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/text_lspa_tv_protocol_field_6"
+                    android:labelFor="@+id/id_lspa_et_protocol_field_6"/>
+
+                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                    android:id="@+id/id_lspa_et_protocol_field_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/id_lspa_tv_protocol_field_6"
+                    android:layout_toEndOf="@+id/id_lspa_tv_protocol_field_5"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:inputType="number"/>
+
             </RelativeLayout>
         </HorizontalScrollView>
 

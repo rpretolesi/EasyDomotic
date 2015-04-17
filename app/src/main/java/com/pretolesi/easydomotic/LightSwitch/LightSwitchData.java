@@ -12,9 +12,9 @@ public class LightSwitchData implements Parcelable {
     public static int TAGMaxChar = 128;
     public static String TAGDefaultValue = "My Name";
 
-    public static int ProtTcpIpClientIDMinValue = 0;
-    public static int ProtTcpIpClientIDMaxValue = 32768;
-    public static String ProtTcpIpClientIDDefaulValue = "1";
+    public static int ProtTcpIpClientValueIDMinValue = 0;
+    public static int ProtTcpIpClientValueIDMaxValue = 32768;
+    public static String ProtTcpIpClientValueIDDefaulValue = "1";
 
     public static int ProtTcpIpClientValueOFFMinValue = 0;
     public static int ProtTcpIpClientValueOFFMaxValue = 255;
@@ -31,6 +31,10 @@ public class LightSwitchData implements Parcelable {
     public static int ProtTcpIpClientValueONMinValue = 0;
     public static int ProtTcpIpClientValueONMaxValue = 255;
     public static String ProtTcpIpClientValueONDefaulValue = "4";
+
+    public static int ProtTcpIpClientValueAddressMinValue = 0;
+    public static int ProtTcpIpClientValueAddressMaxValue = 65535;
+    public static String ProtTcpIpClientValueAddressDefaulValue = "0";
 
     private long m_ID;
     private boolean m_bSaved;
