@@ -28,7 +28,7 @@ import com.pretolesi.SQL.SQLContract;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class MainNavigationDrawerFragment extends Fragment {
+public class RunTimeNavigationDrawerFragment extends Fragment {
 
     /**
      * Remember the position of the selected item.
@@ -63,7 +63,7 @@ public class MainNavigationDrawerFragment extends Fragment {
 
     private SimpleCursorAdapter mAdapter;
 
-    public MainNavigationDrawerFragment() {
+    public RunTimeNavigationDrawerFragment() {
     }
 
     @Override
@@ -94,7 +94,7 @@ public class MainNavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
-                R.layout.main_fragment_navigation_drawer, container, false);
+                R.layout.run_time_fragment_navigation_drawer, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

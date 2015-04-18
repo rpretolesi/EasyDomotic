@@ -25,7 +25,7 @@
               android:layout_width="@dimen/navigation_drawer_width"
               android:layout_height="match_parent"
               android:layout_gravity="start"
-              android:name="com.pretolesi.easydomotic.MainNavigationDrawerFragment"
-              tools:layout="@layout/main_fragment_navigation_drawer"/>
+              android:name="com.pretolesi.easydomotic.RunTimeNavigationDrawerFragment"
+              tools:layout="@layout/run_time_fragment_navigation_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

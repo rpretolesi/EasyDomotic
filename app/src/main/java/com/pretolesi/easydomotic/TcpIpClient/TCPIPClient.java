@@ -40,20 +40,17 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsGet = 0;
 
-    private boolean startConnection()
-    {
-        if(m_ticd == null){
-            Log.d(TAG,this.toString() + "startConnection()->" + "m_ticd == null");
+    private boolean startConnection() {
+        if (m_ticd == null) {
+            Log.d(TAG, this.toString() + "startConnection()->" + "m_ticd == null");
             return false;
         }
-        try
-        {
+        try {
             // Prima chiudo la connessione
             stopConnection();
 
-            m_socketAddress = new InetSocketAddress(m_ticd.getAddress() , m_ticd.getPort());
-            if(m_clientSocket == null)
-            {
+            m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
+            if (m_clientSocket == null) {
                 m_sticp = new Stack<>();
                 m_clientSocket = new Socket();
                 m_clientSocket.setSoTimeout(m_ticd.getTimeout());
@@ -64,14 +61,12 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                 m_timeMillisecondsSend = System.currentTimeMillis();
                 m_timeMillisecondsGet = System.currentTimeMillis();
 
-                Log.d(TAG,this.toString() + "startConnection()");
+                Log.d(TAG, this.toString() + "startConnection()");
 
                 return true;
             }
-        }
-        catch (Exception ex)
-        {
-            Log.d(TAG,this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
+        } catch (Exception ex) {
+            Log.d(TAG, this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
             stopConnection();
         }
 
@@ -86,28 +81,27 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         return bRes;
     }
 
-    private boolean send(byte[] byteToSend)
-    {
+    private boolean send(byte[] byteToSend) {
         boolean bRes = false;
 
-        if (m_dataOutputStream != null && m_sticp != null)       {
-            try
-            {
+        if (m_dataOutputStream != null && m_sticp != null) {
+            try {
                 try {
                     m_sticp.pop();
+                } catch (Exception ex){
+
                 }
 
 //                if(!m_bWaitingForData)
 //                {
-                    if(byteToSend != null) {
-                        m_dataOutputStream.write(byteToSend, 0, byteToSend.length);
+                if (byteToSend != null) {
+                    m_dataOutputStream.write(byteToSend, 0, byteToSend.length);
 //                        m_bWaitingForData = true;
-                    }
+                }
 //                }
                 bRes = true;
-            }
-            catch (Exception ex) {
-                Log.d(TAG,this.toString() + "send()->" + "Exception ex: " + ex.getMessage());
+            } catch (Exception ex) {
+                Log.d(TAG, this.toString() + "send()->" + "Exception ex: " + ex.getMessage());
             }
         }
 
@@ -116,37 +110,28 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         return bRes;
     }
 
-
-    private byte[] receive()
-    {
-        if (m_dataInputStream != null)
-        {
-            try
-            {
+/*
+    private byte[] receive() {
+        if (m_dataInputStream != null) {
+            try {
                 int iByteRead = 0;
 
                 iByteRead = m_dataInputStream.read(m_byteInputStreamBuf, m_NrOfByteInInputStreamBuf, m_byteInputStreamBuf.length - m_NrOfByteInInputStreamBuf);
-                if(iByteRead > 0)
-                {
+                if (iByteRead > 0) {
                     m_NrOfByteInInputStreamBuf = m_NrOfByteInInputStreamBuf + iByteRead;
-                    if(iByteRead != 16)
-                    {
+                    if (iByteRead != 16) {
                         // Log.d(TAG, "getData->" + "(iByteRead > 0), iByteRead : " + iByteRead + ", m_NrOfByteInInputStreamBuf = " + m_NrOfByteInInputStreamBuf);
                     }
 
-                    if(m_NrOfByteInInputStreamBuf == 16)
-                    {
+                    if (m_NrOfByteInInputStreamBuf == 16) {
                         m_NrOfByteInInputStreamBuf = 0;
                         m_bWaitingForData = false;
 
-                        if((m_byteInputStreamBuf[0] == ACK) && (m_byteInputStreamBuf[15] == EOT))
-                        {
+                        if ((m_byteInputStreamBuf[0] == ACK) && (m_byteInputStreamBuf[15] == EOT)) {
                             msg.setData(m_byteInputStreamBuf);
                             m_strLastError = "";
                             bRes = true;
-                        }
-                        else
-                        {
+                        } else {
                             // Error
                             // Log.d(TAG,"getData->" + "(m_byteInputStreamBuf[0] != ACK) || (m_byteInputStreamBuf[15] != EOT)");
                             m_strLastError = "Protocol Error.";
@@ -158,7 +143,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         m_strLastError = "";
                         bRes = true;
                     }
-                } else if(iByteRead < 0) {
+                } else if (iByteRead < 0) {
                     // Log.d(TAG,"getData->" + "(iByteRead < 0)");
                     m_strLastError = "Stream closed";
                     bRes = false;
@@ -188,46 +173,34 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
         return bRes;
     }
-
-    private void stopConnection()
-    {
+*/
+    private void stopConnection() {
 
         m_socketAddress = null;
 
         // Chiudo il socket
-        if(m_clientSocket != null)
-        {
-            try
-            {
+        if (m_clientSocket != null) {
+            try {
                 m_clientSocket.close();
-            } catch (IOException ioex_1)
-            {
+            } catch (IOException ioex_1) {
             }
         }
         m_clientSocket = null;
 
         // close Output stream
-        if (m_dataOutputStream != null)
-        {
-            try
-            {
+        if (m_dataOutputStream != null) {
+            try {
                 m_dataOutputStream.close();
-            }
-            catch (IOException ioex_2)
-            {
+            } catch (IOException ioex_2) {
             }
         }
         m_dataOutputStream = null;
 
         // close Input stream
-        if (m_dataInputStream != null)
-        {
-            try
-            {
+        if (m_dataInputStream != null) {
+            try {
                 m_dataInputStream.close();
-            }
-            catch (IOException ioex_3)
-            {
+            } catch (IOException ioex_3) {
             }
         }
         m_dataInputStream = null;
@@ -236,16 +209,15 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Object...obj) {
+    protected Void doInBackground(Object... obj) {
         m_ticd = (TCPIPClientData) obj[0];
 
         try {
             while (!isCancelled() && m_ticd != null) {
 
-
                 if (!isConnected()) {
                     // Start communication with Server
-                    if(startConnection()){
+                    if (startConnection()) {
 
                     } else {
                         // attendo per non sovraccaricare CPU
@@ -255,15 +227,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         }
                     }
                 } else {
-                    if(send(null)) {
-//                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
-                    } else {
-                        try {
-                            Thread.sleep(3000, 0);
-                        } catch (InterruptedException ignored) {
-                        }
-                    }
-                    if(receive()) {
+                    if (send(null)) {
 //                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
                     } else {
                         try {
@@ -272,9 +236,28 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         }
                     }
                 }
+            }
+        } catch ( Exception ex) {
+
+        }
+
+        return null;
+    }
+}
 
 
+/*
+                    if (receive()) {
+//                        lTime_1 = acs.getGetSendAnswerTimeMilliseconds();
+                    } else {
+                        try {
+                            Thread.sleep(3000, 0);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+*/
 
+/*
 
 
 
@@ -390,7 +373,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         }
 
 //            TcpIpClientProtocol
-/*
+
             //Prendo i parametri
             ArduinoClientSocket acs = (ArduinoClientSocket) obj[0];
             Message msg = (Message) obj[1];
@@ -521,13 +504,13 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             this.publishProgress(pud);
 
             // Log.d(TAG, "doInBackground()->return");
-*/
+
         return null;
     }
 
     private class CommunicationTask extends AsyncTask<Object, Void, Void> {
         private static final String TAG = "CommunicationTask";
-/*
+
         private List<ProgressUpdate> m_lCSListener = new Vector<>();
         private ProgressUpdateData m_pud = new ProgressUpdateData();
 
@@ -561,11 +544,11 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             }
 
         }
-*/
-        @Override
+
+//        @Override
         protected Void doInBackground(Object...obj) {
 //            TcpIpClientProtocol
-/*
+
             //Prendo i parametri
             ArduinoClientSocket acs = (ArduinoClientSocket) obj[0];
             Message msg = (Message) obj[1];
@@ -696,10 +679,10 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             this.publishProgress(pud);
 
             // Log.d(TAG, "doInBackground()->return");
-*/
+
             return null;
         }
-/*
+
         @Override
         protected void onProgressUpdate(ProgressUpdateData... pud) {
             super.onProgressUpdate(pud);
@@ -712,7 +695,6 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             super.onPostExecute(v);
             // Log.d(TAG, "onPostExecute()");
         }
-*/
-    }
 
-}
+    }
+*/

@@ -13,37 +13,31 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.SQL.SQLHelper;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
+import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends BaseActivity implements
-        MainNavigationDrawerFragment.NavigationDrawerCallbacks,
+public class RunTimeActivity extends BaseActivity implements
+        RunTimeNavigationDrawerFragment.NavigationDrawerCallbacks,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "MainActivity";
-
-    // Client Tcp Ip
-    private ArrayList<TCPIPClient> m_altic;
+    private static final String TAG = "RunTimeActivity";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private MainNavigationDrawerFragment mNavigationDrawerFragment;
+    private RunTimeNavigationDrawerFragment mNavigationDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.run_time_activity);
 
-        // Initialize the SQL Instance
-        SQLHelper.getInstance(getApplicationContext());
-
-        mNavigationDrawerFragment = (MainNavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (RunTimeNavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -167,19 +161,7 @@ public class MainActivity extends BaseActivity implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
             ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
-            if(alticd != null && !alticd.isEmpty()){
-                // Initialize the List of TcpIpCLient
-                if(m_altic == null){
-                    m_altic = new ArrayList<>();
-                }
-                for(TCPIPClientData ticd : alticd){
-                    if(ticd != null){
-                        TCPIPClient tic = new TCPIPClient(this, ticd);
-                        tic.startConnection();
-                        m_altic.add(new TCPIPClient(this, ticd));
-                    }
-                }
-            }
+            TciIpClientHelper.startInstance(getApplicationContext(), alticd);
         }
 
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -187,14 +169,10 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(m_altic != null){
-            for(TCPIPClient tic : m_altic){
-                if(tic != null){
-                    tic.stopConnection();
-                }
-            }
-            m_altic.clear();
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            TciIpClientHelper.stopInstance();
         }
+
     }
 /*
     /**
@@ -243,7 +221,7 @@ public class MainActivity extends BaseActivity implements
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
+            ((RunTimeActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getLong(_ID));
         }
     }

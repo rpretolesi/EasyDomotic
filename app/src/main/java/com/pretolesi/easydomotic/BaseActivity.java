@@ -2,7 +2,10 @@ package com.pretolesi.easydomotic;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
+
+import com.pretolesi.SQL.SQLHelper;
 
 import java.util.List;
 import java.util.Vector;
@@ -21,6 +24,13 @@ public class BaseActivity extends Activity {
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     protected CharSequence mTitle;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize the SQL Instance
+        SQLHelper.getInstance(getApplicationContext());
+    }
 
     @Override
     protected void onStart() {
