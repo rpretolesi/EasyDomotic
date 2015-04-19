@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -21,20 +22,81 @@ import java.util.Vector;
 public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private static final String TAG = "TCPIPClient";
 
-    private Context m_context = null;
-    private Stack<TcpIpClientProtocol> m_sticp = null;
+    private Stack<byte[]> m_sbyte = null;
     private TCPIPClientData m_ticd = null;
+    private List<TCPIPClientListener> m_vticcListener = new Vector<>();
+
+    /*
+     * Listener and Callbacks function
+     */
+    public interface TCPIPClientListener
+    {
+        public abstract void onReceiveCompletedCallbacks();
+    }
+
+    // Imposto il listener
+    public synchronized void registerListener(TCPIPClientListener listener) {
+        if(!m_vticcListener.contains(listener)){
+            m_vticcListener.add(listener);
+        }
+    }
+    public synchronized void unregisterListener(TCPIPClientListener listener) {
+        if(m_vticcListener.contains(listener)){
+            m_vticcListener.remove(listener);
+        }
+    }
+
+    public synchronized long getID(){
+        if(m_ticd != null){
+            return m_ticd.getID();
+        }
+        return 0;
+    }
+
+    /*
+     * Communication function
+     */
+
+    public synchronized void sendByteValue(int iField_1, int iField_2, int iField_3, int iField_4, int iField_5){
+        if(m_ticd != null && m_sbyte != null){
+            if(m_ticd.getProtocolID() ==  TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
+                m_sbyte.push(writeSingleRegister(iField_1, iField_2, iField_3, iField_4, iField_5));
+            }
+        }
+    }
+
+    /*
+     * Modbus function
+     */
+    /**
+     * Send a command with the specified Protocol
+     * The value of the Fields field depends of the protocol
+     * Protocol Modbus Over TCP/IP:
+     * @param iField_1 Transaction Identifier (2 bytes);
+     * @param iField_2 Protocol Identifier (2 bytes), must be 0;
+     * @param iField_3 Unit Identifier (1 byte);
+     * @param iField_4 Address (2 byte);
+     * @param iField_5 Value (2 byte);
+     */
+    public byte[] writeSingleRegister(int iField_1, int iField_2, int iField_3, int iField_4, int iField_5){
+        int iLength = 6 + 10;
+        ByteBuffer bb = ByteBuffer.allocate(6 + iField_3);
+        bb.putShort((short)iField_1); // Transaction Identifier (2 bytes);
+        bb.putShort((short)iField_2); // Protocol Identifier (2 bytes), must be 0;
+        bb.putShort((short)iLength); // Length (2 bytes);
+        bb.put((byte)iField_3);
+        bb.putShort((short)iField_4);
+        bb.putShort((short)iField_5);
+
+        return bb.array();
+    }
+
+    private Context m_context = null;
+
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
     private DataOutputStream m_dataOutputStream = null;
     private DataInputStream m_dataInputStream = null;
-
-    private TcpIpClientProtocol m_protocol;
-    private int m_SendDataField_1;
-    private int m_SendDataField_2;
-    private int m_SendDataField_3;
-    private int m_SendDataField_4;
-    private int m_SendDataField_5;
 
 
     private long m_timeMillisecondsSend = 0;
@@ -51,7 +113,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
             m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
             if (m_clientSocket == null) {
-                m_sticp = new Stack<>();
+                m_sbyte = new Stack<>();
                 m_clientSocket = new Socket();
                 m_clientSocket.setSoTimeout(m_ticd.getTimeout());
                 m_clientSocket.connect(m_socketAddress);
@@ -74,46 +136,52 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     }
 
     private boolean isConnected() {
-        boolean bRes = false;
-        if (m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null) {
-            bRes = m_clientSocket.isConnected();
-        }
-        return bRes;
+        return m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected();
     }
 
-    private boolean send(byte[] byteToSend) {
-        boolean bRes = false;
-
-        if (m_dataOutputStream != null && m_sticp != null) {
+    private boolean send() {
+        if (m_dataOutputStream != null && m_ticd != null && m_sbyte != null) {
             try {
-                try {
-                    m_sticp.pop();
-                } catch (Exception ex){
-
+                if (!m_sbyte.isEmpty()) {
+                    byte[] abyte = m_sbyte.pop();
+                    if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
+                        m_dataOutputStream.write(abyte, 0, abyte.length);
+                    }
                 }
-
-//                if(!m_bWaitingForData)
-//                {
-                if (byteToSend != null) {
-                    m_dataOutputStream.write(byteToSend, 0, byteToSend.length);
-//                        m_bWaitingForData = true;
-                }
-//                }
-                bRes = true;
+                return true;
+            } catch (EmptyStackException ESex){
+                return true;
             } catch (Exception ex) {
                 Log.d(TAG, this.toString() + "send()->" + "Exception ex: " + ex.getMessage());
             }
+            finally {
+                m_timeMillisecondsSend = System.currentTimeMillis();
+            }
         }
 
-        m_timeMillisecondsSend = System.currentTimeMillis();
-
-        return bRes;
+        return false;
     }
 
-/*
-    private byte[] receive() {
-        if (m_dataInputStream != null) {
+    private boolean receive() {
+        if (m_dataInputStream != null && m_ticd != null) {
             try {
+                if(m_ticd.getProtocolID() ==  TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
+                    // Allocate 260 byte
+                    ByteBuffer bb = ByteBuffer.allocate(260);
+                    boolean bReceiveDataCompleted = false;
+                    // Unit Identifier
+                    byte[] byteUI = new byte[2];
+                    m_dataInputStream.readFully(byteUI, 0,2);
+                    // Length
+                    byte[] byteL = new byte[2];
+                    m_dataInputStream.readFully(byteL, 0,2);
+finire qui
+                    while(!bReceiveDataCompleted){
+                    }
+
+                }
+
+
                 int iByteRead = 0;
 
                 iByteRead = m_dataInputStream.read(m_byteInputStreamBuf, m_NrOfByteInInputStreamBuf, m_byteInputStreamBuf.length - m_NrOfByteInInputStreamBuf);

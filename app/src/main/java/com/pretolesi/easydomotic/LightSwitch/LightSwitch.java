@@ -14,7 +14,10 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocol;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+
+import java.util.List;
 
 /**
  *
@@ -22,7 +25,8 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocol;
 public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-        ToggleButton.OnCheckedChangeListener{
+        ToggleButton.OnCheckedChangeListener,
+        TCPIPClient.TCPIPClientListener {
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -79,9 +83,9 @@ public class LightSwitch extends Switch implements
                     Switch s = (Switch)findViewById(getId());
                     if(s != null){
                         if(s.isChecked()){
-                            sendStatus(m_lsd.getProtTcpIpClientValueON());
+                            sendRequest(m_lsd.getProtTcpIpClientValueON());
                         } else {
-                            sendStatus(m_lsd.getProtTcpIpClientValueOFF());
+                            sendRequest(m_lsd.getProtTcpIpClientValueOFF());
                         }
                     }
 
@@ -95,9 +99,32 @@ public class LightSwitch extends Switch implements
      * Timer variable and function
      */
 
+    private TCPIPClient getTcpIpClient(){
+        if(m_lsd != null){
+            TciIpClientHelper tich = TciIpClientHelper.getInstance();
+            if(tich != null){
+                List<TCPIPClient> ltic = tich.getTciIpClient();
+                if(ltic != null && !ltic.isEmpty()){
+                    for(TCPIPClient tic : ltic){
+                        if (tic != null && (tic.getID() == m_lsd.getID())){
+                            return tic;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        TCPIPClient tic = getTcpIpClient();
+        if(tic != null){
+            tic.registerListener(this);
+        }
+
         if(!m_bEditMode) {
             setTimerHandler();
         }
@@ -113,6 +140,11 @@ public class LightSwitch extends Switch implements
             resetTimerHandler();
         }
 
+        TCPIPClient tic = getTcpIpClient();
+        if(tic != null){
+            tic.unregisterListener(this);
+        }
+
         Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
@@ -121,18 +153,23 @@ public class LightSwitch extends Switch implements
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if(m_lsd != null) {
             if(isChecked){
-                sendStatus(m_lsd.getProtTcpIpClientValueON());
+                sendRequest(m_lsd.getProtTcpIpClientValueON());
             } else {
-                sendStatus(m_lsd.getProtTcpIpClientValueOFF());
+                sendRequest(m_lsd.getProtTcpIpClientValueOFF());
             }
         }
     }
 
-    private void sendStatus(int iStatusValue){
-        if(m_lsd != null) {
-            TcpIpClientProtocol ticp = new TcpIpClientProtocol();
-            ticp.WriteSingleRegister(m_lsd.getProtTcpIpClientValueID(), 0, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+    private void sendRequest(int iStatusValue){
+        TCPIPClient tic = getTcpIpClient();
+        if(tic != null){
+            tic.sendByteValue(m_lsd.getProtTcpIpClientValueID(), 0, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
         }
+    }
+
+    @Override
+    public void onReceiveCompletedCallbacks(TcpIpClientProtocol ticp) {
+
     }
 
     @Override
@@ -254,5 +291,4 @@ public class LightSwitch extends Switch implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
-
 }

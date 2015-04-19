@@ -48,7 +48,7 @@ public class TCPIPClientData implements Parcelable {
     private int m_iPort;
     private int m_iTimeout;
     private int m_iCommSendDelayData;
-    private int m_iProtocol;
+    private long m_lProtocolID;
     private int m_iHead;
     private int m_iTail;
 
@@ -61,12 +61,12 @@ public class TCPIPClientData implements Parcelable {
         this.m_iPort = 0;
         this.m_iTimeout = 0;
         this.m_iCommSendDelayData = 0;
-        this.m_iProtocol = -1;
+        this.m_lProtocolID = -1;
         this.m_iHead = 0;
         this.m_iTail = 0;
     }
 
-    public TCPIPClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iProtocol, int iHead, int iTail) {
+    public TCPIPClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -75,7 +75,7 @@ public class TCPIPClientData implements Parcelable {
         this.m_iPort = iPort;
         this.m_iTimeout = iTimeout;
         this.m_iCommSendDelayData = iCommSendDelayData;
-        this.m_iProtocol = iProtocol;
+        this.m_lProtocolID = lProtocolID;
         this.m_iHead = iHead;
         this.m_iTail = iTail;
     }
@@ -90,7 +90,7 @@ public class TCPIPClientData implements Parcelable {
             this.m_iPort = lsd.getPort();
             this.m_iTimeout = lsd.getTimeout();
             this.m_iCommSendDelayData = lsd.getCommSendDelayData();
-            this.m_iProtocol = lsd.getProtocol();
+            this.m_lProtocolID = lsd.getProtocolID();
             this.m_iHead = lsd.getHead();
             this.m_iTail = lsd.getTail();
         }
@@ -122,8 +122,8 @@ public class TCPIPClientData implements Parcelable {
 
     public void setCommSendDelayData(int iCommSendDelayData) { this.m_iCommSendDelayData = iCommSendDelayData; }
 
-    public void setProtocol(int iProtocol) {
-        this.m_iProtocol = iProtocol;
+    public void setProtocolID(long lProtocolID) {
+        this.m_lProtocolID = lProtocolID;
     }
 
     public void setHead(int iHead) {
@@ -160,7 +160,7 @@ public class TCPIPClientData implements Parcelable {
 
     public int getCommSendDelayData() { return m_iCommSendDelayData; }
 
-    public int getProtocol() { return m_iProtocol; }
+    public long getProtocolID() { return m_lProtocolID; }
 
     public int getHead() { return m_iHead; }
 
@@ -177,7 +177,7 @@ public class TCPIPClientData implements Parcelable {
         m_iPort = in.readInt();
         m_iTimeout = in.readInt();
         m_iCommSendDelayData = in.readInt();
-        m_iProtocol = in.readInt();
+        m_lProtocolID = in.readLong();
         m_iHead = in.readInt();
         m_iTail = in.readInt();
     }
@@ -197,7 +197,7 @@ public class TCPIPClientData implements Parcelable {
         dest.writeInt(m_iPort);
         dest.writeInt(m_iTimeout);
         dest.writeInt(m_iCommSendDelayData);
-        dest.writeInt(m_iProtocol);
+        dest.writeLong(m_lProtocolID);
         dest.writeInt(m_iHead);
         dest.writeInt(m_iTail);
     }
@@ -215,4 +215,26 @@ public class TCPIPClientData implements Parcelable {
         }
     };
 
+    public static enum Protocol {
+        MODBUS_ON_TCP_IP(1, "Modbus TCP/IP RTU"),
+        KNX_ON_TCP_IP(2, "KNX TCP/IP");
+
+        private int m_iProtocolID;
+        private String m_strProtocolName;
+
+        Protocol(int IProtocolID, String strProtocolName) {
+
+            m_iProtocolID = IProtocolID;
+            m_strProtocolName = strProtocolName;
+        }
+
+        public int getID() {
+            return m_iProtocolID;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(m_iProtocolID) + "-" + m_strProtocolName;
+        }
+    }
 }

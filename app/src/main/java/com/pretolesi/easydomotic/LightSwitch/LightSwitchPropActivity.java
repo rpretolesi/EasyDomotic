@@ -25,7 +25,6 @@ import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocol;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;

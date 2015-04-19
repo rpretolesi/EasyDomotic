@@ -336,7 +336,7 @@ public class SQLContract
                     values.put(COLUMN_NAME_PORT, ticd.getPort());
                     values.put(COLUMN_NAME_TIMEOUT, ticd.getTimeout());
                     values.put(COLUMN_NAME_COMM_SEND_DATA_DELAY, ticd.getCommSendDelayData());
-                    values.put(COLUMN_NAME_PROTOCOL, ticd.getProtocol());
+                    values.put(COLUMN_NAME_PROTOCOL, ticd.getProtocolID());
                     values.put(COLUMN_NAME_HEAD, ticd.getHead());
                     values.put(COLUMN_NAME_TAIL, ticd.getTail());
 
@@ -392,7 +392,7 @@ public class SQLContract
                             ticd.getPort(),
                             ticd.getTimeout(),
                             ticd.getCommSendDelayData(),
-                            ticd.getProtocol(),
+                            ticd.getProtocolID(),
 
                             0   // Origin
                     });

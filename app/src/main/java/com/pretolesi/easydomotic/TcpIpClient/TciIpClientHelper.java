@@ -11,18 +11,15 @@ import java.util.Vector;
 public class TciIpClientHelper {
 
     private static TciIpClientHelper m_Instance;
-    private static List<TCPIPClientData> m_lticd;
     private static List<TCPIPClient> m_ltic;
 
     private TciIpClientHelper(List<TCPIPClientData> lticd)
     {
-        m_lticd = lticd;
-
         if ((m_ltic == null))
         {
-            if(m_lticd != null && !m_lticd.isEmpty()) {
+            if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
-                for(TCPIPClientData ticd : m_lticd){
+                for(TCPIPClientData ticd : lticd){
                     TCPIPClient tic = new TCPIPClient();
                     tic.execute(ticd);
                     m_ltic.add(tic);
@@ -60,11 +57,6 @@ public class TciIpClientHelper {
             }
             m_ltic = null;
 
-            if(m_lticd != null && !m_lticd.isEmpty()) {
-                m_lticd.clear();
-            }
-            m_lticd = null;
-
             m_Instance = null;
         }
     }
@@ -77,19 +69,6 @@ public class TciIpClientHelper {
     public List<TCPIPClient> getTciIpClient()
     {
         // Initialize if not already done
-        togliere questo e metterlo solo nello start.
-        if ((m_ltic == null))
-        {
-            if(m_lticd != null && !m_lticd.isEmpty()) {
-                m_ltic = new Vector<>();
-                for(TCPIPClientData ticd : m_lticd){
-                    TCPIPClient tic = new TCPIPClient();
-                    tic.execute(ticd);
-                    m_ltic.add(tic);
-                }
-            }
-        }
-
         return m_ltic;
     }
 
