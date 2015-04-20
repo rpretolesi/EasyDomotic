@@ -169,13 +169,33 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                     // Allocate 260 byte
                     ByteBuffer bb = ByteBuffer.allocate(260);
                     boolean bReceiveDataCompleted = false;
-                    // Unit Identifier
-                    byte[] byteUI = new byte[2];
-                    m_dataInputStream.readFully(byteUI, 0,2);
+                    // Transaction Identifier
+                    byte[] byteTI = new byte[2];
+                    m_dataInputStream.readFully(byteTI, 0,2);
+                    // Protocol Identifier
+                    byte[] bytePI = new byte[2];
+                    m_dataInputStream.readFully(bytePI, 0,2);
                     // Length
                     byte[] byteL = new byte[2];
                     m_dataInputStream.readFully(byteL, 0,2);
-finire qui
+                    int iLength = 0;
+                    try{
+                        iLength = ByteBuffer.wrap(byteL).getInt();
+                    } catch (Exception ignored) {
+                    }
+                    if((iLength < 3) || (iLength > 252)) {
+                        return false;
+                    }
+                    // Unit Identifier
+                    byte[] byteUI = new byte[1];
+                    m_dataInputStream.readFully(byteUI, 0,1);
+                    // Function Code
+                    byte[] byteFC = new byte[1];
+                    m_dataInputStream.readFully(byteFC, 0,1);
+                    // Rest of message
+                    byte[] byteData = new byte[252];
+                    m_dataInputStream.readFully(byteData, 0,iLength - 2);
+
                     while(!bReceiveDataCompleted){
                     }
 
@@ -241,7 +261,7 @@ finire qui
 
         return bRes;
     }
-*/
+
     private void stopConnection() {
 
         m_socketAddress = null;
