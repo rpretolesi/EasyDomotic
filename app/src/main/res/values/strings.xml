@@ -2,6 +2,14 @@
     <string name="app_name">EasyDomotic</string>
 
     <!--
+        Exception
+    -->
+    <string name="ModbusTransIdOutOfRangeException">Transaction Identifier is out of range.</string>
+    <string name="ModbusUnitIdOutOfRangeException">Unit Identifier is out of range.</string>
+    <string name="ModbusAddressOutOfRangeException">Address is out of range.</string>
+    <string name="ModbusValueOutOfRangeException">Value is out of range.</string>
+
+    <!--
         Settings Activity
     -->
     <string name="settings_title_dialog_section_new_room">Room</string>

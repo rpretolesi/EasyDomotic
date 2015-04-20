@@ -14,6 +14,11 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
@@ -162,8 +167,16 @@ public class LightSwitch extends Switch implements
 
     private void sendRequest(int iStatusValue){
         TCPIPClient tic = getTcpIpClient();
+        byte[] byteToSend = null;
         if(tic != null){
-            tic.sendByteValue(m_lsd.getProtTcpIpClientValueID(), 0, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+            try {
+               byteToSend = Modbus.writeSingleRegister(this.getContext(), (int)m_lsd.getID(), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue)
+            } catch (ModbusTransIdOutOfRangeException e) {
+            } catch (ModbusUnitIdOutOfRangeException e) {
+            } catch (ModbusAddressOutOfRangeException e) {
+            } catch (ModbusValueOutOfRangeException e) {
+            }
+            tic.sendMessage(byteToSend);
         }
     }
 

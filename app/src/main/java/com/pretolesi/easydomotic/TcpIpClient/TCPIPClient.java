@@ -56,12 +56,18 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     /*
      * Communication function
      */
-
+/*
     public synchronized void sendByteValue(int iField_1, int iField_2, int iField_3, int iField_4, int iField_5){
         if(m_ticd != null && m_sbyte != null){
             if(m_ticd.getProtocolID() ==  TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
                 m_sbyte.push(writeSingleRegister(iField_1, iField_2, iField_3, iField_4, iField_5));
             }
+        }
+    }
+*/
+    public synchronized void sendMessage(byte[] byteToSend){
+        if(m_sbyte != null && byteToSend != null){
+            m_sbyte.push(byteToSend);
         }
     }
 
@@ -161,7 +167,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
         return false;
     }
-
+/*
     private boolean receive() {
         if (m_dataInputStream != null && m_ticd != null) {
             try {
@@ -261,7 +267,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
         return bRes;
     }
-
+*/
     private void stopConnection() {
 
         m_socketAddress = null;
