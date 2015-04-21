@@ -20,6 +20,7 @@ import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException
 import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         ToggleButton.OnCheckedChangeListener,
-        TCPIPClient.TCPIPClientListener {
+        Modbus.ModbusListener {
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -103,7 +104,7 @@ public class LightSwitch extends Switch implements
      * End
      * Timer variable and function
      */
-
+/*
     private TCPIPClient getTcpIpClient(){
         if(m_lsd != null){
             TciIpClientHelper tich = TciIpClientHelper.getInstance();
@@ -121,14 +122,17 @@ public class LightSwitch extends Switch implements
 
         return null;
     }
-
+*/
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+/*
         TCPIPClient tic = getTcpIpClient();
         if(tic != null){
             tic.registerListener(this);
         }
+*/
+        Modbus.registerListener(this);
 
         if(!m_bEditMode) {
             setTimerHandler();
@@ -145,11 +149,13 @@ public class LightSwitch extends Switch implements
             resetTimerHandler();
         }
 
+        Modbus.unregisterListener(this);
+/*
         TCPIPClient tic = getTcpIpClient();
         if(tic != null){
             tic.unregisterListener(this);
         }
-
+*/
         Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
@@ -166,22 +172,35 @@ public class LightSwitch extends Switch implements
     }
 
     private void sendRequest(int iStatusValue){
-        TCPIPClient tic = getTcpIpClient();
-        byte[] byteToSend = null;
-        if(tic != null){
-            try {
-               byteToSend = Modbus.writeSingleRegister(this.getContext(), ((int)m_lsd.getID() + m_lsd.getProtTcpIpClientValueAddress()), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue)
-            } catch (ModbusTransIdOutOfRangeException e) {
-            } catch (ModbusUnitIdOutOfRangeException e) {
-            } catch (ModbusAddressOutOfRangeException e) {
-            } catch (ModbusValueOutOfRangeException e) {
+        TciIpClientHelper tich = TciIpClientHelper.getInstance();
+        if(m_lsd != null && tich != null){
+            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+            if(tic != null){
+                byte[] byteToSend = null;
+                if(tic.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
+                    try {
+                        byteToSend = Modbus.writeSingleRegister(this.getContext(), ((int)m_lsd.getID() + m_lsd.getProtTcpIpClientValueAddress()), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+                    } catch (ModbusTransIdOutOfRangeException e) {
+                    } catch (ModbusUnitIdOutOfRangeException e) {
+                    } catch (ModbusAddressOutOfRangeException e) {
+                    } catch (ModbusValueOutOfRangeException e) {
+                    }
+                }
+                if(byteToSend != null) {
+                    tic.sendMessage(byteToSend);
+                }
             }
-            tic.sendMessage(byteToSend);
         }
     }
 
+
     @Override
-    public void onReceiveCompletedCallbacks(TcpIpClientProtocol ticp) {
+    public void onWriteSingleRegisterCompletedCallback(int iTransactionIdentifier, int iFC, int iAddress, int iValue) {
+
+    }
+
+    @Override
+    public void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC) {
 
     }
 
@@ -304,4 +323,5 @@ public class LightSwitch extends Switch implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
+
 }

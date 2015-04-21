@@ -10,6 +10,7 @@ import java.util.Vector;
  */
 public class TciIpClientHelper {
 
+    private static Context m_context;
     private static TciIpClientHelper m_Instance;
     private static List<TCPIPClient> m_ltic;
 
@@ -20,7 +21,7 @@ public class TciIpClientHelper {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
                 for(TCPIPClientData ticd : lticd){
-                    TCPIPClient tic = new TCPIPClient();
+                    TCPIPClient tic = new TCPIPClient(m_context);
                     tic.execute(ticd);
                     m_ltic.add(tic);
                 }
@@ -70,6 +71,24 @@ public class TciIpClientHelper {
     {
         // Initialize if not already done
         return m_ltic;
+    }
+
+    public TCPIPClient getTciIpClient(long lID)
+    {
+        if (m_Instance != null)
+        {
+            // Initialize if not already done
+            if(m_ltic != null && !m_ltic.isEmpty()) {
+                for(TCPIPClient tic : m_ltic){
+                    if(tic.getID() == lID){
+                        return tic;
+                    }
+                }
+                m_ltic.clear();
+            }
+        }
+
+        return null;
     }
 
 }
