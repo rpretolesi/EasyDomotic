@@ -180,10 +180,10 @@ public class LightSwitch extends Switch implements
                 if(tic.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
                     try {
                         byteToSend = Modbus.writeSingleRegister(this.getContext(), ((int)m_lsd.getID() + m_lsd.getProtTcpIpClientValueAddress()), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
-                    } catch (ModbusTransIdOutOfRangeException e) {
-                    } catch (ModbusUnitIdOutOfRangeException e) {
-                    } catch (ModbusAddressOutOfRangeException e) {
-                    } catch (ModbusValueOutOfRangeException e) {
+                    } catch (ModbusTransIdOutOfRangeException ignored) {
+                    } catch (ModbusUnitIdOutOfRangeException ignored) {
+                    } catch (ModbusAddressOutOfRangeException ignored) {
+                    } catch (ModbusValueOutOfRangeException ignored) {
                     }
                 }
                 if(byteToSend != null) {

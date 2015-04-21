@@ -148,5 +148,6 @@ public class Modbus {
          */
         void onWriteSingleRegisterCompletedCallback(int iTransactionIdentifier, int iFC, int iAddress,  int iValue);
         void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC);
+        void onTcpIpServerStatusCallback(int iTransactionIdentifier, int iEC, int iExC);
     }
 }

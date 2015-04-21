@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
@@ -27,21 +26,29 @@ import java.util.Vector;
 public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private static final String TAG = "TCPIPClient";
 
-    private Stack<byte[]> m_sbyte = null;
-    private TCPIPClientData m_ticd = null;
-
     private Context m_context = null;
+
+    private Stack<byte[]> m_sbyte = null;
+    nello Stack metterci una struttura in modo che possa marcare i messaggi in coda come inviati ed individuare eventuali timeout
+    private TCPIPClientData m_ticd = null;
 
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
     private DataOutputStream m_dataOutputStream = null;
     private DataInputStream m_dataInputStream = null;
+    private Status m_status
+
+    private List<String> m_vstrMessageLog = null;
+    private String m_strStatus = null;
 
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsReceive = 0;
 
     public TCPIPClient (Context context){
         m_context = context;
+        m_sbyte = new Stack<>();
+        m_vstrMessageLog = new Vector<>();
+        m_strStatus = "";
     }
 
     public synchronized long getID() {
@@ -280,5 +287,13 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
+    }
+
+    public static enum Status {
+        IDLE,
+        OFF_LINE,
+        CONNECTING,
+        ON_LINE,
+        DISCONNECTING;
     }
 }
