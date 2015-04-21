@@ -170,7 +170,7 @@ public class LightSwitch extends Switch implements
         byte[] byteToSend = null;
         if(tic != null){
             try {
-               byteToSend = Modbus.writeSingleRegister(this.getContext(), (int)m_lsd.getID(), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue)
+               byteToSend = Modbus.writeSingleRegister(this.getContext(), ((int)m_lsd.getID() + m_lsd.getProtTcpIpClientValueAddress()), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue)
             } catch (ModbusTransIdOutOfRangeException e) {
             } catch (ModbusUnitIdOutOfRangeException e) {
             } catch (ModbusAddressOutOfRangeException e) {

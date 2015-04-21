@@ -3,6 +3,9 @@ package com.pretolesi.easydomotic.Modbus;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusLengthOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusMessageExceedTheLengthException;
+import com.pretolesi.easydomotic.CustomException.ModbusProtocolOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
@@ -51,5 +54,56 @@ public class Modbus {
         bb.putShort(shValue);
 
         return bb.array();
+    }
+
+    public static synchronized int getMessageLengthFromMBAP(Context context, byte[] byteMsg) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMessageExceedTheLengthException {
+        // Max message length 260 byte
+        if(byteMsg != null && byteMsg.length == 10){
+            ByteBuffer bb = ByteBuffer.wrap(byteMsg);
+            bb.getShort(); // Transaction Identifier
+            int iPI = bb.getShort(); // Protocol Identifier, must be 0
+            if(iPI != 0){
+                throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
+            }
+            int iLength = bb.getShort(); // Length
+            if(iLength < 5 || iLength > 254){
+                throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
+            }
+            return iLength;
+        }
+
+        throw new ModbusMessageExceedTheLengthException(context.getString(R.string.ModbusMessageExceedTheLengthException));
+    }
+
+    public static synchronized boolean getMessageDATA(Context context, byte[] byteMsg) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMessageExceedTheLengthException {
+        // Max message length 260 byte
+        if(byteMsg != null && byteMsg.length >= 10){
+            ByteBuffer bb = ByteBuffer.wrap(byteMsg);
+            if(byteMsg.length < 5 || byteMsg.length > 254){
+                throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
+            }
+            // Unit Identifier
+
+            finire qui...
+
+
+
+
+
+
+
+
+
+
+
+            if(byteMsg.length < byteMsg.length + 6){
+                return false;
+            } else if(byteMsg.length == iLength + 6) {
+                return true;
+            } else {
+                throw new ModbusMessageExceedTheLengthException(context.getString(R.string.ModbusMessageExceedTheLengthException));
+            }
+        }
+        return false;
     }
 }

@@ -4,6 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pretolesi.easydomotic.CustomException.ModbusLengthOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusMessageExceedTheLengthException;
+import com.pretolesi.easydomotic.CustomException.ModbusProtocolOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.Modbus;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -167,46 +172,38 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
         return false;
     }
-/*
+
     private boolean receive() {
         if (m_dataInputStream != null && m_ticd != null) {
-            try {
                 if(m_ticd.getProtocolID() ==  TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
-                    // Allocate 260 byte
-                    ByteBuffer bb = ByteBuffer.allocate(260);
-                    boolean bReceiveDataCompleted = false;
-                    // Transaction Identifier
-                    byte[] byteTI = new byte[2];
-                    m_dataInputStream.readFully(byteTI, 0,2);
-                    // Protocol Identifier
-                    byte[] bytePI = new byte[2];
-                    m_dataInputStream.readFully(bytePI, 0,2);
-                    // Length
-                    byte[] byteL = new byte[2];
-                    m_dataInputStream.readFully(byteL, 0,2);
-                    int iLength = 0;
-                    try{
-                        iLength = ByteBuffer.wrap(byteL).getInt();
-                    } catch (Exception ignored) {
+                    // MBAP
+                    byte[] byteMBAP = new byte[10];
+                    try {
+                        m_dataInputStream.readFully(byteMBAP, 0, 10);
+
+                        int iLength;
+                        try {
+                            iLength = Modbus.getMessageLengthFromMBAP(m_context, byteMBAP);
+                            byte[] byteDATA = new byte[iLength];
+                            try {
+                                m_dataInputStream.readFully(byteDATA, 0, iLength);
+                            } catch (IOException e) {
+                            }
+
+                        } catch (ModbusProtocolOutOfRangeException e) {
+                        } catch (ModbusMessageExceedTheLengthException e) {
+                        } catch (ModbusLengthOutOfRangeException e) {
+                        }
+
+                    } catch (IOException e) {
                     }
-                    if((iLength < 3) || (iLength > 252)) {
-                        return false;
-                    }
-                    // Unit Identifier
-                    byte[] byteUI = new byte[1];
-                    m_dataInputStream.readFully(byteUI, 0,1);
-                    // Function Code
-                    byte[] byteFC = new byte[1];
-                    m_dataInputStream.readFully(byteFC, 0,1);
-                    // Rest of message
-                    byte[] byteData = new byte[252];
-                    m_dataInputStream.readFully(byteData, 0,iLength - 2);
+
 
                     while(!bReceiveDataCompleted){
                     }
 
                 }
-
+/*
 
                 int iByteRead = 0;
 
@@ -261,13 +258,15 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                 m_strLastError = ex.getMessage();
                 closeConnection(msg);
             }
-        }
+*/
 
         m_timeMillisecondsGet = System.currentTimeMillis();
 
         return bRes;
+            }
+        }
     }
-*/
+
     private void stopConnection() {
 
         m_socketAddress = null;
