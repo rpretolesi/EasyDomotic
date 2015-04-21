@@ -29,14 +29,13 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private Context m_context = null;
 
     private Stack<byte[]> m_sbyte = null;
-    nello Stack metterci una struttura in modo che possa marcare i messaggi in coda come inviati ed individuare eventuali timeout
     private TCPIPClientData m_ticd = null;
 
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
     private DataOutputStream m_dataOutputStream = null;
     private DataInputStream m_dataInputStream = null;
-    private Status m_status
+    private boolean m_bSocketOpen = false;
 
     private List<String> m_vstrMessageLog = null;
     private String m_strStatus = null;
@@ -65,40 +64,45 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         return 0;
     }
 
-    public synchronized void sendMessage(byte[] byteToSend) {
-        if (m_sbyte != null && byteToSend != null) {
-            m_sbyte.push(byteToSend);
+    public synchronized void sendMessage(byte[] byteDATA) {
+        if (m_sbyte != null && byteDATA != null) {
+            m_sbyte.push(byteDATA);
         }
     }
 
     private boolean startConnection() {
-        if (m_ticd == null) {
-            Log.d(TAG, this.toString() + "startConnection()->" + "m_ticd == null");
-            return false;
+        // Prima chiudo la connessione
+        if(m_bSocketOpen){
+            stopConnection();
         }
-        try {
-            // Prima chiudo la connessione
-            stopConnection();
 
-            m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
-            if (m_clientSocket == null) {
-                m_sbyte = new Stack<>();
-                m_clientSocket = new Socket();
-                m_clientSocket.setSoTimeout(m_ticd.getTimeout());
-                m_clientSocket.connect(m_socketAddress);
-                m_dataOutputStream = new DataOutputStream(m_clientSocket.getOutputStream());
-                m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
+        if (m_ticd != null) {
+            Modbus.callTcpIpServerModbusStatusCallback(Status.CONNECTING);
+            try {
+                m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
+                if (m_clientSocket == null) {
+                    m_sbyte = new Stack<>();
+                    m_clientSocket = new Socket();
+                    m_clientSocket.setSoTimeout(m_ticd.getTimeout());
+                    m_clientSocket.connect(m_socketAddress);
+                    m_dataOutputStream = new DataOutputStream(m_clientSocket.getOutputStream());
+                    m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
 
-                m_timeMillisecondsSend = System.currentTimeMillis();
-                m_timeMillisecondsReceive = System.currentTimeMillis();
+                    m_timeMillisecondsSend = System.currentTimeMillis();
+                    m_timeMillisecondsReceive = System.currentTimeMillis();
 
-                Log.d(TAG, this.toString() + "startConnection()");
+                    Log.d(TAG, this.toString() + "startConnection()");
 
-                return true;
+                    m_bSocketOpen = true;
+
+                    Modbus.callTcpIpServerModbusStatusCallback(Status.ON_LINE);
+
+                    return true;
+                }
+            } catch (Exception ex) {
+                Log.d(TAG, this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
+                stopConnection();
             }
-        } catch (Exception ex) {
-            Log.d(TAG, this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
-            stopConnection();
         }
 
         return false;
@@ -114,9 +118,11 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         if (m_dataOutputStream != null && m_ticd != null && m_sbyte != null) {
             try {
                 if (!m_sbyte.isEmpty()) {
-                    byte[] abyte = m_sbyte.pop();
-                    if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
-                        m_dataOutputStream.write(abyte, 0, abyte.length);
+                    byte[] byteDATA = m_sbyte.pop();
+                    if(byteDATA != null) {
+                        if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                            m_dataOutputStream.write(byteDATA, 0, byteDATA.length);
+                        }
                     }
                 }
                 return true;
@@ -144,7 +150,6 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                 byte[] byteMBAP = new byte[10];
                 try {
                     m_dataInputStream.readFully(byteMBAP, 0, 10);
-
                     // Rest of message
                     int iLength;
                     try {
@@ -152,7 +157,6 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         byte[] byteDATA = new byte[iLength];
                         try {
                             m_dataInputStream.readFully(byteDATA, 0, iLength);
-
                             try {
                                 Modbus.getMessageDATA(m_context, byteMBAP, byteDATA);
 
@@ -188,6 +192,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                     }
 
                 } catch (IOException ex) {
+                    Modbus.callTcpIpServerModbusOperationTimeoutCallback();
                     stopConnection();
                     Log.d(TAG, this.toString() + "receive()->" + "IOException ex: " + ex.getMessage());
                 }
@@ -202,6 +207,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     }
 
     private void stopConnection() {
+
+        Modbus.callTcpIpServerModbusStatusCallback(Status.DISCONNECTING);
 
         m_socketAddress = null;
 
@@ -234,6 +241,10 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             }
         }
         m_dataInputStream = null;
+
+        Modbus.callTcpIpServerModbusStatusCallback(Status.OFF_LINE);
+
+        m_bSocketOpen = false;
 
         Log.d(TAG, this.toString() + "stopConnection()");
     }

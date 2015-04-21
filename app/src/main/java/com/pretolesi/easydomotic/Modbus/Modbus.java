@@ -10,7 +10,9 @@ import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeExceptio
 import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.R;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Vector;
@@ -139,6 +141,22 @@ public class Modbus {
         }
     }
 
+    public static synchronized void callTcpIpServerModbusOperationTimeoutCallback(){
+        if(m_vMLListener != null) {
+            for (ModbusListener ml : m_vMLListener) {
+                ml.onTcpIpServerModbusOperationTimeoutCallback();
+            }
+        }
+    }
+
+    public static synchronized void callTcpIpServerModbusStatusCallback(TCPIPClient.Status tics){
+        if(m_vMLListener != null) {
+            for (ModbusListener ml : m_vMLListener) {
+                ml.onTcpIpServerModbusStatusCallback(tics);
+            }
+        }
+    }
+
     /**
      * Callbacks interface.
      */
@@ -148,6 +166,7 @@ public class Modbus {
          */
         void onWriteSingleRegisterCompletedCallback(int iTransactionIdentifier, int iFC, int iAddress,  int iValue);
         void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC);
-        void onTcpIpServerStatusCallback(int iTransactionIdentifier, int iEC, int iExC);
+        void onTcpIpServerModbusOperationTimeoutCallback();
+        void onTcpIpServerModbusStatusCallback(TCPIPClient.Status tics);
     }
 }

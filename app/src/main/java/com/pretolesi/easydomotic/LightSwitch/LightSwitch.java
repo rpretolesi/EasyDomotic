@@ -23,8 +23,6 @@ import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
-import java.util.List;
-
 /**
  *
  */
@@ -201,6 +199,16 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC) {
+
+    }
+
+    @Override
+    public void onTcpIpServerModbusOperationTimeoutCallback() {
+
+    }
+
+    @Override
+    public void onTcpIpServerModbusStatusCallback(TCPIPClient.Status tics) {
 
     }
 
