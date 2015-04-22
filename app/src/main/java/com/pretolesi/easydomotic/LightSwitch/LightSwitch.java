@@ -53,6 +53,7 @@ public class LightSwitch extends Switch implements
         if(lsd != null) {
             this.m_lsd = lsd;
             this.setTag(lsd.getTag());
+            this.setId((int)lsd.getID() + lsd.getProtTcpIpClientValueAddress());
         }
         this.m_bEditMode = bEditMode;
 
@@ -177,7 +178,7 @@ public class LightSwitch extends Switch implements
                 byte[] byteToSend = null;
                 if(tic.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
                     try {
-                        byteToSend = Modbus.writeSingleRegister(this.getContext(), ((int)m_lsd.getID() + m_lsd.getProtTcpIpClientValueAddress()), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+                        byteToSend = Modbus.writeSingleRegister(this.getContext(), getId(), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
                     } catch (ModbusTransIdOutOfRangeException ignored) {
                     } catch (ModbusUnitIdOutOfRangeException ignored) {
                     } catch (ModbusAddressOutOfRangeException ignored) {

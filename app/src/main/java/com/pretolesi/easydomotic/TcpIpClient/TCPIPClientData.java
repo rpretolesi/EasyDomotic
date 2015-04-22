@@ -216,8 +216,8 @@ public class TCPIPClientData implements Parcelable {
     };
 
     public static enum Protocol {
-        MODBUS_ON_TCP_IP(1, "Modbus TCP/IP RTU"),
-        KNX_ON_TCP_IP(2, "KNX TCP/IP");
+        MODBUS_ON_TCP_IP(0, "Modbus TCP/IP RTU"),
+        KNX_ON_TCP_IP(1, "KNX TCP/IP");
 
         private int m_iProtocolID;
         private String m_strProtocolName;

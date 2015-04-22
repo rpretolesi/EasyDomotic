@@ -61,7 +61,7 @@ public class Modbus {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
         }
 
-        ByteBuffer bb = ByteBuffer.allocate(5);
+        ByteBuffer bb = ByteBuffer.allocate(12);
         bb.putShort(shTransactionIdentifier);
         bb.putShort((short)0);
         bb.putShort((short)6);

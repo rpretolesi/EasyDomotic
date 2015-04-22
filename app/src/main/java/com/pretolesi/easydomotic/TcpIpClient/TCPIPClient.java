@@ -11,10 +11,12 @@ import com.pretolesi.easydomotic.Modbus.Modbus;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
@@ -191,15 +193,17 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         Log.d(TAG, this.toString() + "receive()->" + "ModbusLengthOutOfRangeException ex: " + ex.getMessage());
                     }
 
-                } catch (IOException ex) {
+                } catch (SocketTimeoutException stex) {
                     Modbus.callTcpIpServerModbusOperationTimeoutCallback();
-                    stopConnection();
-                    Log.d(TAG, this.toString() + "receive()->" + "IOException ex: " + ex.getMessage());
+                    Log.d(TAG, this.toString() + "receive()->" + "SocketTimeoutException stex: " + stex.getMessage());
+                } catch (EOFException eofex) {
+                    Log.d(TAG, this.toString() + "receive()->" + "EOFException eofex: " + eofex.getMessage());
+                } catch (IOException ioex) {
+                    Log.d(TAG, this.toString() + "receive()->" + "IOException ioex: " + ioex.getMessage());
+                } catch (Exception ex) {
+                    Log.d(TAG, this.toString() + "receive()->" + "Exception ex: " + ex.getMessage());
                 }
-                finally {
-                    // Prelevare qui la differenza
-                    // System.currentTimeMillis() - m_timeMillisecondsReceive;
-                }
+
             }
         }
 

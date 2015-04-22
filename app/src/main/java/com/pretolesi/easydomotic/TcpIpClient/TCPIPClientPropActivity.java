@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
@@ -95,7 +96,7 @@ public class TCPIPClientPropActivity extends Activity implements
         }
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TcpIpClientProtocol.Protocol.values()));
+                android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
 
         getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
     }
@@ -281,12 +282,12 @@ public class TCPIPClientPropActivity extends Activity implements
                 m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getCommSendDelayData()));
             }
             if(m_id_stica_spn_protocol != null) {
-                int iItem = -1;
+                long lItem = -1;
                 try{
-                    iItem = m_ticd.getProtocolID();
+                    lItem = m_ticd.getProtocolID();
                 } catch (Exception ignore) { }
                 m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
-                m_id_stica_spn_protocol.setSelection(iItem);
+                m_id_stica_spn_protocol.setSelection((int)lItem);
             }
             if(m_id_stica_et_protocol_field_1 != null) {
                 m_id_stica_et_protocol_field_1.setText(Integer.toString(m_ticd.getHead()));
@@ -330,7 +331,7 @@ public class TCPIPClientPropActivity extends Activity implements
         m_ticd.setPort(Integer.parseInt(m_id_stica_et_server_port.getText().toString()));
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
         m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
-        m_ticd.setProtocolID(m_id_stica_spn_protocol.getSelectedItemPosition());
+        m_ticd.setProtocolID(m_id_stica_spn_protocol.getSelectedItemId());
         m_ticd.setHead(Integer.parseInt(m_id_stica_et_protocol_field_1.getText().toString()));
         m_ticd.setTail(Integer.parseInt(m_id_stica_et_protocol_field_2.getText().toString()));
 
