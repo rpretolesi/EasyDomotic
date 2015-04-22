@@ -24,21 +24,13 @@ boolean m_bOneShotClientConnected = false;
 boolean m_bOneShotClientDisconnected_1 = false;
 boolean m_bOneShotClientDisconnected_2 = false;
 
-// Dati di comunicazione
-byte SOH = 0x01;
-byte EOT = 0x04;
-byte ENQ = 0x05;
-byte ACK = 0x06;
+byte m_byteReadMBAP[6] = {0};
+byte m_byteReadMBMsg[260] = {0};
+boolean m_bModbusMBAP = false;
+unsigned int m_uiModbusMBAPLength = 0;
 
-
-int m_iNrByteToRead = 0;
-int m_iNrByteRead = 0;
-byte m_byteRead[16] = {0};
-boolean m_bENQInProgress = false;
-boolean m_bSOHInProgress = false;
-byte m_byteFirstByteRead = 0;
-byte m_byteToWrite[16] = {0};
-
+byte m_byteToWriteMBAPMsg[260] = {0};
+unsigned int m_uiNrByteToWrite = 0;
 void setup() 
 {
   // Deselect SD Card
@@ -117,184 +109,164 @@ void Communication()
         //        m_client.flush();    
 
         // Init buffer data
-        m_iNrByteRead = 0;
-        for(int indice_1 = 0; indice_1 < 16; indice_1++)
-        {
-          m_byteRead[indice_1] = 0;
-        }
-        m_byteToWrite[0] = ACK;
-        m_byteToWrite[15] = EOT;
+        initValue();
 
         Serial.println("Client Connected.");
       }
 
       // Read and write operation....
-      // Checking the first byte....
-      // Devono essere 16
-      m_iNrByteToRead = client.available();
-      if (m_iNrByteToRead >= 1) 
+      // Get MBAP
+      if (client.available() >= 6 && m_bModbusMBAP == false)
       {
-        if(m_bENQInProgress == false && m_bSOHInProgress == false)
-        {
-          // Check the message
-          // Read the first byte
-          m_byteFirstByteRead = client.read(); 
-          m_iNrByteRead = m_iNrByteRead + 1;
-          // Just a enquiry....
-          if(m_byteFirstByteRead == ENQ)
-          {
-            m_bENQInProgress = true;
-          }
-          // Data to read....
-          if(m_byteFirstByteRead == SOH)
-          {
-            m_bSOHInProgress = true;
-          }
+        // Parse message in order to get MBAP Header
+        Serial.print("MBAP: ");
+        for(int index_0 = 0; index_0 < 6; index_0++) {
+          m_byteReadMBAP[index_0] = client.read();
+          Serial.print(m_byteReadMBAP[index_0]);
+          Serial.print(" ");
         }
+        Serial.println(" ");
 
-        // Just a enquiry....
-        if(m_bENQInProgress == true)
-        {
-          //          Serial.println("ENQ byte read.");
+        unsigned int uiModbusMBAPTransactionID = getWordFromBytes(m_byteReadMBAP[0], m_byteReadMBAP[1]);
+        Serial.print("Transaction ID: ");
+        Serial.println(uiModbusMBAPTransactionID);
 
-          for(int index_1 = 0; index_1 < 16; index_1++)
-          {
-            client.write(m_byteToWrite[index_1]);
-            //            Serial.print("ENQ byte write: ");
-            //            Serial.print(m_byteToWrite[index_1]);
-            //            Serial.print(" index: ");
-            //            Serial.println(index_1);
-          } 
-          m_iNrByteRead = 0;
-          m_bENQInProgress = false;          
+        unsigned int uiModbusMBAPProtocolID = getWordFromBytes(m_byteReadMBAP[2], m_byteReadMBAP[3]);
+        Serial.print("Protocol ID: ");
+        Serial.println(uiModbusMBAPProtocolID);
+
+        m_uiModbusMBAPLength = getWordFromBytes(m_byteReadMBAP[4], m_byteReadMBAP[5]);
+        Serial.print("Length: ");
+        Serial.println(m_uiModbusMBAPLength);
+
+        if ((uiModbusMBAPProtocolID != 0) || (m_uiModbusMBAPLength < 5) || (m_uiModbusMBAPLength > 254)) {
+          // Errore, scarico tutto
+          initValue();
+          client.flush();
+        } else {
+          m_bModbusMBAP = true;
         }
+      }
 
-        // Data to read....
-        if(m_bSOHInProgress == true)
-        {
-          for(int index_0 = m_iNrByteRead; index_0 < m_iNrByteToRead; index_0++)
-          {
-            m_byteRead[m_iNrByteRead] = client.read();
-            //            Serial.print("SOH byte read: ");
-            //            Serial.print(m_byteRead[m_iNrByteRead]);
-            //            Serial.print(" index: ");
-            //            Serial.println(m_iNrByteRead);
-            m_iNrByteRead = m_iNrByteRead + 1;  
-            if(m_iNrByteRead >= 16)
-            {
-              m_iNrByteRead = 0;
-              m_bSOHInProgress = false;
+      if (client.available() >= m_uiModbusMBAPLength && m_bModbusMBAP == true)
+      {
+        Serial.print("Message: ");
+        for(int index_0 = 0; index_0 < m_uiModbusMBAPLength; index_0++) {
+          m_byteReadMBMsg[index_0] = client.read();
+          Serial.print(m_byteReadMBMsg[index_0]);
+          Serial.print(" ");
+        }
+        Serial.println(" ");
 
-              // Check the last char...
-              if(m_byteRead[15] == EOT)
-              {
-                // Store the result and write back....
-                // Here i can use the data received....
-                // Digital
-                boolean b_1_1 = ((m_byteRead[1] & 0b00000001) == 1);
-                boolean b_1_2 = ((m_byteRead[1] & 0b00000010) == 2);
-                boolean b_1_3 = ((m_byteRead[1] & 0b00000100) == 4);
-                boolean b_1_4 = ((m_byteRead[1] & 0b00001000) == 8);
-                boolean b_1_5 = ((m_byteRead[1] & 0b00010000) == 16);
-                boolean b_1_6 = ((m_byteRead[1] & 0b00100000) == 32);
-                boolean b_1_7 = ((m_byteRead[1] & 0b01000000) == 64);
-                boolean b_1_8 = ((m_byteRead[1] & 0b10000000) == 128);
+        // Messaggio Completo, estraggo i dati:
+        unsigned int uiModbusUnitIdentifier = getWordFromBytes(m_byteReadMBMsg[6], 0);
+        Serial.print("Unit Identifier: ");
+        Serial.println(uiModbusUnitIdentifier);
+        
+        unsigned int uiModbusFunctionCode = getWordFromBytes(m_byteReadMBMsg[7], 0);
+        Serial.print("Function Code: ");
+        Serial.println(uiModbusFunctionCode);
 
-                boolean b_2_1 = ((m_byteRead[2] & 0b00000001) == 1);
-                boolean b_2_2 = ((m_byteRead[2] & 0b00000010) == 2);
-                boolean b_2_3 = ((m_byteRead[2] & 0b00000100) == 4);
-                boolean b_2_4 = ((m_byteRead[2] & 0b00001000) == 8);
-                boolean b_2_5 = ((m_byteRead[2] & 0b00010000) == 16);
-                boolean b_2_6 = ((m_byteRead[2] & 0b00100000) == 32);
-                boolean b_2_7 = ((m_byteRead[2] & 0b01000000) == 64);
-                boolean b_2_8 = ((m_byteRead[2] & 0b10000000) == 128);
+        // Tutto Ok, costruisco la risposta, 1° parte
+        // Intestazione
+        m_byteToWriteMBAPMsg[0] = m_byteReadMBAP[0]; // Transaction Identifier
+        m_byteToWriteMBAPMsg[1] = m_byteReadMBAP[1]; // Transaction Identifier
+        m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+        m_byteToWriteMBAPMsg[2] = m_byteReadMBAP[2]; // Protocol Identifier
+        m_byteToWriteMBAPMsg[3] = m_byteReadMBAP[3]; // Protocol Identifier
+        m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+        m_byteToWriteMBAPMsg[6] = m_byteReadMBAP[6]; // Unit Identifier
+        m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
 
-                // Analogic
-                byte byte_5 = m_byteRead[5];
-                byte byte_6 = m_byteRead[6];
-                byte byte_7 = m_byteRead[7];
-                byte byte_8 = m_byteRead[8];
-                // ...
-                byte byte_14 = m_byteRead[14];
-
-                // Output
-                if(b_2_1 == true){
-                  digitalWrite(3, true); 
-                } 
-                else {
-                  analogWrite(3, byte_5); 
-                }
-
-                if(b_2_2 == true){
-                  digitalWrite(5, true); 
-                } 
-                else {
-                  analogWrite(5, byte_6);       
-                }
-
-                if(b_2_3 == true){
-                  digitalWrite(6, true); 
-                } 
-                else {
-                  analogWrite(6, byte_7);       
-                }
-
-                if(b_2_4 == true){
-                  digitalWrite(9, true); 
-                } 
-                else {
-                  analogWrite(9, byte_8);       
-                }
-
-                // Write back just for test....
-                // You can assigne here any value that you would like to read on the app....
-                // Digital
-                m_byteToWrite[1] = m_byteRead[1];
-                m_byteToWrite[2] = m_byteRead[2];
-
-                // Analogic
-                m_byteToWrite[5] = m_byteRead[5];
-                m_byteToWrite[6] = m_byteRead[6];
-                m_byteToWrite[7] = m_byteRead[7];
-                m_byteToWrite[8] = m_byteRead[8];
-                m_byteToWrite[9] = m_byteRead[9];
-                m_byteToWrite[10] = m_byteRead[10];
-                m_byteToWrite[11] = m_byteRead[11];
-                m_byteToWrite[12] = m_byteRead[12];
-                m_byteToWrite[13] = m_byteRead[13];
-                m_byteToWrite[14] = m_byteRead[14];
-
-
-                /*
-                 * Test
-                 *                
-                 for(int index_2 = 1; index_2 < 15; index_2++)
-                 {
-                 m_byteToWrite[index_2] = m_byteRead[index_2];
-                 }
-                 */
-
-                for(int index_3 = 0; index_3 < 16; index_3++)
-                {
-                  client.write(m_byteToWrite[index_3]);
-                  //                   Serial.print("SOH byte write: ");
-                  //                   Serial.print(m_byteToWrite[index_3]);
-                  //                   Serial.print(" index: ");
-                  //                   Serial.println(index_3);
-                }                
-              }
-              else
-              {
-                Serial.println("EOT Error. ");
-                client.stop();
-
-                initValue();
-              }
-              break;  
+        if(uiModbusFunctionCode == 0x06){
+          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBAP[7], m_byteReadMBAP[8]);
+          Serial.print("Address: ");
+          Serial.println(uiModbusAddress);
+          if(uiModbusAddress == 10000) {                       
+            int iModbuSingleValue = getWordFromBytes(m_byteReadMBAP[10], m_byteReadMBAP[11]);
+            boolean bValueOk = false;
+            Serial.print("Value: ");
+            Serial.println(iModbuSingleValue);
+            // Ok, i can use the value
+            // Set 0 if value == 1
+            // Set 1 if value == 4
+            switch(iModbuSingleValue){
+              case 1:
+                digitalWrite(3, 0);  
+                bValueOk = true;
+                break;
+              
+              case 4:
+                digitalWrite(3, 1);            
+                bValueOk = true;
+                break;
+               
+              default:
+                // Exception
+                bValueOk = false;
+                
+                break;
             }
+
+            if(bValueOk == true) {
+              // Tutto Ok, costruisco la risposta, 2° parte
+              unsigned int iMBAPMsgLength = 12;
+              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[7] = m_byteReadMBAP[7]; // Function code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = m_byteReadMBAP[8]; // Address
+              m_byteToWriteMBAPMsg[9] = m_byteReadMBAP[9]; // Address
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[10] = m_byteReadMBAP[10]; // Value
+              m_byteToWriteMBAPMsg[11] = m_byteReadMBAP[11]; // Value
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+            } else {
+              // Exception
+              // Bad Value
+              unsigned int iMBAPMsgLength = 9;
+              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            }
+              
+          } else {
+            // Exception
+            // Bad Address
+            unsigned int iMBAPMsgLength = 9;
+            m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+            m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+            m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[8] = 0x02; // Exception code
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
           }
+        } else {
+          // Bad Function code
+          unsigned int iMBAPMsgLength = 9;
+          m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+          m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+          m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+          m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+          m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+          m_byteToWriteMBAPMsg[8] = 0x01; // Exception code
+          m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
         }
-      } 
+
+        // Risposta completa, la invio
+        for(int index_0 = 0; index_0 < m_uiNrByteToWrite; index_0++) {
+          client.write(m_byteToWriteMBAPMsg[index_0]);
+        }
+
+        // Operazione Terminata
+        initValue();
+      }
     }
     else
     {
@@ -328,23 +300,22 @@ void Communication()
 void initValue(){
 
   // Initializing the Value
-  // Variable
-  m_iNrByteToRead = 0;
-  m_iNrByteRead = 0;
-  m_bENQInProgress = false;
-  m_bSOHInProgress = false;
-  m_byteFirstByteRead = 0;
+  m_bModbusMBAP = false;
+  
+  for(int index_0 = 0; index_0 < 6; index_0++) {
+    m_byteReadMBAP[index_0] = 0;
+  }
 
-  for(int index_0 = 0; index_0 < 16; index_0++) {
-    m_byteRead[index_0] = 0;
-    m_byteToWrite[index_0] = 0;
+  for(int index_0 = 0; index_0 < 260; index_0++) {
+    m_byteReadMBMsg[index_0] = 0;
+    m_byteToWriteMBAPMsg[index_0] = 0;
   }
 
   // Output
-  analogWrite(3, 0);       
-  analogWrite(5, 0);       
-  analogWrite(6, 0);       
-  analogWrite(9, 0);       
+//  analogWrite(3, 0);
+//  analogWrite(5, 0);
+//  analogWrite(6, 0);
+//  analogWrite(9, 0);
 
 }
 void printWifiStatus() {
@@ -366,3 +337,7 @@ void printWifiStatus() {
   Serial.println(" dBm");
 }
 
+//#define bytesToWord(hb,lb) ( (((WORD)(hb&0xFF))<<8) | ((WORD)lb) )
+word getWordFromBytes(byte lowByte, byte highByte) {
+    return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
+}

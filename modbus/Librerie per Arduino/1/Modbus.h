@@ -81,9 +81,10 @@ float MB_rFloat(int i);
 05 Message length low   num bytes after this
 06 Slave number         echo
 07 Function code        echo for OK, 80h+FC for Exception
-08 Start address high   num bytes of data for OK, else Exception Code
-09 Data high
-10 Data low
+08 Start address high   maybe 0
+09 Start address low    maybe 0
+10 Data high
+11 Data low
 **********************************************
 */
 
