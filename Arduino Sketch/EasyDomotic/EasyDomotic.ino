@@ -10,7 +10,7 @@
  
  */
 
-#include <SPI.h>
+#include <SPI.h> 
 #include <WiFi.h>
 
 char m_ssid[] = "PretolesiWiFi";          //  your network SSID (name) 
