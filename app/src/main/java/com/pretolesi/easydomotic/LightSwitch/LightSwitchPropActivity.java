@@ -84,7 +84,9 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_light_switch_name.setText(LightSwitchData.TAGDefaultValue);
 
         m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
+        m_id_rb_portrait.setChecked(true);
         m_id_rb_landscape = (RadioButton)findViewById(R.id.id_rb_landscape);
+        m_id_rb_landscape.setChecked(false);
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
@@ -96,9 +98,6 @@ public class LightSwitchPropActivity extends Activity implements
 
             @Override
             public void onClick(View v) {
-                //is chkIos checked?
-//                if (((CheckBox) v).isChecked()) {
-//                }
                 m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
                 m_id_lspa_et_protocol_field_1.setEnabled(((CheckBox) v).isChecked());
                 m_id_lspa_et_protocol_field_2.setEnabled(((CheckBox) v).isChecked());
@@ -542,35 +541,38 @@ public class LightSwitchPropActivity extends Activity implements
             m_lsd.setProtTcpIpClientEnable(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
         }
 
-        if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
-            m_lsd.setProtTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
+        if(m_lsd.getProtTcpIpClientEnable()){
+            if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
+                m_lsd.setProtTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
+            }
+
+            try {
+                if (m_id_lspa_et_protocol_field_1 != null) {
+                    m_lsd.setProtTcpIpClientValueID(Integer.parseInt(m_id_lspa_et_protocol_field_1.getText().toString()));
+                }
+                if (m_id_lspa_et_protocol_field_2 != null) {
+                    m_lsd.setProtTcpIpClientValueOFF(Integer.parseInt(m_id_lspa_et_protocol_field_2.getText().toString()));
+                }
+                if (m_id_lspa_et_protocol_field_3 != null) {
+                    m_lsd.setProtTcpIpClientValueOFFON(Integer.parseInt(m_id_lspa_et_protocol_field_3.getText().toString()));
+                }
+                if (m_id_lspa_et_protocol_field_4 != null) {
+                    m_lsd.setProtTcpIpClientValueONOFF(Integer.parseInt(m_id_lspa_et_protocol_field_4.getText().toString()));
+                }
+                if (m_id_lspa_et_protocol_field_5 != null) {
+                    m_lsd.setProtTcpIpClientValueON(Integer.parseInt(m_id_lspa_et_protocol_field_5.getText().toString()));
+                }
+                if (m_id_lspa_et_protocol_field_6 != null) {
+                    m_lsd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_lspa_et_protocol_field_6.getText().toString()));
+                }
+            } catch (Exception ex) {
+                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+                return ;
+            }
         }
 
-        try {
-            if (m_id_lspa_et_protocol_field_1 != null) {
-                m_lsd.setProtTcpIpClientValueID(Integer.parseInt(m_id_lspa_et_protocol_field_1.getText().toString()));
-            }
-            if (m_id_lspa_et_protocol_field_2 != null) {
-                m_lsd.setProtTcpIpClientValueOFF(Integer.parseInt(m_id_lspa_et_protocol_field_2.getText().toString()));
-            }
-            if (m_id_lspa_et_protocol_field_3 != null) {
-                m_lsd.setProtTcpIpClientValueOFFON(Integer.parseInt(m_id_lspa_et_protocol_field_3.getText().toString()));
-            }
-            if (m_id_lspa_et_protocol_field_4 != null) {
-                m_lsd.setProtTcpIpClientValueONOFF(Integer.parseInt(m_id_lspa_et_protocol_field_4.getText().toString()));
-            }
-            if (m_id_lspa_et_protocol_field_5 != null) {
-                m_lsd.setProtTcpIpClientValueON(Integer.parseInt(m_id_lspa_et_protocol_field_5.getText().toString()));
-            }
-            if (m_id_lspa_et_protocol_field_6 != null) {
-                m_lsd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_lspa_et_protocol_field_6.getText().toString()));
-            }
-        } catch (Exception ex) {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
-            return ;
-        }
-
+        m_lsd.setProtTcpIpClientSendDataOnChange(true);
         if(SQLContract.LightSwitchEntry.save(m_lsd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");

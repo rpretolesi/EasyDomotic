@@ -21,21 +21,8 @@ import java.util.Vector;
  *
  */
 public class Modbus {
-    private static List<ModbusListener> m_vMLListener = new Vector<>();
 
-    // Imposto il listener
-    public static synchronized void registerListener(ModbusListener listener) {
-        if(!m_vMLListener.contains(listener)){
-            m_vMLListener.add(listener);
-        }
-    }
-    public static synchronized void unregisterListener(ModbusListener listener) {
-        if(m_vMLListener.contains(listener)){
-            m_vMLListener.remove(listener);
-        }
-    }
-
-    public static byte[] writeSingleRegister(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
+    public static synchronized byte[] writeSingleRegister(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
         short shTransactionIdentifier;
         byte byteUnitIdentifier;
         short shAddress;
@@ -92,7 +79,7 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized void getMessageDATA(Context context, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
+    public static synchronized void getMessageDATA(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
         // Max total message length 260 byte
         int iTransactionIdentifier = 0; // Transaction Identifier
         if(byteMBA != null && byteMBA.length == 10){
@@ -125,48 +112,20 @@ public class Modbus {
                     int iRegisterValue = bb.getShort();
                     if(m_vMLListener != null) {
                         for (ModbusListener ml : m_vMLListener) {
-                            ml.onWriteSingleRegisterCompletedCallback(iTransactionIdentifier, 0x06, iRegisterAddress, iRegisterValue);
+                            ml.onWriteSingleRegisterCompletedCallback(lProtTcpIpClientID, iTransactionIdentifier, 0x06, iRegisterAddress, iRegisterValue);
                         }
                     }
                     break;
                 case 0x86:
                     int iExceptionCodes = bb.getShort();
+                    ModbusRequestException finire qui...
                     if(m_vMLListener != null) {
                         for (ModbusListener ml : m_vMLListener) {
-                            ml.onWriteSingleRegisterExceptionCallback(iTransactionIdentifier, 0x86, iExceptionCodes);
+                            ml.onWriteSingleRegisterExceptionCallback(lProtTcpIpClientID, iTransactionIdentifier, 0x86, iExceptionCodes);
                         }
                     }
                     break;
             }
         }
-    }
-
-    public static synchronized void callTcpIpServerModbusOperationTimeoutCallback(){
-        if(m_vMLListener != null) {
-            for (ModbusListener ml : m_vMLListener) {
-                ml.onTcpIpServerModbusOperationTimeoutCallback();
-            }
-        }
-    }
-
-    public static synchronized void callTcpIpServerModbusStatusCallback(TCPIPClient.Status tics){
-        if(m_vMLListener != null) {
-            for (ModbusListener ml : m_vMLListener) {
-                ml.onTcpIpServerModbusStatusCallback(tics);
-            }
-        }
-    }
-
-    /**
-     * Callbacks interface.
-     */
-    public static interface ModbusListener {
-        /**
-         * Callbacks
-         */
-        void onWriteSingleRegisterCompletedCallback(int iTransactionIdentifier, int iFC, int iAddress,  int iValue);
-        void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC);
-        void onTcpIpServerModbusOperationTimeoutCallback();
-        void onTcpIpServerModbusStatusCallback(TCPIPClient.Status tics);
     }
 }

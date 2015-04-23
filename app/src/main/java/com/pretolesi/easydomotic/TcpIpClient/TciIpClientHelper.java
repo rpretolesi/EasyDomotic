@@ -36,7 +36,7 @@ public class TciIpClientHelper {
      * @param context
      *            the application context
      */
-    public static TciIpClientHelper startInstance(Context context, List<TCPIPClientData> lticd)
+    public synchronized static TciIpClientHelper startInstance(Context context, List<TCPIPClientData> lticd)
     {
         if (context != null && lticd != null && m_Instance == null)
         {
@@ -45,7 +45,7 @@ public class TciIpClientHelper {
         return m_Instance;
     }
 
-    public static void stopInstance()
+    public synchronized static void stopInstance()
     {
         if (m_Instance != null)
         {
@@ -62,18 +62,18 @@ public class TciIpClientHelper {
         }
     }
 
-    public static TciIpClientHelper getInstance()
+    public synchronized static TciIpClientHelper getInstance()
     {
         return m_Instance;
     }
 
-    public List<TCPIPClient> getTciIpClient()
+    public synchronized List<TCPIPClient> getTciIpClient()
     {
         // Initialize if not already done
         return m_ltic;
     }
 
-    public TCPIPClient getTciIpClient(long lID)
+    public synchronized TCPIPClient getTciIpClient(long lID)
     {
         if (m_Instance != null)
         {

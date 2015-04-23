@@ -4,9 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusLengthOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.CustomException.ModbusProtocolOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 
 import java.io.DataInputStream;
@@ -28,6 +32,21 @@ import java.util.Vector;
 public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private static final String TAG = "TCPIPClient";
 
+    // Listener e Callback
+    private List<TCPIPClientListener> m_vListener = new Vector<>();
+    // Imposto il listener
+    public synchronized void registerListener(TCPIPClientListener listener) {
+        if(!m_vListener.contains(listener)){
+            m_vListener.add(listener);
+        }
+    }
+    public synchronized void unregisterListener(TCPIPClientListener listener) {
+        if(m_vListener.contains(listener)){
+            m_vListener.remove(listener);
+        }
+    }
+
+    //
     private Context m_context = null;
 
     private Stack<byte[]> m_sbyte = null;
@@ -42,6 +61,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     private List<String> m_vstrMessageLog = null;
     private String m_strStatus = null;
 
+    private long m_timeMillisecondsStart = 0;
     private long m_timeMillisecondsSend = 0;
     private long m_timeMillisecondsReceive = 0;
 
@@ -66,20 +86,19 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         return 0;
     }
 
-    public synchronized void sendMessage(byte[] byteDATA) {
-        if (m_sbyte != null && byteDATA != null) {
-            m_sbyte.push(byteDATA);
-        }
-    }
+    private synchronized boolean startConnection() {
 
-    private boolean startConnection() {
+        Log.d(TAG, this.toString() + "startConnection() enter");
+        m_timeMillisecondsStart = System.currentTimeMillis();
+
         // Prima chiudo la connessione
         if(m_bSocketOpen){
             stopConnection();
         }
 
         if (m_ticd != null) {
-            Modbus.callTcpIpServerModbusStatusCallback(Status.CONNECTING);
+            // Callbacks
+            sendTcpIpClientStatusCallback(Status.SERVER_CONNECTING);
             try {
                 m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
                 if (m_clientSocket == null) {
@@ -90,15 +109,12 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                     m_dataOutputStream = new DataOutputStream(m_clientSocket.getOutputStream());
                     m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
 
-                    m_timeMillisecondsSend = System.currentTimeMillis();
-                    m_timeMillisecondsReceive = System.currentTimeMillis();
-
-                    Log.d(TAG, this.toString() + "startConnection()");
-
                     m_bSocketOpen = true;
 
-                    Modbus.callTcpIpServerModbusStatusCallback(Status.ON_LINE);
+                    // Callbacks
+                    sendTcpIpClientStatusCallback(Status.SERVER_ON_LINE);
 
+                    Log.d(TAG, this.toString() + "startConnection() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsStart));
                     return true;
                 }
             } catch (Exception ex) {
@@ -107,14 +123,18 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             }
         }
 
+        Log.d(TAG, this.toString() + "startConnection() return false");
+
         return false;
     }
 
-    private boolean isConnected() {
+    private synchronized boolean isConnected() {
         return m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected();
     }
 
     private boolean send() {
+        Log.d(TAG, this.toString() + "send() enter");
+
         m_timeMillisecondsSend = System.currentTimeMillis();
 
         if (m_dataOutputStream != null && m_ticd != null && m_sbyte != null) {
@@ -127,8 +147,11 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         }
                     }
                 }
+
+                Log.d(TAG, this.toString() + "send() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsSend));
                 return true;
             } catch (EmptyStackException ESex) {
+                Log.d(TAG, this.toString() + "send() return true");
                 return true;
             } catch (Exception ex) {
                 stopConnection();
@@ -140,10 +163,13 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             }
         }
 
+        Log.d(TAG, this.toString() + "send() return false");
         return false;
     }
 
-    private boolean receive() {
+    private synchronized boolean receive() {
+        Log.d(TAG, this.toString() + "receive() enter");
+
         m_timeMillisecondsReceive = System.currentTimeMillis();
 
         if (m_dataInputStream != null && m_ticd != null) {
@@ -160,10 +186,10 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                         try {
                             m_dataInputStream.readFully(byteDATA, 0, iLength);
                             try {
-                                Modbus.getMessageDATA(m_context, byteMBAP, byteDATA);
+                                Modbus.getMessageDATA(m_context, m_ticd.getID(), byteMBAP, byteDATA);
 
 //                                m_timeMillisecondsGet = System.currentTimeMillis();
-
+                                Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                 return true;
 
                             } catch (ModbusProtocolOutOfRangeException ex) {
@@ -194,7 +220,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                     }
 
                 } catch (SocketTimeoutException stex) {
-                    Modbus.callTcpIpServerModbusOperationTimeoutCallback();
+                    Modbus.callTcpIpServerModbusOperationTimeoutCallback(m_ticd.getID());
                     Log.d(TAG, this.toString() + "receive()->" + "SocketTimeoutException stex: " + stex.getMessage());
                 } catch (EOFException eofex) {
                     Log.d(TAG, this.toString() + "receive()->" + "EOFException eofex: " + eofex.getMessage());
@@ -207,12 +233,18 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
             }
         }
 
+        Log.d(TAG, this.toString() + "receive() return false");
         return false;
     }
 
-    private void stopConnection() {
+    private synchronized void stopConnection() {
 
-        Modbus.callTcpIpServerModbusStatusCallback(Status.DISCONNECTING);
+        Log.d(TAG, this.toString() + "stopConnection() enter");
+
+        if(m_ticd != null) {
+            // Callbacks
+            sendTcpIpClientStatusCallback(Status.SERVER_DISCONNECTING);
+        }
 
         m_socketAddress = null;
 
@@ -224,6 +256,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
                 Log.d(TAG, this.toString() + "stopConnection()->" + "IOException ioex_1: " + ioex_1.getMessage());
             }
         }
+
         m_clientSocket = null;
 
         // close Output stream
@@ -246,11 +279,49 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         }
         m_dataInputStream = null;
 
-        Modbus.callTcpIpServerModbusStatusCallback(Status.OFF_LINE);
+        if(m_sbyte != null) {
+            m_sbyte.clear();
+        }
+        m_sbyte = null;
+
+        if(m_ticd != null) {
+            // Callbacks
+            sendTcpIpClientStatusCallback(Status.SERVER_OFF_LINE);
+        }
 
         m_bSocketOpen = false;
 
-        Log.d(TAG, this.toString() + "stopConnection()");
+        Log.d(TAG, this.toString() + "stopConnection() return");
+    }
+
+    /*
+     * Writing/Reading Function
+     */
+    public synchronized void writeSwitchValue(int lID, int iAddress, int iValue){
+        if(m_ticd != null) {
+            if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                byte[] byteToSend = null;
+                try {
+                    byteToSend = Modbus.writeSingleRegister(m_context, lID, 0,  iAddress, iValue);
+                    if (m_sbyte != null && byteToSend != null) {
+                        m_sbyte.push(byteToSend);
+
+                        return;
+                    }
+                } catch (ModbusTransIdOutOfRangeException mtioorex) {
+                    Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException mtioorex: " + mtioorex.getMessage());
+                } catch (ModbusUnitIdOutOfRangeException muioorex) {
+                    Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException muioorex: " + muioorex.getMessage());
+                } catch (ModbusAddressOutOfRangeException maoorex) {
+                    Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException maoorex: " + maoorex.getMessage());
+                } catch (ModbusValueOutOfRangeException mvoorex) {
+                    Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException mvoorex: " + mvoorex.getMessage());
+                }
+            }
+        }
+
+        // Callbacks
+        sendWriteSwitchValueCallback(lID, Status.WRITE_LIGTH_SWITCH_VALUE_ERROR);
     }
 
     @Override
@@ -260,6 +331,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... obj) {
+        Log.d(TAG, this.toString() + "doInBackground() enter");
+
         m_ticd = (TCPIPClientData) obj[0];
 
         try {
@@ -297,6 +370,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
         // Closing...
         stopConnection();
 
+        Log.d(TAG, this.toString() + "doInBackground() return");
         return null;
     }
 
@@ -305,10 +379,45 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> {
     }
 
     public static enum Status {
-        IDLE,
-        OFF_LINE,
-        CONNECTING,
-        ON_LINE,
-        DISCONNECTING;
+        SERVER_IDLE,
+        SERVER_OFF_LINE,
+        SERVER_CONNECTING,
+        SERVER_ON_LINE,
+        SERVER_DISCONNECTING,
+        WRITE_LIGTH_SWITCH_VALUE_OK,
+        WRITE_LIGTH_SWITCH_VALUE_ERROR;
+        ;
+    }
+
+    /*
+     * Send callbacks
+     */
+    private void sendWriteSwitchValueCallback(int iTransactionIdentifier, Status sStatus){
+        if(m_vListener != null) {
+            for (TCPIPClientListener ticl : m_vListener) {
+                ticl.onWriteSwitchValueCallback(iTransactionIdentifier, sStatus);
+            }
+        }
+    }
+    private void sendTcpIpClientStatusCallback(Status sStatus){
+        if(m_vListener != null) {
+            for (TCPIPClientListener ticl : m_vListener) {
+                ticl.onTcpIpClientStatusCallback(sStatus);
+            }
+        }
+    }
+
+    /**
+     * Callbacks interface.
+     */
+    public static interface TCPIPClientListener {
+        /**
+         * Callbacks
+         */
+        void onWriteSwitchValueCallback(int iTransactionIdentifier, Status sStatus);
+        void onTcpIpClientStatusCallback(Status sStatus);
+//        void onWriteSingleRegisterExceptionCallback(long lProtTcpIpClientID, int iTransactionIdentifier, int iEC, int iExC);
+//        void onTcpIpServerModbusOperationTimeoutCallback(long lProtTcpIpClientID);
+//        void onTcpIpServerModbusStatusCallback(long lProtTcpIpClientID, TCPIPClient.Status tics);
     }
 }

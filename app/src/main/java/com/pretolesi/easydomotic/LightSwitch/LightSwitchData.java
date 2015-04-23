@@ -34,7 +34,7 @@ public class LightSwitchData implements Parcelable {
 
     public static int ProtTcpIpClientValueAddressMinValue = 0;
     public static int ProtTcpIpClientValueAddressMaxValue = 65535;
-    public static String ProtTcpIpClientValueAddressDefaulValue = "0";
+    public static String ProtTcpIpClientValueAddressDefaulValue = "10000";
 
     private long m_ID;
     private boolean m_bSaved;

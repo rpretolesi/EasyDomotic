@@ -14,13 +14,8 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
 /**
@@ -30,7 +25,7 @@ public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         ToggleButton.OnCheckedChangeListener,
-        Modbus.ModbusListener {
+        TCPIPClient.TCPIPClientListener {
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -53,7 +48,7 @@ public class LightSwitch extends Switch implements
         if(lsd != null) {
             this.m_lsd = lsd;
             this.setTag(lsd.getTag());
-            this.setId((int)lsd.getID() + lsd.getProtTcpIpClientValueAddress());
+            this.setId((int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress());
         }
         this.m_bEditMode = bEditMode;
 
@@ -85,13 +80,10 @@ public class LightSwitch extends Switch implements
         public void run() {
             if(m_lsd != null && m_TimerHandler != null) {
                 if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
-                    Switch s = (Switch)findViewById(getId());
-                    if(s != null){
-                        if(s.isChecked()){
-                            sendRequest(m_lsd.getProtTcpIpClientValueON());
-                        } else {
-                            sendRequest(m_lsd.getProtTcpIpClientValueOFF());
-                        }
+                    if(isChecked()){
+                        writeSwitchValue(m_lsd.getProtTcpIpClientValueON());
+                    } else {
+                        writeSwitchValue(m_lsd.getProtTcpIpClientValueOFF());
                     }
 
                     m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
@@ -125,16 +117,20 @@ public class LightSwitch extends Switch implements
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-/*
-        TCPIPClient tic = getTcpIpClient();
-        if(tic != null){
-            tic.registerListener(this);
+        // Listener
+        TciIpClientHelper tich = TciIpClientHelper.getInstance();
+        if(m_lsd != null && tich != null){
+            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+            if(tic != null){
+                tic.registerListener(this);
+            }
         }
-*/
-        Modbus.registerListener(this);
 
-        if(!m_bEditMode) {
-            setTimerHandler();
+        setOnCheckedChangeListener(this);
+        if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
+            if(!m_bEditMode) {
+                setTimerHandler();
+            }
         }
 
         Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
@@ -144,73 +140,62 @@ public class LightSwitch extends Switch implements
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(!m_bEditMode) {
-            resetTimerHandler();
+        if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
+            if(!m_bEditMode) {
+                resetTimerHandler();
+            }
         }
 
-        Modbus.unregisterListener(this);
-/*
-        TCPIPClient tic = getTcpIpClient();
-        if(tic != null){
-            tic.unregisterListener(this);
+        setOnCheckedChangeListener(null);
+
+        // Listener
+        TciIpClientHelper tich = TciIpClientHelper.getInstance();
+        if(m_lsd != null && tich != null){
+            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+            if(tic != null){
+                tic.unregisterListener(this);
+            }
         }
-*/
+
         Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() enter Check Status: " + isChecked);
+
         if(m_lsd != null) {
-            if(isChecked){
-                sendRequest(m_lsd.getProtTcpIpClientValueON());
-            } else {
-                sendRequest(m_lsd.getProtTcpIpClientValueOFF());
+            if(m_lsd.getProtTcpIpClientSendDataOnChange()){
+                if(isChecked){
+                    writeSwitchValue(m_lsd.getProtTcpIpClientValueON());
+                } else {
+                    writeSwitchValue(m_lsd.getProtTcpIpClientValueOFF());
+                }
             }
         }
+
+        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
-    private void sendRequest(int iStatusValue){
+    private void writeSwitchValue(int iStatusValue){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_lsd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                byte[] byteToSend = null;
-                if(tic.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()){
-                    try {
-                        byteToSend = Modbus.writeSingleRegister(this.getContext(), getId(), 0,  m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
-                    } catch (ModbusTransIdOutOfRangeException ignored) {
-                    } catch (ModbusUnitIdOutOfRangeException ignored) {
-                    } catch (ModbusAddressOutOfRangeException ignored) {
-                    } catch (ModbusValueOutOfRangeException ignored) {
-                    }
-                }
-                if(byteToSend != null) {
-                    tic.sendMessage(byteToSend);
-                }
+                tic.writeSwitchValue(getId(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
             }
         }
     }
 
-
     @Override
-    public void onWriteSingleRegisterCompletedCallback(int iTransactionIdentifier, int iFC, int iAddress, int iValue) {
-
+    public void onWriteSwitchValueCallback(int iTransactionIdentifier, TCPIPClient.Status sStatus) {
+        Log.d(TAG, this.toString() + ": " + "onWriteSwitchValueCallback() ID: " + iTransactionIdentifier + " Status: " + sStatus.toString());
     }
 
     @Override
-    public void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iEC, int iExC) {
-
-    }
-
-    @Override
-    public void onTcpIpServerModbusOperationTimeoutCallback() {
-
-    }
-
-    @Override
-    public void onTcpIpServerModbusStatusCallback(TCPIPClient.Status tics) {
-
+    public void onTcpIpClientStatusCallback(TCPIPClient.Status sStatus) {
+        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() Status: " + sStatus.toString());
     }
 
     @Override
