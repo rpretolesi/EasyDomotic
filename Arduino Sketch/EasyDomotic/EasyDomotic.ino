@@ -127,15 +127,15 @@ void Communication()
         }
         Serial.println(" ");
 
-        unsigned int uiModbusMBAPTransactionID = getWordFromBytes(m_byteReadMBAP[0], m_byteReadMBAP[1]);
+        unsigned int uiModbusMBAPTransactionID = getWordFromBytes(m_byteReadMBAP[1], m_byteReadMBAP[0]);
         Serial.print("Transaction ID: ");
         Serial.println(uiModbusMBAPTransactionID);
 
-        unsigned int uiModbusMBAPProtocolID = getWordFromBytes(m_byteReadMBAP[2], m_byteReadMBAP[3]);
+        unsigned int uiModbusMBAPProtocolID = getWordFromBytes(m_byteReadMBAP[3], m_byteReadMBAP[2]);
         Serial.print("Protocol ID: ");
         Serial.println(uiModbusMBAPProtocolID);
 
-        m_uiModbusMBAPLength = getWordFromBytes(m_byteReadMBAP[4], m_byteReadMBAP[5]);
+        m_uiModbusMBAPLength = getWordFromBytes(m_byteReadMBAP[5], m_byteReadMBAP[4]);
         Serial.print("Length: ");
         Serial.println(m_uiModbusMBAPLength);
 
@@ -159,11 +159,11 @@ void Communication()
         Serial.println(" ");
 
         // Messaggio Completo, estraggo i dati:
-        unsigned int uiModbusUnitIdentifier = getWordFromBytes(m_byteReadMBMsg[6], 0);
+        unsigned int uiModbusUnitIdentifier = getWordFromBytes(m_byteReadMBMsg[0], 0);
         Serial.print("Unit Identifier: ");
         Serial.println(uiModbusUnitIdentifier);
         
-        unsigned int uiModbusFunctionCode = getWordFromBytes(m_byteReadMBMsg[7], 0);
+        unsigned int uiModbusFunctionCode = getWordFromBytes(m_byteReadMBMsg[1], 0);
         Serial.print("Function Code: ");
         Serial.println(uiModbusFunctionCode);
 
@@ -171,19 +171,17 @@ void Communication()
         // Intestazione
         m_byteToWriteMBAPMsg[0] = m_byteReadMBAP[0]; // Transaction Identifier
         m_byteToWriteMBAPMsg[1] = m_byteReadMBAP[1]; // Transaction Identifier
-        m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+        m_uiNrByteToWrite = 2;
         m_byteToWriteMBAPMsg[2] = m_byteReadMBAP[2]; // Protocol Identifier
         m_byteToWriteMBAPMsg[3] = m_byteReadMBAP[3]; // Protocol Identifier
         m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-        m_byteToWriteMBAPMsg[6] = m_byteReadMBAP[6]; // Unit Identifier
-        m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
 
         if(uiModbusFunctionCode == 0x06){
-          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBAP[7], m_byteReadMBAP[8]);
+          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
           Serial.print("Address: ");
           Serial.println(uiModbusAddress);
           if(uiModbusAddress == 10000) {                       
-            int iModbuSingleValue = getWordFromBytes(m_byteReadMBAP[10], m_byteReadMBAP[11]);
+            int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
             boolean bValueOk = false;
             Serial.print("Value: ");
             Serial.println(iModbuSingleValue);
@@ -214,13 +212,15 @@ void Communication()
               m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
               m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[7] = m_byteReadMBAP[7]; // Function code
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[8] = m_byteReadMBAP[8]; // Address
-              m_byteToWriteMBAPMsg[9] = m_byteReadMBAP[9]; // Address
+              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+              m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[10] = m_byteReadMBAP[10]; // Value
-              m_byteToWriteMBAPMsg[11] = m_byteReadMBAP[11]; // Value
+              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
+              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
             } else {
               // Exception
@@ -229,7 +229,9 @@ void Communication()
               m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
               m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
               m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
@@ -242,7 +244,9 @@ void Communication()
             m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
             m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
             m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-            m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+            m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
             m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
             m_byteToWriteMBAPMsg[8] = 0x02; // Exception code
             m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
@@ -253,16 +257,22 @@ void Communication()
           m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
           m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
           m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-          m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBAP[7] + 0x80); // Error code
+          m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+          m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+          m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
           m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
           m_byteToWriteMBAPMsg[8] = 0x01; // Exception code
           m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
         }
 
         // Risposta completa, la invio
+        Serial.print("Answer: ");
         for(int index_0 = 0; index_0 < m_uiNrByteToWrite; index_0++) {
           client.write(m_byteToWriteMBAPMsg[index_0]);
+          Serial.print(m_byteToWriteMBAPMsg[index_0]);
+          Serial.print(" ");
         }
+        Serial.println(" ");
 
         // Operazione Terminata
         initValue();

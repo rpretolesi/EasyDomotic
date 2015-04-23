@@ -91,6 +91,7 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
         m_id_lspa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_lspa_cb_enable_tcp_ip_client_protocol);
+        m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
         m_id_lspa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_lspa_spn_tcp_ip_client_protocol);
         m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(false);
 
@@ -391,6 +392,14 @@ public class LightSwitchPropActivity extends Activity implements
     }
 
     private void updateLightSwitch() {
+        // Stato
+        if(m_id_lspa_spn_tcp_ip_client_protocol!= null && m_id_lspa_spn_tcp_ip_client_protocol.getCount() > 0){
+            m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(true);
+        } else {
+            m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
+        }
+
+        // Dati
         if (m_lsd != null) {
             if (m_id_et_light_switch_name != null) {
                 m_id_et_light_switch_name.setText(m_lsd.getTag());

@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
@@ -95,25 +96,6 @@ public class LightSwitch extends Switch implements
      * End
      * Timer variable and function
      */
-/*
-    private TCPIPClient getTcpIpClient(){
-        if(m_lsd != null){
-            TciIpClientHelper tich = TciIpClientHelper.getInstance();
-            if(tich != null){
-                List<TCPIPClient> ltic = tich.getTciIpClient();
-                if(ltic != null && !ltic.isEmpty()){
-                    for(TCPIPClient tic : ltic){
-                        if (tic != null && (tic.getID() == m_lsd.getID())){
-                            return tic;
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-*/
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -134,7 +116,6 @@ public class LightSwitch extends Switch implements
         }
 
         Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
-
     }
 
     @Override
@@ -190,11 +171,15 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onWriteSwitchValueCallback(int iTransactionIdentifier, TCPIPClient.Status sStatus) {
+//        Toast.makeText(getContext(), "onWriteSwitchValueCallback ID: " + iTransactionIdentifier + " Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
+
         Log.d(TAG, this.toString() + ": " + "onWriteSwitchValueCallback() ID: " + iTransactionIdentifier + " Status: " + sStatus.toString());
     }
 
     @Override
     public void onTcpIpClientStatusCallback(TCPIPClient.Status sStatus) {
+//        Toast.makeText(getContext(), "onTcpIpClientStatusCallback Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
+
         Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() Status: " + sStatus.toString());
     }
 

@@ -10,9 +10,7 @@ import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeExceptio
 import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Vector;
@@ -21,6 +19,20 @@ import java.util.Vector;
  *
  */
 public class Modbus {
+    // Listener e Callback
+    private static List<ModbusListener> m_vListener = new Vector<>();
+
+    // Imposto il listener
+    public static synchronized void registerListener(ModbusListener listener) {
+        if(!m_vListener.contains(listener)){
+            m_vListener.add(listener);
+        }
+    }
+    public static synchronized void unregisterListener(ModbusListener listener) {
+        if(m_vListener.contains(listener)){
+            m_vListener.remove(listener);
+        }
+    }
 
     public static synchronized byte[] writeSingleRegister(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
         short shTransactionIdentifier;
@@ -62,7 +74,7 @@ public class Modbus {
 
     public static synchronized int getMessageLengthFromMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
         // Max message length 260 byte
-        if(byteMBA != null && byteMBA.length == 10){
+        if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
             bb.getShort(); // Transaction Identifier
             int iPI = bb.getShort(); // Protocol Identifier, must be 0
@@ -82,14 +94,15 @@ public class Modbus {
     public static synchronized void getMessageDATA(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
         // Max total message length 260 byte
         int iTransactionIdentifier = 0; // Transaction Identifier
-        if(byteMBA != null && byteMBA.length == 10){
+        int iLength = 0;
+        if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
             iTransactionIdentifier = bb.getShort(); // Transaction Identifier
             int iPI = bb.getShort(); // Protocol Identifier, must be 0
             if(iPI != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }
-            int iLength = bb.getShort(); // Length
+            iLength = bb.getShort(); // Length
             if(iLength < 5 || iLength > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
@@ -97,35 +110,58 @@ public class Modbus {
             throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
         }
 
-        if(byteDATA != null && byteDATA.length >= 10){
+        if(byteDATA != null && byteDATA.length == iLength - 6){
             ByteBuffer bb = ByteBuffer.wrap(byteDATA);
-            if(byteDATA.length < 5 || byteDATA.length > 254){
+            if(byteDATA.length < 3 || byteDATA.length > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
             // Unit Identifier
             int iUI = bb.get();
             // Function Code
+            convertire qui il -122 in 134 poi vedere come fare per mostrare lo statodel server...
             int iFEC = bb.get();
             switch(iFEC) {
                 case 0x06:
                     int iRegisterAddress = bb.getShort();
                     int iRegisterValue = bb.getShort();
-                    if(m_vMLListener != null) {
-                        for (ModbusListener ml : m_vMLListener) {
-                            ml.onWriteSingleRegisterCompletedCallback(lProtTcpIpClientID, iTransactionIdentifier, 0x06, iRegisterAddress, iRegisterValue);
-                        }
-                    }
+                    sendWriteSingleRegisterOkCallback(iTransactionIdentifier);
+
                     break;
                 case 0x86:
-                    int iExceptionCodes = bb.getShort();
-                    ModbusRequestException finire qui...
-                    if(m_vMLListener != null) {
-                        for (ModbusListener ml : m_vMLListener) {
-                            ml.onWriteSingleRegisterExceptionCallback(lProtTcpIpClientID, iTransactionIdentifier, 0x86, iExceptionCodes);
-                        }
-                    }
+                    int iExceptionCode = bb.getShort();
+                    sendWriteSingleRegisterExceptionCallback(iTransactionIdentifier, iExceptionCode);
                     break;
             }
         }
+    }
+
+    /*
+      * Send callbacks
+      */
+    private static void sendWriteSingleRegisterOkCallback(int iTransactionIdentifier){
+        if(m_vListener != null) {
+            for (ModbusListener ml : m_vListener) {
+                ml.onWriteSingleRegisterOkCallback(iTransactionIdentifier);
+            }
+        }
+    }
+
+    private static void sendWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iExceptionCode){
+        if(m_vListener != null) {
+            for (ModbusListener ml : m_vListener) {
+                ml.onWriteSingleRegisterExceptionCallback(iTransactionIdentifier, iExceptionCode);
+            }
+        }
+    }
+
+    /**
+     * Callbacks interface.
+     */
+    public static interface ModbusListener {
+        /**
+         * Callbacks
+         */
+        void onWriteSingleRegisterOkCallback(int iTransactionIdentifier);
+        void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iErrorCode);
     }
 }

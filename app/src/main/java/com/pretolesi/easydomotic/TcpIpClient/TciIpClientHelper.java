@@ -52,7 +52,7 @@ public class TciIpClientHelper {
             // Initialize if not already done
             if(m_ltic != null && !m_ltic.isEmpty()) {
                  for(TCPIPClient tic : m_ltic){
-                     tic.cancel(false);
+                     tic.cancel(true);
                 }
                 m_ltic.clear();
             }
