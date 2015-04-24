@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,6 +22,8 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 
 import java.util.ArrayList;
@@ -46,6 +50,9 @@ public class BaseFragment extends Fragment implements
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
+
+    protected HorizontalScrollView m_osvStatusTcpIpServer;
+    protected LinearLayout m_llStatusTcpIpServer;
 
     public static BaseFragment newInstance(int sectionNumber, long id, boolean bEditMode) {
         BaseFragment fragment = new BaseFragment();
@@ -78,6 +85,12 @@ public class BaseFragment extends Fragment implements
         if (m_rl == null) {
             m_rl = new RelativeLayout(getActivity());
         }
+        if (m_osvStatusTcpIpServer == null) {
+            m_osvStatusTcpIpServer = new HorizontalScrollView(getActivity());
+        }
+        if (m_llStatusTcpIpServer == null) {
+            m_llStatusTcpIpServer = new LinearLayout(getActivity());
+        }
 
         Log.d(TAG, this.toString() + ": " + "onCreateView()");
         return m_rl;
@@ -86,10 +99,6 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-//        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-//        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
-
         Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
 
@@ -120,6 +129,12 @@ public class BaseFragment extends Fragment implements
         super.onPause();
 
         // remove all object
+        if(m_llStatusTcpIpServer != null){
+            m_llStatusTcpIpServer.removeAllViews();
+        }
+        if (m_osvStatusTcpIpServer != null) {
+            m_osvStatusTcpIpServer.removeAllViews();
+        }
         if(m_rl != null){
             m_rl.removeAllViews();
         }
@@ -223,6 +238,51 @@ public class BaseFragment extends Fragment implements
             m_tvRoomName.setText(m_rfd.getTAG());
 
             m_rl.addView(m_tvRoomName);
+// ***********************************************************
+            // Aggiungo Lo Stato dei Server
+            if(m_llStatusTcpIpServer != null && m_osvStatusTcpIpServer != null && m_rl != null){
+                TextView tv1 = new TextView(getActivity());
+                LinearLayout.LayoutParams rlp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                tv1.setLayoutParams(rlp1);
+                tv1.setText("text 1");
+
+                TextView tv2 = new TextView(getActivity());
+                LinearLayout.LayoutParams rlp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                tv2.setLayoutParams(rlp2);
+                tv2.setText("text 2");
+                m_llStatusTcpIpServer.addView(tv1);
+                m_llStatusTcpIpServer.addView(tv2);
+
+                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                m_llStatusTcpIpServer.setLayoutParams(llp);
+
+                HorizontalScrollView.LayoutParams hsvp = new HorizontalScrollView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                m_osvStatusTcpIpServer.setLayoutParams(hsvp);
+
+                m_osvStatusTcpIpServer.addView(m_llStatusTcpIpServer);
+                m_rl.addView(m_osvStatusTcpIpServer);
+            }
+
+
+/*
+            m_llStatusTcpIpServer
+            TextView tv = null;
+
+            TciIpClientHelper tich = TciIpClientHelper.getInstance();
+            if(tich != null) {
+                for(TCPIPClient tic : tich.getTciIpClient()){
+                    if(tic != null){
+                        tv = new TextView(getActivity());
+                        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                        rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                        m_tvRoomName.setLayoutParams(rlp);
+
+                    }
+                }
+            }
+*/
+// *******************************************************
 
             // Controllo orientamento prima di costruire il frame....
             if(m_rfd.getLandscape()){

@@ -333,6 +333,7 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
 
     @Override
     public void onWriteSingleRegisterOkCallback(int iTransactionIdentifier) {
+        this.publishProgress();
         sendWriteSwitchValueCallback(iTransactionIdentifier, Status.WRITE_LIGTH_SWITCH_VALUE_OK);
     }
 
