@@ -33,7 +33,8 @@ import java.util.ArrayList;
  */
 public class BaseFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
-        OkDialogFragment.OkDialogFragmentCallbacks {
+        OkDialogFragment.OkDialogFragmentCallbacks,
+        TCPIPClient.TCPIPClientListener {
 
     private static final String TAG = "BaseFragment";
 
@@ -118,6 +119,17 @@ public class BaseFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
+        // Register Listener For Tcp Ip Server
+        // Listener
+        TciIpClientHelper tich = TciIpClientHelper.getInstance();
+        if(tich != null) {
+            for(TCPIPClient tic : tich.getTciIpClient()){
+                if(tic != null){
+                    tic.registerListener(this);
+                }
+            }
+        }
+
         getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
         getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
 
@@ -127,6 +139,17 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+
+        // Unregister Listener For Tcp Ip Server
+        // Listener
+        TciIpClientHelper tich = TciIpClientHelper.getInstance();
+        if(tich != null) {
+            for(TCPIPClient tic : tich.getTciIpClient()){
+                if(tic != null){
+                    tic.unregisterListener(this);
+                }
+            }
+        }
 
         // remove all object
         if(m_llStatusTcpIpServer != null){
@@ -238,9 +261,16 @@ public class BaseFragment extends Fragment implements
             m_tvRoomName.setText(m_rfd.getTAG());
 
             m_rl.addView(m_tvRoomName);
-// ***********************************************************
+
+            // Controllo orientamento prima di costruire il frame....
+            if(m_rfd.getLandscape()){
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
             // Aggiungo Lo Stato dei Server
-            if(m_llStatusTcpIpServer != null && m_osvStatusTcpIpServer != null && m_rl != null){
+            if(m_llStatusTcpIpServer != null && m_osvStatusTcpIpServer != null) {
                 RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -251,50 +281,24 @@ public class BaseFragment extends Fragment implements
                 HorizontalScrollView.LayoutParams hsvp = new HorizontalScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 m_llStatusTcpIpServer.setLayoutParams(hsvp);
                 m_osvStatusTcpIpServer.addView(m_llStatusTcpIpServer);
+                TciIpClientHelper tich = TciIpClientHelper.getInstance();
 
-                TextView tv1 = new TextView(getActivity());
-                LinearLayout.LayoutParams rlp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                rlp1.setLayoutDirection(LinearLayout.HORIZONTAL);
-                rlp1.weight = (float)1.0;
-                tv1.setLayoutParams(rlp1);
-                tv1.setText("text 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-                m_llStatusTcpIpServer.addView(tv1);
-
-                TextView tv2 = new TextView(getActivity());
-                LinearLayout.LayoutParams rlp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                rlp2.setLayoutDirection(LinearLayout.HORIZONTAL);
-                rlp2.weight = (float)1.0;
-                tv2.setLayoutParams(rlp2);
-                tv2.setText("text 222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
-                m_llStatusTcpIpServer.addView(tv2);
-            }
-
-
-/*
-            m_llStatusTcpIpServer
-            TextView tv = null;
-
-            TciIpClientHelper tich = TciIpClientHelper.getInstance();
-            if(tich != null) {
-                for(TCPIPClient tic : tich.getTciIpClient()){
-                    if(tic != null){
-                        tv = new TextView(getActivity());
-                        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                        rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                        m_tvRoomName.setLayoutParams(rlp);
-
+                // Get configured Servers
+                TextView tv;
+                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                llp.setLayoutDirection(LinearLayout.HORIZONTAL);
+                llp.weight = (float) 1.0;
+                if (tich != null) {
+                    for (TCPIPClient tic : tich.getTciIpClient()) {
+                        if (tic != null) {
+                            tv = new TextView(getActivity());
+                            tv.setId((int)tic.getID());
+                            tv.setLayoutParams(llp);
+                            m_llStatusTcpIpServer.addView(tv);
+                            tv.setText("No Server Configured\nNo Server Configured");
+                        }
                     }
                 }
-            }
-*/
-// *******************************************************
-
-            // Controllo orientamento prima di costruire il frame....
-            if(m_rfd.getLandscape()){
-                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         }
     }
@@ -337,5 +341,19 @@ public class BaseFragment extends Fragment implements
                 }
             }
         }
+    }
+
+    @Override
+    public void onWriteSwitchValueCallback(long LID, int iTransactionIdentifier, TCPIPClient.Status sStatus) {
+
+    }
+
+    @Override
+    public void onTcpIpClientStatusCallback(long LID, TCPIPClient.Status sStatus, String strError) {
+        TextView tv = (TextView)getActivity().findViewById((int)LID);
+        if(tv != null){
+            tv.setText(sStatus.toString() + "\n" + strError);
+        }
+
     }
 }

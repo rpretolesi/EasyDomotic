@@ -170,17 +170,15 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    public void onWriteSwitchValueCallback(int iTransactionIdentifier, TCPIPClient.Status sStatus) {
+    public void onWriteSwitchValueCallback(long lID, int iTransactionIdentifier, TCPIPClient.Status sStatus) {
 //        Toast.makeText(getContext(), "onWriteSwitchValueCallback ID: " + iTransactionIdentifier + " Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
-
-        Log.d(TAG, this.toString() + ": " + "onWriteSwitchValueCallback() ID: " + iTransactionIdentifier + " Status: " + sStatus.toString());
+        Log.d(TAG, this.toString() + ": " + "onWriteSwitchValueCallback() ID: " + lID + " TID: " + iTransactionIdentifier + " Status: " + sStatus.toString());
     }
 
     @Override
-    public void onTcpIpClientStatusCallback(TCPIPClient.Status sStatus) {
+    public void onTcpIpClientStatusCallback(long lID, TCPIPClient.Status sStatus, String strError) {
 //        Toast.makeText(getContext(), "onTcpIpClientStatusCallback Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
-
-        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() Status: " + sStatus.toString());
+        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + lID + " Status: " + sStatus.toString());
     }
 
     @Override
@@ -302,5 +300,4 @@ public class LightSwitch extends Switch implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
-
 }

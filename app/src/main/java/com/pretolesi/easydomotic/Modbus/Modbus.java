@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.Modbus;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
+import com.pretolesi.easydomotic.CustomException.ModbusIOException;
 import com.pretolesi.easydomotic.CustomException.ModbusLengthOutOfRangeException;
 import com.pretolesi.easydomotic.CustomException.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.CustomException.ModbusProtocolOutOfRangeException;
@@ -91,7 +92,7 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized void getMessageDATA(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
+    public static synchronized void getMessageDATA(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusIOException {
         // Max total message length 260 byte
         int iTransactionIdentifier = 0; // Transaction Identifier
         int iLength = 0;
@@ -124,12 +125,14 @@ public class Modbus {
                 case 0x06:
                     int iRegisterAddress = bb.getShort();
                     int iRegisterValue = bb.getShort();
-                    sendWriteSingleRegisterOkCallback(iTransactionIdentifier);
+                    sendWriteSingleRegisterOkCallback(new ModbusStatus(-1, -1, ModbusStatus.Status.WRITING_OK, 0, ""));
 
                     break;
                 case 0x86:
                     int iExceptionCode = bb.getShort();
-                    sendWriteSingleRegisterExceptionCallback(iTransactionIdentifier, iExceptionCode);
+                    throw new ModbusIOException(iExceptionCode, context.getString(R.string.ModbusWriteSingleRegisterException));
+finire qui ritornndo true se tutto ok.
+                    sendWriteSingleRegisterExceptionCallback(new ModbusStatus(-1, -1, ModbusStatus.Status.WRITING_ERROR, iExceptionCode, ""));
                     break;
             }
         }
@@ -138,18 +141,18 @@ public class Modbus {
     /*
       * Send callbacks
       */
-    private static void sendWriteSingleRegisterOkCallback(int iTransactionIdentifier){
+    private static void sendWriteSingleRegisterOkCallback(ModbusStatus ms){
         if(m_vListener != null) {
             for (ModbusListener ml : m_vListener) {
-                ml.onWriteSingleRegisterOkCallback(iTransactionIdentifier);
+                ml.onWriteSingleRegisterOkCallback(ms);
             }
         }
     }
 
-    private static void sendWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iExceptionCode){
+    private static void sendWriteSingleRegisterExceptionCallback(ModbusStatus ms){
         if(m_vListener != null) {
             for (ModbusListener ml : m_vListener) {
-                ml.onWriteSingleRegisterExceptionCallback(iTransactionIdentifier, iExceptionCode);
+                ml.onWriteSingleRegisterExceptionCallback(ms);
             }
         }
     }
@@ -161,7 +164,7 @@ public class Modbus {
         /**
          * Callbacks
          */
-        void onWriteSingleRegisterOkCallback(int iTransactionIdentifier);
-        void onWriteSingleRegisterExceptionCallback(int iTransactionIdentifier, int iErrorCode);
+        void onWriteSingleRegisterOkCallback(ModbusStatus ms);
+        void onWriteSingleRegisterExceptionCallback(ModbusStatus ms);
     }
 }

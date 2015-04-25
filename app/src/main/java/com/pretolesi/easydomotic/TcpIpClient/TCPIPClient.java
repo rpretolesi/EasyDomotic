@@ -29,7 +29,7 @@ import java.util.Vector;
 /**
  *
  */
-public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus.ModbusListener {
+public class TCPIPClient extends AsyncTask<Object, Object, Void> implements Modbus.ModbusListener {
     private static final String TAG = "TCPIPClient";
 
     // Listener e Callback
@@ -99,8 +99,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
         }
 
         if (m_ticd != null) {
-            // Callbacks
-            sendTcpIpClientStatusCallback(Status.SERVER_CONNECTING);
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.CONNECTING, "" ));
             try {
                 m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
                 if (m_clientSocket == null) {
@@ -112,15 +112,16 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
 
                     m_bSocketOpen = true;
 
-                    // Callbacks
-                    sendTcpIpClientStatusCallback(Status.SERVER_ON_LINE);
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.ONLINE, "" ));
 
                     Log.d(TAG, this.toString() + "startConnection() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsStart));
                     return true;
                 }
             } catch (Exception ex) {
                 Log.d(TAG, this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
-                stopConnection();
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.OFFLINE, ex.getMessage() ));
             }
         }
 
@@ -250,8 +251,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
         Log.d(TAG, this.toString() + "stopConnection() enter");
 
         if(m_ticd != null) {
-            // Callbacks
-            sendTcpIpClientStatusCallback(Status.SERVER_DISCONNECTING);
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.DISCONNECTING, "" ));
         }
 
         m_socketAddress = null;
@@ -291,10 +292,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
             m_sbyte.clear();
         }
 
-        if(m_ticd != null) {
-            // Callbacks
-            sendTcpIpClientStatusCallback(Status.SERVER_OFF_LINE);
-        }
+        // Callbacks on UI
+        publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.OFFLINE, "" ));
 
         m_bSocketOpen = false;
 
@@ -399,38 +398,41 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
     }
 
     @Override
-    protected void onPostExecute(Void result) {
+    protected void onProgressUpdate(Object... obj) {
+        super.onProgressUpdate(obj);
+        // Aggiorno
+        if(obj != null && obj[0] instanceof TcpIpClientStatus){
+            if(m_vListener != null) {
+                for (TCPIPClientListener ticl : m_vListener) {
+                    ticl.onTcpIpClientStatusCallback((TcpIpClientStatus)obj[0]);
+                }
+            }
+        }
     }
 
-    public static enum Status {
-        SERVER_IDLE,
-        SERVER_OFF_LINE,
-        SERVER_CONNECTING,
-        SERVER_ON_LINE,
-        SERVER_DISCONNECTING,
-        WRITE_LIGTH_SWITCH_VALUE_OK,
-        WRITE_LIGTH_SWITCH_VALUE_ERROR;
-        ;
+    @Override
+    protected void onPostExecute(Void result) {
     }
 
     /*
      * Send callbacks
      */
+/*
     private void sendWriteSwitchValueCallback(int iTransactionIdentifier, Status sStatus){
         if(m_vListener != null) {
             for (TCPIPClientListener ticl : m_vListener) {
-                ticl.onWriteSwitchValueCallback(iTransactionIdentifier, sStatus);
+                ticl.onWriteSwitchValueCallback(getID(), iTransactionIdentifier, sStatus);
             }
         }
     }
-    private void sendTcpIpClientStatusCallback(Status sStatus){
+    private void sendTcpIpClientStatusCallback(TcpIpClientStatus tics){
         if(m_vListener != null) {
             for (TCPIPClientListener ticl : m_vListener) {
-                ticl.onTcpIpClientStatusCallback(sStatus);
+                ticl.onTcpIpClientStatusCallback(tics);
             }
         }
     }
-
+*/
     /**
      * Callbacks interface.
      */
@@ -438,8 +440,8 @@ public class TCPIPClient extends AsyncTask<Object, Void, Void> implements Modbus
         /**
          * Callbacks
          */
-        void onWriteSwitchValueCallback(int iTransactionIdentifier, Status sStatus);
-        void onTcpIpClientStatusCallback(Status sStatus);
+        void onWriteSwitchValueCallback(long lID, int iTransactionIdentifier, Status sStatus);
+        void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
 //        void onWriteSingleRegisterExceptionCallback(long lProtTcpIpClientID, int iTransactionIdentifier, int iEC, int iExC);
 //        void onTcpIpServerModbusOperationTimeoutCallback(long lProtTcpIpClientID);
 //        void onTcpIpServerModbusStatusCallback(long lProtTcpIpClientID, TCPIPClient.Status tics);

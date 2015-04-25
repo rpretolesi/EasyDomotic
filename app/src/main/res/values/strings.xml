@@ -11,8 +11,23 @@
     <string name="ModbusAddressOutOfRangeException">Address is out of range.</string>
     <string name="ModbusValueOutOfRangeException">Value is out of range.</string>
     <string name="ModbusMBAPLengthException">MBAP length Out Of Range.</string>
-    <string name="ModbusWriteSingleRegisterException">Write Single Register Exception. Exception Code: </string>
+    <!-- ModbusIOException String    -->
+    <string name="ModbusWriteSingleRegisterException">Write Single Register Exception.</string>
 
+    <!-- TcpIpClientStatus. -->
+    <string name="tics_idle">Idle</string>
+    <string name="tics_offline">Offline</string>
+    <string name="tics_connecting">Connecting...</string>
+    <string name="tics_online">Online</string>
+    <string name="tics_error">Error</string>
+    <string name="tics_disconnecting">Disconnecting...</string>
+
+    <!-- ModbusStatus. -->
+    <string name="ms_idle">Idle</string>
+    <string name="ms_writing_ok">Writing Ok</string>
+    <string name="ms_writing_error">Writing Error</string>
+    <string name="ms_reading_ok">Reading Ok</string>
+    <string name="ms_reading_error">Reading Error</string>
 
     <!--
         Settings Activity
