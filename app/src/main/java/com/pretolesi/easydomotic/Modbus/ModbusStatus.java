@@ -54,13 +54,11 @@ public class ModbusStatus {
         m_strErrorMessage = "";
     }
 
-    public long setServerID(long lServerID){
+    public void setServerID(long lServerID){
         m_lServerID = lServerID;
     }
 
-    public int setTransactionID(int iTransactionID){
-        m_iTransactionID = iTransactionID;
-    }
+    public void setTransactionID(int iTransactionID){ m_iTransactionID = iTransactionID; }
 
     public long getServerID(){
         return m_lServerID;
@@ -85,6 +83,8 @@ public class ModbusStatus {
     public static enum Status
     {
         IDLE(0, R.string.ms_idle),
+        OK(0, R.string.ms_ok),
+        ERROR(0, R.string.ms_error),
         READING_OK(1, R.string.ms_reading_ok),
         READING_ERROR(2, R.string.ms_reading_error),
         WRITING_OK(3, R.string.ms_writing_ok),

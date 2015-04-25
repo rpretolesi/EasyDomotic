@@ -16,8 +16,10 @@ import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.Modbus.Modbus;
+import com.pretolesi.easydomotic.Modbus.ModbusStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
 /**
  *
@@ -170,15 +172,14 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    public void onWriteSwitchValueCallback(long lID, int iTransactionIdentifier, TCPIPClient.Status sStatus) {
-//        Toast.makeText(getContext(), "onWriteSwitchValueCallback ID: " + iTransactionIdentifier + " Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
-        Log.d(TAG, this.toString() + ": " + "onWriteSwitchValueCallback() ID: " + lID + " TID: " + iTransactionIdentifier + " Status: " + sStatus.toString());
+    public void onModbusStatusCallback(ModbusStatus ms) {
+        Toast.makeText(this.getContext(), ms.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
     }
 
     @Override
-    public void onTcpIpClientStatusCallback(long lID, TCPIPClient.Status sStatus, String strError) {
-//        Toast.makeText(getContext(), "onTcpIpClientStatusCallback Status: " + sStatus.toString() , Toast.LENGTH_SHORT).show();
-        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + lID + " Status: " + sStatus.toString());
+    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
+        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + tics.getID() + " Status: " + tics.getStatus().toString());
     }
 
     @Override

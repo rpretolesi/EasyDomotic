@@ -22,8 +22,10 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.Modbus.ModbusStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 
 import java.util.ArrayList;
@@ -344,16 +346,15 @@ public class BaseFragment extends Fragment implements
     }
 
     @Override
-    public void onWriteSwitchValueCallback(long LID, int iTransactionIdentifier, TCPIPClient.Status sStatus) {
+    public void onModbusStatusCallback(ModbusStatus ms) {
 
     }
 
     @Override
-    public void onTcpIpClientStatusCallback(long LID, TCPIPClient.Status sStatus, String strError) {
-        TextView tv = (TextView)getActivity().findViewById((int)LID);
+    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
+        TextView tv = (TextView)getActivity().findViewById((int)tics.getID());
         if(tv != null){
-            tv.setText(sStatus.toString() + "\n" + strError);
+            tv.setText(tics.getStatus().toString() + "\n" + tics.getError());
         }
-
     }
 }
