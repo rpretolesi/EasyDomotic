@@ -241,26 +241,32 @@ public class BaseFragment extends Fragment implements
 // ***********************************************************
             // Aggiungo Lo Stato dei Server
             if(m_llStatusTcpIpServer != null && m_osvStatusTcpIpServer != null && m_rl != null){
+                RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                rlp.setMargins(16, 16, 16, 16);
+                m_osvStatusTcpIpServer.setLayoutParams(rlp);
+                m_rl.addView(m_osvStatusTcpIpServer);
+
+                HorizontalScrollView.LayoutParams hsvp = new HorizontalScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                m_llStatusTcpIpServer.setLayoutParams(hsvp);
+                m_osvStatusTcpIpServer.addView(m_llStatusTcpIpServer);
+
                 TextView tv1 = new TextView(getActivity());
                 LinearLayout.LayoutParams rlp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                rlp1.setLayoutDirection(LinearLayout.HORIZONTAL);
+                rlp1.weight = (float)1.0;
                 tv1.setLayoutParams(rlp1);
-                tv1.setText("text 1");
+                tv1.setText("text 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+                m_llStatusTcpIpServer.addView(tv1);
 
                 TextView tv2 = new TextView(getActivity());
-                LinearLayout.LayoutParams rlp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams rlp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                rlp2.setLayoutDirection(LinearLayout.HORIZONTAL);
+                rlp2.weight = (float)1.0;
                 tv2.setLayoutParams(rlp2);
-                tv2.setText("text 2");
-                m_llStatusTcpIpServer.addView(tv1);
+                tv2.setText("text 222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
                 m_llStatusTcpIpServer.addView(tv2);
-
-                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                m_llStatusTcpIpServer.setLayoutParams(llp);
-
-                HorizontalScrollView.LayoutParams hsvp = new HorizontalScrollView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                m_osvStatusTcpIpServer.setLayoutParams(hsvp);
-
-                m_osvStatusTcpIpServer.addView(m_llStatusTcpIpServer);
-                m_rl.addView(m_osvStatusTcpIpServer);
             }
 
 

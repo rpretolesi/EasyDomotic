@@ -118,7 +118,7 @@ public class Modbus {
             // Unit Identifier
             int iUI = bb.get();
             // Function Code
-            convertire qui il -122 in 134 poi vedere come fare per mostrare lo statodel server...
+            //convertire qui il -122 in 134 poi vedere come fare per mostrare lo statodel server...
             int iFEC = bb.get();
             switch(iFEC) {
                 case 0x06:
