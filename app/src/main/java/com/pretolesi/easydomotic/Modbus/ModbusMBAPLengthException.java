@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.CustomException;
+package com.pretolesi.easydomotic.Modbus;
 
 /**
  * Created by RPRETOLESI on 21/04/2015.

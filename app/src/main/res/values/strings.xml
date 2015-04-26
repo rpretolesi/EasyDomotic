@@ -21,12 +21,14 @@
     <string name="tics_connecting">Connecting...</string>
     <string name="tics_online">Online</string>
     <string name="tics_error">Error</string>
+    <string name="tics_timeout">Timeout</string>
     <string name="tics_disconnecting">Disconnecting...</string>
 
     <!-- ModbusStatus. -->
     <string name="ms_idle">Idle</string>
     <string name="ms_ok">Ok</string>
     <string name="ms_error">Error</string>
+    <string name="ms_timeout">Timeout</string>
     <string name="ms_writing_ok">Writing Ok</string>
     <string name="ms_writing_error">Writing Error</string>
     <string name="ms_reading_ok">Reading Ok</string>

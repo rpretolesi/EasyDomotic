@@ -33,4 +33,25 @@ public class TcpIpMsg {
         m_bMsgSent = true;
         m_lSentTimeMS = System.currentTimeMillis();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Return true if the objects are identical.
+        // (This is just an optimization, not required for correctness.)
+        if (this == obj) {
+            return true;
+        }
+
+        // Return false if the other object has the wrong type.
+        // This type may be an interface depending on the interface's specification.
+        if (!(obj instanceof TcpIpMsg)) {
+            return false;
+        }
+
+        final TcpIpMsg tim = (TcpIpMsg) obj;
+        if (this.m_lMsgID != tim.m_lMsgID) {
+            return false;
+        }
+        return true;
+    }
 }

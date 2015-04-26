@@ -34,6 +34,10 @@ public class LightSwitch extends Switch implements
     private GestureDetectorCompat mDetector;
 
     private LightSwitchData m_lsd;
+    private int m_iTIDOFF;
+    private int m_iTIDOFFON;
+    private int m_iTIDONOFF;
+    private int m_iTIDON;
 
     private float mLastTouchX;
     private float mLastTouchY;
@@ -43,6 +47,10 @@ public class LightSwitch extends Switch implements
     public LightSwitch(Context context) {
         super(context);
         this.m_lsd = null;
+        this.m_iTIDOFF = 0;
+        this.m_iTIDOFFON = 0;
+        this.m_iTIDONOFF = 0;
+        this.m_iTIDON = 0;
         this.m_bEditMode = false;
     }
 
@@ -50,12 +58,16 @@ public class LightSwitch extends Switch implements
         super(context);
         if(lsd != null) {
             this.m_lsd = lsd;
+            this.m_iTIDOFF = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueOFF();
+            this.m_iTIDOFFON = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueOFFON();
+            this.m_iTIDONOFF = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueONOFF();
+            this.m_iTIDON = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueON();
             this.setTag(lsd.getTag());
-            this.setId((int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress());
+            this.setId((int)lsd.getID());
         }
         this.m_bEditMode = bEditMode;
-
     }
+
     public LightSwitchData getLightSwitchData() {
         return m_lsd;
     }
@@ -84,9 +96,9 @@ public class LightSwitch extends Switch implements
             if(m_lsd != null && m_TimerHandler != null) {
                 if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
                     if(isChecked()){
-                        writeSwitchValue(m_lsd.getProtTcpIpClientValueON());
+                        writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                     } else {
-                        writeSwitchValue(m_lsd.getProtTcpIpClientValueOFF());
+                        writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                     }
 
                     m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
@@ -151,9 +163,9 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             if(m_lsd.getProtTcpIpClientSendDataOnChange()){
                 if(isChecked){
-                    writeSwitchValue(m_lsd.getProtTcpIpClientValueON());
+                    writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                 } else {
-                    writeSwitchValue(m_lsd.getProtTcpIpClientValueOFF());
+                    writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                 }
             }
         }
@@ -161,20 +173,24 @@ public class LightSwitch extends Switch implements
         Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
-    private void writeSwitchValue(int iStatusValue){
+    private void writeSwitchValue(int iTI, int iAddress, int iValue){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_lsd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeSwitchValue(getId(), m_lsd.getProtTcpIpClientValueAddress(), iStatusValue);
+                tic.writeSwitchValue(iTI, iAddress, iValue);
             }
         }
     }
 
     @Override
     public void onModbusStatusCallback(ModbusStatus ms) {
-        Toast.makeText(this.getContext(), ms.getErrorMessage(), Toast.LENGTH_SHORT).show();
-        Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+        if(ms != null){
+            if(ms.getTransactionID() == m_iTIDOFF || ms.getTransactionID() == m_iTIDOFFON || ms.getTransactionID() == m_iTIDONOFF || ms.getTransactionID() == m_iTIDON) {
+                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString(), Toast.LENGTH_SHORT).show();
+            }
+            Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+        }
     }
 
     @Override

@@ -61,7 +61,8 @@ public class TcpIpClientStatus {
         CONNECTING(2, R.string.tics_connecting),
         ONLINE(3, R.string.tics_online),
         ERROR(4, R.string.tics_error),
-        DISCONNECTING(5, R.string.tics_disconnecting);
+        TIMEOUT(5, R.string.tics_timeout),
+        DISCONNECTING(6, R.string.tics_disconnecting);
 
         private int ID;
         private int StringResID;

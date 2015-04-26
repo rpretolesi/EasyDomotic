@@ -84,11 +84,12 @@ public class ModbusStatus {
     {
         IDLE(0, R.string.ms_idle),
         OK(0, R.string.ms_ok),
-        ERROR(0, R.string.ms_error),
-        READING_OK(1, R.string.ms_reading_ok),
-        READING_ERROR(2, R.string.ms_reading_error),
-        WRITING_OK(3, R.string.ms_writing_ok),
-        WRITING_ERROR(4, R.string.ms_writing_error);
+        ERROR(1, R.string.ms_error),
+        TIMEOUT(2, R.string.ms_reading_ok),
+        READING_OK(3, R.string.ms_reading_ok),
+        READING_ERROR(4, R.string.ms_reading_error),
+        WRITING_OK(5, R.string.ms_writing_ok),
+        WRITING_ERROR(6, R.string.ms_writing_error);
 
         private int ID;
         private int StringResID;

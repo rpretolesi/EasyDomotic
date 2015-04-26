@@ -2,21 +2,10 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
-import com.pretolesi.easydomotic.CustomException.ModbusAddressOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusIOException;
-import com.pretolesi.easydomotic.CustomException.ModbusLengthOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusMBAPLengthException;
-import com.pretolesi.easydomotic.CustomException.ModbusPDULengthException;
-import com.pretolesi.easydomotic.CustomException.ModbusProtocolOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusTransIdOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusUnitIdOutOfRangeException;
-import com.pretolesi.easydomotic.CustomException.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
 import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Vector;
 
 /**
  *
@@ -79,11 +68,11 @@ public class Modbus {
 //        return bb.array();
     }
 
-    public static synchronized int getMessageLengthFromMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
+    public static synchronized ModbusMBAP getMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
         // Max message length 260 byte
         if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
-            bb.getShort(); // Transaction Identifier
+            int iTI = bb.getShort(); // Transaction Identifier
             int iPI = bb.getShort(); // Protocol Identifier, must be 0
             if(iPI != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
@@ -92,14 +81,16 @@ public class Modbus {
             if(iLength < 5 || iLength > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
-            return iLength;
+            return new ModbusMBAP(iTI, iPI, iLength);
         }
 
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized void getMessagePDU(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusIOException, ModbusPDULengthException {
+    public static synchronized ModbusPDU getPDU(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException {
         // Max total message length 260 byte
+        ModbusPDU mpdu = null;
+
         int iTransactionIdentifier = 0; // Transaction Identifier
         int iLength = 0;
         if(byteMBA != null && byteMBA.length == 6){
@@ -122,7 +113,7 @@ public class Modbus {
             if(byteDATA.length < 3 || byteDATA.length > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
-            // Unit Identifier
+             // Unit Identifier
             int iUI = bb.get();
             // Function Code
             //convertire qui il -122 in 134 poi vedere come fare per mostrare lo statodel server...
@@ -132,16 +123,22 @@ public class Modbus {
                     int iRegisterAddress = bb.getShort();
                     int iRegisterValue = bb.getShort();
 
+                    mpdu = new ModbusPDU(iUI, iFEC, 0);
+
                     break;
 
                 case 0x86:
                     int iExceptionCode = bb.getShort();
-                    throw new ModbusIOException(iExceptionCode, context.getString(R.string.ModbusWriteSingleRegisterException));
-                    // break;
+
+                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode);
+
+                    break;
             }
         } else {
             throw new ModbusPDULengthException(context.getString(R.string.ModbusPDULengthException));
         }
+
+        return mpdu;
     }
 
     /*
