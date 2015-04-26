@@ -26,6 +26,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -110,6 +111,19 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
                     iProgressCounter = 0;
 
+                    // Restore the operations not completed
+                    if(m_vtim != null) {
+                        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+                            TcpIpMsg tim = iterator.next();
+                            if (tim != null) {
+                                tim.setMsgAsSent(false);
+                                tim.setMsgTimeMSNow();
+                                // Remove the current element from the iterator and the list.
+                                // iterator.remove();
+                            }
+                        }
+                    }
+
                     // Callbacks on UI
                     publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.ONLINE, "" ));
 
@@ -163,7 +177,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                         if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                             int iIndex = m_vtim.lastIndexOf(tim);
                             if(iIndex != -1) {
-                                tim.setSentTimeMSNow();
+                                tim.setMsgTimeMSNow();
+                                tim.setMsgAsSent(true);
                                 m_vtim.setElementAt(tim,iIndex);
                             }
                             m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
@@ -198,20 +213,15 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
         if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
 
-            if (!m_vtim.isEmpty()) {
-                // Verifico il timeout e genero l'allarme se necessario
-                TcpIpMsg timTemp = null;
-                for(TcpIpMsg tim : m_vtim){
-                    if(tim != null){
-                        if(tim.getMsgSent() && (System.currentTimeMillis() - tim.getSentTimeMS() > m_ticd.getTimeout())){
-                            timTemp = tim;
-                            // Callbacks on UI
-                            publishProgress(new ModbusStatus(getID(), (int)tim.getMsgID(), ModbusStatus.Status.TIMEOUT, 0, ""));
-                        }
-                    }
-                }
-                if(timTemp != null){
-                    m_vtim.remove(timTemp);
+            // In case of timeout, i pute the message in queue again
+            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+                TcpIpMsg tim = iterator.next();
+                if (tim != null) {
+                    if(tim.getMsgSent() && (System.currentTimeMillis() - tim.getSentTimeMS() > m_ticd.getTimeout())){
+                        tim.setMsgAsSent(false);
+                        tim.setMsgTimeMSNow();
+                        publishProgress(new ModbusStatus(getID(), (int)tim.getMsgID(), ModbusStatus.Status.TIMEOUT, 0, ""));
+                   }
                 }
             }
 
@@ -247,7 +257,12 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                                 m_vtim.remove(timTemp);
                                             }
 
-                                            publishProgress(new ModbusStatus(getID(), mmbap.getTI(), ModbusStatus.Status.WRITING_OK, 0, ""));
+                                            // Check Return code
+                                            if(mpdu.getExC() == 0){
+                                                publishProgress(new ModbusStatus(getID(), mmbap.getTI(), ModbusStatus.Status.OK, 0, ""));
+                                            } else {
+                                                publishProgress(new ModbusStatus(getID(), mmbap.getTI(), ModbusStatus.Status.ERROR, mpdu.getExC(), ""));
+                                            }
                                             // m_timeMillisecondsGet = System.currentTimeMillis();
                                             Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                             return true;
@@ -303,7 +318,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
                     } catch (SocketTimeoutException ex) {
                         // Callbacks on UI
-                        publishProgress(new ModbusStatus(getID(), -1, ModbusStatus.Status.TIMEOUT, 0, ex.getMessage()));
                         publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
                         Log.d(TAG, this.toString() + "receive() MBAP->" + "SocketTimeoutException ex: " + ex.getMessage());
                     } catch (EOFException ex) {
@@ -372,10 +386,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
         m_dataInputStream = null;
 
-        if(m_vtim != null) {
-            m_vtim.clear();
-        }
-
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.OFFLINE, "" ));
 
@@ -394,8 +404,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
-verificare perche' se schiaccio molte volte, ricevo molte risposte ma non sembra attivarsi lalampada lo stesso nr di volte, controllare che almeno arrivino lo stessonr di messaggi nellog di arduino.'
-                        return;
                     }
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI

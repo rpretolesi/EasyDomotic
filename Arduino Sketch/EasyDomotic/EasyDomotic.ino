@@ -180,7 +180,26 @@ void Communication()
           unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
           Serial.print("Address: ");
           Serial.println(uiModbusAddress);
-          if(uiModbusAddress == 10000) {                       
+          boolean bAddressOk = false;
+          int iOutput = 0;
+          if(uiModbusAddress == 10000) {  
+            iOutput = 3;
+            bAddressOk = true;
+          }            
+          if(uiModbusAddress == 10001) {  
+            iOutput = 5;
+            bAddressOk = true;
+          }            
+          if(uiModbusAddress == 10002) {  
+            iOutput = 6;
+            bAddressOk = true;
+          }            
+          if(uiModbusAddress == 10003) {  
+            iOutput = 9;
+            bAddressOk = true;
+          }   
+ 
+          if(bAddressOk == true){         
             int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
             boolean bValueOk = false;
             Serial.print("Value: ");
@@ -190,12 +209,12 @@ void Communication()
             // Set 1 if value == 4
             switch(iModbuSingleValue){
               case 1:
-                digitalWrite(3, 0);  
+                digitalWrite(iOutput, 0);  
                 bValueOk = true;
                 break;
               
               case 4:
-                digitalWrite(3, 1);            
+                digitalWrite(iOutput, 1);            
                 bValueOk = true;
                 break;
                

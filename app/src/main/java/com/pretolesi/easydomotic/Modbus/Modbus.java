@@ -128,7 +128,7 @@ public class Modbus {
                     break;
 
                 case 0x86:
-                    int iExceptionCode = bb.getShort();
+                    int iExceptionCode = bb.get();
 
                     mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode);
 

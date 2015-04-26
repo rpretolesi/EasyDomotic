@@ -187,15 +187,15 @@ public class LightSwitch extends Switch implements
     public void onModbusStatusCallback(ModbusStatus ms) {
         if(ms != null){
             if(ms.getTransactionID() == m_iTIDOFF || ms.getTransactionID() == m_iTIDOFFON || ms.getTransactionID() == m_iTIDONOFF || ms.getTransactionID() == m_iTIDON) {
-                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
             }
-            Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+            // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
         }
     }
 
     @Override
     public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
-        Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + tics.getID() + " Status: " + tics.getStatus().toString());
+        // Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + tics.getID() + " Status: " + tics.getStatus().toString());
     }
 
     @Override

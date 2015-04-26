@@ -19,20 +19,20 @@ public class TcpIpMsg {
     public long getMsgID(){
         return m_lMsgID;
     }
+
     public byte[] getMsgData(){
         return m_byteMsgData;
     }
-    public boolean getMsgSent(){
-        return m_bMsgSent;
-    }
+
+    public boolean getMsgSent(){ return m_bMsgSent; }
+
     public long getSentTimeMS(){
         return m_lSentTimeMS;
     }
 
-    public void setSentTimeMSNow(){
-        m_bMsgSent = true;
-        m_lSentTimeMS = System.currentTimeMillis();
-    }
+    public void setMsgAsSent(boolean bMsgSent ){ m_bMsgSent = bMsgSent; }
+
+    public void setMsgTimeMSNow(){ m_lSentTimeMS = System.currentTimeMillis(); }
 
     @Override
     public boolean equals(Object obj) {
