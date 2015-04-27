@@ -50,6 +50,11 @@
     <string name="settings_title_section_open_tcp_ip_client">Open TCP IP Client</string>
     <string name="settings_title_section_edit_tcp_ip_client">Edit TCP IP Client</string>
 
+    <string name="settings_title_dialog_section_add_numeric_value">Numeric Value</string>
+    <string name="settings_title_section_add_numeric_value">Add Numeric Value</string>
+    <string name="settings_title_section_open_numeric_value">Open Numeric Value</string>
+    <string name="settings_title_section_edit_numeric_value">Edit Numeric Value</string>
+
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
 
@@ -121,10 +126,10 @@
     <string name="text_orientation_vertical">Vertical</string>
 
     <!--
-    light_switch_prop_activity
+    common_prop_activity
     -->
-    <string name="text_tv_light_switch_name">Name</string>
-    <string name="hint_et_light_switch_name">Type a Name</string>
+    <string name="text_tv_name">Name</string>
+    <string name="hint_et_name">Type a Name</string>
     <string name="text_tv_orientation">Orientation</string>
     <string name="text_rb_portrait">Portrait</string>
     <string name="text_rb_landscape">Landscape</string>
@@ -132,12 +137,26 @@
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>
     <string name="text_tv_position_z">Z:</string>
+
+    <!--
+    light_switch_prop_activity
+    -->
     <string name="text_lspa_tv_protocol_field_1">IDENTIFIER(2 byte long)</string>
     <string name="text_lspa_tv_protocol_field_2">OFF BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_3">OFF-ON BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_4">ON-OFF BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_5">ON BYTE(1 byte long)</string>
     <string name="text_lspa_tv_protocol_field_6">ADDRESS(2 byte long)</string>
+
+    <!--
+    numeric_value_prop_activity
+    -->
+
+    <string name="text_nvpa_tv_data_type">Data type</string>
+    <string name="text_nvpa_tv_nr_of_decimal">Nr of decimal</string>
+    <string name="text_nvpa_tv_protocol_field_1">IDENTIFIER(2 byte long)</string>
+    <string name="text_nvpa_tv_protocol_field_2">ADDRESS(2 byte long)</string>
+    <string name="text_nvpa_tv_protocol_field_3">NRs OF 16 VALUE (2 byte long x VALUE)</string>
 
     <string name="text_stica_btn_save_tcp_ip_client_data">SAVE</string>
 
