@@ -60,6 +60,7 @@ public class NumericValuePropActivity extends Activity implements
     private EditText m_id_et_position_z;
     private Spinner m_id_nvpa_spn_data_type;
     private EDEditText m_id_nvpa_et_nr_of_decimal;
+    private EDEditText m_id_nvpa_et_update_millis;
 
     private CheckBox m_id_nvpa_cb_enable_tcp_ip_client_protocol;
     private Spinner m_id_nvpa_spn_tcp_ip_client_protocol;
@@ -93,8 +94,9 @@ public class NumericValuePropActivity extends Activity implements
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
         m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_nvpa_spn_data_type);
-        m_id_nvpa_spn_data_type.setEnabled(true);
+        m_id_nvpa_spn_data_type.setSelection(NumericValueData.DataTypeDefaulValue);
         m_id_nvpa_et_nr_of_decimal = (EDEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
+        m_id_nvpa_et_update_millis = (EDEditText)findViewById(R.id.id_nvpa_et_update_millis);
 
         m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_nvpa_cb_enable_tcp_ip_client_protocol);
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
@@ -242,9 +244,9 @@ public class NumericValuePropActivity extends Activity implements
                 public Cursor loadInBackground() {
                     Cursor cursor;
                     if(m_nvdParameter != null){
-                        cursor = SQLContract.LightSwitchEntry.loadFromLightSwitchData(m_nvdParameter);
+                        cursor = SQLContract.NumericValueEntry.loadFromNumericValueData(m_nvdParameter);
                     } else {
-                        cursor = SQLContract.LightSwitchEntry.load(m_lIDParameter, m_lRoomIDParameter);
+                        cursor = SQLContract.NumericValueEntry.load(m_lIDParameter, m_lRoomIDParameter);
                     }
                     return cursor;
                 }
@@ -287,10 +289,10 @@ public class NumericValuePropActivity extends Activity implements
             getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
         }
 
-        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
-            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
-            if(allsd != null && !allsd.isEmpty()){
-                m_nvd = allsd.get(0);
+        if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
+            ArrayList<NumericValueData> alnvd = SQLContract.NumericValueEntry.get(cursor);
+            if(alnvd != null && !alnvd.isEmpty()){
+                m_nvd = alnvd.get(0);
             }
 
             // Terzo
@@ -299,7 +301,7 @@ public class NumericValuePropActivity extends Activity implements
 
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
             m_TcpIpClientAdapter.swapCursor(cursor);
-            updateLightSwitch();
+            updateNumericValue();
         }
 
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -324,7 +326,7 @@ public class NumericValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveLightSwitchData(iDialogOriginID);
+                    saveNumericValueData(iDialogOriginID);
                 }
                 if(bNo) {
                     // no action
@@ -334,7 +336,7 @@ public class NumericValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.DELETE_CONFIRM_ID) {
                 if(bYes) {
                     // Delete
-                    deleteLightSwitchData(iDialogOriginID);                }
+                    deleteNumericValueData(iDialogOriginID);                }
                 if(bNo) {
                     // No action...
                 }
@@ -345,7 +347,7 @@ public class NumericValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveLightSwitchData(iDialogOriginID);
+                    saveNumericValueData(iDialogOriginID);
                 }
                 if(bNo) {
                     super.onBackPressed();
@@ -383,7 +385,7 @@ public class NumericValuePropActivity extends Activity implements
         }
     }
 
-    private void updateLightSwitch() {
+    private void updateNumericValue() {
         // Stato
         if(m_id_nvpa_spn_tcp_ip_client_protocol != null && m_id_nvpa_spn_tcp_ip_client_protocol.getCount() > 0){
             m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(true);
@@ -421,6 +423,23 @@ public class NumericValuePropActivity extends Activity implements
             if (m_id_et_position_z != null) {
                 m_id_et_position_z.setText(Float.toString(m_nvd.getPosZ()));
             }
+            if (m_id_nvpa_spn_data_type != null) {
+                m_id_nvpa_spn_data_type.
+            }
+            if(m_id_nvpa_spn_data_type != null) {
+                long lItem = -1;
+                try{
+                    lItem = m_nvd.getProtTcpIpClientValueDataType();
+                } catch (Exception ignore) { }
+                m_id_nvpa_spn_data_type.setSelection((int)lItem);
+            }
+            if (m_id_nvpa_et_nr_of_decimal != null) {
+                m_id_nvpa_et_nr_of_decimal.setText(Integer.toString(m_nvd.getProtTcpIpClientValueNrOfDecimal()));
+            }
+            if (m_id_nvpa_et_update_millis != null) {
+                m_id_nvpa_et_update_millis.setText(Integer.toString(m_nvd.getProtTcpIpClientValueUpdateMillis()));
+            }
+
             if (m_id_nvpa_spn_tcp_ip_client_protocol != null && m_id_nvpa_cb_enable_tcp_ip_client_protocol != null) {
                 for (int i = 0; i < m_id_nvpa_spn_tcp_ip_client_protocol.getCount(); i++) {
                     Cursor value = (Cursor) m_id_nvpa_spn_tcp_ip_client_protocol.getItemAtPosition(i);
@@ -434,9 +453,6 @@ public class NumericValuePropActivity extends Activity implements
                             m_id_nvpa_et_protocol_field_1.setEnabled(m_nvd.getProtTcpIpClientEnable());
                             m_id_nvpa_et_protocol_field_2.setEnabled(m_nvd.getProtTcpIpClientEnable());
                             m_id_nvpa_et_protocol_field_3.setEnabled(m_nvd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_4.setEnabled(m_nvd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_5.setEnabled(m_nvd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_6.setEnabled(m_nvd.getProtTcpIpClientEnable());
                         }
                     }
                 }
@@ -445,19 +461,10 @@ public class NumericValuePropActivity extends Activity implements
                 m_id_nvpa_et_protocol_field_1.setText(Integer.toString(m_nvd.getProtTcpIpClientValueID()));
             }
             if (m_id_nvpa_et_protocol_field_2 != null) {
-                m_id_nvpa_et_protocol_field_2.setText(Integer.toString(m_nvd.getProtTcpIpClientValueOFF()));
+                m_id_nvpa_et_protocol_field_2.setText(Integer.toString(m_nvd.getProtTcpIpClientValueAddress()));
             }
             if (m_id_nvpa_et_protocol_field_3 != null) {
-                m_id_nvpa_et_protocol_field_3.setText(Integer.toString(m_nvd.getProtTcpIpClientValueOFFON()));
-            }
-            if (m_id_lspa_et_protocol_field_4 != null) {
-                m_id_lspa_et_protocol_field_4.setText(Integer.toString(m_nvd.getProtTcpIpClientValueONOFF()));
-            }
-            if (m_id_lspa_et_protocol_field_5 != null) {
-                m_id_lspa_et_protocol_field_5.setText(Integer.toString(m_nvd.getProtTcpIpClientValueON()));
-            }
-            if (m_id_lspa_et_protocol_field_6 != null) {
-                m_id_lspa_et_protocol_field_6.setText(Integer.toString(m_nvd.getProtTcpIpClientValueAddress()));
+                m_id_nvpa_et_protocol_field_3.setText(Integer.toString(m_nvd.getProtTcpIpClientValueDataType()));
             }
         }
     }
@@ -473,8 +480,8 @@ public class NumericValuePropActivity extends Activity implements
                 lRoomID = m_lRoomIDParameter;
             }
 
-            if (!SQLContract.LightSwitchEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
-                saveLightSwitchData(iDialogOriginID);
+            if (!SQLContract.NumericValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
+                saveNumericValueData(iDialogOriginID);
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
                         DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
@@ -487,9 +494,9 @@ public class NumericValuePropActivity extends Activity implements
         }
     }
 
-    private void saveLightSwitchData(int iDialogOriginID){
+    private void saveNumericValueData(int iDialogOriginID){
         if (m_nvd == null) {
-            m_nvd = new LightSwitchData();
+            m_nvd = new NumericValueData();
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
@@ -593,7 +600,7 @@ public class NumericValuePropActivity extends Activity implements
                 getString(R.string.text_yndf_btn_no)
         ).show(getFragmentManager(), "");
     }
-    private void deleteLightSwitchData(int iDialogOriginID) {
+    private void deleteNumericValueData(int iDialogOriginID) {
         if(m_nvd != null) {
             SQLContract.LightSwitchEntry.delete(m_nvd.getID(), m_nvd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))

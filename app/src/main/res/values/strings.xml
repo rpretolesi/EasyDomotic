@@ -151,9 +151,9 @@
     <!--
     numeric_value_prop_activity
     -->
-
     <string name="text_nvpa_tv_data_type">Data type</string>
     <string name="text_nvpa_tv_nr_of_decimal">Nr of decimal</string>
+    <string name="text_nvpa_tv_update_millis">Update millis</string>
     <string name="text_nvpa_tv_protocol_field_1">IDENTIFIER(2 byte long)</string>
     <string name="text_nvpa_tv_protocol_field_2">ADDRESS(2 byte long)</string>
     <string name="text_nvpa_tv_protocol_field_3">NRs OF 16 VALUE (2 byte long x VALUE)</string>
