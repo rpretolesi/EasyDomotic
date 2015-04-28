@@ -10,7 +10,7 @@ public class LightSwitchData implements Parcelable {
 
     public static int TAGMinChar = 1;
     public static int TAGMaxChar = 128;
-    public static String TAGDefaultValue = "My Name";
+    public static String TAGDefaultValue = "My LightSwitchData Name";
 
     public static int ProtTcpIpClientValueIDMinValue = 0;
     public static int ProtTcpIpClientValueIDMaxValue = 32768;

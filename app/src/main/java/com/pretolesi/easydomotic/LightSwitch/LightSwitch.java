@@ -123,7 +123,7 @@ public class LightSwitch extends Switch implements
         }
 
         setOnCheckedChangeListener(this);
-        if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
+        if(m_lsd != null && !m_lsd.getProtTcpIpClientSendDataOnChange()){
             if(!m_bEditMode) {
                 setTimerHandler();
             }

@@ -23,11 +23,9 @@ import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.EDEditText;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -42,7 +40,7 @@ public class NumericValuePropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
-    private static final String TAG = "LightSwitchPropActivity";
+    private static final String TAG = "NumericValuePropActivity";
 
     private static final String ROOM_ID = "Room_ID";
     private static final String NUMERIC_VALUE_ID = "Numeric_Value_ID";
@@ -67,7 +65,6 @@ public class NumericValuePropActivity extends Activity implements
 
     private EDEditText m_id_nvpa_et_protocol_field_1;
     private EDEditText m_id_nvpa_et_protocol_field_2;
-    private EDEditText m_id_nvpa_et_protocol_field_3;
 
     private NumericValueData m_nvd;
     private long m_lRoomIDParameter;
@@ -78,12 +75,12 @@ public class NumericValuePropActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.light_switch_property_activity);
+        setContentView(R.layout.nnumeric_vvalue_property_activity);
 
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
-        m_id_et_name = (EDEditText)findViewById(R.id.id_et_light_switch_name);
-        m_id_et_name.setInputLimit(LightSwitchData.TAGMinChar, LightSwitchData.TAGMaxChar);
-        m_id_et_name.setText(LightSwitchData.TAGDefaultValue);
+        m_id_et_name = (EDEditText)findViewById(R.id.id_et_name);
+        m_id_et_name.setInputLimit(NumericValueData.TAGMinChar, NumericValueData.TAGMaxChar);
+        m_id_et_name.setText(NumericValueData.TAGDefaultValue);
 
         m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
         m_id_rb_portrait.setChecked(true);
@@ -94,9 +91,13 @@ public class NumericValuePropActivity extends Activity implements
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
         m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_nvpa_spn_data_type);
-        m_id_nvpa_spn_data_type.setSelection(NumericValueData.DataTypeDefaulValue);
+        m_id_nvpa_spn_data_type.setSelection(NumericValueData.ProtTcpIpClientValueDataTypeDefaulValue);
         m_id_nvpa_et_nr_of_decimal = (EDEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
+        m_id_nvpa_et_nr_of_decimal.setInputLimit(NumericValueData.ProtTcpIpClientValueNrOfDecimalMinValue, NumericValueData.ProtTcpIpClientValueNrOfDecimalMaxValue);
+        m_id_nvpa_et_nr_of_decimal.setText(NumericValueData.ProtTcpIpClientValueNrOfDecimalDefaulValue);
         m_id_nvpa_et_update_millis = (EDEditText)findViewById(R.id.id_nvpa_et_update_millis);
+        m_id_nvpa_et_update_millis.setInputLimit(NumericValueData.ProtTcpIpClientValueUpdateMillisMinValue, NumericValueData.ProtTcpIpClientValueUpdateMillisMaxValue);
+        m_id_nvpa_et_update_millis.setText(NumericValueData.ProtTcpIpClientValueUpdateMillisDefaulValue);
 
         m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_nvpa_cb_enable_tcp_ip_client_protocol);
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
@@ -110,22 +111,17 @@ public class NumericValuePropActivity extends Activity implements
                 m_id_nvpa_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
                 m_id_nvpa_et_protocol_field_1.setEnabled(((CheckBox) v).isChecked());
                 m_id_nvpa_et_protocol_field_2.setEnabled(((CheckBox) v).isChecked());
-                m_id_nvpa_et_protocol_field_3.setEnabled(((CheckBox) v).isChecked());
             }
         });
 
         m_id_nvpa_et_protocol_field_1 = (EDEditText)findViewById(R.id.id_nvpa_et_protocol_field_1);
-        m_id_nvpa_et_protocol_field_1.setInputLimit(LightSwitchData.ProtTcpIpClientValueIDMinValue, LightSwitchData.ProtTcpIpClientValueIDMaxValue);
-        m_id_nvpa_et_protocol_field_1.setText(LightSwitchData.ProtTcpIpClientValueIDDefaulValue);
+        m_id_nvpa_et_protocol_field_1.setInputLimit(NumericValueData.ProtTcpIpClientValueIDMinValue, NumericValueData.ProtTcpIpClientValueIDMaxValue);
+        m_id_nvpa_et_protocol_field_1.setText(NumericValueData.ProtTcpIpClientValueIDDefaulValue);
         m_id_nvpa_et_protocol_field_1.setEnabled(false);
         m_id_nvpa_et_protocol_field_2 = (EDEditText)findViewById(R.id.id_nvpa_et_protocol_field_2);
-        m_id_nvpa_et_protocol_field_2.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFMinValue, LightSwitchData.ProtTcpIpClientValueOFFMaxValue);
-        m_id_nvpa_et_protocol_field_2.setText(LightSwitchData.ProtTcpIpClientValueOFFDefaulValue);
+        m_id_nvpa_et_protocol_field_2.setInputLimit(NumericValueData.ProtTcpIpClientValueAddressMinValue, NumericValueData.ProtTcpIpClientValueAddressMaxValue);
+        m_id_nvpa_et_protocol_field_2.setText(NumericValueData.ProtTcpIpClientValueAddressDefaulValue);
         m_id_nvpa_et_protocol_field_2.setEnabled(false);
-        m_id_nvpa_et_protocol_field_3 = (EDEditText)findViewById(R.id.id_nvpa_et_protocol_field_3);
-        m_id_nvpa_et_protocol_field_3.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFONMinValue, LightSwitchData.ProtTcpIpClientValueOFFONMaxValue);
-        m_id_nvpa_et_protocol_field_3.setText(LightSwitchData.ProtTcpIpClientValueOFFONDefaulValue);
-        m_id_nvpa_et_protocol_field_3.setEnabled(false);
 
         setActionBar();
 
@@ -140,7 +136,7 @@ public class NumericValuePropActivity extends Activity implements
         }
 
         m_id_nvpa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, NumericValueData.DataType.values()));
 
         m_SCASpnRoom = new SimpleCursorAdapter(
                 this,
@@ -238,7 +234,7 @@ public class NumericValuePropActivity extends Activity implements
             };
         }
 
-        if(id == Loaders.LIGHT_SWITCH_LOADER_ID){
+        if(id == Loaders.NUMERIC_VALUE_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -286,7 +282,7 @@ public class NumericValuePropActivity extends Activity implements
                 }
             }
             // Secondo
-            getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
         }
 
         if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
@@ -423,9 +419,6 @@ public class NumericValuePropActivity extends Activity implements
             if (m_id_et_position_z != null) {
                 m_id_et_position_z.setText(Float.toString(m_nvd.getPosZ()));
             }
-            if (m_id_nvpa_spn_data_type != null) {
-                m_id_nvpa_spn_data_type.
-            }
             if(m_id_nvpa_spn_data_type != null) {
                 long lItem = -1;
                 try{
@@ -452,7 +445,6 @@ public class NumericValuePropActivity extends Activity implements
                             m_id_nvpa_spn_tcp_ip_client_protocol.setEnabled(m_nvd.getProtTcpIpClientEnable());
                             m_id_nvpa_et_protocol_field_1.setEnabled(m_nvd.getProtTcpIpClientEnable());
                             m_id_nvpa_et_protocol_field_2.setEnabled(m_nvd.getProtTcpIpClientEnable());
-                            m_id_nvpa_et_protocol_field_3.setEnabled(m_nvd.getProtTcpIpClientEnable());
                         }
                     }
                 }
@@ -462,9 +454,6 @@ public class NumericValuePropActivity extends Activity implements
             }
             if (m_id_nvpa_et_protocol_field_2 != null) {
                 m_id_nvpa_et_protocol_field_2.setText(Integer.toString(m_nvd.getProtTcpIpClientValueAddress()));
-            }
-            if (m_id_nvpa_et_protocol_field_3 != null) {
-                m_id_nvpa_et_protocol_field_3.setText(Integer.toString(m_nvd.getProtTcpIpClientValueDataType()));
             }
         }
     }
@@ -485,8 +474,8 @@ public class NumericValuePropActivity extends Activity implements
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
                         DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
-                        getString(R.string.text_yndf_title_light_switch_name_already_exist),
-                        getString(R.string.text_yndf_message_light_switch_name_already_exist_confirmation),
+                        getString(R.string.text_yndf_title_numeric_value_name_already_exist),
+                        getString(R.string.text_yndf_message_numeric_value_name_already_exist_confirmation),
                         getString(R.string.text_yndf_btn_yes),
                         getString(R.string.text_yndf_btn_no)
                 ).show(getFragmentManager(), "");
@@ -505,7 +494,7 @@ public class NumericValuePropActivity extends Activity implements
             return ;
         }
         if (m_id_et_name == null || m_id_et_name.getText().toString().equals("")) {
-            OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.LIGHT_SWITCH_ERROR_NAME, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+            OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.NUMERIC_VALUE_ERROR_NAME, getString(R.string.text_odf_title_numeric_value_name_error), getString(R.string.text_odf_message_numeric_value_name_not_valid), getString(R.string.text_odf_message_ok_button));
             odf.show(getFragmentManager(), "");
             return ;
         }
@@ -545,6 +534,16 @@ public class NumericValuePropActivity extends Activity implements
             return ;
         }
 
+        if(m_id_nvpa_spn_data_type != null) {
+            m_nvd.setProtTcpIpClientValueDataType((int) m_id_nvpa_spn_data_type.getSelectedItemId());
+        }
+        if (m_id_nvpa_et_nr_of_decimal != null) {
+            m_nvd.setProtTcpIpClientValueNrOfDecimal(Integer.parseInt(m_id_nvpa_et_nr_of_decimal.getText().toString()));
+        }
+        if (m_id_nvpa_et_update_millis != null) {
+            m_nvd.setProtTcpIpClientValueUpdateMillis(Integer.parseInt(m_id_nvpa_et_update_millis.getText().toString()));
+        }
+
         if(m_id_nvpa_cb_enable_tcp_ip_client_protocol != null) {
             m_nvd.setProtTcpIpClientEnable(m_id_nvpa_cb_enable_tcp_ip_client_protocol.isChecked());
         }
@@ -559,19 +558,7 @@ public class NumericValuePropActivity extends Activity implements
                     m_nvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_nvpa_et_protocol_field_1.getText().toString()));
                 }
                 if (m_id_nvpa_et_protocol_field_2 != null) {
-                    m_nvd.setProtTcpIpClientValueOFF(Integer.parseInt(m_id_nvpa_et_protocol_field_2.getText().toString()));
-                }
-                if (m_id_nvpa_et_protocol_field_3 != null) {
-                    m_nvd.setProtTcpIpClientValueOFFON(Integer.parseInt(m_id_nvpa_et_protocol_field_3.getText().toString()));
-                }
-                if (m_id_lspa_et_protocol_field_4 != null) {
-                    m_nvd.setProtTcpIpClientValueONOFF(Integer.parseInt(m_id_lspa_et_protocol_field_4.getText().toString()));
-                }
-                if (m_id_lspa_et_protocol_field_5 != null) {
-                    m_nvd.setProtTcpIpClientValueON(Integer.parseInt(m_id_lspa_et_protocol_field_5.getText().toString()));
-                }
-                if (m_id_lspa_et_protocol_field_6 != null) {
-                    m_nvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_lspa_et_protocol_field_6.getText().toString()));
+                    m_nvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_nvpa_et_protocol_field_2.getText().toString()));
                 }
             } catch (Exception ex) {
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
@@ -581,7 +568,7 @@ public class NumericValuePropActivity extends Activity implements
         }
 
         m_nvd.setProtTcpIpClientSendDataOnChange(true);
-        if(SQLContract.LightSwitchEntry.save(m_nvd)){
+        if(SQLContract.NumericValueEntry.save(m_nvd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         } else {
@@ -602,7 +589,7 @@ public class NumericValuePropActivity extends Activity implements
     }
     private void deleteNumericValueData(int iDialogOriginID) {
         if(m_nvd != null) {
-            SQLContract.LightSwitchEntry.delete(m_nvd.getID(), m_nvd.getRoomID());
+            SQLContract.NumericValueEntry.delete(m_nvd.getID(), m_nvd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }
@@ -621,18 +608,18 @@ public class NumericValuePropActivity extends Activity implements
     }
 
 
-    public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID) {
+    public static Intent makeNumericValuePropActivity(Context context, long lRoomID, long lID) {
         Intent intent = new Intent();
         intent.setClass(context, NumericValuePropActivity.class);
         intent.putExtra(NumericValuePropActivity.ROOM_ID, lRoomID);
-        intent.putExtra(NumericValuePropActivity.LIGHT_SWITCH_ID, lID);
+        intent.putExtra(NumericValuePropActivity.NUMERIC_VALUE_ID, lID);
         return intent;
     }
 
-    public static Intent makeLightSwitchPropActivity(Context context, LightSwitchData lsd) {
+    public static Intent makeNumericValuePropActivity(Context context, NumericValueData nvd) {
         Intent intent = new Intent();
         intent.setClass(context, NumericValuePropActivity.class);
-        intent.putExtra(NumericValuePropActivity.LIGHT_SWITCH_DATA, lsd);
+        intent.putExtra(NumericValuePropActivity.NUMERIC_VALUE_DATA, nvd);
         return intent;
     }
 

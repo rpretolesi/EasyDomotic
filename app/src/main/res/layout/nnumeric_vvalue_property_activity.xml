@@ -285,25 +285,6 @@
                     android:text="0"
                     android:inputType="number"/>
 
-                <TextView
-                    android:id="@+id/id_nvpa_tv_protocol_field_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_protocol_field_2"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/text_nvpa_tv_protocol_field_3"
-                    android:labelFor="@+id/id_nvpa_et_protocol_field_3"/>
-
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
-                    android:id="@+id/id_nvpa_et_protocol_field_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/id_nvpa_tv_protocol_field_3"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_protocol_field_2"
-                    android:layout_marginStart="10dp"
-                    android:text="0"
-                    android:inputType="number"/>
-
             </RelativeLayout>
         </HorizontalScrollView>
 

@@ -10,35 +10,29 @@ public class NumericValueData implements Parcelable {
 
     public static int TAGMinChar = 1;
     public static int TAGMaxChar = 128;
-    public static String TAGDefaultValue = "My Name";
+    public static String TAGDefaultValue = "My NumericValue Name";
 
     public static int ProtTcpIpClientValueIDMinValue = 0;
     public static int ProtTcpIpClientValueIDMaxValue = 32768;
     public static String ProtTcpIpClientValueIDDefaulValue = "1";
 
-    public static int ProtTcpIpClientValueOFFMinValue = 0;
-    public static int ProtTcpIpClientValueOFFMaxValue = 255;
-    public static String ProtTcpIpClientValueOFFDefaulValue = "1";
-
-    public static int ProtTcpIpClientValueOFFONMinValue = 0;
-    public static int ProtTcpIpClientValueOFFONMaxValue = 255;
-    public static String ProtTcpIpClientValueOFFONDefaulValue = "3";
-
-    public static int ProtTcpIpClientValueONOFFMinValue = 0;
-    public static int ProtTcpIpClientValueONOFFMaxValue = 255;
-    public static String ProtTcpIpClientValueONOFFDefaulValue = "7";
-
-    public static int ProtTcpIpClientValueONMinValue = 0;
-    public static int ProtTcpIpClientValueONMaxValue = 255;
-    public static String ProtTcpIpClientValueONDefaulValue = "4";
-
-    public static int DataTypeMinValue = 0;
-    public static int DataTypeMaxValue = 3;
-    public static int DataTypeDefaulValue = -1;
-
     public static int ProtTcpIpClientValueAddressMinValue = 0;
     public static int ProtTcpIpClientValueAddressMaxValue = 65535;
     public static String ProtTcpIpClientValueAddressDefaulValue = "10000";
+
+    public static int ProtTcpIpClientValueDataTypeMinValue = 0;
+    public static int ProtTcpIpClientValueDataTypeMaxValue = 5;
+    public static int ProtTcpIpClientValueDataTypeDefaulValue = -1;
+
+    public static int ProtTcpIpClientValueNrOfDecimalMinValue = 0;
+    public static int ProtTcpIpClientValueNrOfDecimalMaxValue = 5;
+    public static String ProtTcpIpClientValueNrOfDecimalDefaulValue = "0";
+
+    public static int ProtTcpIpClientValueUpdateMillisMinValue = 100;
+    public static int ProtTcpIpClientValueUpdateMillisMaxValue = 65535;
+    public static String ProtTcpIpClientValueUpdateMillisDefaulValue = "1000";
+
+    public static String DefaultValue = "#####";
 
     private long m_ID;
     private boolean m_bSaved;

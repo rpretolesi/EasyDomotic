@@ -23,6 +23,8 @@ import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Modbus.ModbusStatus;
+import com.pretolesi.easydomotic.NumerValue.NumericValue;
+import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
@@ -53,6 +55,7 @@ public class BaseFragment extends Fragment implements
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
+    protected ArrayList<NumericValueData> m_alnvd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
     protected LinearLayout m_llStatusTcpIpServer;
@@ -134,6 +137,7 @@ public class BaseFragment extends Fragment implements
 
         getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
         getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
@@ -165,6 +169,7 @@ public class BaseFragment extends Fragment implements
         }
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
 
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
@@ -214,6 +219,15 @@ public class BaseFragment extends Fragment implements
             };
         }
 
+        if(id == Loaders.NUMERIC_VALUE_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.NumericValueEntry.load(getArguments().getLong(_ID, -1));
+                }
+            };
+        }
+
         return null;
     }
 
@@ -233,6 +247,11 @@ public class BaseFragment extends Fragment implements
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
             m_allsd = SQLContract.LightSwitchEntry.get(cursor);
             updateLightSwitchs();
+        }
+
+        if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
+            m_alnvd = SQLContract.NumericValueEntry.get(cursor);
+            updateNumericValues();
         }
 
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -321,6 +340,22 @@ public class BaseFragment extends Fragment implements
                     }
                     setViewPosition(ls, lsd.getPosX(), lsd.getPosY());
                     m_rl.addView(ls);
+                }
+            }
+        }
+    }
+
+    private void updateNumericValues(){
+        // Define the switch
+        if(m_rl != null && m_alnvd != null){
+            for(NumericValueData nvd : m_alnvd){
+                if(nvd != null){
+                    NumericValue nv = new NumericValue(getActivity(), nvd, getArguments().getBoolean(EDIT_MODE, false));
+                    if(nvd.getLandscape()){
+                        ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
+                    }
+                    setViewPosition(nv, nvd.getPosX(), nvd.getPosY());
+                    m_rl.addView(nv);
                 }
             }
         }

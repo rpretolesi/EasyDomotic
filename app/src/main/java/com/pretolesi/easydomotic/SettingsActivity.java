@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
+import com.pretolesi.easydomotic.NumerValue.NumericValuePropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientListFragment;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
@@ -95,6 +96,24 @@ public class SettingsActivity extends BaseActivity implements
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
                     Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this, rfd.getID(), -1);
+                    startActivity(intent);
+                }else {
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+                }
+            } else {
+                OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+            }
+        }
+
+        if(position == 3){
+            Fragment f = getFragmentManager().findFragmentById(R.id.container);
+            if(f != null && f instanceof BaseFragment){
+                BaseFragment bf = (BaseFragment)f;
+                RoomFragmentData rfd = bf.getRoomFragmentData();
+                if(rfd != null) {
+                    Intent intent = NumericValuePropActivity.makeNumericValuePropActivity(this, rfd.getID(), -1);
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))

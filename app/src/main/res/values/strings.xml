@@ -46,14 +46,14 @@
     <string name="settings_title_section_open_switch">Open Switch</string>
     <string name="settings_title_section_edit_switch">Edit Switch</string>
 
-    <string name="settings_title_section_new_tcp_ip_client">New TCP IP Client</string>
-    <string name="settings_title_section_open_tcp_ip_client">Open TCP IP Client</string>
-    <string name="settings_title_section_edit_tcp_ip_client">Edit TCP IP Client</string>
-
     <string name="settings_title_dialog_section_add_numeric_value">Numeric Value</string>
     <string name="settings_title_section_add_numeric_value">Add Numeric Value</string>
     <string name="settings_title_section_open_numeric_value">Open Numeric Value</string>
     <string name="settings_title_section_edit_numeric_value">Edit Numeric Value</string>
+
+    <string name="settings_title_section_new_tcp_ip_client">New TCP IP Client</string>
+    <string name="settings_title_section_open_tcp_ip_client">Open TCP IP Client</string>
+    <string name="settings_title_section_edit_tcp_ip_client">Edit TCP IP Client</string>
 
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
@@ -85,6 +85,10 @@
     <string name="text_odf_message_light_switch_name_not_valid">Light Switch Name not valid.</string>
     <string name="text_odf_message_light_switch_name_already_exist">LightSwitch Name already exist.</string>
 
+    <string name="text_odf_title_numeric_value_name_error">Numeric Value Name Error.</string>
+    <string name="text_odf_message_numeric_value_name_not_valid">Numeric Value Name not valid.</string>
+    <string name="text_odf_message_numeric_value_name_already_exist">Numeric Value Name already exist.</string>
+
     <string name="text_odf_title_position_not_valid">Position values are not valid.</string>
     <string name="text_odf_message_position_not_valid">Please set a valid Position values.</string>
 
@@ -111,11 +115,14 @@
     <string name="text_yndf_title_data_delete">Data is deleting &#8230; </string>
     <string name="text_yndf_message_data_delete_confirmation">Are you sure ?</string>
 
+    <string name="text_yndf_title_tcp_ip_client_name_already_exist">Tcp Ip Client name already exist.</string>
+    <string name="text_yndf_message_tcp_ip_client_name_already_exist_confirmation">Do you want to overwrite it ?</string>
+
     <string name="text_yndf_title_light_switch_name_already_exist">Light Switch name already exist.</string>
     <string name="text_yndf_message_light_switch_name_already_exist_confirmation">Do you want to overwrite it ?</string>
 
-    <string name="text_yndf_title_tcp_ip_client_name_already_exist">Tcp Ip Client name already exist.</string>
-    <string name="text_yndf_message_tcp_ip_client_name_already_exist_confirmation">Do you want to overwrite it ?</string>
+    <string name="text_yndf_title_numeric_value_name_already_exist">Numeric Value name already exist.</string>
+    <string name="text_yndf_message_numeric_value_name_already_exist_confirmation">Do you want to overwrite it ?</string>
 
     <string name="text_yndf_btn_yes">Yes</string>
     <string name="text_yndf_btn_no">No</string>

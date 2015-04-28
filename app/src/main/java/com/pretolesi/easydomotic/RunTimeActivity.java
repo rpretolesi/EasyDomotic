@@ -171,7 +171,7 @@ public class RunTimeActivity extends BaseActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
             TciIpClientHelper.stopInstance();
-            ricordarsi questo ordine di chiamata e poi fae i cmpi di lettura.
+//            ricordarsi questo ordine di chiamata e poi fae i cmpi di lettura.
         }
 
     }
