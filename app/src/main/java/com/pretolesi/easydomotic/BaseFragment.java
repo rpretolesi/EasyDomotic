@@ -22,7 +22,7 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.Modbus.ModbusStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -380,8 +380,9 @@ public class BaseFragment extends Fragment implements
         }
     }
 
+
     @Override
-    public void onModbusStatusCallback(ModbusStatus ms) {
+    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ticos) {
 
     }
 

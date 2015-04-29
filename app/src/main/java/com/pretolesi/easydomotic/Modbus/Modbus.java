@@ -12,22 +12,7 @@ import java.nio.ByteBuffer;
  *
  */
 public class Modbus {
-/*
-    // Listener e Callback
-    private static List<ModbusListener> m_vListener = new Vector<>();
 
-    // Imposto il listener
-    public static synchronized void registerListener(ModbusListener listener) {
-        if(!m_vListener.contains(listener)){
-            m_vListener.add(listener);
-        }
-    }
-    public static synchronized void unregisterListener(ModbusListener listener) {
-        if(m_vListener.contains(listener)){
-            m_vListener.remove(listener);
-        }
-    }
-*/
     public static synchronized TcpIpMsg writeSingleRegister(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
         short shTransactionIdentifier;
         byte byteUnitIdentifier;
@@ -180,7 +165,7 @@ public class Modbus {
       * Send callbacks
       */
 /*
-    private static void sendWriteSingleRegisterOkCallback(ModbusStatus ms){
+    private static void sendWriteSingleRegisterOkCallback(TcpIpClientOperationStatus ms){
         if(m_vListener != null) {
             for (ModbusListener ml : m_vListener) {
                 ml.onWriteSingleRegisterOkCallback(ms);
@@ -188,7 +173,7 @@ public class Modbus {
         }
     }
 
-    private static void sendWriteSingleRegisterExceptionCallback(ModbusStatus ms){
+    private static void sendWriteSingleRegisterExceptionCallback(TcpIpClientOperationStatus ms){
         if(m_vListener != null) {
             for (ModbusListener ml : m_vListener) {
                 ml.onWriteSingleRegisterExceptionCallback(ms);
@@ -204,7 +189,7 @@ public class Modbus {
         /**
          * Callbacks
          */
-//        void onWriteSingleRegisterOkCallback(ModbusStatus ms);
-//        void onWriteSingleRegisterExceptionCallback(ModbusStatus ms);
+//        void onWriteSingleRegisterOkCallback(TcpIpClientOperationStatus ms);
+//        void onWriteSingleRegisterExceptionCallback(TcpIpClientOperationStatus ms);
 //    }
 }

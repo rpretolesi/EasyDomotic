@@ -58,6 +58,9 @@ public class NumericValuePropActivity extends Activity implements
     private EditText m_id_et_position_z;
     private Spinner m_id_nvpa_spn_data_type;
     private EDEditText m_id_nvpa_et_nr_of_decimal;
+    private EDEditText m_id_nvpa_et_um;
+    private EDEditText m_id_nvpa_et_min_nr_char_to_show;
+    private CheckBox m_id_nvpa_cb_read_only;
     private EDEditText m_id_nvpa_et_update_millis;
 
     private CheckBox m_id_nvpa_cb_enable_tcp_ip_client_protocol;
@@ -95,6 +98,13 @@ public class NumericValuePropActivity extends Activity implements
         m_id_nvpa_et_nr_of_decimal = (EDEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(NumericValueData.ProtTcpIpClientValueNrOfDecimalMinValue, NumericValueData.ProtTcpIpClientValueNrOfDecimalMaxValue);
         m_id_nvpa_et_nr_of_decimal.setText(NumericValueData.ProtTcpIpClientValueNrOfDecimalDefaulValue);
+        m_id_nvpa_et_um = (EDEditText)findViewById(R.id.id_nvpa_et_um);
+        m_id_nvpa_et_um.setInputLimit(NumericValueData.ProtTcpIpClientValueUMMinValue, NumericValueData.ProtTcpIpClientValueUMMaxValue);
+        m_id_nvpa_et_um.setText(NumericValueData.ProtTcpIpClientValueUMDefaulValue);
+        m_id_nvpa_et_min_nr_char_to_show = (EDEditText)findViewById(R.id.id_nvpa_et_min_nr_char_to_show);
+        m_id_nvpa_et_min_nr_char_to_show.setInputLimit(NumericValueData.ProtTcpIpClientValueMinNrCharToShowMinValue, NumericValueData.ProtTcpIpClientValueMinNrCharToShowMaxValue);
+        m_id_nvpa_et_min_nr_char_to_show.setText(NumericValueData.ProtTcpIpClientValueMinNrCharToShowDefaulValue);
+        m_id_nvpa_cb_read_only = (CheckBox)findViewById(R.id.id_nvpa_cb_read_only);
         m_id_nvpa_et_update_millis = (EDEditText)findViewById(R.id.id_nvpa_et_update_millis);
         m_id_nvpa_et_update_millis.setInputLimit(NumericValueData.ProtTcpIpClientValueUpdateMillisMinValue, NumericValueData.ProtTcpIpClientValueUpdateMillisMaxValue);
         m_id_nvpa_et_update_millis.setText(NumericValueData.ProtTcpIpClientValueUpdateMillisDefaulValue);
@@ -429,6 +439,15 @@ public class NumericValuePropActivity extends Activity implements
             if (m_id_nvpa_et_nr_of_decimal != null) {
                 m_id_nvpa_et_nr_of_decimal.setText(Integer.toString(m_nvd.getProtTcpIpClientValueNrOfDecimal()));
             }
+            if (m_id_nvpa_et_um != null) {
+                m_id_nvpa_et_um.setText(m_nvd.getProtTcpIpClientValueUM());
+            }
+            if (m_id_nvpa_et_min_nr_char_to_show != null) {
+                m_id_nvpa_et_min_nr_char_to_show.setText(Integer.toString(m_nvd.getProtTcpIpClientValueMinNrCharToShow()));
+            }
+            if (m_id_nvpa_cb_read_only != null) {
+                m_id_nvpa_cb_read_only.setChecked(m_nvd.getProtTcpIpClientValueReadOnly());
+            }
             if (m_id_nvpa_et_update_millis != null) {
                 m_id_nvpa_et_update_millis.setText(Integer.toString(m_nvd.getProtTcpIpClientValueUpdateMillis()));
             }
@@ -539,6 +558,15 @@ public class NumericValuePropActivity extends Activity implements
         }
         if (m_id_nvpa_et_nr_of_decimal != null) {
             m_nvd.setProtTcpIpClientValueNrOfDecimal(Integer.parseInt(m_id_nvpa_et_nr_of_decimal.getText().toString()));
+        }
+        if (m_id_nvpa_et_um != null) {
+            m_nvd.setProtTcpIpClientValueUM(m_id_nvpa_et_um.getText().toString());
+        }
+        if (m_id_nvpa_et_min_nr_char_to_show != null) {
+            m_nvd.setProtTcpIpClientValueMinNrCharToShow(Integer.parseInt(m_id_nvpa_et_min_nr_char_to_show.getText().toString()));
+        }
+        if (m_id_nvpa_cb_read_only != null) {
+            m_nvd.setProtTcpIpClientValueReadOnly(m_id_nvpa_cb_read_only.isChecked());
         }
         if (m_id_nvpa_et_update_millis != null) {
             m_nvd.setProtTcpIpClientValueUpdateMillis(Integer.parseInt(m_id_nvpa_et_update_millis.getText().toString()));

@@ -28,6 +28,14 @@ public class NumericValueData implements Parcelable {
     public static int ProtTcpIpClientValueNrOfDecimalMaxValue = 5;
     public static String ProtTcpIpClientValueNrOfDecimalDefaulValue = "0";
 
+    public static int ProtTcpIpClientValueUMMinValue = 0;
+    public static int ProtTcpIpClientValueUMMaxValue = 9;
+    public static String ProtTcpIpClientValueUMDefaulValue = "";
+
+    public static int ProtTcpIpClientValueMinNrCharToShowMinValue = 1;
+    public static int ProtTcpIpClientValueMinNrCharToShowMaxValue = 9;
+    public static String ProtTcpIpClientValueMinNrCharToShowDefaulValue = "3";
+
     public static int ProtTcpIpClientValueUpdateMillisMinValue = 100;
     public static int ProtTcpIpClientValueUpdateMillisMaxValue = 65535;
     public static String ProtTcpIpClientValueUpdateMillisDefaulValue = "1000";
@@ -51,16 +59,12 @@ public class NumericValueData implements Parcelable {
     private int m_iProtTcpIpClientValueAddress;
     private int m_iProtTcpIpClientValueDataType;
     private int m_iProtTcpIpClientValueNrOfDecimal;
+    private String m_strProtTcpIpClientValueUM;
+    private int m_iProtTcpIpClientValueMinNrCharToShow;
+    private boolean m_bProtTcpIpClientValueReadOnly;
     private int m_iProtTcpIpClientValueUpdateMillis;
     private boolean m_bProtTcpIpClientSendDataOnChange;
     private boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData;
-
-
-    aggiungere:
-    -Nr minimo caratteri da visualizzare
-    -Sola òettura
-    -
-
 
     public NumericValueData() {
         this.m_ID = -1;
@@ -78,6 +82,9 @@ public class NumericValueData implements Parcelable {
         this.m_iProtTcpIpClientValueAddress = 0;
         this.m_iProtTcpIpClientValueDataType = 0;
         this.m_iProtTcpIpClientValueNrOfDecimal = 0;
+        this.m_strProtTcpIpClientValueUM = "";
+        this.m_iProtTcpIpClientValueMinNrCharToShow = 0;
+        this.m_bProtTcpIpClientValueReadOnly = false;
         this.m_iProtTcpIpClientValueUpdateMillis = 1000;
         this.m_bProtTcpIpClientSendDataOnChange = false;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = false;
@@ -99,6 +106,9 @@ public class NumericValueData implements Parcelable {
         this.m_iProtTcpIpClientValueAddress = 0;
         this.m_iProtTcpIpClientValueDataType = 0;
         this.m_iProtTcpIpClientValueNrOfDecimal = 0;
+        this.m_strProtTcpIpClientValueUM = "";
+        this.m_iProtTcpIpClientValueMinNrCharToShow = 0;
+        this.m_bProtTcpIpClientValueReadOnly = false;
         this.m_iProtTcpIpClientValueUpdateMillis = 1000;
         this.m_bProtTcpIpClientSendDataOnChange = false;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = false;
@@ -118,16 +128,19 @@ public class NumericValueData implements Parcelable {
          }
     }
 
-    public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType, int iProtTcpIpClientValueNrOfDecimal, int iProtTcpIpClientValueUpdateMillis, boolean bProtTcpIpClientSendDataOnChange, boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData) {
+    public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType, int iProtTcpIpClientValueNrOfDecimal, String strProtTcpIpClientValueUM, int iProtTcpIpClientValueMinNrCharToShow, boolean bProtTcpIpClientValueReadOnly, int iProtTcpIpClientValueUpdateMillis, boolean bProtTcpIpClientSendDataOnChange, boolean bProtTcpIpClientWaitAnswerBeforeSendNextData) {
         this.m_bProtTcpIpClientEnable = bProtTcpIpClientEnable;
         this.m_lProtTcpIpClientID = lProtTcpIpClientID;
         this.m_iProtTcpIpClientValueID = iProtTcpIpClientValueID;
         this.m_iProtTcpIpClientValueAddress = iProtTcpIpClientValueAddress;
         this.m_iProtTcpIpClientValueDataType = iProtTcpIpClientValueDataType;
         this.m_iProtTcpIpClientValueNrOfDecimal = iProtTcpIpClientValueNrOfDecimal;
+        this.m_strProtTcpIpClientValueUM = strProtTcpIpClientValueUM;
+        this.m_iProtTcpIpClientValueMinNrCharToShow = iProtTcpIpClientValueMinNrCharToShow;
+        this.m_bProtTcpIpClientValueReadOnly = bProtTcpIpClientValueReadOnly;
         this.m_iProtTcpIpClientValueUpdateMillis = iProtTcpIpClientValueUpdateMillis;
         this.m_bProtTcpIpClientSendDataOnChange = bProtTcpIpClientSendDataOnChange;
-        this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = m_bProtTcpIpClientWaitAnswerBeforeSendNextData;
+        this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = bProtTcpIpClientWaitAnswerBeforeSendNextData;
     }
 
     // Set Method
@@ -178,6 +191,18 @@ public class NumericValueData implements Parcelable {
 
     public void setProtTcpIpClientValueNrOfDecimal(int iProtTcpIpClientValueNrOfDecimal) {
         this.m_iProtTcpIpClientValueNrOfDecimal = iProtTcpIpClientValueNrOfDecimal;
+    }
+
+    public void setProtTcpIpClientValueUM(String strProtTcpIpClientValueUM) {
+        this.m_strProtTcpIpClientValueUM = strProtTcpIpClientValueUM;
+    }
+
+    public void setProtTcpIpClientValueMinNrCharToShow(int iProtTcpIpClientValueMinNrCharToShow) {
+        this.m_iProtTcpIpClientValueMinNrCharToShow = iProtTcpIpClientValueMinNrCharToShow;
+    }
+
+    public void setProtTcpIpClientValueReadOnly(boolean bProtTcpIpClientValueReadOnly) {
+        this.m_bProtTcpIpClientValueReadOnly = bProtTcpIpClientValueReadOnly;
     }
 
     public void setProtTcpIpClientValueUpdateMillis(int iProtTcpIpClientValueUpdateMillis) {
@@ -242,6 +267,18 @@ public class NumericValueData implements Parcelable {
         return m_iProtTcpIpClientValueNrOfDecimal;
     }
 
+    public String getProtTcpIpClientValueUM() {
+        return m_strProtTcpIpClientValueUM;
+    }
+
+    public int getProtTcpIpClientValueMinNrCharToShow() {
+        return m_iProtTcpIpClientValueMinNrCharToShow;
+    }
+
+    public boolean getProtTcpIpClientValueReadOnly() {
+        return m_bProtTcpIpClientValueReadOnly;
+    }
+
     public int getProtTcpIpClientValueUpdateMillis() {
         return m_iProtTcpIpClientValueUpdateMillis;
     }
@@ -267,6 +304,9 @@ public class NumericValueData implements Parcelable {
         m_iProtTcpIpClientValueAddress = in.readInt();
         m_iProtTcpIpClientValueDataType = in.readInt();
         m_iProtTcpIpClientValueNrOfDecimal = in.readInt();
+        m_strProtTcpIpClientValueUM = in.readString();
+        m_iProtTcpIpClientValueMinNrCharToShow = in.readInt();
+        m_bProtTcpIpClientValueReadOnly = in.readByte() != 0;
         m_iProtTcpIpClientValueUpdateMillis = in.readInt();
         m_bProtTcpIpClientSendDataOnChange = in.readByte() != 0;
         m_bProtTcpIpClientWaitAnswerBeforeSendNextData = in.readByte() != 0;
@@ -295,6 +335,9 @@ public class NumericValueData implements Parcelable {
         dest.writeInt(m_iProtTcpIpClientValueAddress);
         dest.writeInt(m_iProtTcpIpClientValueDataType);
         dest.writeInt(m_iProtTcpIpClientValueNrOfDecimal);
+        dest.writeString(m_strProtTcpIpClientValueUM);
+        dest.writeInt(m_iProtTcpIpClientValueMinNrCharToShow);
+        dest.writeByte((byte) (m_bProtTcpIpClientValueReadOnly ? 1 : 0));
         dest.writeInt(m_iProtTcpIpClientValueUpdateMillis);
         dest.writeByte((byte) (m_bProtTcpIpClientSendDataOnChange ? 1 : 0));
         dest.writeByte((byte) (m_bProtTcpIpClientWaitAnswerBeforeSendNextData ? 1 : 0));

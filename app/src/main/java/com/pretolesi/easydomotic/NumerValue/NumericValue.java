@@ -8,16 +8,12 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
-import com.pretolesi.easydomotic.Modbus.ModbusStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
@@ -134,7 +130,7 @@ public class NumericValue extends EditText implements
             setTimerHandler();
         }
 
-        setText(NumericValueData.DefaultValue);
+        setDefaultValue();
 
         Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
@@ -187,8 +183,26 @@ public class NumericValue extends EditText implements
         }
     }
 
+    private void setDefaultValue(){
+        String strDefaultValue = "";
+        if(m_nvd != null){
+             for(int iIndice = m_nvd.getProtTcpIpClientValueMinNrCharToShow() + m_nvd.getProtTcpIpClientValueNrOfDecimal(); iIndice > 0; iIndice--){
+                 if(iIndice == m_nvd.getProtTcpIpClientValueNrOfDecimal()){
+                     strDefaultValue = strDefaultValue + ".";
+                 }
+                 strDefaultValue = strDefaultValue + "#";
+             }
+            if(m_nvd.getProtTcpIpClientValueUM() != null && !m_nvd.getProtTcpIpClientValueUM().equals("")){
+                strDefaultValue = strDefaultValue + " " + m_nvd.getProtTcpIpClientValueUM();
+            }
+        } else {
+            strDefaultValue = NumericValueData.DefaultValue;
+        }
+        setText(strDefaultValue);
+    }
+
     @Override
-    public void onModbusStatusCallback(ModbusStatus ms) {
+    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ms) {
         if(ms != null){
             if(ms.getTransactionID() == m_iTIDRead || ms.getTransactionID() == m_iTIDWrite) {
                 Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();

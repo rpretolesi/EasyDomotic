@@ -15,8 +15,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.Modbus.Modbus;
-import com.pretolesi.easydomotic.Modbus.ModbusStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
@@ -184,12 +183,12 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    public void onModbusStatusCallback(ModbusStatus ms) {
+    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ms) {
         if(ms != null){
             if(ms.getTransactionID() == m_iTIDOFF || ms.getTransactionID() == m_iTIDOFFON || ms.getTransactionID() == m_iTIDONOFF || ms.getTransactionID() == m_iTIDON) {
                 Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
             }
-            // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+            // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
         }
     }
 

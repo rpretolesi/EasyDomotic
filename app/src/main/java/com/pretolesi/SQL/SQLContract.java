@@ -1204,6 +1204,9 @@ public class SQLContract
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL = "ProtTcpIpClientValueNrOfDecimal";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM = "ProtTcpIpClientValueUM";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW = "ProtTcpIpClientValueMinNrCharToShow";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY = "ProtTcpIpClientValueReadOnly";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS = "ProtTcpIpClientValueUpdateMillis";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE = "ProtTcpIpClientSendDataOnChange";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA = "ProtTcpIpClientWaitAnswerBeforeSendNextData";
@@ -1227,6 +1230,9 @@ public class SQLContract
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
@@ -1248,33 +1254,36 @@ public class SQLContract
                 if(db != null && alnvd != null) {
 
                     ContentValues values = new ContentValues();
-                    for(NumericValueData lsdTemp:alnvd){
-                        if(lsdTemp != null) {
-                            values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
-                            values.put(COLUMN_NAME_ROOM_ID, lsdTemp.getRoomID());
-                            values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
-                            values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
-                            values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
-                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
+                    for(NumericValueData nvdTemp:alnvd){
+                        if(nvdTemp != null) {
+                            values.put(COLUMN_NAME_TAG, String.valueOf(nvdTemp.getTag()));
+                            values.put(COLUMN_NAME_ROOM_ID, nvdTemp.getRoomID());
+                            values.put(COLUMN_NAME_X, Float.toString(nvdTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(nvdTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(nvdTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(nvdTemp.getLandscape() ? 1 : 0));
 
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getProtTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getProtTcpIpClientID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsdTemp.getProtTcpIpClientValueID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsdTemp.getProtTcpIpClientValueAddress());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, lsdTemp.getProtTcpIpClientValueDataType());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, lsdTemp.getProtTcpIpClientValueNrOfDecimal());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsdTemp.getProtTcpIpClientValueUpdateMillis());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(nvdTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, nvdTemp.getProtTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, nvdTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvdTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvdTemp.getProtTcpIpClientValueDataType());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvdTemp.getProtTcpIpClientValueNrOfDecimal());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvdTemp.getProtTcpIpClientValueUM());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvdTemp.getProtTcpIpClientValueMinNrCharToShow());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvdTemp.getProtTcpIpClientValueReadOnly() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvdTemp.getProtTcpIpClientValueUpdateMillis());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
 
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
-                            String[] whereArgs = {String.valueOf(lsdTemp.getID()), String.valueOf(lsdTemp.getRoomID())};
-                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsdTemp.getID());
+                            String[] whereArgs = {String.valueOf(nvdTemp.getID()), String.valueOf(nvdTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, nvdTemp.getID());
                             // Update or Save
                             if (id > 0) {
-                                lsdTemp.setID(id);
-                                lsdTemp.setSaved(true);
+                                nvdTemp.setID(id);
+                                nvdTemp.setSaved(true);
                             } else {
                                 bRes = false;
                             }
@@ -1312,6 +1321,9 @@ public class SQLContract
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvd.getProtTcpIpClientValueAddress());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvd.getProtTcpIpClientValueDataType());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvd.getProtTcpIpClientValueNrOfDecimal());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvd.getProtTcpIpClientValueUM());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvd.getProtTcpIpClientValueMinNrCharToShow());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0));
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvd.getProtTcpIpClientValueUpdateMillis());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
@@ -1361,6 +1373,9 @@ public class SQLContract
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
@@ -1384,6 +1399,9 @@ public class SQLContract
                             nvd.getProtTcpIpClientValueAddress(),
                             nvd.getProtTcpIpClientValueDataType(),
                             nvd.getProtTcpIpClientValueNrOfDecimal(),
+                            nvd.getProtTcpIpClientValueUM(),
+                            nvd.getProtTcpIpClientValueMinNrCharToShow(),
+                            Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0),
                             nvd.getProtTcpIpClientValueUpdateMillis(),
                             Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
                             Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
@@ -1430,6 +1448,9 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
@@ -1492,6 +1513,9 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
@@ -1644,6 +1668,9 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY)) == 0) ? false : true),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
