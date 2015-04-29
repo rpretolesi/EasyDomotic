@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
@@ -26,7 +26,7 @@ import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 public class NumericValue extends EditText implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-        TCPIPClient.TCPIPClientListener {
+        TCPIPClient.TCPIPClientStatusListener {
 
     private static final String TAG = "NumericValue";
     private GestureDetectorCompat mDetector;
@@ -122,7 +122,7 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.registerListener(this);
+                tic.registerTCPIPClientStatus(this);
             }
         }
 
@@ -147,7 +147,7 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.unregisterListener(this);
+                tic.unregisterTCPIPClientStatus(this);
             }
         }
 
@@ -202,7 +202,7 @@ public class NumericValue extends EditText implements
     }
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ms) {
+    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ms) {
         if(ms != null){
             if(ms.getTransactionID() == m_iTIDRead || ms.getTransactionID() == m_iTIDWrite) {
                 Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();

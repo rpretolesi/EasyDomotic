@@ -5,10 +5,9 @@ import com.pretolesi.easydomotic.R;
 /**
  *
  */
-vedere se e' il caso di dividere le operazioni con ognuna la sua classe di risposta, visto che sono poche tipologie, secondo me puo' convenire...
 
-public class TcpIpClientOperationStatus {
-    private static final String TAG = "TcpIpClientOperationStatus";
+public class TcpIpClientWriteStatus {
+    private static final String TAG = "TcpIpClientWriteStatus";
 
     private long m_lServerID;
     private int m_iTransactionID;
@@ -16,7 +15,7 @@ public class TcpIpClientOperationStatus {
     private int m_iErrorCode;
     private String m_strErrorMessage;
 
-    public TcpIpClientOperationStatus(){
+    public TcpIpClientWriteStatus(){
         m_lServerID = -1;
         m_iTransactionID = -1;
         m_sStatus = Status.IDLE;
@@ -24,7 +23,7 @@ public class TcpIpClientOperationStatus {
         m_strErrorMessage = "";
     }
 
-    public TcpIpClientOperationStatus(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage){
+    public TcpIpClientWriteStatus(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage){
         m_lServerID = lServerID;
         m_iTransactionID = iTransactionID;
         m_sStatus = sStatus;
@@ -40,7 +39,7 @@ public class TcpIpClientOperationStatus {
         m_strErrorMessage = strErrorMessage;
     }
 
-    public void setData(TcpIpClientOperationStatus ms){
+    public void setData(TcpIpClientWriteStatus ms){
         m_lServerID = ms.getServerID();
         m_iTransactionID = ms.getTransactionID();
         m_sStatus = ms.getStatus();
@@ -84,14 +83,10 @@ public class TcpIpClientOperationStatus {
 
     public static enum Status
     {
-        IDLE(0, R.string.ticos_idle),
-        OK(0, R.string.ticos_ok),
-        ERROR(1, R.string.ticos_error),
-        TIMEOUT(2, R.string.ticos_reading_ok),
-        READING_OK(3, R.string.ticos_reading_ok),
-        READING_ERROR(4, R.string.ticos_reading_error),
-        WRITING_OK(5, R.string.ticos_writing_ok),
-        WRITING_ERROR(6, R.string.ticos_writing_error);
+        IDLE(0, R.string.ticwos_idle),
+        OK(0, R.string.ticwos_ok),
+        ERROR(1, R.string.ticwos_error),
+        TIMEOUT(2, R.string.ticwos_timeout);
 
         private int ID;
         private int StringResID;

@@ -15,7 +15,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
@@ -27,7 +27,7 @@ public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         ToggleButton.OnCheckedChangeListener,
-        TCPIPClient.TCPIPClientListener {
+        TCPIPClient.TcpIpClientWriteSwitchStatusListener {
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -117,7 +117,7 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.registerListener(this);
+                tic.registerTcpIpClientWriteSwitchStatus(this);
             }
         }
 
@@ -147,7 +147,7 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.unregisterListener(this);
+                tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
 
@@ -183,18 +183,13 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ms) {
+    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ms) {
         if(ms != null){
             if(ms.getTransactionID() == m_iTIDOFF || ms.getTransactionID() == m_iTIDOFFON || ms.getTransactionID() == m_iTIDONOFF || ms.getTransactionID() == m_iTIDON) {
                 Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
             }
             // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
         }
-    }
-
-    @Override
-    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
-        // Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + tics.getID() + " Status: " + tics.getStatus().toString());
     }
 
     @Override

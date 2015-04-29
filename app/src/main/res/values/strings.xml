@@ -25,15 +25,11 @@
     <string name="tics_timeout">Timeout</string>
     <string name="tics_disconnecting">Disconnecting...</string>
 
-    <!-- TcpIpClientOperationStatus. -->
-    <string name="ticos_idle">Idle</string>
-    <string name="ticos_ok">Ok</string>
-    <string name="ticos_error">Error</string>
-    <string name="ticos_timeout">Timeout</string>
-    <string name="ticos_writing_ok">Writing Ok</string>
-    <string name="ticos_writing_error">Writing Error</string>
-    <string name="ticos_reading_ok">Reading Ok</string>
-    <string name="ticos_reading_error">Reading Error</string>
+    <!-- TcpIpClientWriteStatus. -->
+    <string name="ticwos_idle">Idle</string>
+    <string name="ticwos_ok">Ok</string>
+    <string name="ticwos_error">Error</string>
+    <string name="ticwos_timeout">Timeout</string>
 
     <!--
         Settings Activity

@@ -160,36 +160,4 @@ public class Modbus {
 
         return mpdu;
     }
-
-    /*
-      * Send callbacks
-      */
-/*
-    private static void sendWriteSingleRegisterOkCallback(TcpIpClientOperationStatus ms){
-        if(m_vListener != null) {
-            for (ModbusListener ml : m_vListener) {
-                ml.onWriteSingleRegisterOkCallback(ms);
-            }
-        }
-    }
-
-    private static void sendWriteSingleRegisterExceptionCallback(TcpIpClientOperationStatus ms){
-        if(m_vListener != null) {
-            for (ModbusListener ml : m_vListener) {
-                ml.onWriteSingleRegisterExceptionCallback(ms);
-            }
-        }
-    }
-*/
-    /**
-     * Callbacks interface.
-     */
-
-//    public static interface ModbusListener {
-        /**
-         * Callbacks
-         */
-//        void onWriteSingleRegisterOkCallback(TcpIpClientOperationStatus ms);
-//        void onWriteSingleRegisterExceptionCallback(TcpIpClientOperationStatus ms);
-//    }
 }

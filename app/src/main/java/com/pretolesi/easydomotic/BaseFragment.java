@@ -22,7 +22,7 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientOperationStatus;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class BaseFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
-        TCPIPClient.TCPIPClientListener {
+        TCPIPClient.TCPIPClientStatusListener {
 
     private static final String TAG = "BaseFragment";
 
@@ -130,7 +130,7 @@ public class BaseFragment extends Fragment implements
         if(tich != null) {
             for(TCPIPClient tic : tich.getTciIpClient()){
                 if(tic != null){
-                    tic.registerListener(this);
+                    tic.registerTcpIpClientStatus(this);
                 }
             }
         }
@@ -152,7 +152,8 @@ public class BaseFragment extends Fragment implements
         if(tich != null) {
             for(TCPIPClient tic : tich.getTciIpClient()){
                 if(tic != null){
-                    tic.unregisterListener(this);
+                    tic.unregisterTcpIplientStatus(this);
+
                 }
             }
         }
@@ -382,7 +383,7 @@ public class BaseFragment extends Fragment implements
 
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientOperationStatus ticos) {
+    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticos) {
 
     }
 
