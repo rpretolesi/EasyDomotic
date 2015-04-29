@@ -36,7 +36,7 @@ public class TCPIPClientPropActivity extends Activity implements
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
 
-    private static final String TAG = "TCPIPClientPropActivity";
+    private static final String TAG = "TCPIPClientPropAct";
 
     private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
 

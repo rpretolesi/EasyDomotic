@@ -22,6 +22,8 @@ import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
+import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
+
 /**
  *
  */
@@ -88,17 +90,27 @@ public class NumericValue extends EditText implements
         @Override
         public void run() {
             if(m_nvd != null && m_TimerHandler != null) {
-                if(!m_nvd.getProtTcpIpClientSendDataOnChange()){
-/*
-                    if(isChecked()){
-                        writeSwitchValue(m_iTIDON, m_nvd.getProtTcpIpClientValueAddress(), m_nvd.getProtTcpIpClientValueON());
-                    } else {
-                        writeSwitchValue(m_iTIDOFF, m_nvd.getProtTcpIpClientValueAddress(), m_nvd.getProtTcpIpClientValueOFF());
-                    }
-
-                    m_TimerHandler.postDelayed(m_TimerRunnable, m_nvd.getProtTcpIpClientValueUpdateMillis());
-*/
+                NumericValueData.DataType dtDataType = SHORT16;
+                if(m_nvd.getProtTcpIpClientValueDataType() == SHORT16.getID()) {
+                    dtDataType = SHORT16;
                 }
+                if(m_nvd.getProtTcpIpClientValueDataType() == INT32.getID()) {
+                    dtDataType = INT32;
+                }
+                if(m_nvd.getProtTcpIpClientValueDataType() == LONG64.getID()) {
+                    dtDataType = LONG64;
+                }
+                if(m_nvd.getProtTcpIpClientValueDataType() == FLOAT32.getID()) {
+                    dtDataType = FLOAT32;
+                }
+                if(m_nvd.getProtTcpIpClientValueDataType() == DOUBLE64.getID()) {
+                    dtDataType = DOUBLE64;
+                }
+
+                // Read Request
+                readNumericValue(m_iTIDRead, m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
+
+                m_TimerHandler.postDelayed(m_TimerRunnable, m_nvd.getProtTcpIpClientValueUpdateMillis());
             }
         }
     };
@@ -118,10 +130,8 @@ public class NumericValue extends EditText implements
             }
         }
 
-        if(m_nvd != null && !m_nvd.getProtTcpIpClientSendDataOnChange()){
-            if(!m_bEditMode) {
-                setTimerHandler();
-            }
+        if(!m_bEditMode) {
+            setTimerHandler();
         }
 
         setText(NumericValueData.DefaultValue);
@@ -132,10 +142,8 @@ public class NumericValue extends EditText implements
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(!m_nvd.getProtTcpIpClientSendDataOnChange()){
-            if(!m_bEditMode) {
-                resetTimerHandler();
-            }
+        if(!m_bEditMode) {
+            resetTimerHandler();
         }
 
         // Listener
@@ -168,17 +176,17 @@ public class NumericValue extends EditText implements
         Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 */
-/*
-    private void writeSwitchValue(int iTI, int iAddress, int iValue){
+
+    private void readNumericValue(int iTI, int iAddress, NumericValueData.DataType dtDataType){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeSwitchValue(iTI, iAddress, iValue);
+                tic.readNumericValue(iTI, iAddress, dtDataType);
             }
         }
     }
-*/
+
     @Override
     public void onModbusStatusCallback(ModbusStatus ms) {
         if(ms != null){

@@ -2,6 +2,7 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
+import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
@@ -62,10 +63,45 @@ public class Modbus {
         bb.putShort(shAddress);
         bb.putShort(shValue);
 
-        TcpIpMsg tim = new TcpIpMsg(iTransactionIdentifier, bb.array());
+        return new TcpIpMsg(iTransactionIdentifier, bb.array());
+    }
 
-        return tim;
-//        return bb.array();
+    public static synchronized TcpIpMsg readHoldingRegisters(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iStartingAddress, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
+        short shTransactionIdentifier;
+        byte byteUnitIdentifier;
+        short shAddress;
+        short shNrOfRegisters;
+        if(iTransactionIdentifier >= 0 && iTransactionIdentifier <= 65535){
+            shTransactionIdentifier = (short) iTransactionIdentifier;
+        } else {
+            throw new ModbusTransIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
+        }
+        if(iUnitIdentifier >= 0 && iUnitIdentifier <= 255){
+            byteUnitIdentifier = (byte) iUnitIdentifier;
+        } else {
+            throw new ModbusUnitIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
+        }
+        if(iStartingAddress >= 0 && iStartingAddress <= 65535){
+            shAddress = (short) iStartingAddress;
+        } else {
+            throw new ModbusAddressOutOfRangeException(context.getString(R.string.ModbusAddressOutOfRangeException));
+        }
+        if(iNrOfRegisters > 0 && iNrOfRegisters < 126) {
+            shNrOfRegisters = (short) iNrOfRegisters;
+        } else {
+            throw new ModbusQuantityOfRegistersOutOfRange(context.getString(R.string.ModbusValueArrayLengthOutOfRangeException));
+        }
+
+        ByteBuffer bb = ByteBuffer.allocate(12);
+        bb.putShort(shTransactionIdentifier);
+        bb.putShort((short)0);
+        bb.putShort((short)6);
+        bb.put(byteUnitIdentifier);
+        bb.put((byte)0x03);
+        bb.putShort(shAddress);
+        bb.putShort(shNrOfRegisters);
+
+        return new TcpIpMsg(iTransactionIdentifier, bb.array());
     }
 
     public static synchronized ModbusMBAP getMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {

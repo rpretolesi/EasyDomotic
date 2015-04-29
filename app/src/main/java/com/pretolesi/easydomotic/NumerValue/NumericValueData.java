@@ -55,6 +55,13 @@ public class NumericValueData implements Parcelable {
     private boolean m_bProtTcpIpClientSendDataOnChange;
     private boolean m_bProtTcpIpClientWaitAnswerBeforeSendNextData;
 
+
+    aggiungere:
+    -Nr minimo caratteri da visualizzare
+    -Sola òettura
+    -
+
+
     public NumericValueData() {
         this.m_ID = -1;
         this.m_bSaved = false;

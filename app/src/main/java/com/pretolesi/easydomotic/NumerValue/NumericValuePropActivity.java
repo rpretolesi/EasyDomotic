@@ -40,7 +40,7 @@ public class NumericValuePropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
-    private static final String TAG = "NumericValuePropActivity";
+    private static final String TAG = "NumericValuePropAct";
 
     private static final String ROOM_ID = "Room_ID";
     private static final String NUMERIC_VALUE_ID = "Numeric_Value_ID";

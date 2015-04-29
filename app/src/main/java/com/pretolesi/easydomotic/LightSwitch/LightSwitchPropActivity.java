@@ -40,7 +40,7 @@ public class LightSwitchPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
-    private static final String TAG = "LightSwitchPropActivity";
+    private static final String TAG = "LightSwitchPropAct";
 
     private static final String ROOM_ID = "Room_ID";
     private static final String LIGHT_SWITCH_ID = "Light_Switch_ID";
