@@ -10,12 +10,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
+
+import java.nio.ByteBuffer;
 
 import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 
@@ -25,6 +27,7 @@ import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 public class NumericValue extends EditText implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
+        TCPIPClient.TcpIpClientStatusListener,
         TCPIPClient.TcpIpClientReadValueStatusListener {
 
     private static final String TAG = "NumericValue";
@@ -121,6 +124,7 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
+                tic.registerTcpIpClientStatus(this);
                 tic.registerTcpIpClientReadValueStatus(this);
             }
         }
@@ -146,31 +150,13 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
+                tic.unregisterTcpIpClientStatus(this);
                 tic.unregisterTcpIpClientReadValueStatus(this);
             }
         }
 
         Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
-
-/*
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() enter Check Status: " + isChecked);
-
-        if(m_nvd != null) {
-            if(m_nvd.getProtTcpIpClientSendDataOnChange()){
-                if(isChecked){
-                    writeSwitchValue(m_iTIDON, m_nvd.getProtTcpIpClientValueAddress(), m_nvd.getProtTcpIpClientValueON());
-                } else {
-                    writeSwitchValue(m_iTIDOFF, m_nvd.getProtTcpIpClientValueAddress(), m_nvd.getProtTcpIpClientValueOFF());
-                }
-            }
-        }
-
-        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
-    }
-*/
 
     private void readNumericValue(int iTID, int iUID, int iAddress, NumericValueData.DataType dtDataType){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
@@ -184,6 +170,7 @@ public class NumericValue extends EditText implements
 
     private void setDefaultValue(){
         String strDefaultValue = "";
+
         if(m_nvd != null){
              for(int iIndice = m_nvd.getProtTcpIpClientValueMinNrCharToShow() + m_nvd.getProtTcpIpClientValueNrOfDecimal(); iIndice > 0; iIndice--){
                  if(iIndice == m_nvd.getProtTcpIpClientValueNrOfDecimal()){
@@ -197,19 +184,68 @@ public class NumericValue extends EditText implements
         } else {
             strDefaultValue = NumericValueData.DefaultValue;
         }
+
         setText(strDefaultValue);
     }
+    private void setErrorValue(){
+        String strErrorValue = "";
+        if(m_nvd != null){
+            strErrorValue = String.format("%s", "#Err# " + m_nvd.getProtTcpIpClientValueUM());
+        } else {
+            strErrorValue = String.format("%s", "#Err# ");
+        }
+        setText(strErrorValue);
+    }
 
+    @Override
+    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
+        if(tics != null && m_nvd != null) {
+            if(tics.getServerID() == m_nvd.getProtTcpIpClientID()){
+                setErrorValue();
+            }
+        }
+    }
 
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
-        if(ticrs != null){
-            if(ticrs.getTID() == m_iTIDRead || ticrs.getTID() == m_iTIDWrite) {
-                if(ticrs.getValue() != null) {
-                    Toast.makeText(this.getContext(), "Server ID: " + ticrs.getServerID() + " TID: " + ticrs.getTID() + " Status: " + ticrs.getStatus().toString() + " Error Code: " + ticrs.getErrorCode() + " Value: " + ticrs.getValue().toString(), Toast.LENGTH_SHORT).show();
+        if(ticrs != null && m_nvd != null){
+            if(ticrs.getServerID() == m_nvd.getProtTcpIpClientID()){
+                if(ticrs.getTID() == m_iTIDRead) {
+                    String strValue = "";
+                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.SHORT16.getID()){
+                        if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
+                            short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();
+                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
+                        }
+                    }
+                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.INT32.getID()){
+                        if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
+                            int iValue = ByteBuffer.wrap(ticrs.getValue()).getInt();
+                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
+                        }
+                    }
+                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.FLOAT32.getID()){
+                        if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
+                            float fValue = ByteBuffer.wrap(ticrs.getValue()).getFloat();
+                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)fValue, m_nvd.getProtTcpIpClientValueUM());
+                        }
+                    }
+                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.LONG64.getID()){
+                        if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
+                            long lValue = ByteBuffer.wrap(ticrs.getValue()).getLong();
+                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "d %s", lValue, m_nvd.getProtTcpIpClientValueUM());
+                        }
+                    }
+                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.DOUBLE64.getID()){
+                        if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
+                            double dValue = ByteBuffer.wrap(ticrs.getValue()).getDouble();
+                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", dValue, m_nvd.getProtTcpIpClientValueUM());
+                        }
+                    }
+                    setText(strValue);
                 }
+                // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
             }
-            // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }
     }
 
@@ -326,5 +362,4 @@ public class NumericValue extends EditText implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
-
 }

@@ -22,7 +22,6 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -152,7 +151,7 @@ public class BaseFragment extends Fragment implements
         if(tich != null) {
             for(TCPIPClient tic : tich.getTciIpClient()){
                 if(tic != null){
-                    tic.unregisterTcpIplientStatus(this);
+                    tic.unregisterTcpIpClientStatus(this);
 
                 }
             }
@@ -383,7 +382,7 @@ public class BaseFragment extends Fragment implements
 
     @Override
     public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
-        TextView tv = (TextView)getActivity().findViewById((int)tics.getID());
+        TextView tv = (TextView)getActivity().findViewById((int)tics.getServerID());
         if(tv != null){
             tv.setText(tics.getStatus().toString() + "\n" + tics.getError());
         }

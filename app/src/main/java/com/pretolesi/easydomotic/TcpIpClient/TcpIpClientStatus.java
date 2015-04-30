@@ -8,42 +8,42 @@ import com.pretolesi.easydomotic.R;
 public class TcpIpClientStatus {
     private static final String TAG = "TcpIpClientStatus";
 
-    private long m_lID;
+    private long m_lServerID;
     private Status m_sStatus;
     private String m_strError;
 
     public TcpIpClientStatus(){
-        m_lID = -1;
+        m_lServerID = -1;
         m_sStatus = Status.IDLE;
         m_strError = "";
     }
 
-    public TcpIpClientStatus(long lID, Status sStatus, String strError){
-        m_lID = lID;
+    public TcpIpClientStatus(long lServerID, Status sStatus, String strError){
+        m_lServerID = lServerID;
         m_sStatus = sStatus;
         m_strError = strError;
     }
 
     public void setData(long lID, Status sStatus, String strError){
-        m_lID = lID;
+        m_lServerID = lID;
         m_sStatus = sStatus;
         m_strError = strError;
     }
 
     public void setData(TcpIpClientStatus pud){
-        m_lID = pud.getID();
+        m_lServerID = pud.getServerID();
         m_sStatus = pud.getStatus();
         m_strError = pud.getError();
     }
 
     public void resetData(){
-        m_lID = -1;
+        m_lServerID = -1;
         m_sStatus = Status.IDLE;
         m_strError = "";
     }
 
-    public long getID(){
-        return m_lID;
+    public long getServerID(){
+        return m_lServerID;
     }
 
     public Status getStatus(){

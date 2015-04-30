@@ -47,7 +47,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
             m_vTcpIpClientStatusListener.add(listener);
         }
     }
-    public synchronized void unregisterTcpIplientStatus(TcpIpClientStatusListener listener) {
+    public synchronized void unregisterTcpIpClientStatus(TcpIpClientStatusListener listener) {
         if(m_vTcpIpClientStatusListener != null && m_vTcpIpClientStatusListener.contains(listener)){
             m_vTcpIpClientStatusListener.remove(listener);
         }
@@ -477,6 +477,16 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     switch (dtDataType) {
                         case SHORT16:
                             tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 2);
+                            break;
+
+                        case INT32:
+                        case FLOAT32:
+                            tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 4);
+                            break;
+
+                        case LONG64:
+                        case DOUBLE64:
+                            tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 8);
                             break;
                     }
                     if (m_vtim != null && tim != null) {

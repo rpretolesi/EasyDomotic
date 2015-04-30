@@ -7,7 +7,7 @@ import com.pretolesi.easydomotic.R;
  */
 
 public class TcpIpClientReadStatus {
-    private static final String TAG = "TcpIpClientWriteStatus";
+    private static final String TAG = "TcpIpClientReadStatus";
 
     private long m_lServerID;
     private int m_iTID;

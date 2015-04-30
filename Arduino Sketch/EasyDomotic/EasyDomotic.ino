@@ -274,11 +274,19 @@ void Communication()
             Serial.println(uiQuantityOfRegister);
 
             unsigned int iMBAPMsgLength = 0;
+            int iSV = analogRead(iInput);
+            float fSV = -56.78;
+            double dSV = -910.1112;
+            Serial.print("iSV: ");
+            Serial.print(iSV);
+            Serial.print("fSV: ");
+            Serial.print(fSV);
+            Serial.print("dSV: ");
+            Serial.println(dSV);
             switch(uiQuantityOfRegister){
               case 2:
                 // short 16 bit
-                int iSV = -1234;
-                iMBAPMsgLength = 11
+                iMBAPMsgLength = 11;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 m_byteToWriteMBAPMsg[9] = (iSV >> 8) & 0xFF; // Value
                 m_byteToWriteMBAPMsg[10] = iSV & 0xFF; // Value
@@ -288,6 +296,7 @@ void Communication()
                 break;
               
               case 4:
+/*              
                 // int 32 bit
                 int iSV = -5678;
                 iMBAPMsgLength = 13
@@ -297,11 +306,18 @@ void Communication()
                 m_byteToWriteMBAPMsg[11] = (iSV >> 8) & 0xFFFF; // Value
                 m_byteToWriteMBAPMsg[12] = iSV & 0xFFFF; // Value
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
+*/
+                // Float 32 bit
+                iMBAPMsgLength = 13;
+                // Tutto Ok, costruisco la risposta, 3° parte
+                floatTobytes(fSV, &m_byteToWriteMBAPMsg[9]);
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
 
                 bValueOk = true;
                 break;
 
               case 8:
+/*              
                 // long 64 bit
                 long lSV = -9101112;
                 iMBAPMsgLength = 17
@@ -314,6 +330,12 @@ void Communication()
                 m_byteToWriteMBAPMsg[14] = (lSV >> 16) & 0xFFFFFFFF; // Value
                 m_byteToWriteMBAPMsg[15] = (lSV >> 8) & 0xFFFFFFFF; // Value
                 m_byteToWriteMBAPMsg[16] = lSV & 0xFFFFFFFF; // Value
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
+*/
+                // Double 64 bit
+                iMBAPMsgLength = 17;
+                // Tutto Ok, costruisco la risposta, 3° parte
+                floatTobytes(dSV, &m_byteToWriteMBAPMsg[9]);
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
 
                 bValueOk = true;
@@ -472,4 +494,28 @@ void printWifiStatus() {
 //#define bytesToWord(hb,lb) ( (((WORD)(hb&0xFF))<<8) | ((WORD)lb) )
 word getWordFromBytes(byte lowByte, byte highByte) {
     return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
+}
+
+void floatTobytes(float floatVal, byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    float temp_float;
+    byte temp_bytearray[4];
+  } u;
+  // Overite bytes of union with float variable
+  u.temp_float = floatVal;
+  // Assign bytes to input array
+  memcpy(bytearrayVal, u.temp_bytearray, 4);
+}
+
+void doubleTobytes(double doubleVal, byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    double temp_double;
+    byte temp_bytearray[8];
+  } u;
+  // Overite bytes of union with float variable
+  u.temp_double = doubleVal;
+  // Assign bytes to input array
+  memcpy(bytearrayVal, u.temp_bytearray, 8);
 }
