@@ -275,7 +275,7 @@ void Communication()
 
             unsigned int iMBAPMsgLength = 0;
             int iSV = analogRead(iInput);
-            float fSV = -56.78;
+            float fSV = -11.11;
             double dSV = -910.1112;
             Serial.print("iSV: ");
             Serial.print(iSV);
@@ -284,18 +284,17 @@ void Communication()
             Serial.print("dSV: ");
             Serial.println(dSV);
             switch(uiQuantityOfRegister){
-              case 2:
+              case 1:
                 // short 16 bit
                 iMBAPMsgLength = 11;
                 // Tutto Ok, costruisco la risposta, 3° parte
-                m_byteToWriteMBAPMsg[9] = (iSV >> 8) & 0xFF; // Value
-                m_byteToWriteMBAPMsg[10] = iSV & 0xFF; // Value
+                shortTobytes(iSV, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
                 
                 bValueOk = true;
                 break;
               
-              case 4:
+              case 2:
 /*              
                 // int 32 bit
                 int iSV = -5678;
@@ -316,7 +315,7 @@ void Communication()
                 bValueOk = true;
                 break;
 
-              case 8:
+              case 4:
 /*              
                 // long 64 bit
                 long lSV = -9101112;
@@ -335,7 +334,7 @@ void Communication()
                 // Double 64 bit
                 iMBAPMsgLength = 17;
                 // Tutto Ok, costruisco la risposta, 3° parte
-                floatTobytes(dSV, &m_byteToWriteMBAPMsg[9]);
+                doubleTobytes(dSV, &m_byteToWriteMBAPMsg[9]);
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
 
                 bValueOk = true;
@@ -410,6 +409,9 @@ void Communication()
         }
 
         // Risposta completa, la invio
+        Serial.print("Nr of bytes to write: ");
+        Serial.println(m_uiNrByteToWrite);
+        
         Serial.print("Answer: ");
         for(int index_0 = 0; index_0 < m_uiNrByteToWrite; index_0++) {
           client.write(m_byteToWriteMBAPMsg[index_0]);
@@ -494,6 +496,18 @@ void printWifiStatus() {
 //#define bytesToWord(hb,lb) ( (((WORD)(hb&0xFF))<<8) | ((WORD)lb) )
 word getWordFromBytes(byte lowByte, byte highByte) {
     return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
+}
+
+void shortTobytes(short shortVal, byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    short temp_short;
+    byte temp_bytearray[2];
+  } u;
+  // Overite bytes of union with float variable
+  u.temp_short = shortVal;
+  // Assign bytes to input array
+  memcpy(bytearrayVal, u.temp_bytearray, 2);
 }
 
 void floatTobytes(float floatVal, byte* bytearrayVal){

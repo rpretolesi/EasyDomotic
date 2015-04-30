@@ -40,6 +40,7 @@ public class TciIpClientHelper {
     {
         if (context != null && lticd != null && m_Instance == null)
         {
+            m_context = context;
             m_Instance = new TciIpClientHelper(lticd);
         }
         return m_Instance;

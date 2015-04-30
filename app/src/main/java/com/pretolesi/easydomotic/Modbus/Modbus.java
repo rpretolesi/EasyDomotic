@@ -6,6 +6,7 @@ import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 /**
@@ -162,7 +163,11 @@ public class Modbus {
                     }
                     byte[] byteBuffer = new byte[iByteCount];
                     for(int iIndice = 0; iIndice < iByteCount; iIndice++){
-                        byteBuffer[iIndice] = bb.get();
+                        try{
+                            byteBuffer[iIndice] = bb.get();
+                        } catch(BufferUnderflowException ex) {
+                            throw new ModbusByteCountOutOfRangeException(context.getString(R.string.ModbusByteCountOutOfRangeException));
+                        }
                     }
 
                     mpdu = new ModbusPDU(iUI, iFEC, 0, iByteCount, byteBuffer);

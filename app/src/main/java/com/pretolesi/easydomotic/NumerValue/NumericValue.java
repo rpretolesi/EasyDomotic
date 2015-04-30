@@ -18,6 +18,7 @@ import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 
@@ -27,7 +28,6 @@ import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 public class NumericValue extends EditText implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-        TCPIPClient.TcpIpClientStatusListener,
         TCPIPClient.TcpIpClientReadValueStatusListener {
 
     private static final String TAG = "NumericValue";
@@ -129,7 +129,6 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.registerTcpIpClientStatus(this);
                 tic.registerTcpIpClientReadValueStatus(this);
             }
         }
@@ -155,7 +154,6 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.unregisterTcpIpClientStatus(this);
                 tic.unregisterTcpIpClientReadValueStatus(this);
             }
         }
@@ -192,23 +190,12 @@ public class NumericValue extends EditText implements
 
         setText(strDefaultValue);
     }
-    private void setErrorValue(){
-        String strErrorValue = "";
-        if(m_nvd != null){
-            strErrorValue = String.format("%s", "#Err# " + m_nvd.getProtTcpIpClientValueUM());
-        } else {
-            strErrorValue = String.format("%s", "#Err# ");
-        }
-        setText(strErrorValue);
+    private String getErrorValue(){
+        return "Error";
     }
 
-    @Override
-    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
-        if(tics != null && m_nvd != null) {
-            if(tics.getServerID() == m_nvd.getProtTcpIpClientID()){
-                setErrorValue();
-            }
-        }
+    private String getTimeoutValue(){
+        return "Timeout";
     }
 
     @Override
@@ -217,36 +204,43 @@ public class NumericValue extends EditText implements
             if(ticrs.getServerID() == m_nvd.getProtTcpIpClientID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     String strValue = "";
-                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.SHORT16.getID()){
-                        if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
-                            short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();
-                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
+                    if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK){
+                        if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.SHORT16.getID()){
+                            if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
+                                short shValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getShort();
+                                strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
+                            }
                         }
-                    }
-                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.INT32.getID()){
-                        if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
-                            int iValue = ByteBuffer.wrap(ticrs.getValue()).getInt();
-                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
+                        if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.INT32.getID()){
+                            if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
+                                int iValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getInt();
+                                strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
+                            }
                         }
-                    }
-                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.FLOAT32.getID()){
-                        if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
-                            float fValue = ByteBuffer.wrap(ticrs.getValue()).getFloat();
-                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)fValue, m_nvd.getProtTcpIpClientValueUM());
+                        if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.FLOAT32.getID()){
+                            if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
+                                float fValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                                strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)fValue, m_nvd.getProtTcpIpClientValueUM());
+                            }
                         }
-                    }
-                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.LONG64.getID()){
-                        if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
-                            long lValue = ByteBuffer.wrap(ticrs.getValue()).getLong();
-                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "d %s", lValue, m_nvd.getProtTcpIpClientValueUM());
+                        if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.LONG64.getID()){
+                            if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
+                                long lValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getLong();
+                                strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "d %s", lValue, m_nvd.getProtTcpIpClientValueUM());
+                            }
                         }
-                    }
-                    if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.DOUBLE64.getID()){
-                        if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
-                            double dValue = ByteBuffer.wrap(ticrs.getValue()).getDouble();
-                            strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", dValue, m_nvd.getProtTcpIpClientValueUM());
+                        if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.DOUBLE64.getID()){
+                            if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
+                                double dValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.).getDouble();
+                                strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", dValue, m_nvd.getProtTcpIpClientValueUM());
+                            }
                         }
+                    } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
+                        strValue = getTimeoutValue();
+                    } else {
+                        strValue = getErrorValue();
                     }
+
                     setText(strValue);
                 }
                 // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
