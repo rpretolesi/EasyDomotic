@@ -119,6 +119,11 @@ public class NumericValue extends EditText implements
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        // Check for read only
+        if(m_nvd != null && m_nvd.getProtTcpIpClientValueReadOnly()){
+            setKeyListener(null);
+        }
+
         // Listener
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_nvd != null && tich != null){
