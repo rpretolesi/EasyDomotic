@@ -22,8 +22,6 @@ public class ModbusMBAP {
         return m_iPI;
     }
 
-    public int getLength(){
-        return m_iLength;
-    }
+    public int getLength(){ return m_iLength; }
 
 }

@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -26,7 +27,7 @@ import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 public class NumericValue extends EditText implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-        TCPIPClient.TCPIPClientStatusListener {
+        TCPIPClient.TcpIpClientReadValueStatusListener {
 
     private static final String TAG = "NumericValue";
     private GestureDetectorCompat mDetector;
@@ -122,7 +123,7 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.registerTCPIPClientStatus(this);
+                tic.registerTcpIpClientReadValueStatus(this);
             }
         }
 
@@ -147,7 +148,7 @@ public class NumericValue extends EditText implements
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.unregisterTCPIPClientStatus(this);
+                tic.unregisterTcpIpClientReadValueStatus(this);
             }
         }
 
@@ -201,19 +202,15 @@ public class NumericValue extends EditText implements
         setText(strDefaultValue);
     }
 
+
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ms) {
-        if(ms != null){
-            if(ms.getTransactionID() == m_iTIDRead || ms.getTransactionID() == m_iTIDWrite) {
-                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
+    public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
+        if(ticrs != null){
+            if(ticrs.getTransactionID() == m_iTIDRead || ticrs.getTransactionID() == m_iTIDWrite) {
+                Toast.makeText(this.getContext(), "Server ID: " + ticrs.getServerID() + " TID: " + ticrs.getTransactionID() + " Status: " + ticrs.getStatus().toString() + " Error Code: " + ticrs.getErrorCode() + " Value: " + ticrs.getValue().toString(), Toast.LENGTH_SHORT).show();
             }
             // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
         }
-    }
-
-    @Override
-    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
-        // Log.d(TAG, this.toString() + ": " + "onTcpIpClientStatusCallback() ID: " + tics.getID() + " Status: " + tics.getStatus().toString());
     }
 
     @Override
@@ -329,4 +326,5 @@ public class NumericValue extends EditText implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
+
 }

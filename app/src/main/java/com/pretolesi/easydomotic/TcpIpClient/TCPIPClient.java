@@ -291,6 +291,15 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                                 }
                                             }
 
+                                            if(mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
+                                                // Check Return code
+                                                if (mpdu.getExC() == 0) {
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                                                } else {
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                                                }
+                                            }
+
                                             // m_timeMillisecondsGet = System.currentTimeMillis();
                                             Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                             return true;

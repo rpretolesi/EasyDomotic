@@ -7,6 +7,7 @@
     <string name="ModbusTransIdOutOfRangeException">Transaction Identifier is out of range.</string>
     <string name="ModbusProtocolOutOfRangeException">Protocol Identifier is out of range.</string>
     <string name="ModbusLengthOutOfRangeException">Length is out of range.</string>
+    <string name="ModbusByteCountOutOfRangeException">Byte Count is out of range.</string>
     <string name="ModbusUnitIdOutOfRangeException">Unit Identifier is out of range.</string>
     <string name="ModbusAddressOutOfRangeException">Address is out of range.</string>
     <string name="ModbusValueArrayLengthOutOfRangeException">Value Array Length is out of range.</string>

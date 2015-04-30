@@ -108,7 +108,7 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized ModbusPDU getPDU(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException {
+    public static synchronized ModbusPDU getPDU(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException, ModbusByteCountOutOfRangeException {
         // Max total message length 260 byte
         ModbusPDU mpdu = null;
 
@@ -138,19 +138,41 @@ public class Modbus {
             int iUI = bb.get();
             // Function Code
             int iFEC = bb.get() & 0xFF;
+            int iExceptionCode = 0;
             switch(iFEC) {
                 case 0x06:
                     int iRegisterAddress = bb.getShort();
                     int iRegisterValue = bb.getShort();
 
-                    mpdu = new ModbusPDU(iUI, iFEC, 0);
+                    mpdu = new ModbusPDU(iUI, iFEC, 0, 0, null);
 
                     break;
 
                 case 0x86:
-                    int iExceptionCode = bb.get();
+                    iExceptionCode = bb.get();
 
-                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode);
+                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);
+
+                    break;
+
+                case 0x03:
+                    int iByteCount = bb.get() & 0xFF;
+                    if(iByteCount < 1 || iLength > 125){
+                        throw new ModbusByteCountOutOfRangeException(context.getString(R.string.ModbusByteCountOutOfRangeException));
+                    }
+                    byte[] byteBuffer = new byte[iByteCount];
+                    for(int iIndice = 0; iIndice < iByteCount; iIndice++){
+                        byteBuffer[iIndice] = bb.get();
+                    }
+
+                    mpdu = new ModbusPDU(iUI, iFEC, 0, iByteCount, byteBuffer);
+
+                    break;
+
+                case 0x83:
+                    iExceptionCode = bb.get();
+
+                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);
 
                     break;
             }
