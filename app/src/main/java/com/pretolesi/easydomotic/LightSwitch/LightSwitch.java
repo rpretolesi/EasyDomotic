@@ -18,7 +18,6 @@ import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
 /**
  *
@@ -95,9 +94,9 @@ public class LightSwitch extends Switch implements
             if(m_lsd != null && m_TimerHandler != null) {
                 if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
                     if(isChecked()){
-                        writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
+                        writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                     } else {
-                        writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+                        writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                     }
 
                     m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
@@ -162,9 +161,9 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             if(m_lsd.getProtTcpIpClientSendDataOnChange()){
                 if(isChecked){
-                    writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
+                    writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                 } else {
-                    writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+                    writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                 }
             }
         }
@@ -172,12 +171,12 @@ public class LightSwitch extends Switch implements
         Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
-    private void writeSwitchValue(int iTI, int iAddress, int iValue){
+    private void writeSwitchValue(int iTID, int iUID, int iAddress, int iValue){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_lsd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeSwitchValue(iTI, iAddress, iValue);
+                tic.writeSwitchValue(iTID, iUID, iAddress, iValue);
             }
         }
     }
@@ -185,10 +184,10 @@ public class LightSwitch extends Switch implements
     @Override
     public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ms) {
         if(ms != null){
-            if(ms.getTransactionID() == m_iTIDOFF || ms.getTransactionID() == m_iTIDOFFON || ms.getTransactionID() == m_iTIDONOFF || ms.getTransactionID() == m_iTIDON) {
-                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
+            if(ms.getTID() == m_iTIDOFF || ms.getTID() == m_iTIDOFFON || ms.getTID() == m_iTIDONOFF || ms.getTID() == m_iTIDON) {
+                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
             }
-            // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+            // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }
     }
 

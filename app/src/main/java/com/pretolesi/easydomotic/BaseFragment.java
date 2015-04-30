@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class BaseFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
-        TCPIPClient.TCPIPClientStatusListener {
+        TCPIPClient.TcpIpClientStatusListener {
 
     private static final String TAG = "BaseFragment";
 
@@ -379,12 +379,6 @@ public class BaseFragment extends Fragment implements
                 }
             }
         }
-    }
-
-
-    @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticos) {
-
     }
 
     @Override

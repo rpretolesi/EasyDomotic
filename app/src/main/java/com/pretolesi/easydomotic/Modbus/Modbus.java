@@ -13,18 +13,18 @@ import java.nio.ByteBuffer;
  */
 public class Modbus {
 
-    public static synchronized TcpIpMsg writeSingleRegister(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
-        short shTransactionIdentifier;
-        byte byteUnitIdentifier;
+    public static synchronized TcpIpMsg writeSingleRegister(Context context, int iTID, int iUID, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
+        short shTID;
+        byte byteUID;
         short shAddress;
         short shValue;
-        if(iTransactionIdentifier >= 0 && iTransactionIdentifier <= 65535){
-            shTransactionIdentifier = (short) iTransactionIdentifier;
+        if(iTID >= 0 && iTID <= 65535){
+            shTID = (short) iTID;
         } else {
             throw new ModbusTransIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
         }
-        if(iUnitIdentifier >= 0 && iUnitIdentifier <= 255){
-            byteUnitIdentifier = (byte) iUnitIdentifier;
+        if(iUID >= 0 && iUID <= 255){
+            byteUID = (byte) iUID;
         } else {
             throw new ModbusUnitIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
         }
@@ -40,29 +40,29 @@ public class Modbus {
         }
 
         ByteBuffer bb = ByteBuffer.allocate(12);
-        bb.putShort(shTransactionIdentifier);
+        bb.putShort(shTID);
         bb.putShort((short)0);
         bb.putShort((short)6);
-        bb.put(byteUnitIdentifier);
+        bb.put(byteUID);
         bb.put((byte)0x06);
         bb.putShort(shAddress);
         bb.putShort(shValue);
 
-        return new TcpIpMsg(iTransactionIdentifier, bb.array());
+        return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
-    public static synchronized TcpIpMsg readHoldingRegisters(Context context, int iTransactionIdentifier, int iUnitIdentifier, int iStartingAddress, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
-        short shTransactionIdentifier;
-        byte byteUnitIdentifier;
+    public static synchronized TcpIpMsg readHoldingRegisters(Context context, int iTID, int iUID, int iStartingAddress, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
+        short shTID;
+        byte byteUID;
         short shAddress;
         short shNrOfRegisters;
-        if(iTransactionIdentifier >= 0 && iTransactionIdentifier <= 65535){
-            shTransactionIdentifier = (short) iTransactionIdentifier;
+        if(iTID >= 0 && iTID <= 65535){
+            shTID = (short) iTID;
         } else {
             throw new ModbusTransIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
         }
-        if(iUnitIdentifier >= 0 && iUnitIdentifier <= 255){
-            byteUnitIdentifier = (byte) iUnitIdentifier;
+        if(iUID >= 0 && iUID <= 255){
+            byteUID = (byte) iUID;
         } else {
             throw new ModbusUnitIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
         }
@@ -78,31 +78,31 @@ public class Modbus {
         }
 
         ByteBuffer bb = ByteBuffer.allocate(12);
-        bb.putShort(shTransactionIdentifier);
+        bb.putShort(shTID);
         bb.putShort((short)0);
         bb.putShort((short)6);
-        bb.put(byteUnitIdentifier);
+        bb.put(byteUID);
         bb.put((byte)0x03);
         bb.putShort(shAddress);
         bb.putShort(shNrOfRegisters);
 
-        return new TcpIpMsg(iTransactionIdentifier, bb.array());
+        return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
     public static synchronized ModbusMBAP getMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException {
         // Max message length 260 byte
         if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
-            int iTI = bb.getShort(); // Transaction Identifier
-            int iPI = bb.getShort(); // Protocol Identifier, must be 0
-            if(iPI != 0){
+            int iTID = bb.getShort(); // Transaction Identifier
+            int iPID = bb.getShort(); // Protocol Identifier, must be 0
+            if(iPID != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }
             int iLength = bb.getShort(); // Length
             if(iLength < 5 || iLength > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
-            return new ModbusMBAP(iTI, iPI, iLength);
+            return new ModbusMBAP(iTID, iPID, iLength);
         }
 
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
@@ -112,11 +112,11 @@ public class Modbus {
         // Max total message length 260 byte
         ModbusPDU mpdu = null;
 
-        int iTransactionIdentifier = 0; // Transaction Identifier
+        int iTID = 0; // Transaction Identifier
         int iLength = 0;
         if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
-            iTransactionIdentifier = bb.getShort(); // Transaction Identifier
+            iTID = bb.getShort(); // Transaction Identifier
             int iPI = bb.getShort(); // Protocol Identifier, must be 0
             if(iPI != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));

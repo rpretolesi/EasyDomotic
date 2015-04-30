@@ -4,20 +4,26 @@ package com.pretolesi.easydomotic.TcpIpClient;
  *
  */
 public class TcpIpMsg {
-    private long m_lMsgID;
+    private long m_lTID;
+    private long m_lUID;
     private byte[] m_byteMsgData;
     private boolean m_bMsgSent;
     private long m_lSentTimeMS;
 
-    public TcpIpMsg(long lMsgID, byte[] byteMsgData){
-        m_lMsgID = lMsgID;
+    public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData){
+        m_lTID = lTID;
+        m_lUID = lUID;
         m_byteMsgData = byteMsgData;
         m_bMsgSent = false;
         m_lSentTimeMS = System.currentTimeMillis();
     }
 
-    public long getMsgID(){
-        return m_lMsgID;
+    public long getTID(){
+        return m_lTID;
+    }
+
+    public long getUID(){
+        return m_lUID;
     }
 
     public byte[] getMsgData(){
@@ -49,7 +55,10 @@ public class TcpIpMsg {
         }
 
         final TcpIpMsg tim = (TcpIpMsg) obj;
-        if (this.m_lMsgID != tim.m_lMsgID) {
+        if (this.m_lTID != tim.m_lTID) {
+            return false;
+        }
+        if (this.m_lUID != tim.m_lUID) {
             return false;
         }
         return true;

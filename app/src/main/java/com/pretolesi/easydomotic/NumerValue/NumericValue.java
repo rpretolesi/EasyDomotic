@@ -14,10 +14,8 @@ import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
 import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 
@@ -105,7 +103,7 @@ public class NumericValue extends EditText implements
                 }
 
                 // Read Request
-                readNumericValue(m_iTIDRead, m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
+                readNumericValue(m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
 
                 m_TimerHandler.postDelayed(m_TimerRunnable, m_nvd.getProtTcpIpClientValueUpdateMillis());
             }
@@ -174,12 +172,12 @@ public class NumericValue extends EditText implements
     }
 */
 
-    private void readNumericValue(int iTI, int iAddress, NumericValueData.DataType dtDataType){
+    private void readNumericValue(int iTID, int iUID, int iAddress, NumericValueData.DataType dtDataType){
         TciIpClientHelper tich = TciIpClientHelper.getInstance();
         if(m_nvd != null && tich != null){
             TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.readNumericValue(iTI, iAddress, dtDataType);
+                tic.readNumericValue(iTID, iUID, iAddress, dtDataType);
             }
         }
     }
@@ -206,10 +204,12 @@ public class NumericValue extends EditText implements
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null){
-            if(ticrs.getTransactionID() == m_iTIDRead || ticrs.getTransactionID() == m_iTIDWrite) {
-                Toast.makeText(this.getContext(), "Server ID: " + ticrs.getServerID() + " TID: " + ticrs.getTransactionID() + " Status: " + ticrs.getStatus().toString() + " Error Code: " + ticrs.getErrorCode() + " Value: " + ticrs.getValue().toString(), Toast.LENGTH_SHORT).show();
+            if(ticrs.getTID() == m_iTIDRead || ticrs.getTID() == m_iTIDWrite) {
+                if(ticrs.getValue() != null) {
+                    Toast.makeText(this.getContext(), "Server ID: " + ticrs.getServerID() + " TID: " + ticrs.getTID() + " Status: " + ticrs.getStatus().toString() + " Error Code: " + ticrs.getErrorCode() + " Value: " + ticrs.getValue().toString(), Toast.LENGTH_SHORT).show();
+                }
             }
-            // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTransactionID() + " Status: " + ms.getStatus().toString());
+            // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }
     }
 

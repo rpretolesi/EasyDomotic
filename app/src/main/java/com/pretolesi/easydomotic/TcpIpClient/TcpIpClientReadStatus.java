@@ -10,7 +10,8 @@ public class TcpIpClientReadStatus {
     private static final String TAG = "TcpIpClientWriteStatus";
 
     private long m_lServerID;
-    private int m_iTransactionID;
+    private int m_iTID;
+    private int m_iUID;
     private Status m_sStatus;
     private int m_iErrorCode;
     private String m_strErrorMessage;
@@ -18,25 +19,28 @@ public class TcpIpClientReadStatus {
 
     public TcpIpClientReadStatus(){
         m_lServerID = -1;
-        m_iTransactionID = -1;
+        m_iTID = -1;
+        m_iUID = -1;
         m_sStatus = Status.IDLE;
         m_iErrorCode = 0;
         m_strErrorMessage = "";
         m_abyteValue = null;
     }
 
-    public TcpIpClientReadStatus(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
+    public TcpIpClientReadStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
         m_lServerID = lServerID;
-        m_iTransactionID = iTransactionID;
+        m_iTID = iTID;
+        m_iUID = iUID;
         m_sStatus = sStatus;
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
         m_abyteValue = abyteValue;
     }
 
-    public void setData(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
+    public void setData(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
         m_lServerID = lServerID;
-        m_iTransactionID = iTransactionID;
+        m_iTID = iTID;
+        m_iUID = iUID;
         m_sStatus = sStatus;
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
@@ -45,7 +49,8 @@ public class TcpIpClientReadStatus {
 
     public void setData(TcpIpClientReadStatus ticrs){
         m_lServerID = ticrs.getServerID();
-        m_iTransactionID = ticrs.getTransactionID();
+        m_iTID = ticrs.getTID();
+        m_iUID = ticrs.getUID();
         m_sStatus = ticrs.getStatus();
         m_iErrorCode = ticrs.getErrorCode();
         m_strErrorMessage = ticrs.getErrorMessage();
@@ -54,7 +59,8 @@ public class TcpIpClientReadStatus {
 
     public void resetData(){
         m_lServerID = -1;
-        m_iTransactionID = -1;
+        m_iTID = -1;
+        m_iUID = -1;
         m_sStatus = Status.IDLE;
         m_iErrorCode = 0;
         m_strErrorMessage = "";
@@ -65,14 +71,20 @@ public class TcpIpClientReadStatus {
         m_lServerID = lServerID;
     }
 
-    public void setTransactionID(int iTransactionID){ m_iTransactionID = iTransactionID; }
+    public void setTID(int iTID){ m_iTID = iTID; }
+
+    public void setUnitID(int iUnitID){ m_iUID = iUnitID; }
 
     public long getServerID(){
         return m_lServerID;
     }
 
-    public int getTransactionID(){
-        return m_iTransactionID;
+    public int getTID(){
+        return m_iTID;
+    }
+
+    public int getUID(){
+        return m_iUID;
     }
 
     public Status getStatus(){

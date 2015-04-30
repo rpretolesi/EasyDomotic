@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusLengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthException;
@@ -250,7 +251,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     if(tim.getMsgSent() && (System.currentTimeMillis() - tim.getSentTimeMS() > m_ticd.getTimeout())){
                         tim.setMsgAsSent(false);
                         tim.setMsgTimeMSNow();
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getMsgID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
+                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(),(int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
                    }
                 }
             }
@@ -285,18 +286,18 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                             if(mpdu.getFEC() == 0x06 || mpdu.getFEC() == 0x86) {
                                                 // Check Return code
                                                 if (mpdu.getExC() == 0) {
-                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
                                                 } else {
-                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
                                                 }
                                             }
 
                                             if(mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                                 // Check Return code
                                                 if (mpdu.getExC() == 0) {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", mpdu.getByteValue()));
                                                 } else {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTI(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", mpdu.getByteValue()));
                                                 }
                                             }
 
@@ -320,6 +321,10 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                                         Log.d(TAG, this.toString() + "receive()->" + "ModbusPDULengthException ex: " + ex.getMessage());
+                                    } catch (ModbusByteCountOutOfRangeException ex) {
+                                        // Callbacks on UI
+                                        publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                        Log.d(TAG, this.toString() + "receive()->" + "ModbusByteCountOutOfRangeException ex: " + ex.getMessage());
                                     }
 
                                 } catch (SocketTimeoutException ex) {
@@ -433,11 +438,11 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     /*
      * Writing/Reading Function
      */
-    public synchronized void writeSwitchValue(int lID, int iAddress, int iValue){
+    public synchronized void writeSwitchValue(int iTID, int iUID, int iAddress, int iValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
-                    TcpIpMsg tim = Modbus.writeSingleRegister(m_context, lID, 0,  iAddress, iValue);
+                    TcpIpMsg tim = Modbus.writeSingleRegister(m_context, iTID, iUID,  iAddress, iValue);
                     if (m_vtim != null && tim != null) {
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
@@ -445,33 +450,33 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), lID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), lID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), lID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), lID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 }
             }
         }
     }
 
-    public synchronized void readNumericValue(int lID, int iAddress, NumericValueData.DataType dtDataType){
+    public synchronized void readNumericValue(int iTID, int iUID, int iAddress, NumericValueData.DataType dtDataType){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 TcpIpMsg tim = null;
                 try {
                     switch (dtDataType) {
                         case SHORT16:
-                            tim = Modbus.readHoldingRegisters(m_context, lID, 0, iAddress, 2);
+                            tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 2);
                             break;
                     }
                     if (m_vtim != null && tim != null) {
@@ -481,19 +486,19 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), lID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                     Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), lID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                     Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), lID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                     Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), lID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 }
             }

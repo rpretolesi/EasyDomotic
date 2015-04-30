@@ -176,12 +176,23 @@ void Communication()
         m_byteToWriteMBAPMsg[3] = m_byteReadMBAP[3]; // Protocol Identifier
         m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
 
+        // Begin....
+        boolean bFunctionCodeOk = false;
+        boolean bAddressOk = false;
+        boolean bValueOk = false;
+        
+        // Function
+        if(uiModbusFunctionCode == 0x06 || uiModbusFunctionCode == 0x03){
+          bFunctionCodeOk = true;
+        }   
+
+        // Address
+        int iOutput = 0;
         if(uiModbusFunctionCode == 0x06){
           unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
           Serial.print("Address: ");
           Serial.println(uiModbusAddress);
-          boolean bAddressOk = false;
-          int iOutput = 0;
+  
           if(uiModbusAddress == 10000) {  
             iOutput = 3;
             bAddressOk = true;
@@ -197,11 +208,11 @@ void Communication()
           if(uiModbusAddress == 10003) {  
             iOutput = 9;
             bAddressOk = true;
-          }   
- 
-          if(bAddressOk == true){         
+          }  
+          if(bAddressOk == true){       
+
+            // Value
             int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
-            boolean bValueOk = false;
             Serial.print("Value: ");
             Serial.println(iModbuSingleValue);
             // Ok, i can use the value
@@ -224,7 +235,6 @@ void Communication()
                 
                 break;
             }
-
             if(bValueOk == true) {
               // Tutto Ok, costruisco la risposta, 2° parte
               unsigned int iMBAPMsgLength = 12;
@@ -240,7 +250,101 @@ void Communication()
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
               m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
               m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+            }            
+          }          
+        }
+  
+        int iInput = 0;
+        if(uiModbusFunctionCode == 0x03){
+          bAddressOk = true;
+
+          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
+          Serial.print("Starting Address: ");
+          Serial.println(uiModbusAddress);
+          if(uiModbusAddress == 20000) {  
+            iInput = 3;
+            bAddressOk = true;
+          }
+          if(bAddressOk == true){       
+            
+            // Quantity of Registers
+            unsigned int uiQuantityOfRegister = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
+            Serial.print("Quantity of Register: ");
+            Serial.println(uiQuantityOfRegister);
+
+            unsigned int iMBAPMsgLength = 0;
+            switch(uiQuantityOfRegister){
+              case 2:
+                // short 16 bit
+                int iSV = -1234;
+                iMBAPMsgLength = 11
+                // Tutto Ok, costruisco la risposta, 3° parte
+                m_byteToWriteMBAPMsg[9] = (iSV >> 8) & 0xFF; // Value
+                m_byteToWriteMBAPMsg[10] = iSV & 0xFF; // Value
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+                
+                bValueOk = true;
+                break;
+              
+              case 4:
+                // int 32 bit
+                int iSV = -5678;
+                iMBAPMsgLength = 13
+                // Tutto Ok, costruisco la risposta, 3° parte
+                m_byteToWriteMBAPMsg[9] = (iSV >> 24) & 0xFFFF; // Value
+                m_byteToWriteMBAPMsg[10] = (iSV >> 16) & 0xFFFF; // Value
+                m_byteToWriteMBAPMsg[11] = (iSV >> 8) & 0xFFFF; // Value
+                m_byteToWriteMBAPMsg[12] = iSV & 0xFFFF; // Value
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
+
+                bValueOk = true;
+                break;
+
+              case 8:
+                // long 64 bit
+                long lSV = -9101112;
+                iMBAPMsgLength = 17
+                // Tutto Ok, costruisco la risposta, 3° parte
+                m_byteToWriteMBAPMsg[9] = (lSV >> 56) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[10] = (lSV >> 48) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[11] = (lSV >> 40) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[12] = (lSV >> 32) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[13] = (lSV >> 24) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[14] = (lSV >> 16) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[15] = (lSV >> 8) & 0xFFFFFFFF; // Value
+                m_byteToWriteMBAPMsg[16] = lSV & 0xFFFFFFFF; // Value
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
+
+                bValueOk = true;
+                break;
+               
+              default:
+                // Exception
+                bValueOk = false;
+                
+                break;
+            }   
+               
+            if(bValueOk == true) {
+              // Tutto Ok, costruisco la risposta, 2° parte
+              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = (byte)(2 * uiQuantityOfRegister); // Byte Count (2 x uiQuantityOfRegister)
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            }                     
+          }
+        }
+
+          
+        if(bFunctionCodeOk == true) {
+          if(bAddressOk == true) {         
+            if(bValueOk == true) {
             } else {
               // Exception
               // Bad Value
@@ -255,7 +359,6 @@ void Communication()
               m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
             }
-              
           } else {
             // Exception
             // Bad Address

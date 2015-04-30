@@ -20,15 +20,15 @@
     <!-- TcpIpClientStatus. -->
     <string name="tics_idle">Idle</string>
     <string name="tics_offline">Offline</string>
-    <string name="tics_connecting">Connecting...</string>
+    <string name="tics_connecting">Connecting#8230</string>
     <string name="tics_online">Online</string>
     <string name="tics_error">Error</string>
     <string name="tics_timeout">Timeout</string>
-    <string name="tics_disconnecting">Disconnecting...</string>
+    <string name="tics_disconnecting">Disconnecting#8230</string>
 
     <!-- TcpIpClientWriteStatus. -->
     <string name="ticwos_idle">Idle</string>
-    <string name="ticwos_ok">Ok</string>
+    <string name="ticwos_ok">OK</string>
     <string name="ticwos_error">Error</string>
     <string name="ticwos_timeout">Timeout</string>
 
@@ -207,7 +207,7 @@
 
 
     <!-- General string -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
 </resources>

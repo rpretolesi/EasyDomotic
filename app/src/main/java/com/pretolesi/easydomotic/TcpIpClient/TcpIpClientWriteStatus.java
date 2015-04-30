@@ -10,46 +10,52 @@ public class TcpIpClientWriteStatus {
     private static final String TAG = "TcpIpClientWriteStatus";
 
     private long m_lServerID;
-    private int m_iTransactionID;
+    private int m_iTID;
+    private int m_iUID;
     private Status m_sStatus;
     private int m_iErrorCode;
     private String m_strErrorMessage;
 
     public TcpIpClientWriteStatus(){
         m_lServerID = -1;
-        m_iTransactionID = -1;
+        m_iTID = -1;
+        m_iUID = -1;
         m_sStatus = Status.IDLE;
         m_iErrorCode = 0;
         m_strErrorMessage = "";
     }
 
-    public TcpIpClientWriteStatus(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage){
+    public TcpIpClientWriteStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage){
         m_lServerID = lServerID;
-        m_iTransactionID = iTransactionID;
+        m_iTID = iTID;
+        m_iUID = iUID;
         m_sStatus = sStatus;
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
     }
 
-    public void setData(long lServerID, int iTransactionID, Status sStatus, int iErrorCode, String strErrorMessage){
+    public void setData(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage){
         m_lServerID = lServerID;
-        m_iTransactionID = iTransactionID;
+        m_iTID = iTID;
+        m_iUID = iUID;
         m_sStatus = sStatus;
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
     }
 
-    public void setData(TcpIpClientWriteStatus ms){
-        m_lServerID = ms.getServerID();
-        m_iTransactionID = ms.getTransactionID();
-        m_sStatus = ms.getStatus();
-        m_iErrorCode = ms.getErrorCode();
-        m_strErrorMessage = ms.getErrorMessage();
+    public void setData(TcpIpClientWriteStatus ticws){
+        m_lServerID = ticws.getServerID();
+        m_iTID = ticws.getTID();
+        m_iUID = ticws.getUID();
+        m_sStatus = ticws.getStatus();
+        m_iErrorCode = ticws.getErrorCode();
+        m_strErrorMessage = ticws.getErrorMessage();
     }
 
     public void resetData(){
         m_lServerID = -1;
-        m_iTransactionID = -1;
+        m_iTID = -1;
+        m_iUID = -1;
         m_sStatus = Status.IDLE;
         m_iErrorCode = 0;
         m_strErrorMessage = "";
@@ -59,14 +65,20 @@ public class TcpIpClientWriteStatus {
         m_lServerID = lServerID;
     }
 
-    public void setTransactionID(int iTransactionID){ m_iTransactionID = iTransactionID; }
+    public void setTID(int iTID){ m_iTID = iTID; }
+
+    public void setUID(int iUID){ m_iUID = iUID; }
 
     public long getServerID(){
         return m_lServerID;
     }
 
-    public int getTransactionID(){
-        return m_iTransactionID;
+    public int getTID(){
+        return m_iTID;
+    }
+
+    public int getUID(){
+        return m_iUID;
     }
 
     public Status getStatus(){
