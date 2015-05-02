@@ -176,6 +176,17 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     }
 
     private synchronized boolean isConnected() {
+        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+            TcpIpMsg tim = iterator.next();
+            if (tim != null) {
+                if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
+                    tim.setMsgTimeMSNow();
+                    publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
+                    publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
+                }
+            }
+        }
+
         if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
             iProgressCounter = iProgressCounter + 1;
             if(iProgressCounter > 16) {
@@ -247,19 +258,17 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
 
             // In case of timeout, i pute the message in queue again
+            boolean bMsgSent = false;
             for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
                 TcpIpMsg tim = iterator.next();
                 if (tim != null) {
-                    if(tim.getMsgSent() && (System.currentTimeMillis() - tim.getSentTimeMS() > m_ticd.getTimeout())){
-                        tim.setMsgAsSent(false);
-                        tim.setMsgTimeMSNow();
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (int)tim.getTID(), (int)tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
-                        publishProgress(new TcpIpClientReadStatus(getID(), (int)tim.getTID(), (int)tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
-                   }
+                    if(tim.getMsgSent()) {
+                        bMsgSent = true;
+                    }
                 }
             }
 
-            if (!m_vtim.isEmpty()) {
+            if (bMsgSent) {
                 if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                     // MBAP
                     byte[] byteMBAP = new byte[6];

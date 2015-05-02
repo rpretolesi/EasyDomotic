@@ -263,7 +263,7 @@ void Communication()
           Serial.print("Starting Address: ");
           Serial.println(uiModbusAddress);
           if(uiModbusAddress == 20000) {  
-            iInput = 3;
+            iInput = 0;
             bAddressOk = true;
           }
           if(bAddressOk == true){       
@@ -275,19 +275,14 @@ void Communication()
 
             unsigned int iMBAPMsgLength = 0;
             int iSV = analogRead(iInput);
-            float fSV = -11.11;
-            double dSV = -910.1112;
-            Serial.print("iSV: ");
-            Serial.print(iSV);
-            Serial.print("fSV: ");
-            Serial.print(fSV);
-            Serial.print("dSV: ");
-            Serial.println(dSV);
+            float fSV = analogRead(iInput)/3.3;
             switch(uiQuantityOfRegister){
               case 1:
                 // short 16 bit
                 iMBAPMsgLength = 11;
                 // Tutto Ok, costruisco la risposta, 3° parte
+                Serial.print("iSV: ");
+                Serial.print(iSV);
                 shortTobytes(iSV, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
                 
@@ -297,45 +292,16 @@ void Communication()
               case 2:
 /*              
                 // int 32 bit
-                int iSV = -5678;
-                iMBAPMsgLength = 13
-                // Tutto Ok, costruisco la risposta, 3° parte
-                m_byteToWriteMBAPMsg[9] = (iSV >> 24) & 0xFFFF; // Value
-                m_byteToWriteMBAPMsg[10] = (iSV >> 16) & 0xFFFF; // Value
-                m_byteToWriteMBAPMsg[11] = (iSV >> 8) & 0xFFFF; // Value
-                m_byteToWriteMBAPMsg[12] = iSV & 0xFFFF; // Value
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
+     
 */
                 // Float 32 bit
                 iMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
+                Serial.print("fSV: ");
+                Serial.print(fSV);
+//                shortTobytes(iSV, &m_byteToWriteMBAPMsg[9]);                
                 floatTobytes(fSV, &m_byteToWriteMBAPMsg[9]);
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
-
-                bValueOk = true;
-                break;
-
-              case 4:
-/*              
-                // long 64 bit
-                long lSV = -9101112;
-                iMBAPMsgLength = 17
-                // Tutto Ok, costruisco la risposta, 3° parte
-                m_byteToWriteMBAPMsg[9] = (lSV >> 56) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[10] = (lSV >> 48) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[11] = (lSV >> 40) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[12] = (lSV >> 32) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[13] = (lSV >> 24) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[14] = (lSV >> 16) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[15] = (lSV >> 8) & 0xFFFFFFFF; // Value
-                m_byteToWriteMBAPMsg[16] = lSV & 0xFFFFFFFF; // Value
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
-*/
-                // Double 64 bit
-                iMBAPMsgLength = 17;
-                // Tutto Ok, costruisco la risposta, 3° parte
-                doubleTobytes(dSV, &m_byteToWriteMBAPMsg[9]);
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 8;            
 
                 bValueOk = true;
                 break;
@@ -522,14 +488,3 @@ void floatTobytes(float floatVal, byte* bytearrayVal){
   memcpy(bytearrayVal, u.temp_bytearray, 4);
 }
 
-void doubleTobytes(double doubleVal, byte* bytearrayVal){
-  // Create union of shared memory space
-  union {
-    double temp_double;
-    byte temp_bytearray[8];
-  } u;
-  // Overite bytes of union with float variable
-  u.temp_double = doubleVal;
-  // Assign bytes to input array
-  memcpy(bytearrayVal, u.temp_bytearray, 8);
-}

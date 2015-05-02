@@ -51,8 +51,6 @@ public class RunTimeActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         // The activity has become visible (it is now "resumed").
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
-
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
@@ -60,8 +58,6 @@ public class RunTimeActivity extends BaseActivity implements
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
-        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
-
         Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
@@ -145,34 +141,17 @@ public class RunTimeActivity extends BaseActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
-        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
-            return new CursorLoader(this){
-                @Override
-                public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load();
-                }
-            };
-        }
 
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
-            ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
-            TciIpClientHelper.startInstance(getApplicationContext(), alticd);
-        }
-
         Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
-            TciIpClientHelper.stopInstance();
-//            ricordarsi questo ordine di chiamata e poi fae i cmpi di lettura.
-        }
 
     }
 /*

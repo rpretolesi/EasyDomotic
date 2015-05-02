@@ -112,9 +112,8 @@ public class LightSwitch extends Switch implements
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_lsd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+        if(m_lsd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
                 tic.registerTcpIpClientWriteSwitchStatus(this);
             }
@@ -142,9 +141,8 @@ public class LightSwitch extends Switch implements
         setOnCheckedChangeListener(null);
 
         // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_lsd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+        if(m_lsd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -172,9 +170,8 @@ public class LightSwitch extends Switch implements
     }
 
     private void writeSwitchValue(int iTID, int iUID, int iAddress, int iValue){
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_lsd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_lsd.getProtTcpIpClientID());
+        if(m_lsd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
                 tic.writeSwitchValue(iTID, iUID, iAddress, iValue);
             }

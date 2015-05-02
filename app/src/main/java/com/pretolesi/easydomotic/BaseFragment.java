@@ -25,6 +25,7 @@ import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
+import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -123,20 +124,8 @@ public class BaseFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
-        // Register Listener For Tcp Ip Server
-        // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(tich != null) {
-            for(TCPIPClient tic : tich.getTciIpClient()){
-                if(tic != null){
-                    tic.registerTcpIpClientStatus(this);
-                }
-            }
-        }
-
-        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-        getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
-        getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
+        // Start the Server
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
 
         Log.d(TAG, this.toString() + ": " + "onResume()");
     }
@@ -144,20 +133,7 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-
-        // Unregister Listener For Tcp Ip Server
-        // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(tich != null) {
-            for(TCPIPClient tic : tich.getTciIpClient()){
-                if(tic != null){
-                    tic.unregisterTcpIpClientStatus(this);
-
-                }
-            }
-        }
-
-        // remove all object
+        // remove all objects in the room
         if(m_llStatusTcpIpServer != null){
             m_llStatusTcpIpServer.removeAllViews();
         }
@@ -167,6 +143,21 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null){
             m_rl.removeAllViews();
         }
+
+        // Unregister Listener For Tcp Ip Server
+        // Listener
+        if(TciIpClientHelper.getInstance() != null) {
+            for(TCPIPClient tic : TciIpClientHelper.getTciIpClient()){
+                if(tic != null){
+                    tic.unregisterTcpIpClientStatus(this);
+
+                }
+            }
+        }
+
+        TciIpClientHelper.stopInstance();
+
+        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
@@ -201,6 +192,16 @@ public class BaseFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+
+        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.TcpIpClientEntry.load();
+                }
+            };
+        }
+
         if(id == Loaders.ROOM_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
@@ -234,12 +235,38 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // The list should now be shown.
+        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+            ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+
+            // Start Only if not in edit mode
+            if(!getArguments().getBoolean(EDIT_MODE, false)) {
+                TciIpClientHelper.startInstance(getActivity(), alticd);
+
+                // Register Listener For Tcp Ip Server
+                // Listener
+                if(TciIpClientHelper.getTciIpClient() != null) {
+                    for(TCPIPClient tic : TciIpClientHelper.getTciIpClient()){
+                        if(tic != null){
+                            tic.registerTcpIpClientStatus(this);
+                        }
+                    }
+                }
+            }
+
+            // Room
+            getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+        }
+
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
             if(alrfd != null && !alrfd.isEmpty()) {
                 m_rfd = alrfd.get(0);
                 if(m_rfd != null){
                     updateRoom();
+
+                    // Room's elements
+                    getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+                    getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
                 }
             }
         }
@@ -310,7 +337,7 @@ public class BaseFragment extends Fragment implements
                 llp.setLayoutDirection(LinearLayout.HORIZONTAL);
                 llp.weight = (float) 1.0;
                 if (tich != null) {
-                    for (TCPIPClient tic : tich.getTciIpClient()) {
+                    for (TCPIPClient tic : TciIpClientHelper.getTciIpClient()) {
                         if (tic != null) {
                             tv = new TextView(getActivity());
                             tv.setId((int)tic.getID());

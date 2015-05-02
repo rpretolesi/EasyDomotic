@@ -5,13 +5,22 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewParent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -25,7 +34,7 @@ import static com.pretolesi.easydomotic.NumerValue.NumericValueData.DataType.*;
 /**
  *
  */
-public class NumericValue extends EditText implements
+public class NumericValue extends TextView implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         TCPIPClient.TcpIpClientReadValueStatusListener {
@@ -41,6 +50,9 @@ public class NumericValue extends EditText implements
     private float mLastTouchY;
 
     private boolean m_bEditMode;
+
+    private EDEditText m_edEditText;
+    private TextView aaa;
 
     public NumericValue(Context context) {
         super(context);
@@ -119,25 +131,20 @@ public class NumericValue extends EditText implements
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // Check for read only
-        if(m_nvd != null && m_nvd.getProtTcpIpClientValueReadOnly()){
-            setKeyListener(null);
-        }
-
         // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_nvd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.registerTcpIpClientReadValueStatus(this);
-            }
-        }
-
         if(!m_bEditMode) {
+            if(m_nvd != null){
+                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
+                if(tic != null){
+                    tic.registerTcpIpClientReadValueStatus(this);
+                }
+            }
             setTimerHandler();
         }
 
-        setDefaultValue();
+
+        this.setError("");
+        setText(getDefaultValue());
 
         Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
@@ -150,9 +157,8 @@ public class NumericValue extends EditText implements
         }
 
         // Listener
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_nvd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
+        if(m_nvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientReadValueStatus(this);
             }
@@ -162,16 +168,15 @@ public class NumericValue extends EditText implements
     }
 
     private void readNumericValue(int iTID, int iUID, int iAddress, NumericValueData.DataType dtDataType){
-        TciIpClientHelper tich = TciIpClientHelper.getInstance();
-        if(m_nvd != null && tich != null){
-            TCPIPClient tic = tich.getTciIpClient(m_nvd.getProtTcpIpClientID());
+        if(m_nvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.readNumericValue(iTID, iUID, iAddress, dtDataType);
             }
         }
     }
 
-    private void setDefaultValue(){
+    private String getDefaultValue(){
         String strDefaultValue = "";
 
         if(m_nvd != null){
@@ -188,10 +193,10 @@ public class NumericValue extends EditText implements
             strDefaultValue = NumericValueData.DefaultValue;
         }
 
-        setText(strDefaultValue);
+        return strDefaultValue;
     }
-    private String getErrorValue(){
-        return "Error";
+    private String getErrorValue(int iErrorCode){
+        return "Error Code: " + iErrorCode;
     }
 
     private String getTimeoutValue(){
@@ -231,14 +236,17 @@ public class NumericValue extends EditText implements
                         }
                         if(m_nvd.getProtTcpIpClientValueDataType() == NumericValueData.DataType.DOUBLE64.getID()){
                             if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
-                                double dValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.).getDouble();
+                                double dValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getDouble();
                                 strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", dValue, m_nvd.getProtTcpIpClientValueUM());
                             }
                         }
+                        this.setError(null);
                     } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
                         strValue = getTimeoutValue();
+                        this.setError("");
                     } else {
-                        strValue = getErrorValue();
+                        strValue = getErrorValue(ticrs.getErrorCode());
+                        this.setError("");
                     }
 
                     setText(strValue);
@@ -286,6 +294,45 @@ public class NumericValue extends EditText implements
             this.mDetector.onTouchEvent(event);
 
             return true;
+        } else {
+            final int action = MotionEventCompat.getActionMasked(event);
+
+            switch (action) {
+                case MotionEvent.ACTION_DOWN: {
+                    if(m_edEditText == null){
+                        m_edEditText = new EDEditText(getContext());
+                        m_edEditText.setText("Test");
+                        ViewParent view = this.getParent();
+                        if(view instanceof RelativeLayout){
+                            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+                            m_edEditText.setLayoutParams(rllp);
+                            m_edEditText.setSingleLine();
+                            m_edEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                            m_edEditText.setOnEditorActionListener(new OnEditorActionListener() {
+                                @Override
+                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                    boolean handled = false;
+                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                        aaa.setVisibility(VISIBLE);
+                                        ViewParent view = m_edEditText.getParent();
+                                        if(view instanceof RelativeLayout){
+                                            ((RelativeLayout) view).removeView(m_edEditText);
+                                            m_edEditText = null;
+                                        }
+
+                                            handled = true;
+                                    }
+                                    return handled;
+                                }
+                            });
+                            ((RelativeLayout) view).addView(m_edEditText);
+                            this.setVisibility(GONE);
+                            aaa = this;
+                        }
+                    }
+                    break;
+                }
+            }
         }
 
         return super.onTouchEvent(event);

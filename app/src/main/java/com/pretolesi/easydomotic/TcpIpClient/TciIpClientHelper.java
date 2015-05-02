@@ -68,13 +68,13 @@ public class TciIpClientHelper {
         return m_Instance;
     }
 
-    public synchronized List<TCPIPClient> getTciIpClient()
+    public synchronized static List<TCPIPClient> getTciIpClient()
     {
         // Initialize if not already done
         return m_ltic;
     }
 
-    public synchronized TCPIPClient getTciIpClient(long lID)
+    public synchronized static TCPIPClient getTciIpClient(long lID)
     {
         if (m_Instance != null)
         {
@@ -85,7 +85,6 @@ public class TciIpClientHelper {
                         return tic;
                     }
                 }
-                m_ltic.clear();
             }
         }
 
