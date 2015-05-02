@@ -5,8 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.text.Editable;
-import android.text.method.KeyListener;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -14,17 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -52,7 +49,6 @@ public class NumericValue extends TextView implements
     private boolean m_bEditMode;
 
     private EDEditText m_edEditText;
-    private TextView aaa;
 
     public NumericValue(Context context) {
         super(context);
@@ -203,6 +199,74 @@ public class NumericValue extends TextView implements
         return "Timeout";
     }
 
+    private void openWriteInput(){
+        if(m_edEditText == null){
+            m_edEditText = new EDEditText(getContext());
+            m_edEditText.setText("");
+            ViewParent view = this.getParent();
+            if(view != null && view instanceof RelativeLayout){
+                RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+                m_edEditText.setLayoutParams(rllp);
+                m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                m_edEditText.setSingleLine();
+                ((RelativeLayout) view).addView(m_edEditText);
+                m_edEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(imm != null){
+                    imm.showSoftInput(m_edEditText, InputMethodManager.SHOW_IMPLICIT);
+                }
+                this.setVisibility(GONE);
+
+                m_edEditText.setOnKeyListener(new OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                            m_edEditText.clearFocus();
+                            return true;
+                        }
+
+                        if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                            inviare il dato
+
+                            m_edEditText.clearFocus();
+                            return true;
+                        }
+
+                        return false;
+                    }
+                });
+
+                m_edEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if(!hasFocus){
+                            closeWriteInput();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private synchronized void closeWriteInput(){
+        if(m_edEditText != null){
+            ViewParent view = m_edEditText.getParent();
+            if (view instanceof RelativeLayout) {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (m_edEditText.getWindowToken() != null) {
+                    if(imm != null) {
+                        imm.hideSoftInputFromWindow(m_edEditText.getWindowToken(), 0);
+                    }
+                    ((RelativeLayout) view).removeView(m_edEditText);
+                }
+            }
+        }
+        m_edEditText = null;
+
+        this.setVisibility(VISIBLE);
+    }
+
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null && m_nvd != null){
@@ -299,37 +363,14 @@ public class NumericValue extends TextView implements
 
             switch (action) {
                 case MotionEvent.ACTION_DOWN: {
-                    if(m_edEditText == null){
-                        m_edEditText = new EDEditText(getContext());
-                        m_edEditText.setText("Test");
-                        ViewParent view = this.getParent();
-                        if(view instanceof RelativeLayout){
-                            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
-                            m_edEditText.setLayoutParams(rllp);
-                            m_edEditText.setSingleLine();
-                            m_edEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-                            m_edEditText.setOnEditorActionListener(new OnEditorActionListener() {
-                                @Override
-                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                                    boolean handled = false;
-                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                                        aaa.setVisibility(VISIBLE);
-                                        ViewParent view = m_edEditText.getParent();
-                                        if(view instanceof RelativeLayout){
-                                            ((RelativeLayout) view).removeView(m_edEditText);
-                                            m_edEditText = null;
-                                        }
 
-                                            handled = true;
-                                    }
-                                    return handled;
-                                }
-                            });
-                            ((RelativeLayout) view).addView(m_edEditText);
-                            this.setVisibility(GONE);
-                            aaa = this;
-                        }
-                    }
+                    return true;
+
+                }
+                case MotionEvent.ACTION_UP: {
+
+                    openWriteInput();
+
                     break;
                 }
             }
