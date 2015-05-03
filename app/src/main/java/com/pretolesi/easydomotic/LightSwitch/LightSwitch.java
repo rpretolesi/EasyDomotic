@@ -173,7 +173,7 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeSwitchValue(iTID, iUID, iAddress, iValue);
+                tic.writeNumericValue(iTID, iUID, iAddress, iValue);
             }
         }
     }

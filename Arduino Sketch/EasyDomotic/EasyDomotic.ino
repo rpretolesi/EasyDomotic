@@ -31,6 +31,10 @@ unsigned int m_uiModbusMBAPLength = 0;
 
 byte m_byteToWriteMBAPMsg[260] = {0};
 unsigned int m_uiNrByteToWrite = 0;
+
+// Valori condivisi
+int iValue;
+
 void setup() 
 {
   // Deselect SD Card
@@ -178,83 +182,98 @@ void Communication()
 
         // Begin....
         boolean bFunctionCodeOk = false;
+        boolean bRegisterAndByteCountOk = false;
         boolean bAddressOk = false;
         boolean bValueOk = false;
         
         // Function
-        if(uiModbusFunctionCode == 0x06 || uiModbusFunctionCode == 0x03){
+        if(uiModbusFunctionCode == 0x10 || uiModbusFunctionCode == 0x03){
           bFunctionCodeOk = true;
         }   
 
         // Address
         int iOutput = 0;
-        if(uiModbusFunctionCode == 0x06){
-          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
-          Serial.print("Address: ");
-          Serial.println(uiModbusAddress);
-  
-          if(uiModbusAddress == 10000) {  
-            iOutput = 3;
-            bAddressOk = true;
-          }            
-          if(uiModbusAddress == 10001) {  
-            iOutput = 5;
-            bAddressOk = true;
-          }            
-          if(uiModbusAddress == 10002) {  
-            iOutput = 6;
-            bAddressOk = true;
-          }            
-          if(uiModbusAddress == 10003) {  
-            iOutput = 9;
-            bAddressOk = true;
-          }  
-          if(bAddressOk == true){       
-
-            // Value
-            int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
-            Serial.print("Value: ");
-            Serial.println(iModbuSingleValue);
-            // Ok, i can use the value
-            // Set 0 if value == 1
-            // Set 1 if value == 4
-            switch(iModbuSingleValue){
-              case 1:
-                digitalWrite(iOutput, 0);  
-                bValueOk = true;
-                break;
-              
-              case 4:
-                digitalWrite(iOutput, 1);            
-                bValueOk = true;
-                break;
-               
-              default:
-                // Exception
-                bValueOk = false;
-                
-                break;
-            }
-            if(bValueOk == true) {
-              // Tutto Ok, costruisco la risposta, 2° parte
-              unsigned int iMBAPMsgLength = 12;
-              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
-              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
-              m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
-              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+        if(uiModbusFunctionCode == 0x10){
+          // Check Data
+          unsigned int uiQuantityOfRegisters = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
+          unsigned int uiByteCount = getWordFromBytes(m_byteReadMBMsg[6], 0);
+          Serial.print("Quantity of Register: ");
+          Serial.println(uiQuantityOfRegisters);
+          Serial.print("Byte Count: ");
+          Serial.println(uiByteCount);
+        
+          if(uiByteCount == (uiQuantityOfRegisters * 2)){
+            bRegisterAndByteCountOk = true;
+          }
+          if(bRegisterAndByteCountOk == true){
+            finire qui
+            unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
+            Serial.print("Address: ");
+            Serial.println(uiModbusAddress);
+    
+            if(uiModbusAddress == 10000) {  
+              iOutput = 3;
+              bAddressOk = true;
             }            
-          }          
-        }
+            if(uiModbusAddress == 10001) {  
+              iOutput = 5;
+              bAddressOk = true;
+            }            
+            if(uiModbusAddress == 10002) {  
+              iOutput = 6;
+              bAddressOk = true;
+            }            
+            if(uiModbusAddress == 10003) {  
+              iOutput = 9;
+              bAddressOk = true;
+            }  
+            if(bAddressOk == true){       
   
+              // Value
+              int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
+              Serial.print("Value: ");
+              Serial.println(iModbuSingleValue);
+              // Ok, i can use the value
+              // Set 0 if value == 1
+              // Set 1 if value == 4
+              switch(iModbuSingleValue){
+                case 1:
+                  digitalWrite(iOutput, 0);  
+                  bValueOk = true;
+                  break;
+                
+                case 4:
+                  digitalWrite(iOutput, 1);            
+                  bValueOk = true;
+                  break;
+                 
+                default:
+                  // Exception
+                  bValueOk = false;
+                  
+                  break;
+              }
+              if(bValueOk == true) {
+                // Tutto Ok, costruisco la risposta, 2° parte
+                unsigned int iMBAPMsgLength = 12;
+                m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+                m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+                m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
+                m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+              }            
+            }          
+          }
+        }
+        
         int iInput = 0;
         if(uiModbusFunctionCode == 0x03){
           bAddressOk = true;

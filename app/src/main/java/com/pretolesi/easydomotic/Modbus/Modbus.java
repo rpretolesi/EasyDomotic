@@ -14,10 +14,12 @@ import java.nio.ByteBuffer;
  */
 public class Modbus {
 
-    public static synchronized TcpIpMsg writeSingleRegister(Context context, int iTID, int iUID, int iAddress, int iValue) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException {
+    public static synchronized TcpIpMsg writeMultipleRegisters(Context context, int iTID, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusQuantityOfRegistersOutOfRange {
         short shTID;
         byte byteUID;
         short shAddress;
+        short shNrOfRegisters;
+        byte byteByteCount;
         short shValue;
         if(iTID >= 0 && iTID <= 65535){
             shTID = (short) iTID;
@@ -34,20 +36,34 @@ public class Modbus {
         } else {
             throw new ModbusAddressOutOfRangeException(context.getString(R.string.ModbusAddressOutOfRangeException));
         }
-        if(iValue >= 0 && iValue <= 65535){
-            shValue = (short) iValue;
+        if(iNrOfRegisters > 0 && iNrOfRegisters < 124) {
+            shNrOfRegisters = (short) iNrOfRegisters;
+            byteByteCount = (byte)(shNrOfRegisters * 2);
+        } else {
+            throw new ModbusQuantityOfRegistersOutOfRange(context.getString(R.string.ModbusValueArrayLengthOutOfRangeException));
+        }
+
+        ByteBuffer bb = ByteBuffer.allocate(13 + byteByteCount);
+        bb.putShort(shTID);
+        bb.putShort((short)0);
+        bb.putShort((short)(7 + byteByteCount));
+        bb.put(byteUID);
+        bb.put((byte)0x10);
+        bb.putShort(shAddress);
+        bb.putShort(shNrOfRegisters);
+        bb.put(byteByteCount);
+
+        if(iaValue != null && iaValue.length > 0){
+            for(int iIndice = 0; iIndice < iaValue.length; iIndice++){
+                if(iaValue[iIndice] >= 0 && iaValue[iIndice] <= 65535){
+                    bb.putShort((short) iaValue[iIndice]);
+                } else {
+                    throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
+                }
+            }
         } else {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
         }
-
-        ByteBuffer bb = ByteBuffer.allocate(12);
-        bb.putShort(shTID);
-        bb.putShort((short)0);
-        bb.putShort((short)6);
-        bb.put(byteUID);
-        bb.put((byte)0x06);
-        bb.putShort(shAddress);
-        bb.putShort(shValue);
 
         return new TcpIpMsg(iTID, byteUID, bb.array());
     }

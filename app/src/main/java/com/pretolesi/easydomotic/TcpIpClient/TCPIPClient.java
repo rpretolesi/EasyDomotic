@@ -17,7 +17,7 @@ import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAP;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
-import com.pretolesi.easydomotic.NumerValue.NumericValueData;
+import com.pretolesi.easydomotic.NumericValueUtils.NumericDataType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -450,11 +450,28 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     /*
      * Writing/Reading Function
      */
-    public synchronized void writeSwitchValue(int iTID, int iUID, int iAddress, int iValue){
+    public synchronized void writeNumericValue(int iTID, int iUID, int iAddress, NumericDataType.DataType dtDataTypeValue, double dblValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                TcpIpMsg tim = null;
                 try {
-                    TcpIpMsg tim = Modbus.writeSingleRegister(m_context, iTID, iUID,  iAddress, iValue);
+                    switch (dtDataTypeValue) {
+                        case SHORT16:
+                            int[] iaValue = new int[1];
+                            iaValue[0] = (int)dblValue;
+                            tim = Modbus.writeMultipleRegisters(m_context, iTID, iUID, iAddress, iaValue, 1);
+                            break;
+
+                        case INT32:
+                        case FLOAT32:
+//                            tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 2);
+                            break;
+
+                        case LONG64:
+                        case DOUBLE64:
+//                            tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 4);
+                            break;
+                    }
                     if (m_vtim != null && tim != null) {
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
@@ -481,12 +498,12 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void readNumericValue(int iTID, int iUID, int iAddress, NumericValueData.DataType dtDataType){
+    public synchronized void readNumericValue(int iTID, int iUID, int iAddress, NumericDataType.DataType dtDataTypeValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 TcpIpMsg tim = null;
                 try {
-                    switch (dtDataType) {
+                    switch (dtDataTypeValue) {
                         case SHORT16:
                             tim = Modbus.readHoldingRegisters(m_context, iTID, iUID, iAddress, 1);
                             break;
