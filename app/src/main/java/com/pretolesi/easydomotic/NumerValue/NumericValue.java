@@ -53,8 +53,8 @@ public class NumericValue extends TextView implements
     public NumericValue(Context context) {
         super(context);
         this.m_nvd = null;
-        this.m_iTIDRead = 0;
-        this.m_iTIDWrite = 0;
+        this.m_iTIDRead = this.getId();
+        this.m_iTIDWrite = this.getId() + 1;
         this.m_bEditMode = false;
     }
 
@@ -62,10 +62,9 @@ public class NumericValue extends TextView implements
         super(context);
         if(nvd != null) {
             this.m_nvd = nvd;
-            this.m_iTIDRead = (int)m_nvd.getID() + m_nvd.getProtTcpIpClientValueID() + m_nvd.getProtTcpIpClientValueAddress();
-            this.m_iTIDWrite = m_iTIDRead + 1;
+            this.m_iTIDRead = this.getId();
+            this.m_iTIDWrite = this.getId() + 1;
             this.setTag(nvd.getTag());
-            this.setId((int) nvd.getID());
         }
         this.m_bEditMode = bEditMode;
     }

@@ -33,7 +33,13 @@ byte m_byteToWriteMBAPMsg[260] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
 // Valori condivisi
-int iValue;
+short shInValue = 0;
+int iInValue = 0;
+float fInValue = 0.0;
+
+short shOutValue = 0;
+int iOutValue = 0;
+float fOutValue = 0.0;
 
 void setup() 
 {
@@ -192,7 +198,7 @@ void Communication()
         }   
 
         // Address
-        int iOutput = 0;
+        // Write Multiple Register
         if(uiModbusFunctionCode == 0x10){
           // Check Data
           unsigned int uiQuantityOfRegisters = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
@@ -206,132 +212,140 @@ void Communication()
             bRegisterAndByteCountOk = true;
           }
           if(bRegisterAndByteCountOk == true){
-            finire qui
             unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
             Serial.print("Address: ");
             Serial.println(uiModbusAddress);
+            if(uiQuantityOfRegisters == 1){
+              shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+            }
+            if(uiQuantityOfRegisters == 2){
+              iInValue = getIntFromBytes(&m_byteReadMBMsg[4]);
+            }
+            Serial.print("shValue: ");
+            Serial.println(shValue);
+            
+            Serial.print("iValue: ");
+            Serial.println(iValue);
     
             if(uiModbusAddress == 10000) {  
-              iOutput = 3;
               bAddressOk = true;
-            }            
+              if(shInValue == 1){
+                  digitalWrite(3, 0);                  
+                  bValueOk = true;
+              }
+              if(shInValue == 4){
+                  digitalWrite(3, 1);                  
+                  bValueOk = true;
+              }
+            }
             if(uiModbusAddress == 10001) {  
-              iOutput = 5;
               bAddressOk = true;
+              if(shInValue == 1){
+                  digitalWrite(5, 0);                  
+                  bValueOk = true;
+              }
+              if(shInValue == 4){
+                  digitalWrite(5, 1);                  
+                  bValueOk = true;
+              }
             }            
             if(uiModbusAddress == 10002) {  
-              iOutput = 6;
               bAddressOk = true;
+              if(shInValue == 1){
+                  digitalWrite(6, 0);                  
+                  bValueOk = true;
+              }
+              if(shInValue == 4){
+                  digitalWrite(6, 1);                  
+                  bValueOk = true;
+              }
             }            
             if(uiModbusAddress == 10003) {  
-              iOutput = 9;
               bAddressOk = true;
-            }  
-            if(bAddressOk == true){       
-  
-              // Value
-              int iModbuSingleValue = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
-              Serial.print("Value: ");
-              Serial.println(iModbuSingleValue);
-              // Ok, i can use the value
-              // Set 0 if value == 1
-              // Set 1 if value == 4
-              switch(iModbuSingleValue){
-                case 1:
-                  digitalWrite(iOutput, 0);  
+              if(shInValue == 1){
+                  digitalWrite(9, 0);                  
                   bValueOk = true;
-                  break;
-                
-                case 4:
-                  digitalWrite(iOutput, 1);            
-                  bValueOk = true;
-                  break;
-                 
-                default:
-                  // Exception
-                  bValueOk = false;
-                  
-                  break;
               }
-              if(bValueOk == true) {
-                // Tutto Ok, costruisco la risposta, 2° parte
-                unsigned int iMBAPMsgLength = 12;
-                m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
-                m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-                m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
-                m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-                m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
-                m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
-                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
-              }            
-            }          
+              if(shInValue == 4){
+                  digitalWrite(9, 1);                  
+                  bValueOk = true;
+              }
+            }  
+ 
+            if(bAddressOk == true){   
+             if(bValueOk == true) {
+              // Tutto Ok, costruisco la risposta, 2° parte
+              unsigned int iMBAPMsgLength = 12;
+              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+              m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
+              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+            }            
           }
         }
         
-        int iInput = 0;
         if(uiModbusFunctionCode == 0x03){
-          bAddressOk = true;
-
           unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
           Serial.print("Starting Address: ");
           Serial.println(uiModbusAddress);
-          if(uiModbusAddress == 20000) {  
-            iInput = 0;
-            bAddressOk = true;
-          }
-          if(bAddressOk == true){       
-            
-            // Quantity of Registers
-            unsigned int uiQuantityOfRegister = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
-            Serial.print("Quantity of Register: ");
-            Serial.println(uiQuantityOfRegister);
-
-            unsigned int iMBAPMsgLength = 0;
-            int iSV = analogRead(iInput);
-            float fSV = analogRead(iInput)/3.3;
-            switch(uiQuantityOfRegister){
-              case 1:
-                // short 16 bit
+          // Quantity of Registers
+          unsigned int uiQuantityOfRegister = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
+          Serial.print("Quantity of Register: ");
+          Serial.println(uiQuantityOfRegister);
+          if(uiQuantityOfRegister >= 1 && uiQuantityOfRegister <= 125){
+            if(uiModbusAddress == 10000) {  
+              if(uiQuantityOfRegister == 1){
+                shOutValue = shInValue;
                 iMBAPMsgLength = 11;
-                // Tutto Ok, costruisco la risposta, 3° parte
-                Serial.print("iSV: ");
-                Serial.print(iSV);
-                shortTobytes(iSV, &m_byteToWriteMBAPMsg[9]);                
+               // Tutto Ok, costruisco la risposta, 3° parte
+                Serial.print("shOutValue: ");
+                Serial.println(shOutValue);
+                shortTobytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
-                
+                bAddressOk = true;
                 bValueOk = true;
-                break;
-              
-              case 2:
-/*              
-                // int 32 bit
-     
-*/
-                // Float 32 bit
+              }
+            }            
+            if(uiModbusAddress == 10001) {  
+              if(uiQuantityOfRegister == 2){
+                iOutValue = iInValue;
                 iMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
-                Serial.print("fSV: ");
-                Serial.print(fSV);
-//                shortTobytes(iSV, &m_byteToWriteMBAPMsg[9]);                
-                floatTobytes(fSV, &m_byteToWriteMBAPMsg[9]);
+                Serial.print("iOutValue: ");
+                Serial.println(iOutValue);
+                intTobytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
-
+                bAddressOk = true;
                 bValueOk = true;
-                break;
-               
-              default:
-                // Exception
-                bValueOk = false;
+              }
+            }            
+            if(uiModbusAddress == 10003) {  
+              if(uiQuantityOfRegister == 2){
                 
-                break;
-            }   
-               
+                finire da qui in poi....
+                fOutValue = finValue;
+                iMBAPMsgLength = 13;
+                // Tutto Ok, costruisco la risposta, 3° parte
+                Serial.print("iOutValue: ");
+                Serial.println(iOutValue);
+                intTobytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
+                bAddressOk = true;
+                bValueOk = true;
+              }
+            }            
+          }        
+           
+          if(bAddressOk == true){                      
             if(bValueOk == true) {
               // Tutto Ok, costruisco la risposta, 2° parte
               m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
@@ -479,8 +493,15 @@ void printWifiStatus() {
 }
 
 //#define bytesToWord(hb,lb) ( (((WORD)(hb&0xFF))<<8) | ((WORD)lb) )
-word getWordFromBytes(byte lowByte, byte highByte) {
-    return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
+//word getWordFromBytes(byte lowByte, byte highByte) {
+//    return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
+//}
+short getShortFromBytes(byte* bytearrayVal){
+  return bytearrayVal[0] | ((short)bytearrayVal[1] << 8 ));
+}
+
+int getIntFromBytes(byte* bytearrayVal){
+  return bytearrayVal[0] | ( (int)bytearrayVal[1] << 8 ) | ( (int)bytearrayVal[2] << 16 ) | ( (int)bytearrayVal[3] << 24 );
 }
 
 void shortTobytes(short shortVal, byte* bytearrayVal){
@@ -491,6 +512,18 @@ void shortTobytes(short shortVal, byte* bytearrayVal){
   } u;
   // Overite bytes of union with float variable
   u.temp_short = shortVal;
+  // Assign bytes to input array
+  memcpy(bytearrayVal, u.temp_bytearray, 2);
+}
+
+void intTobytes(int intVal, byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    int temp_int;
+    byte temp_bytearray[2];
+  } u;
+  // Overite bytes of union with float variable
+  u.temp_int = intVal;
   // Assign bytes to input array
   memcpy(bytearrayVal, u.temp_bytearray, 2);
 }

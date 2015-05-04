@@ -45,10 +45,10 @@ public class LightSwitch extends Switch implements
     public LightSwitch(Context context) {
         super(context);
         this.m_lsd = null;
-        this.m_iTIDOFF = 0;
-        this.m_iTIDOFFON = 0;
-        this.m_iTIDONOFF = 0;
-        this.m_iTIDON = 0;
+        this.m_iTIDOFF = this.getId();
+        this.m_iTIDOFFON = this.getId() + 1;
+        this.m_iTIDONOFF = this.getId() + 2;
+        this.m_iTIDON = this.getId() + 3;
         this.m_bEditMode = false;
     }
 
@@ -56,10 +56,10 @@ public class LightSwitch extends Switch implements
         super(context);
         if(lsd != null) {
             this.m_lsd = lsd;
-            this.m_iTIDOFF = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueOFF();
-            this.m_iTIDOFFON = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueOFFON();
-            this.m_iTIDONOFF = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueONOFF();
-            this.m_iTIDON = (int)lsd.getID() + lsd.getProtTcpIpClientValueID() + lsd.getProtTcpIpClientValueAddress() + lsd.getProtTcpIpClientValueON();
+            this.m_iTIDOFF = this.getId();
+            this.m_iTIDOFFON = this.getId() + 1;
+            this.m_iTIDONOFF = this.getId() + 2;
+            this.m_iTIDON = this.getId() + 3;
             this.setTag(lsd.getTag());
             this.setId((int)lsd.getID());
         }

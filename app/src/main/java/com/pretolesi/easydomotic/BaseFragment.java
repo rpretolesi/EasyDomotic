@@ -51,6 +51,8 @@ public class BaseFragment extends Fragment implements
     protected static final String _ID = "id";
     protected static final String EDIT_MODE = "edit_mode";
 
+    protected int m_iChildID;
+
     protected TextView m_tvRoomName;
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
@@ -88,6 +90,10 @@ public class BaseFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // Start ID for child
+        m_iChildID = 10;
+
         if (m_rl == null) {
             m_rl = new RelativeLayout(getActivity());
         }
@@ -299,6 +305,7 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_rfd != null) {
             if (m_tvRoomName == null) {
                 m_tvRoomName = new TextView(getActivity());
+                m_tvRoomName.setId(getChildID());
 
                 RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -340,7 +347,7 @@ public class BaseFragment extends Fragment implements
                     for (TCPIPClient tic : TciIpClientHelper.getTciIpClient()) {
                         if (tic != null) {
                             tv = new TextView(getActivity());
-                            tv.setId((int)tic.getID());
+                            tv.setId(getChildID());
                             tv.setLayoutParams(llp);
                             m_llStatusTcpIpServer.addView(tv);
                             tv.setText("No Server Configured\nNo Server Configured");
@@ -362,6 +369,7 @@ public class BaseFragment extends Fragment implements
             for(LightSwitchData lsd : m_allsd){
                 if(lsd != null){
                     LightSwitch ls = new LightSwitch(getActivity(), lsd, getArguments().getBoolean(EDIT_MODE, false));
+                    ls.setId(getChildID());
                     if(lsd.getLandscape()){
                         ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
                     }
@@ -378,6 +386,7 @@ public class BaseFragment extends Fragment implements
             for(NumericValueData nvd : m_alnvd){
                 if(nvd != null){
                     NumericValue nv = new NumericValue(getActivity(), nvd, getArguments().getBoolean(EDIT_MODE, false));
+                    nv.setId(getChildID());
                     if(nvd.getLandscape()){
                         ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
                     }
@@ -386,6 +395,11 @@ public class BaseFragment extends Fragment implements
                 }
             }
         }
+    }
+
+    private int getChildID(){
+        m_iChildID = m_iChildID + 10;
+        return m_iChildID;
     }
 
     // Static
