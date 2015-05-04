@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
@@ -457,7 +458,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     switch (dtDataTypeValue) {
                         case SHORT16:
-                            int[] iaValue = new int[1];
+                            ByteBuffer bb = ByteBuffer.allocate(2);
+                            bb.putShort((short)dblValue)
                             iaValue[0] = (int)dblValue;
                             tim = Modbus.writeMultipleRegisters(m_context, iTID, iUID, iAddress, iaValue, 1);
                             break;
