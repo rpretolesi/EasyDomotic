@@ -173,16 +173,19 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeNumericValue(iTID, iUID, iAddress, iValue);
+                tic.writeShort(iTID, iUID, iAddress, iValue);
             }
         }
     }
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ms) {
-        if(ms != null){
-            if(ms.getTID() == m_iTIDOFF || ms.getTID() == m_iTIDOFFON || ms.getTID() == m_iTIDONOFF || ms.getTID() == m_iTIDON) {
-                Toast.makeText(this.getContext(), "Server ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString() + " Error Code: " + ms.getErrorCode(), Toast.LENGTH_SHORT).show();
+    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticws) {
+
+        if(ticws != null && m_lsd != null){
+            if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
+                if(ticws.getServerID() == m_lsd.getProtTcpIpClientID()) {
+                    Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + " TID: " + ticws.getTID() + " Status: " + ticws.getStatus().toString() + " Error Code: " + ticws.getErrorCode(), Toast.LENGTH_SHORT).show();
+                }
             }
             // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }

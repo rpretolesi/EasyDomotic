@@ -26,6 +26,7 @@ import com.pretolesi.easydomotic.CustomControls.EDEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
+import com.pretolesi.easydomotic.ValueUtils.ValueDataType;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -146,7 +147,7 @@ public class NumericValuePropActivity extends Activity implements
         }
 
         m_id_nvpa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, NumericValueData.DataType.values()));
+                android.R.layout.simple_list_item_1, ValueDataType.DataType.values()));
 
         m_SCASpnRoom = new SimpleCursorAdapter(
                 this,
@@ -157,7 +158,7 @@ public class NumericValuePropActivity extends Activity implements
         m_id_spn_room.setAdapter(m_SCASpnRoom);
 
         m_id_nvpa_spn_data_type.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, NumericValueData.DataType.values()));
+                android.R.layout.simple_list_item_1, ValueDataType.DataType.values()));
 
         m_TcpIpClientAdapter = new SimpleCursorAdapter(
                 this,
