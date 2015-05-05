@@ -67,17 +67,19 @@ public class Modbus {
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 4);
     }
 
-    private static synchronized TcpIpMsg writeMultipleRegisters(Context context, int iTID, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusQuantityOfRegistersOutOfRange {
+    private static synchronized TcpIpMsg writeMultipleRegisters(Context context, int iTID, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusValueOutOfRangeException {
         short shTID;
         byte byteUID;
         short shAddress;
         short shNrOfRegisters;
         byte byteByteCount;
+
         if(iTID >= 0 && iTID <= 65535){
             shTID = (short) iTID;
         } else {
             throw new ModbusTransIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
         }
+
         if(iUID >= 0 && iUID <= 255){
             byteUID = (byte) iUID;
         } else {
@@ -209,15 +211,15 @@ public class Modbus {
             int iFEC = bb.get() & 0xFF;
             int iExceptionCode = 0;
             switch(iFEC) {
-                case 0x06:
-                    int iRegisterAddress = bb.getShort();
-                    int iRegisterValue = bb.getShort();
+                case 0x10:
+                    int iAddress = bb.getShort();
+                    int iQuantityOfRegisters = bb.getShort();
 
                     mpdu = new ModbusPDU(iUI, iFEC, 0, 0, null);
 
                     break;
 
-                case 0x86:
+                case 0x96:
                     iExceptionCode = bb.get();
 
                     mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);

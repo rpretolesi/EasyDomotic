@@ -32,6 +32,7 @@ public class LightSwitch extends Switch implements
     private GestureDetectorCompat mDetector;
 
     private LightSwitchData m_lsd;
+    private int m_iMsgID;
     private int m_iTIDOFF;
     private int m_iTIDOFFON;
     private int m_iTIDONOFF;
@@ -45,23 +46,24 @@ public class LightSwitch extends Switch implements
     public LightSwitch(Context context) {
         super(context);
         this.m_lsd = null;
-        this.m_iTIDOFF = this.getId();
-        this.m_iTIDOFFON = this.getId() + 1;
-        this.m_iTIDONOFF = this.getId() + 2;
-        this.m_iTIDON = this.getId() + 3;
+        this.m_iMsgID = -1;
+        this.m_iTIDOFF = -1;
+        this.m_iTIDOFFON = -1;
+        this.m_iTIDONOFF = -1;
+        this.m_iTIDON = -1;
         this.m_bEditMode = false;
     }
 
-    public LightSwitch(Context context, LightSwitchData lsd, boolean bEditMode) {
+    public LightSwitch(Context context, LightSwitchData lsd, int iMsgID, boolean bEditMode) {
         super(context);
         if(lsd != null) {
             this.m_lsd = lsd;
-            this.m_iTIDOFF = this.getId();
-            this.m_iTIDOFFON = this.getId() + 1;
-            this.m_iTIDONOFF = this.getId() + 2;
-            this.m_iTIDON = this.getId() + 3;
+            this.m_iMsgID = iMsgID;
+            this.m_iTIDOFF = m_iMsgID + 1;
+            this.m_iTIDOFFON = m_iMsgID + 2;
+            this.m_iTIDONOFF = m_iMsgID + 3;
+            this.m_iTIDON = m_iMsgID + 4;
             this.setTag(lsd.getTag());
-            this.setId((int)lsd.getID());
         }
         this.m_bEditMode = bEditMode;
     }
@@ -94,9 +96,9 @@ public class LightSwitch extends Switch implements
             if(m_lsd != null && m_TimerHandler != null) {
                 if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
                     if(isChecked()){
-                        writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
+                        writeSwitchValue(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                     } else {
-                        writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+                        writeSwitchValue(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                     }
 
                     m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
@@ -159,9 +161,9 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             if(m_lsd.getProtTcpIpClientSendDataOnChange()){
                 if(isChecked){
-                    writeSwitchValue(m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
+                    writeSwitchValue(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
                 } else {
-                    writeSwitchValue(m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+                    writeSwitchValue(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
                 }
             }
         }
@@ -169,11 +171,11 @@ public class LightSwitch extends Switch implements
         Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
-    private void writeSwitchValue(int iTID, int iUID, int iAddress, int iValue){
+    private void writeSwitchValue(Context context, int iTID, int iUID, int iAddress, int iValue){
         if(m_lsd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeShort(iTID, iUID, iAddress, iValue);
+                tic.writeShort(context, iTID, iUID, iAddress, iValue);
             }
         }
     }
@@ -184,7 +186,7 @@ public class LightSwitch extends Switch implements
         if(ticws != null && m_lsd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
                 if(ticws.getServerID() == m_lsd.getProtTcpIpClientID()) {
-                    Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + " TID: " + ticws.getTID() + " Status: " + ticws.getStatus().toString() + " Error Code: " + ticws.getErrorCode(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
             // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());

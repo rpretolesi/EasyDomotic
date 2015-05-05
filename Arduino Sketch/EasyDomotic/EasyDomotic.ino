@@ -100,8 +100,7 @@ void loop()
   Communication();
 }
 
-void Communication()
-{
+void Communication(){
   
   WiFiClient client = m_server.available();   
   if(client != NULL) 
@@ -110,8 +109,7 @@ void Communication()
     {
       m_bOneShotClientDisconnected_1 = false;
       m_bOneShotClientDisconnected_2 = false;
-      if(m_bOneShotClientConnected == false)
-      {
+      if(m_bOneShotClientConnected == false){
         m_bOneShotClientConnected = true;
 
         // clear input buffer:
@@ -128,8 +126,7 @@ void Communication()
 
       // Read and write operation....
       // Get MBAP
-      if (client.available() >= 6 && m_bModbusMBAP == false)
-      {
+      if (client.available() >= 6 && m_bModbusMBAP == false) {
         // Parse message in order to get MBAP Header
         Serial.print("MBAP: ");
         for(int index_0 = 0; index_0 < 6; index_0++) {
@@ -139,15 +136,15 @@ void Communication()
         }
         Serial.println(" ");
 
-        unsigned int uiModbusMBAPTransactionID = getWordFromBytes(m_byteReadMBAP[1], m_byteReadMBAP[0]);
+        unsigned int uiModbusMBAPTransactionID = getShortFromBytes(&m_byteReadMBAP[0]);
         Serial.print("Transaction ID: ");
         Serial.println(uiModbusMBAPTransactionID);
 
-        unsigned int uiModbusMBAPProtocolID = getWordFromBytes(m_byteReadMBAP[3], m_byteReadMBAP[2]);
+        unsigned int uiModbusMBAPProtocolID = getShortFromBytes(&m_byteReadMBAP[2]);
         Serial.print("Protocol ID: ");
         Serial.println(uiModbusMBAPProtocolID);
 
-        m_uiModbusMBAPLength = getWordFromBytes(m_byteReadMBAP[5], m_byteReadMBAP[4]);
+        m_uiModbusMBAPLength = getShortFromBytes(&m_byteReadMBAP[4]);
         Serial.print("Length: ");
         Serial.println(m_uiModbusMBAPLength);
 
@@ -160,8 +157,7 @@ void Communication()
         }
       }
 
-      if (client.available() >= m_uiModbusMBAPLength && m_bModbusMBAP == true)
-      {
+      if (client.available() >= m_uiModbusMBAPLength && m_bModbusMBAP == true) {
         Serial.print("Message: ");
         for(int index_0 = 0; index_0 < m_uiModbusMBAPLength; index_0++) {
           m_byteReadMBMsg[index_0] = client.read();
@@ -171,13 +167,13 @@ void Communication()
         Serial.println(" ");
 
         // Messaggio Completo, estraggo i dati:
-        unsigned int uiModbusUnitIdentifier = getWordFromBytes(m_byteReadMBMsg[0], 0);
+        byte byteModbusUnitIdentifier = m_byteReadMBMsg[0];
         Serial.print("Unit Identifier: ");
-        Serial.println(uiModbusUnitIdentifier);
+        Serial.println(byteModbusUnitIdentifier);
         
-        unsigned int uiModbusFunctionCode = getWordFromBytes(m_byteReadMBMsg[1], 0);
+        byte byteModbusFunctionCode = m_byteReadMBMsg[1];
         Serial.print("Function Code: ");
-        Serial.println(uiModbusFunctionCode);
+        Serial.println(byteModbusFunctionCode);
 
         // Tutto Ok, costruisco la risposta, 1° parte
         // Intestazione
@@ -195,37 +191,37 @@ void Communication()
         boolean bValueOk = false;
         
         // Function
-        if(uiModbusFunctionCode == 0x10 || uiModbusFunctionCode == 0x03){
+        if(byteModbusFunctionCode == 0x10 || byteModbusFunctionCode == 0x03){
           bFunctionCodeOk = true;
         }   
 
         // Address
         // Write Multiple Register
-        if(uiModbusFunctionCode == 0x10){
+        if(byteModbusFunctionCode == 0x10){
           // Check Data
-          unsigned int uiQuantityOfRegisters = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
-          unsigned int uiByteCount = getWordFromBytes(m_byteReadMBMsg[6], 0);
+          short shortQuantityOfRegisters = getShortFromBytes(&m_byteReadMBMsg[4]);
+          byte byteByteCount = m_byteReadMBMsg[6];
           Serial.print("Quantity of Register: ");
-          Serial.println(uiQuantityOfRegisters);
+          Serial.println(shortQuantityOfRegisters);
           Serial.print("Byte Count: ");
-          Serial.println(uiByteCount);
+          Serial.println(byteByteCount);
         
-          if(uiByteCount == (uiQuantityOfRegisters * 2)){
+          if(byteByteCount == (shortQuantityOfRegisters * 2)){
             bRegisterAndByteCountOk = true;
           }
           if(bRegisterAndByteCountOk == true){
-            unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
+            short shortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
             Serial.print("Address: ");
-            Serial.println(uiModbusAddress);
-            if(uiQuantityOfRegisters == 1){
+            Serial.println(shortModbusAddress);
+            if(shortQuantityOfRegisters == 1){
               shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
             }
 
-            if(uiModbusAddress == 20000) {
+            if(shortModbusAddress == 20000) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 1){
-                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              if(shortQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[7]);
               }
               Serial.print("shBoolValue: ");
               Serial.println(shBoolValue);
@@ -239,11 +235,11 @@ void Communication()
                   bValueOk = true;
               }
             }
-            if(uiModbusAddress == 20001) {
+            if(shortModbusAddress == 20001) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 1){
-                shBoolValue = getIntFromBytes(&m_byteReadMBMsg[4]);
+              if(shortQuantityOfRegisters == 1){
+                shBoolValue = getIntFromBytes(&m_byteReadMBMsg[7]);
               }
               Serial.print("shBoolValue: ");
               Serial.println(shBoolValue);
@@ -257,11 +253,11 @@ void Communication()
                   bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 20002) {
+            if(shortModbusAddress == 20002) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 1){
-                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              if(shortQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[7]);
               }
               Serial.print("shBoolValue: ");
               Serial.println(shBoolValue);
@@ -275,11 +271,11 @@ void Communication()
                   bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 20003) {
+            if(shortModbusAddress == 20003) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 1){
-                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              if(shortQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[7]);
               }
               Serial.print("shBoolValue: ");
               Serial.println(shBoolValue);
@@ -294,10 +290,10 @@ void Communication()
               }
             }
 
-            if(uiModbusAddress == 10000) {
+            if(shortModbusAddress == 10000) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 1){
+              if(shortQuantityOfRegisters == 1){
                 shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
                 bValueOk = true;
               }
@@ -305,10 +301,10 @@ void Communication()
               Serial.println(shInValue);
             }
 
-            if(uiModbusAddress == 10001) {
+            if(shortModbusAddress == 10001) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 2){
+              if(shortQuantityOfRegisters == 2){
                 iInValue = getIntFromBytes(&m_byteReadMBMsg[4]);
                 bValueOk = true;
               }
@@ -316,10 +312,10 @@ void Communication()
               Serial.println(shInValue);
             }
 
-            if(uiModbusAddress == 10003) {
+            if(shortModbusAddress == 10003) {
               bAddressOk = true;
 
-              if(uiQuantityOfRegisters == 2){
+              if(shortQuantityOfRegisters == 2){
                 fInValue = getFloatFromBytes(&m_byteReadMBMsg[4]);
                 bValueOk = true;
               }
@@ -328,40 +324,42 @@ void Communication()
             }
 
             if(bAddressOk == true){
-             if(bValueOk == true) {
-              // Tutto Ok, costruisco la risposta, 2° parte
-              unsigned int iMBAPMsgLength = 12;
-              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
-              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
-              m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
-              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
-              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
-            }            
+              if(bValueOk == true) {
+                // Tutto Ok, costruisco la risposta, 2° parte
+                short shortMBAPMsgLength = 12;
+                m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+                m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+                m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
+                m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+              }            
+            }
           }
         }
         
-        if(uiModbusFunctionCode == 0x03){
-          unsigned int uiModbusAddress = getWordFromBytes(m_byteReadMBMsg[3], m_byteReadMBMsg[2]);
+        if(byteModbusFunctionCode == 0x03){
+          short shortMBAPMsgLength = 0;
+          short shortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
           Serial.print("Starting Address: ");
-          Serial.println(uiModbusAddress);
+          Serial.println(shortModbusAddress);
           // Quantity of Registers
-          unsigned int uiQuantityOfRegister = getWordFromBytes(m_byteReadMBMsg[5], m_byteReadMBMsg[4]);
+          short shortQuantityOfRegisters = getShortFromBytes(&m_byteReadMBMsg[4]);
           Serial.print("Quantity of Register: ");
-          Serial.println(uiQuantityOfRegister);
-          if(uiQuantityOfRegister >= 1 && uiQuantityOfRegister <= 125){
-            if(uiModbusAddress == 10000) {  
-              if(uiQuantityOfRegister == 1){
+          Serial.println(shortQuantityOfRegisters);
+          if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
+            if(shortModbusAddress == 10000) {  
+              if(shortQuantityOfRegisters == 1){
                 shOutValue = shInValue;
-                iMBAPMsgLength = 11;
-               // Tutto Ok, costruisco la risposta, 3° parte
+                shortMBAPMsgLength = 11;
+                // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("shOutValue: ");
                 Serial.println(shOutValue);
                 shortTobytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
@@ -370,10 +368,10 @@ void Communication()
                 bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 10001) {  
-              if(uiQuantityOfRegister == 2){
+            if(shortModbusAddress == 10001) {  
+              if(shortQuantityOfRegisters == 2){
                 iOutValue = iInValue;
-                iMBAPMsgLength = 13;
+                shortMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("iOutValue: ");
                 Serial.println(iOutValue);
@@ -383,10 +381,10 @@ void Communication()
                 bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 10003) {  
-              if(uiQuantityOfRegister == 2){
-                fOutValue = finValue;
-                iMBAPMsgLength = 13;
+            if(shortModbusAddress == 10003) {  
+              if(shortQuantityOfRegisters == 2){
+                fOutValue = fInValue;
+                shortMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("iOutValue: ");
                 Serial.println(iOutValue);
@@ -401,14 +399,14 @@ void Communication()
           if(bAddressOk == true){                      
             if(bValueOk == true) {
               // Tutto Ok, costruisco la risposta, 2° parte
-              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
-              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
               m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
               m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-              m_byteToWriteMBAPMsg[8] = (byte)(2 * uiQuantityOfRegister); // Byte Count (2 x uiQuantityOfRegister)
+              m_byteToWriteMBAPMsg[8] = (byte)(2 * shortQuantityOfRegisters); // Byte Count (2 x uiQuantityOfRegister)
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
             }                     
           }
@@ -550,11 +548,15 @@ void printWifiStatus() {
 //    return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
 //}
 short getShortFromBytes(byte* bytearrayVal){
-  return bytearrayVal[0] | ((short)bytearrayVal[1] << 8 ));
+  return (bytearrayVal[1] | ((short)bytearrayVal[0] << 8 ));
 }
 
 int getIntFromBytes(byte* bytearrayVal){
-  return bytearrayVal[0] | ( (int)bytearrayVal[1] << 8 ) | ( (int)bytearrayVal[2] << 16 ) | ( (int)bytearrayVal[3] << 24 );
+  return (bytearrayVal[3] | ( (int)bytearrayVal[2] << 8 ) | ( (int)bytearrayVal[1] << 16 ) | ( (int)bytearrayVal[0] << 24) );
+}
+
+float getFloatFromBytes(byte* bytearrayVal){
+  return (float)(bytearrayVal[3] | ( (int)bytearrayVal[2] << 8 ) | ( (int)bytearrayVal[1] << 16 ) | ( (int)bytearrayVal[0] << 24 ) );
 }
 
 void shortTobytes(short shortVal, byte* bytearrayVal){

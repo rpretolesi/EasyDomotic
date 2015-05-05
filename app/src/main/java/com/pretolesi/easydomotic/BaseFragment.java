@@ -347,7 +347,7 @@ public class BaseFragment extends Fragment implements
                     for (TCPIPClient tic : TciIpClientHelper.getTciIpClient()) {
                         if (tic != null) {
                             tv = new TextView(getActivity());
-                            tv.setId(getChildID());
+                            tv.setId((int)tic.getID());
                             tv.setLayoutParams(llp);
                             m_llStatusTcpIpServer.addView(tv);
                             tv.setText("No Server Configured\nNo Server Configured");
@@ -368,8 +368,7 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_allsd != null){
             for(LightSwitchData lsd : m_allsd){
                 if(lsd != null){
-                    LightSwitch ls = new LightSwitch(getActivity(), lsd, getArguments().getBoolean(EDIT_MODE, false));
-                    ls.setId(getChildID());
+                    LightSwitch ls = new LightSwitch(getActivity(), lsd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                     if(lsd.getLandscape()){
                         ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
                     }

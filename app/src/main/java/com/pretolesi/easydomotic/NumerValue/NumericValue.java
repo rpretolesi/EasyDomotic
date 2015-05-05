@@ -170,7 +170,7 @@ public class NumericValue extends TextView implements
                             // Write Request
                             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeShort(m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), iValue);
+                                tic.writeShort(getContext(), m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), iValue);
                             }
 
                             return;
