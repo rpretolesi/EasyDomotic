@@ -33,6 +33,8 @@ byte m_byteToWriteMBAPMsg[260] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
 // Valori condivisi
+short shBoolValue = 0;
+
 short shInValue = 0;
 int iInValue = 0;
 float fInValue = 0.0;
@@ -218,61 +220,114 @@ void Communication()
             if(uiQuantityOfRegisters == 1){
               shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
             }
-            if(uiQuantityOfRegisters == 2){
-              iInValue = getIntFromBytes(&m_byteReadMBMsg[4]);
-            }
-            Serial.print("shValue: ");
-            Serial.println(shValue);
-            
-            Serial.print("iValue: ");
-            Serial.println(iValue);
-    
-            if(uiModbusAddress == 10000) {  
+
+            if(uiModbusAddress == 20000) {
               bAddressOk = true;
-              if(shInValue == 1){
+
+              if(uiQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              }
+              Serial.print("shBoolValue: ");
+              Serial.println(shBoolValue);
+
+              if(shBoolValue == 1){
                   digitalWrite(3, 0);                  
                   bValueOk = true;
               }
-              if(shInValue == 4){
+              if(shBoolValue == 4){
                   digitalWrite(3, 1);                  
                   bValueOk = true;
               }
             }
-            if(uiModbusAddress == 10001) {  
+            if(uiModbusAddress == 20001) {
               bAddressOk = true;
-              if(shInValue == 1){
+
+              if(uiQuantityOfRegisters == 1){
+                shBoolValue = getIntFromBytes(&m_byteReadMBMsg[4]);
+              }
+              Serial.print("shBoolValue: ");
+              Serial.println(shBoolValue);
+
+              if(shBoolValue == 1){
                   digitalWrite(5, 0);                  
                   bValueOk = true;
               }
-              if(shInValue == 4){
+              if(shBoolValue == 4){
                   digitalWrite(5, 1);                  
                   bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 10002) {  
+            if(uiModbusAddress == 20002) {
               bAddressOk = true;
-              if(shInValue == 1){
+
+              if(uiQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              }
+              Serial.print("shBoolValue: ");
+              Serial.println(shBoolValue);
+
+              if(shBoolValue == 1){
                   digitalWrite(6, 0);                  
                   bValueOk = true;
               }
-              if(shInValue == 4){
+              if(shBoolValue == 4){
                   digitalWrite(6, 1);                  
                   bValueOk = true;
               }
             }            
-            if(uiModbusAddress == 10003) {  
+            if(uiModbusAddress == 20003) {
               bAddressOk = true;
-              if(shInValue == 1){
+
+              if(uiQuantityOfRegisters == 1){
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+              }
+              Serial.print("shBoolValue: ");
+              Serial.println(shBoolValue);
+
+              if(shBoolValue == 1){
                   digitalWrite(9, 0);                  
                   bValueOk = true;
               }
-              if(shInValue == 4){
+              if(shBoolValue == 4){
                   digitalWrite(9, 1);                  
                   bValueOk = true;
               }
-            }  
- 
-            if(bAddressOk == true){   
+            }
+
+            if(uiModbusAddress == 10000) {
+              bAddressOk = true;
+
+              if(uiQuantityOfRegisters == 1){
+                shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+                bValueOk = true;
+              }
+              Serial.print("shInValue: ");
+              Serial.println(shInValue);
+            }
+
+            if(uiModbusAddress == 10001) {
+              bAddressOk = true;
+
+              if(uiQuantityOfRegisters == 2){
+                iInValue = getIntFromBytes(&m_byteReadMBMsg[4]);
+                bValueOk = true;
+              }
+              Serial.print("shInValue: ");
+              Serial.println(shInValue);
+            }
+
+            if(uiModbusAddress == 10003) {
+              bAddressOk = true;
+
+              if(uiQuantityOfRegisters == 2){
+                fInValue = getFloatFromBytes(&m_byteReadMBMsg[4]);
+                bValueOk = true;
+              }
+              Serial.print("fInValue: ");
+              Serial.println(fInValue);
+            }
+
+            if(bAddressOk == true){
              if(bValueOk == true) {
               // Tutto Ok, costruisco la risposta, 2° parte
               unsigned int iMBAPMsgLength = 12;
@@ -286,8 +341,8 @@ void Communication()
               m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
               m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Value
-              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Value
+              m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
+              m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
               m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
             }            
           }
@@ -330,14 +385,12 @@ void Communication()
             }            
             if(uiModbusAddress == 10003) {  
               if(uiQuantityOfRegister == 2){
-                
-                finire da qui in poi....
                 fOutValue = finValue;
                 iMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("iOutValue: ");
                 Serial.println(iOutValue);
-                intTobytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
+                floatTobytes(fOutValue, &m_byteToWriteMBAPMsg[9]);
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
                 bAddressOk = true;
                 bValueOk = true;
