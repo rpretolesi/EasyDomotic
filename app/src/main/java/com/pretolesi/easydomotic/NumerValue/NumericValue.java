@@ -40,6 +40,7 @@ public class NumericValue extends TextView implements
     private GestureDetectorCompat mDetector;
 
     private NumericValueData m_nvd;
+    private int m_iMsgID;
     private int m_iTIDRead;
     private int m_iTIDWrite;
 
@@ -53,17 +54,19 @@ public class NumericValue extends TextView implements
     public NumericValue(Context context) {
         super(context);
         this.m_nvd = null;
-        this.m_iTIDRead = this.getId();
-        this.m_iTIDWrite = this.getId() + 1;
+        this.m_iMsgID = -1;
+        this.m_iTIDRead = -1;
+        this.m_iTIDWrite = -1;
         this.m_bEditMode = false;
     }
 
-    public NumericValue(Context context, NumericValueData nvd, boolean bEditMode) {
+    public NumericValue(Context context, NumericValueData nvd, int iMsgID, boolean bEditMode) {
         super(context);
         if(nvd != null) {
             this.m_nvd = nvd;
-            this.m_iTIDRead = this.getId();
-            this.m_iTIDWrite = this.getId() + 1;
+            this.m_iMsgID = iMsgID;
+            this.m_iTIDRead = m_iMsgID + 1;
+            this.m_iTIDWrite = m_iMsgID + 2;
             this.setTag(nvd.getTag());
         }
         this.m_bEditMode = bEditMode;
@@ -95,11 +98,9 @@ public class NumericValue extends TextView implements
         @Override
         public void run() {
             if(m_nvd != null && m_TimerHandler != null) {
-                ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
-                if(dtDataType != null){
-                    // Read Request
-                    readNumericValue(m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
-                }
+                // Read Request
+                readNumericValue();
+
                 m_TimerHandler.postDelayed(m_TimerRunnable, m_nvd.getProtTcpIpClientValueUpdateMillis());
             }
         }
@@ -149,11 +150,12 @@ public class NumericValue extends TextView implements
         Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
-    private void readNumericValue(int iTID, int iUID, int iAddress, ValueDataType.DataType dtDataType){
+    private void readNumericValue(){
         if(m_nvd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.readNumericValue(iTID, iUID, iAddress, dtDataType);
+            ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
+            if(tic != null && dtDataType != null){
+                tic.readNumericValue(getContext(),m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
             }
         }
     }
@@ -186,7 +188,7 @@ public class NumericValue extends TextView implements
                             // Write Request
                             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeInteger(m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), lValue);
+                                tic.writeInteger(getContext(), m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), lValue);
                             }
 
                             return;
@@ -202,7 +204,7 @@ public class NumericValue extends TextView implements
                             // Write Request
                             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeLong(m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), lValue64);
+                                tic.writeLong(getContext(), m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), lValue64);
                             }
 
                             return;
@@ -218,7 +220,7 @@ public class NumericValue extends TextView implements
                             // Write Request
                             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeFloat(m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), fValue);
+                                tic.writeFloat(getContext(), m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), fValue);
                             }
 
                             return;
@@ -234,7 +236,7 @@ public class NumericValue extends TextView implements
                             // Write Request
                             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeDouble(m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dblValue);
+                                tic.writeDouble(getContext(), m_iTIDWrite, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dblValue);
                             }
 
                             return;

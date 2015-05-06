@@ -219,7 +219,7 @@ public class Modbus {
 
                     break;
 
-                case 0x96:
+                case 0x90:
                     iExceptionCode = bb.get();
 
                     mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);

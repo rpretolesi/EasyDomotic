@@ -73,40 +73,6 @@ public class LightSwitch extends Switch implements
     }
 
     /*
-     * Begin
-     * Timer variable and function
-     */
-    Handler m_TimerHandler;
-    public void setTimerHandler() {
-        if(m_lsd != null) {
-            m_TimerHandler = new Handler();
-            m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
-        }
-    }
-
-    public void resetTimerHandler() {
-        if(m_TimerHandler != null){
-            m_TimerHandler.removeCallbacks(m_TimerRunnable);
-        }
-    }
-
-    private Runnable m_TimerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(m_lsd != null && m_TimerHandler != null) {
-                if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
-                    if(isChecked()){
-                        writeSwitchValue(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
-                    } else {
-                        writeSwitchValue(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
-                    }
-
-                    m_TimerHandler.postDelayed(m_TimerRunnable, m_lsd.getProtTcpIpClientValueUpdateMillis());
-                }
-            }
-        }
-    };
-    /*
      * End
      * Timer variable and function
      */
@@ -122,11 +88,6 @@ public class LightSwitch extends Switch implements
         }
 
         setOnCheckedChangeListener(this);
-        if(m_lsd != null && !m_lsd.getProtTcpIpClientSendDataOnChange()){
-            if(!m_bEditMode) {
-                setTimerHandler();
-            }
-        }
 
         Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
@@ -134,11 +95,6 @@ public class LightSwitch extends Switch implements
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(!m_lsd.getProtTcpIpClientSendDataOnChange()){
-            if(!m_bEditMode) {
-                resetTimerHandler();
-            }
-        }
 
         setOnCheckedChangeListener(null);
 
@@ -161,9 +117,9 @@ public class LightSwitch extends Switch implements
         if(m_lsd != null) {
             if(m_lsd.getProtTcpIpClientSendDataOnChange()){
                 if(isChecked){
-                    writeSwitchValue(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
+                    writeSwitchValueON();
                 } else {
-                    writeSwitchValue(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+                    writeSwitchValueOFF();
                 }
             }
         }
@@ -171,11 +127,20 @@ public class LightSwitch extends Switch implements
         Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
-    private void writeSwitchValue(Context context, int iTID, int iUID, int iAddress, int iValue){
+    private void writeSwitchValueOFF(){
         if(m_lsd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
             if(tic != null){
-                tic.writeShort(context, iTID, iUID, iAddress, iValue);
+                tic.writeShort(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
+            }
+        }
+    }
+
+    private void writeSwitchValueON(){
+        if(m_lsd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
+            if(tic != null){
+                tic.writeShort(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
             }
         }
     }
@@ -186,7 +151,12 @@ public class LightSwitch extends Switch implements
         if(ticws != null && m_lsd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
                 if(ticws.getServerID() == m_lsd.getProtTcpIpClientID()) {
-                    Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
+                        setError(null);
+                    } else {
+                        setError("");
+                    }
+                    // Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
             // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());

@@ -384,8 +384,7 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_alnvd != null){
             for(NumericValueData nvd : m_alnvd){
                 if(nvd != null){
-                    NumericValue nv = new NumericValue(getActivity(), nvd, getArguments().getBoolean(EDIT_MODE, false));
-                    nv.setId(getChildID());
+                    NumericValue nv = new NumericValue(getActivity(), nvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                     if(nvd.getLandscape()){
                         ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
                     }
