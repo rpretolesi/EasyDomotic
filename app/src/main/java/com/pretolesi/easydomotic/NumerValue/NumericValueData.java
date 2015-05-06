@@ -113,7 +113,7 @@ public class NumericValueData implements Parcelable {
         this.m_bProtTcpIpClientSendDataOnChange = false;
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = false;
     }
-
+/*
     public void update(NumericValueData lsd){
         if(lsd != null){
             this.m_ID = lsd.getID();
@@ -127,7 +127,7 @@ public class NumericValueData implements Parcelable {
             this.m_bLandscape = lsd.getLandscape();
          }
     }
-
+*/
     public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType, int iProtTcpIpClientValueNrOfDecimal, String strProtTcpIpClientValueUM, int iProtTcpIpClientValueMinNrCharToShow, boolean bProtTcpIpClientValueReadOnly, int iProtTcpIpClientValueUpdateMillis, boolean bProtTcpIpClientSendDataOnChange, boolean bProtTcpIpClientWaitAnswerBeforeSendNextData) {
         this.m_bProtTcpIpClientEnable = bProtTcpIpClientEnable;
         this.m_lProtTcpIpClientID = lProtTcpIpClientID;

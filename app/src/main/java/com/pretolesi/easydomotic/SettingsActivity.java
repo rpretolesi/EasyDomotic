@@ -40,7 +40,6 @@ public class SettingsActivity extends BaseActivity implements
      */
     private SettingsNavigationDrawerFragment mNavigationDrawerFragment;
     private SetNameAndOrientDialogFragment m_sndf;
-    private YesNoDialogFragment m_yndf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +61,6 @@ public class SettingsActivity extends BaseActivity implements
         super.onPause();
         if(m_sndf != null){
             m_sndf.dismiss();
-        }
-        if(m_yndf != null){
-            m_yndf.dismiss();
         }
     }
 

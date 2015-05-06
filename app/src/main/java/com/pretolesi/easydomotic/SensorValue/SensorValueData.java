@@ -66,11 +66,13 @@ public class SensorValueData implements Parcelable {
     private int m_iValueMinNrCharToShow;
     private int m_iValueNrOfDecimal;
     private String m_strValueUM;
-    private boolean m_bValueReadOnly;
 
     // Sensor
-    private int m_iSensorID;
+    private int m_iSensorTypeID;
     private boolean m_bSensorEnableSimulation;
+    private float m_fSensorAmplK;
+    private float m_fSensorLowPassFilterK;
+    private int m_iSensorSampleTime;
 
     public SensorValueData() {
         this.m_ID = -1;
@@ -94,10 +96,13 @@ public class SensorValueData implements Parcelable {
         this.m_iValueMinNrCharToShow = 0;
         this.m_iValueNrOfDecimal = 0;
         this.m_strValueUM = "";
-        this.m_bValueReadOnly = false;
 
-        this.m_iSensorID = -1;
+        this.m_iSensorTypeID = -1;
         this.m_bSensorEnableSimulation = false;
+        this.m_fSensorAmplK = 1.0f;
+        this.m_fSensorLowPassFilterK = 1.0f;
+        this.m_fSensorLowPassFilterK = 1.0f;
+        this.m_iSensorSampleTime = 100;
     }
 
     public SensorValueData(long id, boolean bSaved, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
@@ -109,6 +114,7 @@ public class SensorValueData implements Parcelable {
         this.m_fPosY = fPosY;
         this.m_fPosZ = fPosZ;
         this.m_bLandscape = bLandscape;
+
         this.m_bProtTcpIpClientEnable = false;
         this.m_lProtTcpIpClientID = 0;
         this.m_iProtTcpIpClientValueID = 0;
@@ -121,25 +127,14 @@ public class SensorValueData implements Parcelable {
         this.m_iValueMinNrCharToShow = 0;
         this.m_iValueNrOfDecimal = 0;
         this.m_strValueUM = "";
-        this.m_bValueReadOnly = false;
 
-        this.m_iSensorID = -1;
+        this.m_iSensorTypeID = -1;
         this.m_bSensorEnableSimulation = false;
+        this.m_fSensorAmplK = 1.0f;
+        this.m_fSensorLowPassFilterK = 1.0f;
+        this.m_iSensorSampleTime = 100;
     }
-/*
-    public void update(SensorValueData lsd){
-        if(lsd != null){
-            this.m_ID = lsd.getID();
-            this.m_bSaved = lsd.getSaved();
-            this.m_lRoomID = lsd.getRoomID();
-            this.m_strTAG = lsd.getTag();
-            this.m_fPosX = lsd.getPosX();
-            this.m_fPosY = lsd.getPosY();
-            this.m_fPosZ = lsd.getPosZ();
-            this.m_bLandscape = lsd.getLandscape();
-         }
-    }
-*/
+
     public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType, int iProtTcpIpClientValueUpdateMillis, boolean bProtTcpIpClientSendDataOnChange, boolean bProtTcpIpClientWaitAnswerBeforeSendNextData) {
         this.m_bProtTcpIpClientEnable = bProtTcpIpClientEnable;
         this.m_lProtTcpIpClientID = lProtTcpIpClientID;
@@ -151,16 +146,18 @@ public class SensorValueData implements Parcelable {
         this.m_bProtTcpIpClientWaitAnswerBeforeSendNextData = bProtTcpIpClientWaitAnswerBeforeSendNextData;
     }
 
-    public void setValueFormat(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, boolean bValueReadOnly) {
+    public void setValueFormat(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM) {
         this.m_iValueMinNrCharToShow = iValueMinNrCharToShow;
         this.m_iValueNrOfDecimal = iValueNrOfDecimal;
         this.m_strValueUM = strValueUM;
-        this.m_bValueReadOnly = bValueReadOnly;
     }
 
-    public void setSensorType(int iSensorID, boolean bSensorEnableSimulation) {
-        this.m_iSensorID = iSensorID;
+    public void setSensorType(int iSensorTypeID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
+        this.m_iSensorTypeID = iSensorTypeID;
         this.m_bSensorEnableSimulation = bSensorEnableSimulation;
+        this.m_fSensorAmplK = fSensorK;
+        this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
+        this.m_iSensorSampleTime = iSensorSampleTime;
     }
 
     // Set Method
@@ -232,17 +229,25 @@ public class SensorValueData implements Parcelable {
         this.m_strValueUM = strValueUM;
     }
 
-    public void setValueReadOnly(boolean bValueReadOnly) {
-        this.m_bValueReadOnly = bValueReadOnly;
-    }
-
     // Sensor
-    public void setSensorID(int iSensorID) {
-        this.m_iSensorID = iSensorID;
+    public void setSensorTypeID(int iSensorTypeID) {
+        this.m_iSensorTypeID = iSensorTypeID;
     }
 
     public void setSensorEnableSimulation(boolean bSensorEnableSimulation) {
         this.m_bSensorEnableSimulation = bSensorEnableSimulation;
+    }
+
+    public void setSensorAmplK(float fSensorAmplK) {
+        this.m_fSensorAmplK = fSensorAmplK;
+    }
+
+    public void setSensorLowPassFilterK(float fSensorLowPassFilterK) {
+        this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
+    }
+
+    public void setSensorSampleTime(int iSensorSampleTime) {
+        this.m_iSensorSampleTime = iSensorSampleTime;
     }
 
     // Get Method
@@ -310,17 +315,25 @@ public class SensorValueData implements Parcelable {
         return m_strValueUM;
     }
 
-    public boolean getValueReadOnly() {
-        return m_bValueReadOnly;
-    }
-
     // Sensor
-    public int getSensorID() {
-        return m_iSensorID;
+    public int getSensorTypeID() {
+        return m_iSensorTypeID;
     }
 
     public boolean getSensorEnableSimulation() {
         return m_bSensorEnableSimulation;
+    }
+
+    public float getSensorAmplK() {
+        return m_fSensorAmplK;
+    }
+
+    public float getSensorLowPassFilterK() {
+        return m_fSensorLowPassFilterK;
+    }
+
+    public int getSensorSampleTime() {
+        return m_iSensorSampleTime;
     }
 
     protected SensorValueData(Parcel in) {
@@ -345,10 +358,12 @@ public class SensorValueData implements Parcelable {
         m_iValueMinNrCharToShow = in.readInt();
         m_iValueNrOfDecimal = in.readInt();
         m_strValueUM = in.readString();
-        m_bValueReadOnly = in.readByte() != 0;
 
-        m_iSensorID = in.readInt();
+        m_iSensorTypeID = in.readInt();
         m_bSensorEnableSimulation = in.readByte() != 0;
+        m_fSensorAmplK = in.readFloat();
+        m_fSensorLowPassFilterK = in.readFloat();
+        m_iSensorSampleTime = in.readInt();
     }
 
     @Override
@@ -379,10 +394,12 @@ public class SensorValueData implements Parcelable {
         dest.writeInt(m_iValueMinNrCharToShow);
         dest.writeInt(m_iValueNrOfDecimal);
         dest.writeString(m_strValueUM);
-        dest.writeByte((byte) (m_bValueReadOnly ? 1 : 0));
 
-        dest.writeInt(m_iSensorID);
+        dest.writeInt(m_iSensorTypeID);
         dest.writeByte((byte) (m_bSensorEnableSimulation ? 1 : 0));
+        dest.writeFloat(m_fSensorAmplK);
+        dest.writeFloat(m_fSensorLowPassFilterK);
+        dest.writeInt(m_iSensorSampleTime);
     }
 
     @SuppressWarnings("unused")
@@ -404,7 +421,7 @@ public class SensorValueData implements Parcelable {
         LEVEL_REAR(1, "Level Rear"),
         LEVEL_LEFT(2, "Level Left"),
         LEVEL_RIGHT(3, "Level Right"),
-        DOUBLE64(4, "Float with double precision IEEE 754 64 bit");
+        COMPASS(4, "Compass");
 
         private int m_iSensorTypeID;
         private String m_strSensorTypeName;

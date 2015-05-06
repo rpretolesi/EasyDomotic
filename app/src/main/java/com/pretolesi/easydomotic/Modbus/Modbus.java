@@ -2,7 +2,6 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
-import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
