@@ -92,7 +92,7 @@ public class BaseFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Start ID for child
-        m_iChildID = 10;
+        m_iChildID = 0;
 
         if (m_rl == null) {
             m_rl = new RelativeLayout(getActivity());
@@ -340,6 +340,8 @@ public class BaseFragment extends Fragment implements
 
                 // Get configured Servers
                 TextView tv;
+                int iID = 0;
+                int iMaxID = 0;
                 LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 llp.setLayoutDirection(LinearLayout.HORIZONTAL);
                 llp.weight = (float) 1.0;
@@ -347,12 +349,18 @@ public class BaseFragment extends Fragment implements
                     for (TCPIPClient tic : TciIpClientHelper.getTciIpClient()) {
                         if (tic != null) {
                             tv = new TextView(getActivity());
-                            tv.setId((int)tic.getID());
+                            iID = (int)tic.getID();
+                            tv.setId(iID);
+                            if(iID > iMaxID){
+                                iMaxID = iID;
+                            }
                             tv.setLayoutParams(llp);
                             m_llStatusTcpIpServer.addView(tv);
                             tv.setText("No Server Configured\nNo Server Configured");
                         }
                     }
+                    // Start ID for child
+                    m_iChildID = iMaxID;
                 }
             }
         }

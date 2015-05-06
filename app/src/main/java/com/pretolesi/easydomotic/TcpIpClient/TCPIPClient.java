@@ -493,6 +493,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
@@ -530,6 +533,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
@@ -567,6 +573,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
@@ -604,6 +613,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
@@ -641,6 +653,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
@@ -688,6 +703,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                     Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
         }
