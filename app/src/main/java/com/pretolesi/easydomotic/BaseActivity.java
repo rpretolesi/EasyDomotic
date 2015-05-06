@@ -36,31 +36,31 @@ public class BaseActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // The activity is about to become visible.
-        Log.d(TAG, this.toString() + ": " + "onStart()");
+        // Log.d(TAG, this.toString() + ": " + "onStart()");
     }
     @Override
     protected void onResume() {
         super.onResume();
         // The activity has become visible (it is now "resumed").
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
     @Override
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
     @Override
     protected void onStop() {
         super.onStop();
         // The activity is no longer visible (it is now "stopped")
-        Log.d(TAG, this.toString() + ": " + "onStop()");
+        // Log.d(TAG, this.toString() + ": " + "onStop()");
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // The activity is about to be destroyed.
-        Log.d(TAG, this.toString() + ": " + "onDestroy()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     public void onSectionAttached(int number) {

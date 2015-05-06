@@ -23,32 +23,32 @@ public class Modbus {
     public static synchronized TcpIpMsg writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.putInt((int)lValue);
+        bb.putInt(0, (int)lValue);
         int[] iaValue = new int[2];
-        iaValue[0] = bb.getShort();
-        iaValue[1] = bb.getShort();
+        iaValue[0] = bb.getShort(0);
+        iaValue[1] = bb.getShort(2);
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 2);
     }
 
     public static synchronized TcpIpMsg writeLong(Context context, int iTID, int iUID, int iAddress, long lValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         ByteBuffer bb = ByteBuffer.allocate(8);
-        bb.putLong(lValue);
+        bb.putLong(0, lValue);
         int[] iaValue = new int[4];
-        iaValue[0] = bb.getShort();
-        iaValue[1] = bb.getShort();
-        iaValue[2] = bb.getShort();
-        iaValue[3] = bb.getShort();
+        iaValue[0] = bb.getShort(0);
+        iaValue[1] = bb.getShort(2);
+        iaValue[2] = bb.getShort(4);
+        iaValue[3] = bb.getShort(6);
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 4);
     }
 
     public static synchronized TcpIpMsg writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.putFloat(fValue);
+        bb.putFloat(0, fValue);
         int[] iaValue = new int[2];
-        iaValue[0] = bb.getShort();
-        iaValue[1] = bb.getShort();
+        iaValue[0] = bb.getShort(0);
+        iaValue[1] = bb.getShort(2);
 
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 2);
     }
@@ -56,12 +56,12 @@ public class Modbus {
     public static synchronized TcpIpMsg writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         ByteBuffer bb = ByteBuffer.allocate(8);
-        bb.putDouble(dblValue);
+        bb.putDouble(0, dblValue);
         int[] iaValue = new int[4];
-        iaValue[0] = bb.getShort();
-        iaValue[1] = bb.getShort();
-        iaValue[2] = bb.getShort();
-        iaValue[3] = bb.getShort();
+        iaValue[0] = bb.getShort(0);
+        iaValue[1] = bb.getShort(2);
+        iaValue[2] = bb.getShort(4);
+        iaValue[3] = bb.getShort(6);
 
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 4);
     }
@@ -108,11 +108,11 @@ public class Modbus {
 
         if(iaValue != null && iaValue.length > 0){
             for (int iValue : iaValue) {
-                if (iValue >= 0 && iValue <= 65535) {
+//                if (iValue >= 0 && iValue <= 65535) {
                     bb.putShort((short) iValue);
-                } else {
-                    throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
-                }
+//                } else {
+//                    throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
+//                }
             }
         } else {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));

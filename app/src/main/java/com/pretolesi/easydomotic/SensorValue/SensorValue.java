@@ -173,7 +173,7 @@ public class SensorValue extends TextView implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
@@ -197,7 +197,7 @@ public class SensorValue extends TextView implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
     private void writeValue(String strValue){
@@ -498,7 +498,7 @@ public class SensorValue extends TextView implements
             mLastTouchY = event.getRawY() - rllp.topMargin;
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
 
         return true;
     }
@@ -527,7 +527,7 @@ public class SensorValue extends TextView implements
             m_svd.setPosY((int)dy);
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
 
         return true;
     }

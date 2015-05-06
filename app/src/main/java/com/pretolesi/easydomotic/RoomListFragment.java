@@ -133,7 +133,7 @@ public class RoomListFragment extends ListFragment implements
     public void onResume() {
         super.onResume();
 //        getLoaderManager().initLoader(0, null, this);
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
@@ -141,25 +141,25 @@ public class RoomListFragment extends ListFragment implements
         super.onPause();
 //        getLoaderManager().destroyLoader(0);
 
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, this.toString() + ": " + "onStop()");
+        // Log.d(TAG, this.toString() + ": " + "onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, this.toString() + ": " + "onDestroyView()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroyView()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, this.toString() + ": " + "onDestroy()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     @Override
@@ -197,14 +197,14 @@ public class RoomListFragment extends ListFragment implements
         mCurFilter = newFilter;
         getLoaderManager().restartLoader(0, null, this);
 
-        Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
+        // Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
 
         return true;
     }
 */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
         return new CursorLoader(getActivity()){
             @Override
             public Cursor loadInBackground() {
@@ -225,7 +225,7 @@ public class RoomListFragment extends ListFragment implements
         } else {
             setListShownNoAnimation(true);
         }
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
     }
 
     @Override
@@ -234,7 +234,7 @@ public class RoomListFragment extends ListFragment implements
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
         mAdapter.swapCursor(null);
-        Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
+        // Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
     }
 
     /**

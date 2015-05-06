@@ -78,14 +78,14 @@ public class BaseFragment extends Fragment implements
         ((BaseActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
  //       ((BaseActivity) activity).restoreActionBar();
 
-        Log.d(TAG, this.toString() + ": " + "onAttach()");
+        // Log.d(TAG, this.toString() + ": " + "onAttach()");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, this.toString() + ": " + "onCreate()");
+        // Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
 
     @Override
@@ -104,26 +104,26 @@ public class BaseFragment extends Fragment implements
             m_llStatusTcpIpServer = new LinearLayout(getActivity());
         }
 
-        Log.d(TAG, this.toString() + ": " + "onCreateView()");
+        // Log.d(TAG, this.toString() + ": " + "onCreateView()");
         return m_rl;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
+        // Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Log.d(TAG, this.toString() + ": " + "onViewStateRestored()");
+        // Log.d(TAG, this.toString() + ": " + "onViewStateRestored()");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, this.toString() + ": " + "onStart()");
+        // Log.d(TAG, this.toString() + ": " + "onStart()");
     }
 
     @Override
@@ -133,7 +133,7 @@ public class BaseFragment extends Fragment implements
         // Start the Server
         getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
 
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
@@ -168,36 +168,36 @@ public class BaseFragment extends Fragment implements
         getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
 
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, this.toString() + ": " + "onStop()");
+        // Log.d(TAG, this.toString() + ": " + "onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, this.toString() + ": " + "onDestroyView()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroyView()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, this.toString() + ": " + "onDestroy()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(TAG, this.toString() + ": " + "onDetach()");
+        // Log.d(TAG, this.toString() + ": " + "onDetach()");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
 
         if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
             return new CursorLoader(getActivity()){
@@ -287,13 +287,13 @@ public class BaseFragment extends Fragment implements
             updateNumericValues();
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-        Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
     }
 
     @Override

@@ -139,32 +139,32 @@ public class TcpIpClientListFragment extends ListFragment implements
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, this.toString() + ": " + "onStop()");
+        // Log.d(TAG, this.toString() + ": " + "onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, this.toString() + ": " + "onDestroyView()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroyView()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, this.toString() + ": " + "onDestroy()");
+        // Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     @Override
@@ -203,14 +203,14 @@ public class TcpIpClientListFragment extends ListFragment implements
         mCurFilter = newFilter;
         getLoaderManager().restartLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
 
-        Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
+        // Log.d(TAG, this.toString() + ": " + "onQueryTextChange()");
 
         return true;
     }
 */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
         if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
@@ -238,7 +238,7 @@ public class TcpIpClientListFragment extends ListFragment implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
     }
 
     @Override
@@ -250,7 +250,7 @@ public class TcpIpClientListFragment extends ListFragment implements
             mAdapter.swapCursor(null);
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
+        // Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
     }
 
     /**

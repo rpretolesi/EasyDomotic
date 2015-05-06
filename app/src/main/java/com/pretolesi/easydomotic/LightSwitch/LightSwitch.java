@@ -89,7 +89,7 @@ public class LightSwitch extends Switch implements
 
         setOnCheckedChangeListener(this);
 
-        Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
@@ -106,13 +106,13 @@ public class LightSwitch extends Switch implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() enter Check Status: " + isChecked);
+        // Log.d(TAG, this.toString() + ": " + "onCheckedChanged() enter Check Status: " + isChecked);
 
         if(m_lsd != null) {
             if(m_lsd.getProtTcpIpClientSendDataOnChange()){
@@ -124,7 +124,7 @@ public class LightSwitch extends Switch implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
+        // Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
     }
 
     private void writeSwitchValueOFF(){
@@ -154,12 +154,12 @@ public class LightSwitch extends Switch implements
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         setError(null);
                     } else {
+                        Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         setError("");
                     }
-                    // Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-            // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
+            // // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }
     }
 
@@ -234,7 +234,7 @@ public class LightSwitch extends Switch implements
             mLastTouchY = event.getRawY() - rllp.topMargin;
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
 
         return true;
     }
@@ -263,7 +263,7 @@ public class LightSwitch extends Switch implements
             m_lsd.setPosY((int)dy);
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
 
         return true;
     }

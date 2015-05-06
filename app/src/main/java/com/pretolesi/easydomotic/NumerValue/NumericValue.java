@@ -124,11 +124,9 @@ public class NumericValue extends TextView implements
             setTimerHandler();
         }
 
-
-        this.setError("");
         setText(getDefaultValue());
 
-        Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
@@ -147,7 +145,7 @@ public class NumericValue extends TextView implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
+        // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
     private void readNumericValue(){
@@ -283,7 +281,7 @@ public class NumericValue extends TextView implements
     private void openWriteInput(){
         if(m_edEditText == null){
             m_edEditText = new EDEditText(getContext());
-            m_edEditText.setInputLimit(0,655353);
+            m_edEditText.setInputLimit(0,65);
             m_edEditText.setText("");
             ViewParent view = this.getParent();
             if(view != null && view instanceof RelativeLayout){
@@ -303,16 +301,18 @@ public class NumericValue extends TextView implements
                 m_edEditText.setOnKeyListener(new OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                            if(m_edEditText != null){
+                        if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                            if (m_edEditText != null) {
                                 m_edEditText.clearFocus();
                             }
                             return true;
                         }
 
-                        if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                            if(m_edEditText != null){
-                                writeValue(m_edEditText.getText().toString());
+                        if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                            if (m_edEditText != null) {
+                                if (m_edEditText.validateInputLimit()) {
+                                    writeValue(m_edEditText.getText().toString());
+                                }
                             }
                             return true;
                         }
@@ -325,7 +325,7 @@ public class NumericValue extends TextView implements
                 m_edEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if(!hasFocus){
+                        if (!hasFocus) {
                             closeWriteInput();
                         }
                     }
@@ -364,35 +364,35 @@ public class NumericValue extends TextView implements
                             switch (dtDataType) {
                                 case SHORT16:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
-                                        short shValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getShort();
+                                        short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();
                                         strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case INT32:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
-                                        int iValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getInt();
+                                        int iValue = ByteBuffer.wrap(ticrs.getValue()).getInt();
                                         strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case LONG64:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
-                                        long lValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getLong();
+                                        long lValue = ByteBuffer.wrap(ticrs.getValue()).getLong();
                                         strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "d %s", lValue, m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case FLOAT32:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
-                                        float fValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                                        float fValue = ByteBuffer.wrap(ticrs.getValue()).getFloat();
                                         strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)fValue, m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case DOUBLE64:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 8) {
-                                        double dValue = ByteBuffer.wrap(ticrs.getValue()).order(ByteOrder.LITTLE_ENDIAN).getDouble();
+                                        double dValue = ByteBuffer.wrap(ticrs.getValue()).getDouble();
                                         strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", dValue, m_nvd.getProtTcpIpClientValueUM());
                                     }
 
@@ -410,7 +410,7 @@ public class NumericValue extends TextView implements
 
                     setText(strValue);
                 }
-                // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
+                // // Log.d(TAG, this.toString() + ": " + "onModbusStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
             }
         }
     }
@@ -519,7 +519,7 @@ public class NumericValue extends TextView implements
             mLastTouchY = event.getRawY() - rllp.topMargin;
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
 
         return true;
     }
@@ -548,7 +548,7 @@ public class NumericValue extends TextView implements
             m_nvd.setPosY((int)dy);
         }
 
-//        Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
+//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
 
         return true;
     }

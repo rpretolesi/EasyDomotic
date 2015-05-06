@@ -166,7 +166,7 @@ public class TCPIPClientPropActivity extends Activity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
         if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
             return new CursorLoader(this){
                 @Override
@@ -190,7 +190,7 @@ public class TCPIPClientPropActivity extends Activity implements
             }
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override

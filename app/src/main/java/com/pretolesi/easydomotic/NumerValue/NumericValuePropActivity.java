@@ -235,7 +235,7 @@ public class NumericValuePropActivity extends Activity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
         if(id == Loaders.ROOM_LOADER_ID){
             return new CursorLoader(this){
                 @Override
@@ -311,7 +311,7 @@ public class NumericValuePropActivity extends Activity implements
             updateNumericValue();
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
 
     }
 
@@ -324,7 +324,7 @@ public class NumericValuePropActivity extends Activity implements
             m_TcpIpClientAdapter.swapCursor(null);
         }
 
-        Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
     }
 
     @Override

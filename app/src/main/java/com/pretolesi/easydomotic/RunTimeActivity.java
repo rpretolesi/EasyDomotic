@@ -51,14 +51,14 @@ public class RunTimeActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         // The activity has become visible (it is now "resumed").
-        Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
-        Log.d(TAG, this.toString() + ": " + "onPause()");
+        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
@@ -140,14 +140,14 @@ public class RunTimeActivity extends BaseActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
+        // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
 
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
+        // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override

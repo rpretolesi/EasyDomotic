@@ -128,6 +128,7 @@ void Communication(){
       // Get MBAP
       if (client.available() >= 6 && m_bModbusMBAP == false) {
         // Parse message in order to get MBAP Header
+        Serial.println("Begin. ");
         Serial.print("MBAP: ");
         for(int index_0 = 0; index_0 < 6; index_0++) {
           m_byteReadMBAP[index_0] = client.read();
@@ -239,7 +240,7 @@ void Communication(){
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
-                shBoolValue = getIntFromBytes(&m_byteReadMBMsg[7]);
+                shBoolValue = getShortFromBytes(&m_byteReadMBMsg[7]);
               }
               Serial.print("shBoolValue: ");
               Serial.println(shBoolValue);
@@ -294,7 +295,7 @@ void Communication(){
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
-                shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
+                shInValue = getShortFromBytes(&m_byteReadMBMsg[7]);
                 bValueOk = true;
               }
               Serial.print("shInValue: ");
@@ -305,7 +306,7 @@ void Communication(){
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
-                iInValue = getIntFromBytes(&m_byteReadMBMsg[4]);
+                iInValue = getIntFromBytes(&m_byteReadMBMsg[7]);
                 bValueOk = true;
               }
               Serial.print("shInValue: ");
@@ -316,7 +317,7 @@ void Communication(){
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
-                fInValue = getFloatFromBytes(&m_byteReadMBMsg[4]);
+                fInValue = getFloatFromBytes(&m_byteReadMBMsg[7]);
                 bValueOk = true;
               }
               Serial.print("fInValue: ");
@@ -362,7 +363,7 @@ void Communication(){
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("shOutValue: ");
                 Serial.println(shOutValue);
-                shortTobytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
+                setShortToBytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
                 bAddressOk = true;
                 bValueOk = true;
@@ -375,7 +376,7 @@ void Communication(){
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("iOutValue: ");
                 Serial.println(iOutValue);
-                intTobytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
+                setIntToBytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
                 bAddressOk = true;
                 bValueOk = true;
@@ -386,9 +387,9 @@ void Communication(){
                 fOutValue = fInValue;
                 shortMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
-                Serial.print("iOutValue: ");
-                Serial.println(iOutValue);
-                floatTobytes(fOutValue, &m_byteToWriteMBAPMsg[9]);
+                Serial.print("fOutValue: ");
+                Serial.println(fOutValue);
+                setFloatToBytes(fOutValue, &m_byteToWriteMBAPMsg[9]);
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
                 bAddressOk = true;
                 bValueOk = true;
@@ -469,6 +470,7 @@ void Communication(){
           Serial.print(" ");
         }
         Serial.println(" ");
+        Serial.println("End. ");
 
         // Operazione Terminata
         initValue();
@@ -543,23 +545,8 @@ void printWifiStatus() {
   Serial.println(" dBm");
 }
 
-//#define bytesToWord(hb,lb) ( (((WORD)(hb&0xFF))<<8) | ((WORD)lb) )
-//word getWordFromBytes(byte lowByte, byte highByte) {
-//    return ((word)(((byte)(lowByte))|(((word)((byte)(highByte)))<<8)));
-//}
-short getShortFromBytes(byte* bytearrayVal){
-  return (bytearrayVal[1] | ((short)bytearrayVal[0] << 8 ));
-}
-
-int getIntFromBytes(byte* bytearrayVal){
-  return (bytearrayVal[3] | ( (int)bytearrayVal[2] << 8 ) | ( (int)bytearrayVal[1] << 16 ) | ( (int)bytearrayVal[0] << 24) );
-}
-
-float getFloatFromBytes(byte* bytearrayVal){
-  return (float)(bytearrayVal[3] | ( (int)bytearrayVal[2] << 8 ) | ( (int)bytearrayVal[1] << 16 ) | ( (int)bytearrayVal[0] << 24 ) );
-}
-
-void shortTobytes(short shortVal, byte* bytearrayVal){
+// Short
+void setShortToBytes(short shortVal, byte* bytearrayVal){
   // Create union of shared memory space
   union {
     short temp_short;
@@ -568,22 +555,56 @@ void shortTobytes(short shortVal, byte* bytearrayVal){
   // Overite bytes of union with float variable
   u.temp_short = shortVal;
   // Assign bytes to input array
-  memcpy(bytearrayVal, u.temp_bytearray, 2);
+  bytearrayVal[0] = u.temp_bytearray[1];
+  bytearrayVal[1] = u.temp_bytearray[0];
 }
 
-void intTobytes(int intVal, byte* bytearrayVal){
+short getShortFromBytes(byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    short temp_short;
+    byte temp_bytearray[2];
+  } u;
+  
+  u.temp_bytearray[1] = bytearrayVal[0];
+  u.temp_bytearray[0] = bytearrayVal[1];
+  
+  return u.temp_short;
+}
+
+// Int
+void setIntToBytes(int intVal, byte* bytearrayVal){
   // Create union of shared memory space
   union {
     int temp_int;
-    byte temp_bytearray[2];
+    byte temp_bytearray[4];
   } u;
-  // Overite bytes of union with float variable
+  // Overite bytes of union with int variable
   u.temp_int = intVal;
-  // Assign bytes to input array
-  memcpy(bytearrayVal, u.temp_bytearray, 2);
+
+  bytearrayVal[0] = u.temp_bytearray[3];
+  bytearrayVal[1] = u.temp_bytearray[2];
+  bytearrayVal[2] = u.temp_bytearray[1];
+  bytearrayVal[3] = u.temp_bytearray[0];
 }
 
-void floatTobytes(float floatVal, byte* bytearrayVal){
+int getIntFromBytes(byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    int temp_int;
+    byte temp_bytearray[4];
+  } u;
+  
+  u.temp_bytearray[3] = bytearrayVal[0];
+  u.temp_bytearray[2] = bytearrayVal[1];
+  u.temp_bytearray[1] = bytearrayVal[2];
+  u.temp_bytearray[0] = bytearrayVal[3];
+  
+  return u.temp_int;
+}
+
+// Float
+void setFloatToBytes(float floatVal, byte* bytearrayVal){
   // Create union of shared memory space
   union {
     float temp_float;
@@ -591,7 +612,25 @@ void floatTobytes(float floatVal, byte* bytearrayVal){
   } u;
   // Overite bytes of union with float variable
   u.temp_float = floatVal;
-  // Assign bytes to input array
-  memcpy(bytearrayVal, u.temp_bytearray, 4);
+  
+  bytearrayVal[0] = u.temp_bytearray[3];
+  bytearrayVal[1] = u.temp_bytearray[2];
+  bytearrayVal[2] = u.temp_bytearray[1];
+  bytearrayVal[3] = u.temp_bytearray[0];
+}
+
+float getFloatFromBytes(byte* bytearrayVal){
+  // Create union of shared memory space
+  union {
+    float temp_float;
+    byte temp_bytearray[4];
+  } u;
+  
+  u.temp_bytearray[3] = bytearrayVal[0];
+  u.temp_bytearray[2] = bytearrayVal[1];
+  u.temp_bytearray[1] = bytearrayVal[2];
+  u.temp_bytearray[0] = bytearrayVal[3];
+  
+  return u.temp_float;
 }
 
