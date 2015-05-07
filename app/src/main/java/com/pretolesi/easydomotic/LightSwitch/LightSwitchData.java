@@ -8,8 +8,8 @@ import android.os.Parcelable;
  */
 public class LightSwitchData implements Parcelable {
 
-    public static int TAGMinChar = 1;
-    public static int TAGMaxChar = 128;
+    public static short TAGMinChar = 1;
+    public static short TAGMaxChar = 128;
     public static String TAGDefaultValue = "My LightSwitchData Name";
 
     public static int ProtTcpIpClientValueIDMinValue = 0;

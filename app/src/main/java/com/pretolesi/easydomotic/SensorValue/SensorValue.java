@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.text.InputType;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -20,12 +19,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.CustomControls.EDEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-import com.pretolesi.easydomotic.ValueUtils.ValueDataType;
 
 /**
  *
@@ -48,7 +47,7 @@ public class SensorValue extends TextView implements
 
     private boolean m_bEditMode;
 
-    private EDEditText m_edEditText;
+    private NumericEditText m_edEditText;
 
     // Sensors & SensorManager
     private SensorManager m_SensorManager;
@@ -202,7 +201,7 @@ public class SensorValue extends TextView implements
 
     private void writeValue(String strValue){
         if(m_svd != null){
-            ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_svd.getProtTcpIpClientValueDataType());
+            DataType dtDataType = DataType.getDataType(m_svd.getProtTcpIpClientValueDataType());
             if(dtDataType != null){
                 switch (dtDataType) {
                     case SHORT16:
@@ -322,7 +321,7 @@ public class SensorValue extends TextView implements
 
     private void openWriteInput(){
         if(m_edEditText == null){
-            m_edEditText = new EDEditText(getContext());
+            m_edEditText = new NumericEditText(getContext());
             m_edEditText.setInputLimit(0,655353);
             m_edEditText.setText("");
             ViewParent view = this.getParent();

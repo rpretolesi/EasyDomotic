@@ -8,12 +8,12 @@ import android.os.Parcelable;
  */
 public class TCPIPClientData implements Parcelable {
 
-    public static int NameMinChar = 1;
-    public static int NameMaxChar = 128;
+    public static short NameMinChar = 1;
+    public static short NameMaxChar = 128;
     public static String NameDefaultValue = "My Name";
 
-    public static int AddressMinChar = 7;
-    public static int AddressMaxChar = 15;
+    public static short AddressMinChar = 7;
+    public static short AddressMaxChar = 15;
     public static String AddressDefaultValue = "192.168.1.1";
 
     public static int PortMinValue = 1;

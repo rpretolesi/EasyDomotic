@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.text.InputType;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -17,15 +16,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.CustomControls.EDEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-import com.pretolesi.easydomotic.ValueUtils.ValueDataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  *
@@ -47,9 +45,11 @@ public class NumericValue extends TextView implements
     private float mLastTouchX;
     private float mLastTouchY;
 
+    private DataType m_netdt;
+
     private boolean m_bEditMode;
 
-    private EDEditText m_edEditText;
+    private NumericEditText m_edEditText;
 
     public NumericValue(Context context) {
         super(context);
@@ -57,6 +57,7 @@ public class NumericValue extends TextView implements
         this.m_iMsgID = -1;
         this.m_iTIDRead = -1;
         this.m_iTIDWrite = -1;
+        this.m_netdt = null;
         this.m_bEditMode = false;
     }
 
@@ -68,6 +69,7 @@ public class NumericValue extends TextView implements
             this.m_iTIDRead = m_iMsgID + 1;
             this.m_iTIDWrite = m_iMsgID + 2;
             this.setTag(nvd.getTag());
+            this.m_netdt = DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
         }
         this.m_bEditMode = bEditMode;
     }
@@ -151,18 +153,16 @@ public class NumericValue extends TextView implements
     private void readNumericValue(){
         if(m_nvd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
-            ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
-            if(tic != null && dtDataType != null){
-                tic.readNumericValue(getContext(),m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), dtDataType);
+            if(tic != null && m_netdt != null){
+                tic.readNumericValue(getContext(),m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), m_netdt);
             }
         }
     }
 
     private void writeValue(String strValue){
         if(m_nvd != null){
-            ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
-            if(dtDataType != null){
-                switch (dtDataType) {
+            if(m_netdt != null){
+                switch (m_netdt) {
                     case SHORT16:
                         int iValue;
                         try {
@@ -280,15 +280,41 @@ public class NumericValue extends TextView implements
 
     private void openWriteInput(){
         if(m_edEditText == null){
-            m_edEditText = new EDEditText(getContext());
-            m_edEditText.setInputLimit(0,65);
-            m_edEditText.setText("");
+            // Create....
+            m_edEditText = new NumericEditText(getContext());
+            // Set Input Limit
+            m_edEditText.setSingleLine();
+            if(m_netdt != null) {
+                switch (m_netdt) {
+                    case SHORT16:
+                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        m_edEditText.setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
+                        break;
+                    case INT32:
+                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        m_edEditText.setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
+                        break;
+                    case LONG64:
+                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        m_edEditText.setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
+                        break;
+                    case FLOAT32:
+                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        m_edEditText.setInputLimit(Float.MIN_VALUE, Float.MAX_VALUE);
+                        break;
+                    case DOUBLE64:
+                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        m_edEditText.setInputLimit(Double.MIN_VALUE, Double.MAX_VALUE);
+                        break;
+                }
+            }
+            // Visualizzo valore corrente
+            m_edEditText.setHint(this.getText());
+            // Creo i parametri per il layout
             ViewParent view = this.getParent();
             if(view != null && view instanceof RelativeLayout){
                 RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
                 m_edEditText.setLayoutParams(rllp);
-                m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                m_edEditText.setSingleLine();
                 ((RelativeLayout) view).addView(m_edEditText);
                 m_edEditText.requestFocus();
                 InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -359,9 +385,8 @@ public class NumericValue extends TextView implements
                 if(ticrs.getTID() == m_iTIDRead) {
                     String strValue = "";
                     if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK){
-                        ValueDataType.DataType dtDataType = ValueDataType.DataType.getDataType(m_nvd.getProtTcpIpClientValueDataType());
-                        if(dtDataType != null){
-                            switch (dtDataType) {
+                        if(m_netdt != null){
+                            switch (m_netdt) {
                                 case SHORT16:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
                                         short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();

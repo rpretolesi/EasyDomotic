@@ -49,7 +49,6 @@ public class Modbus {
         int[] iaValue = new int[2];
         iaValue[0] = bb.getShort(0);
         iaValue[1] = bb.getShort(2);
-
         return writeMultipleRegisters(context, iTID, iUID, iAddress, iaValue, 2);
     }
 
@@ -108,11 +107,11 @@ public class Modbus {
 
         if(iaValue != null && iaValue.length > 0){
             for (int iValue : iaValue) {
-//                if (iValue >= 0 && iValue <= 65535) {
+                if (iValue >= -32768  && iValue <= 32767 ) {
                     bb.putShort((short) iValue);
-//                } else {
-//                    throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
-//                }
+                } else {
+                    throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
+                }
             }
         } else {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));

@@ -35,7 +35,7 @@
             android:layout_below="@id/id_spn_room"
             android:text="@string/text_tv_name"/>
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.StringEditText
             android:id="@+id/id_et_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                     android:text="@string/text_nvpa_tv_nr_of_decimal"
                     android:labelFor="@+id/text_nvpa_tv_nr_of_decimal"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_nvpa_et_nr_of_decimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
                     android:text="@string/text_nvpa_tv_min_nr_char_to_show"
                     android:labelFor="@+id/text_nvpa_tv_min_nr_char_to_show"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_nvpa_et_min_nr_char_to_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -216,7 +216,7 @@
                     android:text="@string/text_nvpa_tv_um"
                     android:labelFor="@+id/text_nvpa_tv_um"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.StringEditText
                     android:id="@+id/id_nvpa_et_um"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
             android:text="@string/text_nvpa_tv_update_millis"
             android:labelFor="@+id/text_nvpa_et_update_millis"/>
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.NumericEditText
             android:id="@+id/id_nvpa_et_update_millis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -309,7 +309,7 @@
                     android:text="@string/text_nvpa_tv_protocol_field_1"
                     android:labelFor="@+id/id_nvpa_et_protocol_field_1"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_nvpa_et_protocol_field_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -326,7 +326,7 @@
                     android:text="@string/text_nvpa_tv_protocol_field_2"
                     android:labelFor="@+id/id_nvpa_et_protocol_field_2"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_nvpa_et_protocol_field_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

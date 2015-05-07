@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -17,9 +16,9 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.CustomControls.EDEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
@@ -40,14 +39,14 @@ public class TCPIPClientPropActivity extends Activity implements
 
     private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
 
-    private EDEditText m_id_stica_et_server_name;
-    private EDEditText m_id_stica_et_server_ip_address;
-    private EDEditText m_id_stica_et_server_port;
-    private EDEditText m_id_stica_et_timeout;
-    private EDEditText m_id_stica_et_comm_send_data_delay;
+    private StringEditText m_id_stica_et_server_name;
+    private StringEditText m_id_stica_et_server_ip_address;
+    private NumericEditText m_id_stica_et_server_port;
+    private NumericEditText m_id_stica_et_timeout;
+    private NumericEditText m_id_stica_et_comm_send_data_delay;
     private Spinner m_id_stica_spn_protocol;
-    private EDEditText m_id_stica_et_protocol_field_1;
-    private EDEditText m_id_stica_et_protocol_field_2;
+    private NumericEditText m_id_stica_et_protocol_field_1;
+    private NumericEditText m_id_stica_et_protocol_field_2;
 
     private SimpleCursorAdapter m_SCAdapter;
     private TCPIPClientData m_ticd;
@@ -59,27 +58,27 @@ public class TCPIPClientPropActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_tcp_ip_client_activity);
 
-        m_id_stica_et_server_name = (EDEditText)findViewById(R.id.id_stica_et_server_name);
+        m_id_stica_et_server_name = (StringEditText)findViewById(R.id.id_stica_et_server_name);
         m_id_stica_et_server_name.setInputLimit(TCPIPClientData.NameMinChar, TCPIPClientData.NameMaxChar);
         m_id_stica_et_server_name.setText(TCPIPClientData.NameDefaultValue);
-        m_id_stica_et_server_ip_address = (EDEditText)findViewById(R.id.id_stica_et_server_ip_address);
+        m_id_stica_et_server_ip_address = (StringEditText)findViewById(R.id.id_stica_et_server_ip_address);
         m_id_stica_et_server_ip_address.setInputLimit(TCPIPClientData.AddressMinChar, TCPIPClientData.AddressMaxChar);
         m_id_stica_et_server_ip_address.setText(TCPIPClientData.AddressDefaultValue);
-        m_id_stica_et_server_port = (EDEditText)findViewById(R.id.id_stica_et_server_port);
+        m_id_stica_et_server_port = (NumericEditText)findViewById(R.id.id_stica_et_server_port);
         m_id_stica_et_server_port.setInputLimit(TCPIPClientData.PortMinValue, TCPIPClientData.PortMaxValue);
         m_id_stica_et_server_port.setText(TCPIPClientData.PortDefaultValue);
-        m_id_stica_et_timeout = (EDEditText)findViewById(R.id.id_stica_et_timeout);
+        m_id_stica_et_timeout = (NumericEditText)findViewById(R.id.id_stica_et_timeout);
         m_id_stica_et_timeout.setInputLimit(TCPIPClientData.TimeoutMinValue, TCPIPClientData.TimeoutMaxValue);
         m_id_stica_et_timeout.setText(TCPIPClientData.TimeouDefaultValue);
-        m_id_stica_et_comm_send_data_delay = (EDEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
+        m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
         m_id_stica_et_comm_send_data_delay.setInputLimit(TCPIPClientData.CommSendDelayDataMinValue, TCPIPClientData.CommSendDelayDataMaxValue);
         m_id_stica_et_comm_send_data_delay.setText(TCPIPClientData.CommSendDelayDataDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
         m_id_stica_spn_protocol.setSelection(TCPIPClientData.ProtocolDefaulValue);
-        m_id_stica_et_protocol_field_1 = (EDEditText)findViewById(R.id.id_stica_et_protocol_field_1);
+        m_id_stica_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_1);
         m_id_stica_et_protocol_field_1.setInputLimit(TCPIPClientData.HeadMinValue, TCPIPClientData.HeadMaxValue);
         m_id_stica_et_protocol_field_1.setText(TCPIPClientData.HeadDefaulValue);
-        m_id_stica_et_protocol_field_2 = (EDEditText)findViewById(R.id.id_stica_et_protocol_field_2);
+        m_id_stica_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_2);
         m_id_stica_et_protocol_field_2.setInputLimit(TCPIPClientData.TailMinValue, TCPIPClientData.TailMaxValue);
         m_id_stica_et_protocol_field_2.setText(TCPIPClientData.TailDefaulValue);
 
@@ -299,7 +298,7 @@ public class TCPIPClientPropActivity extends Activity implements
     }
 
     private void save(int iDialogOriginID) {
-        if(!EDEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
         if(m_id_stica_et_server_name != null) {
 

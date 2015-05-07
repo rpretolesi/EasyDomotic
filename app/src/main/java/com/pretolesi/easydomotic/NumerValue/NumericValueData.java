@@ -8,8 +8,8 @@ import android.os.Parcelable;
  */
 public class NumericValueData implements Parcelable {
 
-    public static int TAGMinChar = 1;
-    public static int TAGMaxChar = 128;
+    public static short TAGMinChar = 1;
+    public static short TAGMaxChar = 128;
     public static String TAGDefaultValue = "My NumericValue Name";
 
     public static int ProtTcpIpClientValueIDMinValue = 0;
@@ -28,8 +28,8 @@ public class NumericValueData implements Parcelable {
     public static int ProtTcpIpClientValueNrOfDecimalMaxValue = 5;
     public static String ProtTcpIpClientValueNrOfDecimalDefaulValue = "0";
 
-    public static int ProtTcpIpClientValueUMMinValue = 0;
-    public static int ProtTcpIpClientValueUMMaxValue = 9;
+    public static short ProtTcpIpClientValueUMMinValue = 0;
+    public static short ProtTcpIpClientValueUMMaxValue = 9;
     public static String ProtTcpIpClientValueUMDefaulValue = "";
 
     public static int ProtTcpIpClientValueMinNrCharToShowMinValue = 1;

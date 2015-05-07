@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,8 @@ import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.CustomControls.EDEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
@@ -51,7 +51,7 @@ public class LightSwitchPropActivity extends Activity implements
     private Spinner m_id_spn_room;
     private SimpleCursorAdapter m_SCAdapter;
 
-    private EDEditText m_id_et_light_switch_name;
+    private StringEditText m_id_et_light_switch_name;
     private RadioButton m_id_rb_portrait;
     private RadioButton m_id_rb_landscape;
     private EditText m_id_et_position_x;
@@ -60,12 +60,12 @@ public class LightSwitchPropActivity extends Activity implements
     private CheckBox m_id_lspa_cb_enable_tcp_ip_client_protocol;
     private Spinner m_id_lspa_spn_tcp_ip_client_protocol;
 
-    private EDEditText m_id_lspa_et_protocol_field_1;
-    private EDEditText m_id_lspa_et_protocol_field_2;
-    private EDEditText m_id_lspa_et_protocol_field_3;
-    private EDEditText m_id_lspa_et_protocol_field_4;
-    private EDEditText m_id_lspa_et_protocol_field_5;
-    private EDEditText m_id_lspa_et_protocol_field_6;
+    private NumericEditText m_id_lspa_et_protocol_field_1;
+    private NumericEditText m_id_lspa_et_protocol_field_2;
+    private NumericEditText m_id_lspa_et_protocol_field_3;
+    private NumericEditText m_id_lspa_et_protocol_field_4;
+    private NumericEditText m_id_lspa_et_protocol_field_5;
+    private NumericEditText m_id_lspa_et_protocol_field_6;
 
     private LightSwitchData m_lsd;
     private long m_lRoomIDParameter;
@@ -79,7 +79,7 @@ public class LightSwitchPropActivity extends Activity implements
         setContentView(R.layout.light_switch_property_activity);
 
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
-        m_id_et_light_switch_name = (EDEditText)findViewById(R.id.id_et_name);
+        m_id_et_light_switch_name = (StringEditText)findViewById(R.id.id_et_name);
         m_id_et_light_switch_name.setInputLimit(LightSwitchData.TAGMinChar, LightSwitchData.TAGMaxChar);
         m_id_et_light_switch_name.setText(LightSwitchData.TAGDefaultValue);
 
@@ -109,27 +109,27 @@ public class LightSwitchPropActivity extends Activity implements
             }
         });
 
-        m_id_lspa_et_protocol_field_1 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_1);
+        m_id_lspa_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_1);
         m_id_lspa_et_protocol_field_1.setInputLimit(LightSwitchData.ProtTcpIpClientValueIDMinValue, LightSwitchData.ProtTcpIpClientValueIDMaxValue);
         m_id_lspa_et_protocol_field_1.setText(LightSwitchData.ProtTcpIpClientValueIDDefaulValue);
         m_id_lspa_et_protocol_field_1.setEnabled(false);
-        m_id_lspa_et_protocol_field_2 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_2);
+        m_id_lspa_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_2);
         m_id_lspa_et_protocol_field_2.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFMinValue, LightSwitchData.ProtTcpIpClientValueOFFMaxValue);
         m_id_lspa_et_protocol_field_2.setText(LightSwitchData.ProtTcpIpClientValueOFFDefaulValue);
         m_id_lspa_et_protocol_field_2.setEnabled(false);
-        m_id_lspa_et_protocol_field_3 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_3);
+        m_id_lspa_et_protocol_field_3 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_3);
         m_id_lspa_et_protocol_field_3.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFONMinValue, LightSwitchData.ProtTcpIpClientValueOFFONMaxValue);
         m_id_lspa_et_protocol_field_3.setText(LightSwitchData.ProtTcpIpClientValueOFFONDefaulValue);
         m_id_lspa_et_protocol_field_3.setEnabled(false);
-        m_id_lspa_et_protocol_field_4 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_4);
+        m_id_lspa_et_protocol_field_4 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_4);
         m_id_lspa_et_protocol_field_4.setInputLimit(LightSwitchData.ProtTcpIpClientValueONOFFMinValue, LightSwitchData.ProtTcpIpClientValueONOFFMaxValue);
         m_id_lspa_et_protocol_field_4.setText(LightSwitchData.ProtTcpIpClientValueONOFFDefaulValue);
         m_id_lspa_et_protocol_field_4.setEnabled(false);
-        m_id_lspa_et_protocol_field_5 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_5);
+        m_id_lspa_et_protocol_field_5 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_5);
         m_id_lspa_et_protocol_field_5.setInputLimit(LightSwitchData.ProtTcpIpClientValueONMinValue, LightSwitchData.ProtTcpIpClientValueONMaxValue);
         m_id_lspa_et_protocol_field_5.setText(LightSwitchData.ProtTcpIpClientValueONDefaulValue);
         m_id_lspa_et_protocol_field_5.setEnabled(false);
-        m_id_lspa_et_protocol_field_6 = (EDEditText)findViewById(R.id.id_lspa_et_protocol_field_6);
+        m_id_lspa_et_protocol_field_6 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_6);
         m_id_lspa_et_protocol_field_6.setInputLimit(LightSwitchData.ProtTcpIpClientValueAddressMinValue, LightSwitchData.ProtTcpIpClientValueAddressMaxValue);
         m_id_lspa_et_protocol_field_6.setText(LightSwitchData.ProtTcpIpClientValueAddressDefaulValue);
         m_id_lspa_et_protocol_field_6.setEnabled(false);
@@ -471,7 +471,7 @@ public class LightSwitchPropActivity extends Activity implements
     }
 
     private void save(int iDialogOriginID) {
-        if(!EDEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
         if(m_id_et_light_switch_name != null){
             long lRoomID;

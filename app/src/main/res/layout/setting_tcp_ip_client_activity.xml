@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="@string/text_stica_tv_server_name" />
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.StringEditText
             android:id="@+id/id_stica_et_server_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:layout_below="@id/id_stica_et_server_name"
             android:text="@string/text_stica_tv_server_ip_address" />
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.StringEditText
             android:id="@+id/id_stica_et_server_ip_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_below="@id/id_stica_et_server_ip_address"
             android:text="@string/text_stica_tv_server_port" />
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.NumericEditText
             android:id="@+id/id_stica_et_server_port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             android:layout_below="@id/id_stica_et_server_port"
             android:text="@string/text_stica_tv_timeout" />
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.NumericEditText
             android:id="@+id/id_stica_et_timeout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             android:layout_below="@id/id_stica_et_timeout"
             android:text="@string/text_stica_tv_comm_send_data_delay" />
 
-        <com.pretolesi.easydomotic.CustomControls.EDEditText
+        <com.pretolesi.easydomotic.CustomControls.NumericEditText
             android:id="@+id/id_stica_et_comm_send_data_delay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                     android:text="@string/text_stica_tv_protocol_field_1"
                     android:labelFor="@+id/id_stica_et_protocol_field_1"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_stica_et_protocol_field_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                     android:text="@string/text_stica_tv_protocol_field_2"
                     android:labelFor="@+id/id_stica_et_protocol_field_2"/>
 
-                <com.pretolesi.easydomotic.CustomControls.EDEditText
+                <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_stica_et_protocol_field_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

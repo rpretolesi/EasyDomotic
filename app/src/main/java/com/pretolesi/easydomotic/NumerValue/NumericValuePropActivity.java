@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,11 +21,12 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.CustomControls.EDEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.ValueUtils.ValueDataType;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -51,24 +51,24 @@ public class NumericValuePropActivity extends Activity implements
     private Spinner m_id_spn_room;
     private SimpleCursorAdapter m_SCASpnRoom;
 
-    private EDEditText m_id_et_name;
+    private StringEditText m_id_et_name;
     private RadioButton m_id_rb_portrait;
     private RadioButton m_id_rb_landscape;
     private EditText m_id_et_position_x;
     private EditText m_id_et_position_y;
     private EditText m_id_et_position_z;
     private Spinner m_id_nvpa_spn_data_type;
-    private EDEditText m_id_nvpa_et_nr_of_decimal;
-    private EDEditText m_id_nvpa_et_um;
-    private EDEditText m_id_nvpa_et_min_nr_char_to_show;
+    private NumericEditText m_id_nvpa_et_nr_of_decimal;
+    private StringEditText m_id_nvpa_et_um;
+    private NumericEditText m_id_nvpa_et_min_nr_char_to_show;
     private CheckBox m_id_nvpa_cb_read_only;
-    private EDEditText m_id_nvpa_et_update_millis;
+    private NumericEditText m_id_nvpa_et_update_millis;
 
     private CheckBox m_id_nvpa_cb_enable_tcp_ip_client_protocol;
     private Spinner m_id_nvpa_spn_tcp_ip_client_protocol;
 
-    private EDEditText m_id_nvpa_et_protocol_field_1;
-    private EDEditText m_id_nvpa_et_protocol_field_2;
+    private NumericEditText m_id_nvpa_et_protocol_field_1;
+    private NumericEditText m_id_nvpa_et_protocol_field_2;
 
     private NumericValueData m_nvd;
     private long m_lRoomIDParameter;
@@ -82,7 +82,7 @@ public class NumericValuePropActivity extends Activity implements
         setContentView(R.layout.nnumeric_vvalue_property_activity);
 
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
-        m_id_et_name = (EDEditText)findViewById(R.id.id_et_name);
+        m_id_et_name = (StringEditText)findViewById(R.id.id_et_name);
         m_id_et_name.setInputLimit(NumericValueData.TAGMinChar, NumericValueData.TAGMaxChar);
         m_id_et_name.setText(NumericValueData.TAGDefaultValue);
 
@@ -96,17 +96,17 @@ public class NumericValuePropActivity extends Activity implements
 
         m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_nvpa_spn_data_type);
         m_id_nvpa_spn_data_type.setSelection(NumericValueData.ProtTcpIpClientValueDataTypeDefaulValue);
-        m_id_nvpa_et_nr_of_decimal = (EDEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
+        m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(NumericValueData.ProtTcpIpClientValueNrOfDecimalMinValue, NumericValueData.ProtTcpIpClientValueNrOfDecimalMaxValue);
         m_id_nvpa_et_nr_of_decimal.setText(NumericValueData.ProtTcpIpClientValueNrOfDecimalDefaulValue);
-        m_id_nvpa_et_um = (EDEditText)findViewById(R.id.id_nvpa_et_um);
+        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_nvpa_et_um);
         m_id_nvpa_et_um.setInputLimit(NumericValueData.ProtTcpIpClientValueUMMinValue, NumericValueData.ProtTcpIpClientValueUMMaxValue);
         m_id_nvpa_et_um.setText(NumericValueData.ProtTcpIpClientValueUMDefaulValue);
-        m_id_nvpa_et_min_nr_char_to_show = (EDEditText)findViewById(R.id.id_nvpa_et_min_nr_char_to_show);
+        m_id_nvpa_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_nvpa_et_min_nr_char_to_show);
         m_id_nvpa_et_min_nr_char_to_show.setInputLimit(NumericValueData.ProtTcpIpClientValueMinNrCharToShowMinValue, NumericValueData.ProtTcpIpClientValueMinNrCharToShowMaxValue);
         m_id_nvpa_et_min_nr_char_to_show.setText(NumericValueData.ProtTcpIpClientValueMinNrCharToShowDefaulValue);
         m_id_nvpa_cb_read_only = (CheckBox)findViewById(R.id.id_nvpa_cb_read_only);
-        m_id_nvpa_et_update_millis = (EDEditText)findViewById(R.id.id_nvpa_et_update_millis);
+        m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_nvpa_et_update_millis);
         m_id_nvpa_et_update_millis.setInputLimit(NumericValueData.ProtTcpIpClientValueUpdateMillisMinValue, NumericValueData.ProtTcpIpClientValueUpdateMillisMaxValue);
         m_id_nvpa_et_update_millis.setText(NumericValueData.ProtTcpIpClientValueUpdateMillisDefaulValue);
 
@@ -125,11 +125,11 @@ public class NumericValuePropActivity extends Activity implements
             }
         });
 
-        m_id_nvpa_et_protocol_field_1 = (EDEditText)findViewById(R.id.id_nvpa_et_protocol_field_1);
+        m_id_nvpa_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_nvpa_et_protocol_field_1);
         m_id_nvpa_et_protocol_field_1.setInputLimit(NumericValueData.ProtTcpIpClientValueIDMinValue, NumericValueData.ProtTcpIpClientValueIDMaxValue);
         m_id_nvpa_et_protocol_field_1.setText(NumericValueData.ProtTcpIpClientValueIDDefaulValue);
         m_id_nvpa_et_protocol_field_1.setEnabled(false);
-        m_id_nvpa_et_protocol_field_2 = (EDEditText)findViewById(R.id.id_nvpa_et_protocol_field_2);
+        m_id_nvpa_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_nvpa_et_protocol_field_2);
         m_id_nvpa_et_protocol_field_2.setInputLimit(NumericValueData.ProtTcpIpClientValueAddressMinValue, NumericValueData.ProtTcpIpClientValueAddressMaxValue);
         m_id_nvpa_et_protocol_field_2.setText(NumericValueData.ProtTcpIpClientValueAddressDefaulValue);
         m_id_nvpa_et_protocol_field_2.setEnabled(false);
@@ -147,7 +147,7 @@ public class NumericValuePropActivity extends Activity implements
         }
 
         m_id_nvpa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, ValueDataType.DataType.values()));
+                android.R.layout.simple_list_item_1, DataType.values()));
 
         m_SCASpnRoom = new SimpleCursorAdapter(
                 this,
@@ -158,7 +158,7 @@ public class NumericValuePropActivity extends Activity implements
         m_id_spn_room.setAdapter(m_SCASpnRoom);
 
         m_id_nvpa_spn_data_type.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, ValueDataType.DataType.values()));
+                android.R.layout.simple_list_item_1, DataType.values()));
 
         m_TcpIpClientAdapter = new SimpleCursorAdapter(
                 this,
@@ -479,7 +479,7 @@ public class NumericValuePropActivity extends Activity implements
     }
 
     private void save(int iDialogOriginID) {
-        if(!EDEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
         if(m_id_et_name != null){
             long lRoomID;
