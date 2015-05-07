@@ -387,14 +387,14 @@ public class NumericValue extends TextView implements
                                 case SHORT16:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
                                         short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();
-                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
+                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue/Math.pow(10,m_nvd.getProtTcpIpClientValueNrOfDecimal()), m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case INT32:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
                                         int iValue = ByteBuffer.wrap(ticrs.getValue()).getInt();
-                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
+                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue/Math.pow(10,m_nvd.getProtTcpIpClientValueNrOfDecimal()), m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
