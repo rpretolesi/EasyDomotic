@@ -1688,6 +1688,506 @@ public class SQLContract
 
     }
 
+    /* Inner class that defines the table contents */
+    public static abstract class SensorValueEntry implements BaseColumns {
+        public static final String TABLE_NAME = "SensorValue";
+        public static final String COLUMN_NAME_TAG = "TAG";
+        public static final String COLUMN_NAME_ROOM_ID = "Room_ID";
+        public static final String COLUMN_NAME_X = "X";
+        public static final String COLUMN_NAME_Y = "Y";
+        public static final String COLUMN_NAME_Z = "Z";
+        public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
+
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE = "ProtTcpIpClientEnable";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ID = "ProtTcpIpClientID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL = "ProtTcpIpClientValueNrOfDecimal";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM = "ProtTcpIpClientValueUM";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW = "ProtTcpIpClientValueMinNrCharToShow";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY = "ProtTcpIpClientValueReadOnly";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS = "ProtTcpIpClientValueUpdateMillis";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE = "ProtTcpIpClientSendDataOnChange";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA = "ProtTcpIpClientWaitAnswerBeforeSendNextData";
+
+        // Used only in MatrixCursor
+        public static final String COLUMN_NAME_ORIGIN = "Origin";
+
+        public static final String SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + TABLE_NAME +
+                        " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ROOM_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
+                        " )";
+
+        public static final String SQL_DELETE_ENTRIES =
+                "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+
+        public static boolean save(ArrayList<NumericValueData> alnvd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && alnvd != null) {
+
+                    ContentValues values = new ContentValues();
+                    for(NumericValueData nvdTemp:alnvd){
+                        if(nvdTemp != null) {
+                            values.put(COLUMN_NAME_TAG, String.valueOf(nvdTemp.getTag()));
+                            values.put(COLUMN_NAME_ROOM_ID, nvdTemp.getRoomID());
+                            values.put(COLUMN_NAME_X, Float.toString(nvdTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(nvdTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(nvdTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(nvdTemp.getLandscape() ? 1 : 0));
+
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(nvdTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, nvdTemp.getProtTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, nvdTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvdTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvdTemp.getProtTcpIpClientValueDataType());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvdTemp.getProtTcpIpClientValueNrOfDecimal());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvdTemp.getProtTcpIpClientValueUM());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvdTemp.getProtTcpIpClientValueMinNrCharToShow());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvdTemp.getProtTcpIpClientValueReadOnly() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvdTemp.getProtTcpIpClientValueUpdateMillis());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                            String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
+
+                            String[] whereArgs = {String.valueOf(nvdTemp.getID()), String.valueOf(nvdTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, nvdTemp.getID());
+                            // Update or Save
+                            if (id > 0) {
+                                nvdTemp.setID(id);
+                                nvdTemp.setSaved(true);
+                            } else {
+                                bRes = false;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+
+        public static boolean save(NumericValueData nvd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null && nvd != null) {
+
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_NAME_TAG, String.valueOf(nvd.getTag()));
+                    values.put(COLUMN_NAME_ROOM_ID, nvd.getRoomID());
+                    values.put(COLUMN_NAME_X, Float.toString(nvd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(nvd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(nvd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(nvd.getLandscape() ? 1 : 0));
+
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(nvd.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, nvd.getProtTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, nvd.getProtTcpIpClientValueID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvd.getProtTcpIpClientValueAddress());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvd.getProtTcpIpClientValueDataType());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvd.getProtTcpIpClientValueNrOfDecimal());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvd.getProtTcpIpClientValueUM());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvd.getProtTcpIpClientValueMinNrCharToShow());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvd.getProtTcpIpClientValueUpdateMillis());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                    String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] whereArgs = {String.valueOf(nvd.getID()), String.valueOf(nvd.getRoomID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, nvd.getID());
+                    // Update or Save
+                    if (id > 0) {
+                        nvd.setID(id);
+                        nvd.setSaved(true);
+                    } else {
+                        bRes = false;
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+
+        public static Cursor loadFromNumericValueData(NumericValueData nvd)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                MatrixCursor cursor = null;
+
+                if(nvd != null){
+
+                    String[] columns = new String[] {
+                            _ID,
+                            COLUMN_NAME_TAG,
+                            COLUMN_NAME_ROOM_ID,
+                            COLUMN_NAME_X,
+                            COLUMN_NAME_Y,
+                            COLUMN_NAME_Z,
+                            COLUMN_NAME_LANDSCAPE,
+
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+
+                            COLUMN_NAME_ORIGIN
+                    };
+
+                    cursor = new MatrixCursor(columns);
+                    cursor.addRow(new Object[] {
+                            nvd.getID(),
+                            nvd.getTag(),
+                            nvd.getRoomID(),
+                            nvd.getPosX(),
+                            nvd.getPosY(),
+                            nvd.getPosZ(),
+                            Integer.valueOf(nvd.getLandscape() ? 1 : 0),
+
+                            Integer.valueOf(nvd.getProtTcpIpClientEnable() ? 1 : 0),
+                            nvd.getProtTcpIpClientID(),
+                            nvd.getProtTcpIpClientValueID(),
+                            nvd.getProtTcpIpClientValueAddress(),
+                            nvd.getProtTcpIpClientValueDataType(),
+                            nvd.getProtTcpIpClientValueNrOfDecimal(),
+                            nvd.getProtTcpIpClientValueUM(),
+                            nvd.getProtTcpIpClientValueMinNrCharToShow(),
+                            Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0),
+                            nvd.getProtTcpIpClientValueUpdateMillis(),
+                            Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
+                            Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
+
+                            0   // Origin
+                    });
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(long lID, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE,
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE,
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] wherenArgs = { String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean delete(long lID, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
+                {
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean isTagPresent(String strTag, long lRoomID) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                boolean bRes = false;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_TAG + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] whereArgs = { String.valueOf(strTag), String.valueOf(lRoomID) };
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        bRes = true;
+                        // Chiudo il cursore
+                        cursor.close();
+                    }
+                }
+
+                return bRes;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static ArrayList<NumericValueData> get(Cursor cursor){
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                NumericValueData nvd = null;
+                ArrayList<NumericValueData> alnvd = null;
+                if((cursor != null) && (cursor.getCount() > 0))
+                {
+                    for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                    {
+                        if(alnvd == null){
+                            alnvd = new ArrayList<>();
+                        }
+                        // Origin
+                        boolean bSaved = true;
+                        if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
+                            if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
+                                // Data come direct from LightSwithData Class
+                                bSaved = false;
+                            }
+                        }
+                        nvd = new NumericValueData(
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
+                                bSaved,
+                                false,
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                        );
+
+                        nvd.setProtTcpIpClient(
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY)) == 0) ? false : true),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
+                        );
+                        alnvd.add(nvd);
+                    }
+                }
+                return alnvd;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+    }
+
     public static abstract class RoomEntry implements BaseColumns
     {
         public static final String TABLE_NAME = "Room";

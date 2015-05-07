@@ -414,7 +414,7 @@ public class SensorValueData implements Parcelable {
             return new SensorValueData[size];
         }
     };
-
+/*
     public enum SensorType {
         LEVEL(0, "Level"),
         LEVEL_FRONT(0, "Level Front"),
@@ -456,4 +456,5 @@ public class SensorValueData implements Parcelable {
             return Integer.toString(m_iSensorTypeID) + "-" + m_strSensorTypeName;
         }
     }
+*/
 }

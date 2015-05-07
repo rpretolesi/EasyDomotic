@@ -171,7 +171,7 @@ public class SensorValuePropActivity extends Activity implements
         ActionBar actionBar = getActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
+            actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
         }
     }
 
@@ -487,8 +487,8 @@ public class SensorValuePropActivity extends Activity implements
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
                         DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
-                        getString(R.string.text_yndf_title_numeric_value_name_already_exist),
-                        getString(R.string.text_yndf_message_numeric_value_name_already_exist_confirmation),
+                        getString(R.string.text_yndf_title_sensor_value_name_already_exist),
+                        getString(R.string.text_yndf_message_sensor_value_name_already_exist_confirmation),
                         getString(R.string.text_yndf_btn_yes),
                         getString(R.string.text_yndf_btn_no)
                 ).show(getFragmentManager(), "");
@@ -629,7 +629,7 @@ public class SensorValuePropActivity extends Activity implements
     }
 
 
-    public static Intent makeNumericValuePropActivity(Context context, long lRoomID, long lID) {
+    public static Intent makeSensorValuePropActivity(Context context, long lRoomID, long lID) {
         Intent intent = new Intent();
         intent.setClass(context, SensorValuePropActivity.class);
         intent.putExtra(SensorValuePropActivity.ROOM_ID, lRoomID);
@@ -637,10 +637,10 @@ public class SensorValuePropActivity extends Activity implements
         return intent;
     }
 
-    public static Intent makeNumericValuePropActivity(Context context, SensorValueData nvd) {
+    public static Intent makeSensorValuePropActivity(Context context, SensorValueData svd) {
         Intent intent = new Intent();
         intent.setClass(context, SensorValuePropActivity.class);
-        intent.putExtra(SensorValuePropActivity.SENSOR_VALUE_DATA, nvd);
+        intent.putExtra(SensorValuePropActivity.SENSOR_VALUE_DATA, svd);
         return intent;
     }
 
