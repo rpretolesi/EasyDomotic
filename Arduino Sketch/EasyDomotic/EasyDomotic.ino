@@ -33,14 +33,14 @@ byte m_byteToWriteMBAPMsg[260] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
 // Valori condivisi
-short shBoolValue = 0;
+short shBoolValue = 0; // 2 bytes
 
-short shInValue = 0;
-int iInValue = 0;
+short shInValue = 0; // 2 bytes
+long lInValue = 0; // 4 bytes
 float fInValue = 0.0;
 
-short shOutValue = 0;
-int iOutValue = 0;
+short shOutValue = 0; // 2 bytes
+long lOutValue = 0; // 4 bytes
 float fOutValue = 0.0;
 
 void setup() 
@@ -211,14 +211,14 @@ void Communication(){
             bRegisterAndByteCountOk = true;
           }
           if(bRegisterAndByteCountOk == true){
-            short shortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
+            unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
             Serial.print("Address: ");
-            Serial.println(shortModbusAddress);
+            Serial.println(ushortModbusAddress);
             if(shortQuantityOfRegisters == 1){
               shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
             }
 
-            if(shortModbusAddress == 20000) {
+            if(ushortModbusAddress == 20000) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -236,7 +236,7 @@ void Communication(){
                   bValueOk = true;
               }
             }
-            if(shortModbusAddress == 20001) {
+            if(ushortModbusAddress == 20001) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -254,7 +254,7 @@ void Communication(){
                   bValueOk = true;
               }
             }            
-            if(shortModbusAddress == 20002) {
+            if(ushortModbusAddress == 20002) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -272,7 +272,7 @@ void Communication(){
                   bValueOk = true;
               }
             }            
-            if(shortModbusAddress == 20003) {
+            if(ushortModbusAddress == 20003) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -291,7 +291,7 @@ void Communication(){
               }
             }
 
-            if(shortModbusAddress == 10000) {
+            if(ushortModbusAddress == 10000) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -302,18 +302,18 @@ void Communication(){
               Serial.println(shInValue);
             }
 
-            if(shortModbusAddress == 10001) {
+            if(ushortModbusAddress == 10001) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
-                iInValue = getIntFromBytes(&m_byteReadMBMsg[7]);
+                lInValue = getLongFromBytes(&m_byteReadMBMsg[7]);
                 bValueOk = true;
               }
-              Serial.print("shInValue: ");
-              Serial.println(shInValue);
+              Serial.print("lInValue: ");
+              Serial.println(lInValue);
             }
 
-            if(shortModbusAddress == 10003) {
+            if(ushortModbusAddress == 10003) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
@@ -348,15 +348,15 @@ void Communication(){
         
         if(byteModbusFunctionCode == 0x03){
           short shortMBAPMsgLength = 0;
-          short shortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
+          unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
           Serial.print("Starting Address: ");
-          Serial.println(shortModbusAddress);
+          Serial.println(ushortModbusAddress);
           // Quantity of Registers
           short shortQuantityOfRegisters = getShortFromBytes(&m_byteReadMBMsg[4]);
           Serial.print("Quantity of Register: ");
           Serial.println(shortQuantityOfRegisters);
           if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
-            if(shortModbusAddress == 10000) {  
+            if(ushortModbusAddress == 10000) {  
               if(shortQuantityOfRegisters == 1){
                 shOutValue = shInValue;
                 shortMBAPMsgLength = 11;
@@ -369,20 +369,20 @@ void Communication(){
                 bValueOk = true;
               }
             }            
-            if(shortModbusAddress == 10001) {  
+            if(ushortModbusAddress == 10001) {  
               if(shortQuantityOfRegisters == 2){
-                iOutValue = iInValue;
+                lOutValue = lInValue;
                 shortMBAPMsgLength = 13;
                 // Tutto Ok, costruisco la risposta, 3° parte
-                Serial.print("iOutValue: ");
-                Serial.println(iOutValue);
-                setIntToBytes(iOutValue, &m_byteToWriteMBAPMsg[9]);                
+                Serial.print("lOutValue: ");
+                Serial.println(lOutValue);
+                setLongToBytes(lOutValue, &m_byteToWriteMBAPMsg[9]);                
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 4;            
                 bAddressOk = true;
                 bValueOk = true;
               }
             }            
-            if(shortModbusAddress == 10003) {  
+            if(ushortModbusAddress == 10003) {  
               if(shortQuantityOfRegisters == 2){
                 fOutValue = fInValue;
                 shortMBAPMsgLength = 13;
@@ -572,15 +572,15 @@ short getShortFromBytes(byte* bytearrayVal){
   return u.temp_short;
 }
 
-// Int
-void setIntToBytes(int intVal, byte* bytearrayVal){
+// Long 4 byte
+void setLongToBytes(long longVal, byte* bytearrayVal){
   // Create union of shared memory space
   union {
-    int temp_int;
+    long temp_long;
     byte temp_bytearray[4];
   } u;
   // Overite bytes of union with int variable
-  u.temp_int = intVal;
+  u.temp_long = longVal;
 
   bytearrayVal[0] = u.temp_bytearray[3];
   bytearrayVal[1] = u.temp_bytearray[2];
@@ -588,10 +588,10 @@ void setIntToBytes(int intVal, byte* bytearrayVal){
   bytearrayVal[3] = u.temp_bytearray[0];
 }
 
-int getIntFromBytes(byte* bytearrayVal){
+long getLongFromBytes(byte* bytearrayVal){
   // Create union of shared memory space
   union {
-    int temp_int;
+    long temp_long;
     byte temp_bytearray[4];
   } u;
   
@@ -600,7 +600,7 @@ int getIntFromBytes(byte* bytearrayVal){
   u.temp_bytearray[1] = bytearrayVal[2];
   u.temp_bytearray[0] = bytearrayVal[3];
   
-  return u.temp_int;
+  return u.temp_long;
 }
 
 // Float
