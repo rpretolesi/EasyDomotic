@@ -12,6 +12,7 @@ import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
+import com.pretolesi.easydomotic.SensorValue.SensorValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 
 /**
@@ -25,6 +26,7 @@ public class SQLContract
     public static final int DATABASE_VERSION = 1;
     public static final String TEXT_TYPE = " TEXT";
     public static final String INT_TYPE = " INT";
+//    public static final String REAL_TYPE = " REAL";
     public static final String IMAGE_TYPE = " BLOB";
     public static final String COMMA_SEP = ",";
 
@@ -1703,13 +1705,20 @@ public class SQLContract
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL = "ProtTcpIpClientValueNrOfDecimal";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM = "ProtTcpIpClientValueUM";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW = "ProtTcpIpClientValueMinNrCharToShow";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY = "ProtTcpIpClientValueReadOnly";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS = "ProtTcpIpClientValueUpdateMillis";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE = "ProtTcpIpClientSendDataOnChange";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA = "ProtTcpIpClientWaitAnswerBeforeSendNextData";
+
+        public static final String COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW = "ValueMinNrCharToShow";
+        public static final String COLUMN_NAME_VALUE_NR_OF_DECIMAL = "ValueNrOfDecimal";
+        public static final String COLUMN_NAME_VALUE_UM = "ValueUM";
+
+        public static final String COLUMN_NAME_SENSOR_TYPE_ID = "SensorTypeID";
+        public static final String COLUMN_NAME_SENSOR_VALUE_ID = "SensorValueID";
+        public static final String COLUMN_NAME_SENSOR_ENABLE_SIMULATION = "SensorEnableSimulation";
+        public static final String COLUMN_NAME_SENSOR_AMPL_K = "SensorAmplK";
+        public static final String COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K = "SensorLowPassFilterK";
+        public static final String COLUMN_NAME_SENSOR_SAMPLE_TIME = "SensorSampleTime";
 
         // Used only in MatrixCursor
         public static final String COLUMN_NAME_ORIGIN = "Origin";
@@ -1724,25 +1733,33 @@ public class SQLContract
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
+
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE + COMMA_SEP +
+
+                        COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_UM + TEXT_TYPE + COMMA_SEP +
+
+                        COLUMN_NAME_SENSOR_TYPE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_VALUE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_ENABLE_SIMULATION + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_AMPL_K + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_SAMPLE_TIME + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
-        public static boolean save(ArrayList<NumericValueData> alnvd)  {
+        public static boolean save(ArrayList<SensorValueData> alsvd)  {
 
             boolean bRes = true;
             try
@@ -1751,39 +1768,46 @@ public class SQLContract
 
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
 
-                if(db != null && alnvd != null) {
+                if(db != null && alsvd != null) {
 
                     ContentValues values = new ContentValues();
-                    for(NumericValueData nvdTemp:alnvd){
-                        if(nvdTemp != null) {
-                            values.put(COLUMN_NAME_TAG, String.valueOf(nvdTemp.getTag()));
-                            values.put(COLUMN_NAME_ROOM_ID, nvdTemp.getRoomID());
-                            values.put(COLUMN_NAME_X, Float.toString(nvdTemp.getPosX()));
-                            values.put(COLUMN_NAME_Y, Float.toString(nvdTemp.getPosY()));
-                            values.put(COLUMN_NAME_Z, Float.toString(nvdTemp.getPosZ()));
-                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(nvdTemp.getLandscape() ? 1 : 0));
+                    for(SensorValueData svdTemp:alsvd){
+                        if(svdTemp != null) {
+                            values.put(COLUMN_NAME_TAG, String.valueOf(svdTemp.getTag()));
+                            values.put(COLUMN_NAME_ROOM_ID, svdTemp.getRoomID());
+                            values.put(COLUMN_NAME_X, Float.toString(svdTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(svdTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(svdTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(svdTemp.getLandscape() ? 1 : 0));
 
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(nvdTemp.getProtTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, nvdTemp.getProtTcpIpClientID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, nvdTemp.getProtTcpIpClientValueID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvdTemp.getProtTcpIpClientValueAddress());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvdTemp.getProtTcpIpClientValueDataType());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvdTemp.getProtTcpIpClientValueNrOfDecimal());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvdTemp.getProtTcpIpClientValueUM());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvdTemp.getProtTcpIpClientValueMinNrCharToShow());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvdTemp.getProtTcpIpClientValueReadOnly() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvdTemp.getProtTcpIpClientValueUpdateMillis());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(svdTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, svdTemp.getProtTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, svdTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, svdTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, svdTemp.getProtTcpIpClientValueDataType());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, svdTemp.getProtTcpIpClientValueUpdateMillis());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(svdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(svdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                            values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, svdTemp.getValueMinNrCharToShow());
+                            values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, svdTemp.getValueNrOfDecimal());
+                            values.put(COLUMN_NAME_VALUE_UM, svdTemp.getValueUM());
+
+                            values.put(COLUMN_NAME_SENSOR_TYPE_ID, svdTemp.getSensorTypeID());
+                            values.put(COLUMN_NAME_SENSOR_VALUE_ID, svdTemp.getSensorValueID());
+                            values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(svdTemp.getSensorEnableSimulation() ? 1 : 0));
+                            values.put(COLUMN_NAME_SENSOR_AMPL_K, svdTemp.getSensorAmplK());
+                            values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, svdTemp.getSensorLowPassFilterK());
+                            values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, svdTemp.getSensorSampleTime());
 
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
-                            String[] whereArgs = {String.valueOf(nvdTemp.getID()), String.valueOf(nvdTemp.getRoomID())};
-                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, nvdTemp.getID());
+                            String[] whereArgs = {String.valueOf(svdTemp.getID()), String.valueOf(svdTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, svdTemp.getID());
                             // Update or Save
                             if (id > 0) {
-                                nvdTemp.setID(id);
-                                nvdTemp.setSaved(true);
+                                svdTemp.setID(id);
+                                svdTemp.setSaved(true);
                             } else {
                                 bRes = false;
                             }
@@ -1798,44 +1822,51 @@ public class SQLContract
 
         }
 
-        public static boolean save(NumericValueData nvd)  {
+        public static boolean save(SensorValueData svd)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null && nvd != null) {
+                if(db != null && svd != null) {
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_TAG, String.valueOf(nvd.getTag()));
-                    values.put(COLUMN_NAME_ROOM_ID, nvd.getRoomID());
-                    values.put(COLUMN_NAME_X, Float.toString(nvd.getPosX()));
-                    values.put(COLUMN_NAME_Y, Float.toString(nvd.getPosY()));
-                    values.put(COLUMN_NAME_Z, Float.toString(nvd.getPosZ()));
-                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(nvd.getLandscape() ? 1 : 0));
+                    values.put(COLUMN_NAME_TAG, String.valueOf(svd.getTag()));
+                    values.put(COLUMN_NAME_ROOM_ID, svd.getRoomID());
+                    values.put(COLUMN_NAME_X, Float.toString(svd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(svd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(svd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(svd.getLandscape() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(nvd.getProtTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, nvd.getProtTcpIpClientID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, nvd.getProtTcpIpClientValueID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, nvd.getProtTcpIpClientValueAddress());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, nvd.getProtTcpIpClientValueDataType());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL, nvd.getProtTcpIpClientValueNrOfDecimal());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM, nvd.getProtTcpIpClientValueUM());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW, nvd.getProtTcpIpClientValueMinNrCharToShow());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY, Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, nvd.getProtTcpIpClientValueUpdateMillis());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(svd.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, svd.getProtTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, svd.getProtTcpIpClientValueID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, svd.getProtTcpIpClientValueAddress());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, svd.getProtTcpIpClientValueDataType());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, svd.getProtTcpIpClientValueUpdateMillis());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(svd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(svd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                    values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, svd.getValueMinNrCharToShow());
+                    values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, svd.getValueNrOfDecimal());
+                    values.put(COLUMN_NAME_VALUE_UM, svd.getValueUM());
+
+                    values.put(COLUMN_NAME_SENSOR_TYPE_ID, svd.getSensorTypeID());
+                    values.put(COLUMN_NAME_SENSOR_VALUE_ID, svd.getSensorValueID());
+                    values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(svd.getSensorEnableSimulation() ? 1 : 0));
+                    values.put(COLUMN_NAME_SENSOR_AMPL_K, svd.getSensorAmplK());
+                    values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, svd.getSensorLowPassFilterK());
+                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, svd.getSensorSampleTime());
 
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
 
-                    String[] whereArgs = {String.valueOf(nvd.getID()), String.valueOf(nvd.getRoomID())};
-                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, nvd.getID());
+                    String[] whereArgs = {String.valueOf(svd.getID()), String.valueOf(svd.getRoomID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, svd.getID());
                     // Update or Save
                     if (id > 0) {
-                        nvd.setID(id);
-                        nvd.setSaved(true);
+                        svd.setID(id);
+                        svd.setSaved(true);
                     } else {
                         bRes = false;
                     }
@@ -1848,7 +1879,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromNumericValueData(NumericValueData nvd)
+        public static Cursor loadFromSensorValueData(SensorValueData svd)
         {
             try
             {
@@ -1856,7 +1887,7 @@ public class SQLContract
 
                 MatrixCursor cursor = null;
 
-                if(nvd != null){
+                if(svd != null){
 
                     String[] columns = new String[] {
                             _ID,
@@ -1872,39 +1903,53 @@ public class SQLContract
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+
+                            COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                            COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                            COLUMN_NAME_VALUE_UM,
+
+                            COLUMN_NAME_SENSOR_TYPE_ID,
+                            COLUMN_NAME_SENSOR_VALUE_ID,
+                            COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                            COLUMN_NAME_SENSOR_AMPL_K,
+                            COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                            COLUMN_NAME_SENSOR_SAMPLE_TIME,
 
                             COLUMN_NAME_ORIGIN
                     };
 
                     cursor = new MatrixCursor(columns);
-                    cursor.addRow(new Object[] {
-                            nvd.getID(),
-                            nvd.getTag(),
-                            nvd.getRoomID(),
-                            nvd.getPosX(),
-                            nvd.getPosY(),
-                            nvd.getPosZ(),
-                            Integer.valueOf(nvd.getLandscape() ? 1 : 0),
+                    cursor.addRow(new Object[]{
+                            svd.getID(),
+                            svd.getTag(),
+                            svd.getRoomID(),
+                            svd.getPosX(),
+                            svd.getPosY(),
+                            svd.getPosZ(),
+                            Integer.valueOf(svd.getLandscape() ? 1 : 0),
 
-                            Integer.valueOf(nvd.getProtTcpIpClientEnable() ? 1 : 0),
-                            nvd.getProtTcpIpClientID(),
-                            nvd.getProtTcpIpClientValueID(),
-                            nvd.getProtTcpIpClientValueAddress(),
-                            nvd.getProtTcpIpClientValueDataType(),
-                            nvd.getProtTcpIpClientValueNrOfDecimal(),
-                            nvd.getProtTcpIpClientValueUM(),
-                            nvd.getProtTcpIpClientValueMinNrCharToShow(),
-                            Integer.valueOf(nvd.getProtTcpIpClientValueReadOnly() ? 1 : 0),
-                            nvd.getProtTcpIpClientValueUpdateMillis(),
-                            Integer.valueOf(nvd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
-                            Integer.valueOf(nvd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
+                            Integer.valueOf(svd.getProtTcpIpClientEnable() ? 1 : 0),
+                            svd.getProtTcpIpClientID(),
+                            svd.getProtTcpIpClientValueID(),
+                            svd.getProtTcpIpClientValueAddress(),
+                            svd.getProtTcpIpClientValueDataType(),
+                            svd.getProtTcpIpClientValueUpdateMillis(),
+                            Integer.valueOf(svd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
+                            Integer.valueOf(svd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
+
+                            svd.getValueMinNrCharToShow(),
+                            svd.getValueNrOfDecimal(),
+                            svd.getValueUM(),
+
+                            svd.getSensorTypeID(),
+                            svd.getSensorValueID(),
+                            Integer.valueOf(svd.getSensorEnableSimulation() ? 1 : 0),
+                            svd.getSensorAmplK(),
+                            svd.getSensorLowPassFilterK(),
+                            svd.getSensorSampleTime(),
 
                             0   // Origin
                     });
@@ -1947,13 +1992,20 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+
+                                    COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_VALUE_UM,
+
+                                    COLUMN_NAME_SENSOR_TYPE_ID,
+                                    COLUMN_NAME_SENSOR_VALUE_ID,
+                                    COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                                    COLUMN_NAME_SENSOR_AMPL_K,
+                                    COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME,
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -2012,13 +2064,21 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+
+                                    COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_VALUE_UM,
+
+                                    COLUMN_NAME_SENSOR_TYPE_ID,
+                                    COLUMN_NAME_SENSOR_VALUE_ID,
+                                    COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                                    COLUMN_NAME_SENSOR_AMPL_K,
+                                    COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME,
+
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -2127,19 +2187,19 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<NumericValueData> get(Cursor cursor){
+        public static ArrayList<SensorValueData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                NumericValueData nvd = null;
-                ArrayList<NumericValueData> alnvd = null;
+                SensorValueData svd = null;
+                ArrayList<SensorValueData> alsvd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                     {
-                        if(alnvd == null){
-                            alnvd = new ArrayList<>();
+                        if(alsvd == null){
+                            alsvd = new ArrayList<>();
                         }
                         // Origin
                         boolean bSaved = true;
@@ -2149,10 +2209,9 @@ public class SQLContract
                                 bSaved = false;
                             }
                         }
-                        nvd = new NumericValueData(
+                        svd = new SensorValueData(
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
-                                false,
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
@@ -2161,24 +2220,42 @@ public class SQLContract
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
                         );
 
-                        nvd.setProtTcpIpClient(
+                        svd.setProtTcpIpClient(
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_NR_OF_DECIMAL)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UM)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_MIN_NR_CHAR_TO_SHOW)),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_READ_ONLY)) == 0) ? false : true),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
                         );
-                        alnvd.add(nvd);
+
+                        svd.setValueFormat(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_NR_OF_DECIMAL)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM))
+                        );
+                        svd.setSensorType(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_TYPE_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_VALUE_ID)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM))
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_ENABLE_SIMULATION)) == 0) ? false : true),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_AMPL_K))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K))),
+
+                        );
+                        ,
+                                ,
+                                ,
+                                COLUMN_NAME_SENSOR_AMPL_K,
+                                COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                COLUMN_NAME_SENSOR_SAMPLE_TIME,
+
+                        alsvd.add(svd);
                     }
                 }
-                return alnvd;
+                return alsvd;
             }
             finally
             {

@@ -69,6 +69,7 @@ public class SensorValueData implements Parcelable {
 
     // Sensor
     private int m_iSensorTypeID;
+    private int m_iSensorValueID;
     private boolean m_bSensorEnableSimulation;
     private float m_fSensorAmplK;
     private float m_fSensorLowPassFilterK;
@@ -98,9 +99,9 @@ public class SensorValueData implements Parcelable {
         this.m_strValueUM = "";
 
         this.m_iSensorTypeID = -1;
+        this.m_iSensorValueID = -1;
         this.m_bSensorEnableSimulation = false;
         this.m_fSensorAmplK = 1.0f;
-        this.m_fSensorLowPassFilterK = 1.0f;
         this.m_fSensorLowPassFilterK = 1.0f;
         this.m_iSensorSampleTime = 100;
     }
@@ -129,6 +130,7 @@ public class SensorValueData implements Parcelable {
         this.m_strValueUM = "";
 
         this.m_iSensorTypeID = -1;
+        this.m_iSensorValueID = -1;
         this.m_bSensorEnableSimulation = false;
         this.m_fSensorAmplK = 1.0f;
         this.m_fSensorLowPassFilterK = 1.0f;
@@ -152,8 +154,9 @@ public class SensorValueData implements Parcelable {
         this.m_strValueUM = strValueUM;
     }
 
-    public void setSensorType(int iSensorTypeID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
+    public void setSensorType(int iSensorTypeID, int iSensorValueID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
         this.m_iSensorTypeID = iSensorTypeID;
+        this.m_iSensorValueID = iSensorValueID;
         this.m_bSensorEnableSimulation = bSensorEnableSimulation;
         this.m_fSensorAmplK = fSensorK;
         this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
@@ -232,6 +235,10 @@ public class SensorValueData implements Parcelable {
     // Sensor
     public void setSensorTypeID(int iSensorTypeID) {
         this.m_iSensorTypeID = iSensorTypeID;
+    }
+
+    public void setSensorValueID(int iSensorValueID) {
+        this.m_iSensorValueID = iSensorValueID;
     }
 
     public void setSensorEnableSimulation(boolean bSensorEnableSimulation) {
@@ -320,6 +327,10 @@ public class SensorValueData implements Parcelable {
         return m_iSensorTypeID;
     }
 
+    public int getSensorValueID() {
+        return m_iSensorValueID;
+    }
+
     public boolean getSensorEnableSimulation() {
         return m_bSensorEnableSimulation;
     }
@@ -360,6 +371,7 @@ public class SensorValueData implements Parcelable {
         m_strValueUM = in.readString();
 
         m_iSensorTypeID = in.readInt();
+        m_iSensorValueID = in.readInt();
         m_bSensorEnableSimulation = in.readByte() != 0;
         m_fSensorAmplK = in.readFloat();
         m_fSensorLowPassFilterK = in.readFloat();
@@ -396,6 +408,7 @@ public class SensorValueData implements Parcelable {
         dest.writeString(m_strValueUM);
 
         dest.writeInt(m_iSensorTypeID);
+        dest.writeInt(m_iSensorValueID);
         dest.writeByte((byte) (m_bSensorEnableSimulation ? 1 : 0));
         dest.writeFloat(m_fSensorAmplK);
         dest.writeFloat(m_fSensorLowPassFilterK);
