@@ -93,9 +93,9 @@ public class SensorValuePropActivity extends Activity implements
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
-        m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_nvpa_cb_enable_tcp_ip_client_protocol);
+        m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
-        m_id_nvpa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_nvpa_spn_tcp_ip_client_protocol);
+        m_id_nvpa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
         m_id_nvpa_spn_tcp_ip_client_protocol.setEnabled(false);
 
         m_id_nvpa_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_nvpa_et_protocol_field_1);
@@ -106,19 +106,19 @@ public class SensorValuePropActivity extends Activity implements
         m_id_nvpa_et_protocol_field_2.setInputLimit(SensorValueData.ProtTcpIpClientValueAddressMinValue, SensorValueData.ProtTcpIpClientValueAddressMaxValue);
         m_id_nvpa_et_protocol_field_2.setText(SensorValueData.ProtTcpIpClientValueAddressDefaulValue);
         m_id_nvpa_et_protocol_field_2.setEnabled(false);
-        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_nvpa_spn_data_type);
+        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_data_type);
         m_id_nvpa_spn_data_type.setSelection(SensorValueData.ProtTcpIpClientValueDataTypeDefaulValue);
-        m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_nvpa_et_update_millis);
+        m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
         m_id_nvpa_et_update_millis.setInputLimit(SensorValueData.ProtTcpIpClientValueUpdateMillisMinValue, SensorValueData.ProtTcpIpClientValueUpdateMillisMaxValue);
         m_id_nvpa_et_update_millis.setText(SensorValueData.ProtTcpIpClientValueUpdateMillisDefaulValue);
 
-        m_id_nvpa_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_nvpa_et_min_nr_char_to_show);
+        m_id_nvpa_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
         m_id_nvpa_et_min_nr_char_to_show.setInputLimit(SensorValueData.ValueMinNrCharToShowMinValue, SensorValueData.ValueMinNrCharToShowMaxValue);
         m_id_nvpa_et_min_nr_char_to_show.setText(SensorValueData.ValueMinNrCharToShowDefaulValue);
-        m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
+        m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(SensorValueData.ValueNrOfDecimalMinValue, SensorValueData.ValueNrOfDecimalMaxValue);
         m_id_nvpa_et_nr_of_decimal.setText(SensorValueData.ValueNrOfDecimalDefaulValue);
-        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_nvpa_et_um);
+        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_et_um);
         m_id_nvpa_et_um.setInputLimit(SensorValueData.ValueUMMinValue, SensorValueData.ValueUMMaxValue);
         m_id_nvpa_et_um.setText(SensorValueData.ValueUMDefaulValue);
 

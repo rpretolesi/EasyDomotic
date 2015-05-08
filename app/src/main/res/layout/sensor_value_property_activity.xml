@@ -85,14 +85,14 @@
             android:text="@string/text_tv_position"/>
 
         <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/id_hsv_position"
+                    android:id="@+id/id_hsv_position_1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/id_tv_position"
                     android:layout_alignParentStart="true" >
 
             <LinearLayout
-                android:id="@+id/id_ll_position"
+                android:id="@+id/id_ll_position_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -143,157 +143,196 @@
 
                 </LinearLayout>
         </HorizontalScrollView>
+        <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                              android:id="@+id/id_hsv_position_2"
+                              android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_below="@+id/id_hsv_position_1"
+                              android:layout_alignParentStart="true" >
+
+            <LinearLayout
+                android:id="@+id/id_ll_position_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/id_tv_sensor_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_tv_sensor_type"
+                    android:labelFor="@+id/id_spn_sensor_type"/>
+
+                <Spinner
+                    android:id="@+id/id_spn_sensor_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/id_tv_sensor_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_tv_sensor_value"
+                    android:labelFor="@+id/id_spn_sensor_value"/>
+
+                <Spinner
+                    android:id="@+id/id_spn_sensor_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <TextView
-            android:id="@+id/id_nvpa_tv_data_type"
+            android:id="@+id/id_tv_data_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_hsv_position"
+            android:layout_below="@id/id_hsv_position_2"
             android:layout_alignParentStart="true"
-            android:text="@string/text_nvpa_tv_data_type"/>
+            android:text="@string/text_tv_data_type"/>
 
         <Spinner
-            android:id="@+id/id_nvpa_spn_data_type"
+            android:id="@+id/id_spn_data_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/id_nvpa_tv_data_type" />
+            android:layout_below="@id/id_tv_data_type" />
 
         <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                               android:id="@+id/id_hsv_1"
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
-                              android:layout_below="@+id/id_nvpa_spn_data_type"
+                              android:layout_below="@+id/id_spn_data_type"
                               android:layout_alignParentStart="true" >
             <RelativeLayout
-                android:id="@+id/id_nvpa_rl_1"
+                android:id="@+id/id_rl_1"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                  <TextView
-                    android:id="@+id/id_nvpa_tv_nr_of_decimal"
+                    android:id="@+id/id_tv_nr_of_decimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:text="@string/text_nvpa_tv_nr_of_decimal"
-                    android:labelFor="@+id/text_nvpa_tv_nr_of_decimal"/>
+                    android:text="@string/text_tv_nr_of_decimal"
+                    android:labelFor="@+id/id_et_nr_of_decimal"/>
 
                 <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                    android:id="@+id/id_nvpa_et_nr_of_decimal"
+                    android:id="@+id/id_et_nr_of_decimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/id_nvpa_tv_nr_of_decimal"
+                    android:layout_below="@id/id_tv_nr_of_decimal"
                     android:layout_alignParentStart="true"
                     android:text="0"
                     android:inputType="number"/>
 
                  <TextView
-                    android:id="@+id/id_nvpa_tv_min_nr_char_to_show"
+                    android:id="@+id/id_tv_min_nr_char_to_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_nr_of_decimal"
+                    android:layout_toEndOf="@+id/id_tv_nr_of_decimal"
                     android:layout_marginStart="10dp"
-                    android:text="@string/text_nvpa_tv_min_nr_char_to_show"
-                    android:labelFor="@+id/text_nvpa_tv_min_nr_char_to_show"/>
+                    android:text="@string/text_tv_min_nr_char_to_show"
+                    android:labelFor="@+id/id_et_min_nr_char_to_show"/>
 
                 <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                    android:id="@+id/id_nvpa_et_min_nr_char_to_show"
+                    android:id="@+id/id_et_min_nr_char_to_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/id_nvpa_tv_min_nr_char_to_show"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_nr_of_decimal"
+                    android:layout_below="@id/id_tv_min_nr_char_to_show"
+                    android:layout_toEndOf="@+id/id_tv_nr_of_decimal"
                     android:layout_marginStart="10dp"
                     android:text="0"
                     android:inputType="number"/>
 
                 <TextView
-                    android:id="@+id/id_nvpa_tv_um"
+                    android:id="@+id/id_tv_um"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_min_nr_char_to_show"
+                    android:layout_toEndOf="@+id/id_tv_min_nr_char_to_show"
                     android:layout_marginStart="10dp"
-                    android:text="@string/text_nvpa_tv_um"
-                    android:labelFor="@+id/text_nvpa_tv_um"/>
+                    android:text="@string/text_tv_um"
+                    android:labelFor="@+id/id_et_um"/>
 
                 <com.pretolesi.easydomotic.CustomControls.StringEditText
-                    android:id="@+id/id_nvpa_et_um"
+                    android:id="@+id/id_et_um"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/id_nvpa_tv_um"
-                    android:layout_toEndOf="@+id/id_nvpa_tv_min_nr_char_to_show"
+                    android:layout_below="@id/id_tv_um"
+                    android:layout_toEndOf="@+id/id_tv_min_nr_char_to_show"
                     android:layout_marginStart="10dp"
                     android:text=""/>
             </RelativeLayout>
         </HorizontalScrollView>
 
         <TextView
-            android:id="@+id/id_nvpa_tv_update_millis"
+            android:id="@+id/id_tv_update_millis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/id_hsv_1"
             android:layout_alignParentStart="true"
-            android:text="@string/text_nvpa_tv_update_millis"
-            android:labelFor="@+id/text_nvpa_et_update_millis"/>
+            android:text="@string/text_tv_update_millis"
+            android:labelFor="@+id/id_et_update_millis"/>
 
         <com.pretolesi.easydomotic.CustomControls.NumericEditText
-            android:id="@+id/id_nvpa_et_update_millis"
+            android:id="@+id/id_et_update_millis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_nvpa_tv_update_millis"
+            android:layout_below="@id/id_tv_update_millis"
             android:layout_alignParentStart="true"
             android:text="0"
             android:inputType="number"/>
 
         <TextView
-            android:id="@+id/id_nvpa_tv_read_only"
+            android:id="@+id/id_tv_read_only"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/id_hsv_1"
-            android:layout_toEndOf="@+id/id_nvpa_tv_update_millis"
+            android:layout_toEndOf="@+id/id_tv_update_millis"
             android:layout_marginStart="10dp"
-            android:text="@string/text_nvpa_tv_read_only"
-            android:labelFor="@+id/id_nvpa_cb_read_only"/>
+            android:text="@string/text_tv_read_only"
+            android:labelFor="@+id/id_cb_read_only"/>
 
         <CheckBox
-            android:id="@+id/id_nvpa_cb_read_only"
+            android:id="@+id/id_cb_read_only"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/id_nvpa_tv_read_only"
-            android:layout_toEndOf="@+id/id_nvpa_tv_update_millis"
+            android:layout_below="@+id/id_tv_read_only"
+            android:layout_toEndOf="@+id/id_tv_update_millis"
             android:layout_marginStart="10dp" />
 
         <TextView
-            android:id="@+id/id_nvpa_tv_protocol"
+            android:id="@+id/id_tv_protocol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_nvpa_et_update_millis"
+            android:layout_below="@id/id_et_update_millis"
             android:layout_alignParentStart="true"
-            android:text="@string/text_stica_tv_protocol" />
+            android:text="@string/text_tv_protocol" />
 
         <CheckBox
-            android:id="@+id/id_nvpa_cb_enable_tcp_ip_client_protocol"
+            android:id="@+id/id_cb_enable_tcp_ip_client_protocol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/id_nvpa_tv_protocol"
+            android:layout_below="@+id/id_tv_protocol"
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"/>
 
         <Spinner
-            android:id="@+id/id_nvpa_spn_tcp_ip_client_protocol"
+            android:id="@+id/id_spn_tcp_ip_client_protocol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/id_nvpa_cb_enable_tcp_ip_client_protocol"
+            android:layout_alignStart="@+id/id_cb_enable_tcp_ip_client_protocol"
             android:layout_marginStart="40dp"
-            android:layout_below="@id/id_nvpa_tv_protocol" />
+            android:layout_below="@id/id_tv_protocol" />
 
         <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                               android:id="@+id/id_nvpa_hlsv_protocol_fields"
                               android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:layout_alignParentStart="true"
-                              android:layout_below="@id/id_nvpa_cb_enable_tcp_ip_client_protocol"
+                              android:layout_below="@id/id_cb_enable_tcp_ip_client_protocol"
                               android:layout_marginTop="20dp">
 
             <RelativeLayout

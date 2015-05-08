@@ -94,25 +94,25 @@ public class NumericValuePropActivity extends Activity implements
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
-        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_nvpa_spn_data_type);
+        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_data_type);
         m_id_nvpa_spn_data_type.setSelection(NumericValueData.ProtTcpIpClientValueDataTypeDefaulValue);
-        m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
+        m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(NumericValueData.ProtTcpIpClientValueNrOfDecimalMinValue, NumericValueData.ProtTcpIpClientValueNrOfDecimalMaxValue);
         m_id_nvpa_et_nr_of_decimal.setText(NumericValueData.ProtTcpIpClientValueNrOfDecimalDefaulValue);
-        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_nvpa_et_um);
+        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_et_um);
         m_id_nvpa_et_um.setInputLimit(NumericValueData.ProtTcpIpClientValueUMMinValue, NumericValueData.ProtTcpIpClientValueUMMaxValue);
         m_id_nvpa_et_um.setText(NumericValueData.ProtTcpIpClientValueUMDefaulValue);
-        m_id_nvpa_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_nvpa_et_min_nr_char_to_show);
+        m_id_nvpa_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
         m_id_nvpa_et_min_nr_char_to_show.setInputLimit(NumericValueData.ProtTcpIpClientValueMinNrCharToShowMinValue, NumericValueData.ProtTcpIpClientValueMinNrCharToShowMaxValue);
         m_id_nvpa_et_min_nr_char_to_show.setText(NumericValueData.ProtTcpIpClientValueMinNrCharToShowDefaulValue);
-        m_id_nvpa_cb_read_only = (CheckBox)findViewById(R.id.id_nvpa_cb_read_only);
-        m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_nvpa_et_update_millis);
+        m_id_nvpa_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
+        m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
         m_id_nvpa_et_update_millis.setInputLimit(NumericValueData.ProtTcpIpClientValueUpdateMillisMinValue, NumericValueData.ProtTcpIpClientValueUpdateMillisMaxValue);
         m_id_nvpa_et_update_millis.setText(NumericValueData.ProtTcpIpClientValueUpdateMillisDefaulValue);
 
-        m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_nvpa_cb_enable_tcp_ip_client_protocol);
+        m_id_nvpa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
-        m_id_nvpa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_nvpa_spn_tcp_ip_client_protocol);
+        m_id_nvpa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
         m_id_nvpa_spn_tcp_ip_client_protocol.setEnabled(false);
 
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
