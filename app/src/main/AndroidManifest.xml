@@ -43,6 +43,13 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:parentActivityName = "com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/android:Theme.Holo"
+            android:name="com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:parentActivityName = ".TcpIpClient.TCPIPClientPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"

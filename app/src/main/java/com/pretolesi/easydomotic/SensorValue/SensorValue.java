@@ -1,6 +1,7 @@
 package com.pretolesi.easydomotic.SensorValue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -287,9 +288,6 @@ public class SensorValue extends TextView implements
                 }
             }
         }
-        if(m_edEditText != null){
-            m_edEditText.setError("");
-        }
     }
 
     private String getDefaultValue(){
@@ -436,8 +434,8 @@ public class SensorValue extends TextView implements
                 case MotionEvent.ACTION_UP: {
                     if(m_svd != null) {
                         m_svd.setSaved(false);
-                        //Intent intent = NumericValuePropActivity.makeNumericValuePropActivity(this.getContext(), m_svd);
-                        //this.getContext().startActivity(intent);
+                        Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this.getContext(), m_svd);
+                        this.getContext().startActivity(intent);
                     }
                     break;
                 }

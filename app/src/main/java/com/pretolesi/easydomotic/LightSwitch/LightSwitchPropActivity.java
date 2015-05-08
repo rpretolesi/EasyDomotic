@@ -472,6 +472,9 @@ public class LightSwitchPropActivity extends Activity implements
 
     private void save(int iDialogOriginID) {
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!StringEditText.validateInputData(findViewById(android.R.id.content))){
+            return;
+        }
 
         if(m_id_et_light_switch_name != null){
             long lRoomID;

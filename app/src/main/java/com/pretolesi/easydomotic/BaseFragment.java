@@ -24,6 +24,8 @@ import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
+import com.pretolesi.easydomotic.SensorValue.SensorValue;
+import com.pretolesi.easydomotic.SensorValue.SensorValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -58,6 +60,7 @@ public class BaseFragment extends Fragment implements
     protected RoomFragmentData m_rfd;
     protected ArrayList<LightSwitchData> m_allsd;
     protected ArrayList<NumericValueData> m_alnvd;
+    protected ArrayList<SensorValueData> m_alsvd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
     protected LinearLayout m_llStatusTcpIpServer;
@@ -167,6 +170,7 @@ public class BaseFragment extends Fragment implements
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.SENSOR_VALUE_LOADER_ID);
 
         // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
@@ -235,6 +239,15 @@ public class BaseFragment extends Fragment implements
             };
         }
 
+        if(id == Loaders.SENSOR_VALUE_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.SensorValueEntry.load(getArguments().getLong(_ID, -1));
+                }
+            };
+        }
+
         return null;
     }
 
@@ -273,6 +286,7 @@ public class BaseFragment extends Fragment implements
                     // Room's elements
                     getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
                     getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
+                    getLoaderManager().initLoader(Loaders.SENSOR_VALUE_LOADER_ID, null, this);
                 }
             }
         }
@@ -285,6 +299,11 @@ public class BaseFragment extends Fragment implements
         if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
             m_alnvd = SQLContract.NumericValueEntry.get(cursor);
             updateNumericValues();
+        }
+
+        if(loader.getId() == Loaders.SENSOR_VALUE_LOADER_ID) {
+            m_alsvd = SQLContract.SensorValueEntry.get(cursor);
+            updateSensorValues();;
         }
 
         // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -398,6 +417,22 @@ public class BaseFragment extends Fragment implements
                     }
                     setViewPosition(nv, nvd.getPosX(), nvd.getPosY());
                     m_rl.addView(nv);
+                }
+            }
+        }
+    }
+
+    private void updateSensorValues(){
+        // Define the switch
+        if(m_rl != null && m_alsvd != null){
+            for(SensorValueData svd : m_alsvd){
+                if(svd != null){
+                    SensorValue sv = new SensorValue(getActivity(), svd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                    if(svd.getLandscape()){
+                        ObjectAnimator.ofFloat(sv, "rotation", 0, 90).start();
+                    }
+                    setViewPosition(sv, svd.getPosX(), svd.getPosY());
+                    m_rl.addView(sv);
                 }
             }
         }

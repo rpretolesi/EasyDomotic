@@ -105,7 +105,7 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                         getString(R.string.settings_title_section_open_room),
                         getString(R.string.settings_title_section_add_switch),
                         getString(R.string.settings_title_section_add_numeric_value),
-                        getString(R.string.settings_title_section_disp),
+                        getString(R.string.settings_title_section_add_sensor_value),
                         getString(R.string.settings_title_section_new_tcp_ip_client),
                         getString(R.string.settings_title_section_open_tcp_ip_client),
                         getString(R.string.settings_title_section_disp)

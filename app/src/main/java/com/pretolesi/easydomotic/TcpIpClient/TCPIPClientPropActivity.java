@@ -299,6 +299,9 @@ public class TCPIPClientPropActivity extends Activity implements
 
     private void save(int iDialogOriginID) {
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!StringEditText.validateInputData(findViewById(android.R.id.content))){
+            return;
+        }
 
         if(m_id_stica_et_server_name != null) {
 

@@ -32,6 +32,8 @@ import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
+import java.util.ArrayList;
+
 /**
  *
  */
@@ -65,7 +67,7 @@ public class SensorValuePropActivity extends Activity implements
 
     private NumericEditText m_id_nvpa_et_min_nr_char_to_show;
     private NumericEditText m_id_nvpa_et_nr_of_decimal;
-    private NumericEditText m_id_nvpa_et_um;
+    private StringEditText m_id_nvpa_et_um;
 
     private SensorValueData m_svd;
     private long m_lRoomIDParameter;
@@ -116,7 +118,7 @@ public class SensorValuePropActivity extends Activity implements
         m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_nvpa_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(SensorValueData.ValueNrOfDecimalMinValue, SensorValueData.ValueNrOfDecimalMaxValue);
         m_id_nvpa_et_nr_of_decimal.setText(SensorValueData.ValueNrOfDecimalDefaulValue);
-        m_id_nvpa_et_um = (NumericEditText)findViewById(R.id.id_nvpa_et_um);
+        m_id_nvpa_et_um = (StringEditText)findViewById(R.id.id_nvpa_et_um);
         m_id_nvpa_et_um.setInputLimit(SensorValueData.ValueUMMinValue, SensorValueData.ValueUMMaxValue);
         m_id_nvpa_et_um.setText(SensorValueData.ValueUMDefaulValue);
 
@@ -240,15 +242,15 @@ public class SensorValuePropActivity extends Activity implements
             };
         }
 
-        if(id == Loaders.NUMERIC_VALUE_LOADER_ID){
+        if(id == Loaders.SENSOR_VALUE_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
                     Cursor cursor = null;
                     if(m_svdParameter != null){
-//                        cursor = SQLContract.NumericValueEntry.loadFromSensorValueData(m_svdParameter);
+                        cursor = SQLContract.SensorValueEntry.loadFromSensorValueData(m_svdParameter);
                     } else {
-                        cursor = SQLContract.NumericValueEntry.load(m_lIDParameter, m_lRoomIDParameter);
+                        cursor = SQLContract.SensorValueEntry.load(m_lIDParameter, m_lRoomIDParameter);
                     }
                     return cursor;
                 }
@@ -288,23 +290,23 @@ public class SensorValuePropActivity extends Activity implements
                 }
             }
             // Secondo
-            getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.SENSOR_VALUE_LOADER_ID, null, this);
         }
 
         if(loader.getId() == Loaders.SENSOR_VALUE_LOADER_ID) {
-/*
-            ArrayList<SensorValueData> alnvd = SQLContract.NumericValueEntry.get(cursor);
-            if(alnvd != null && !alnvd.isEmpty()){
-                m_svd = alnvd.get(0);
+
+            ArrayList<SensorValueData> alsvd = SQLContract.SensorValueEntry.get(cursor);
+            if(alsvd != null && !alsvd.isEmpty()){
+                m_svd = alsvd.get(0);
             }
-*/
+
             // Terzo
             getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
         }
 
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
             m_TcpIpClientAdapter.swapCursor(cursor);
-            updateNumericValue();
+            updateSensorValue();
         }
 
         // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -388,7 +390,7 @@ public class SensorValuePropActivity extends Activity implements
         }
     }
 
-    private void updateNumericValue() {
+    private void updateSensorValue() {
         // Stato
         if(m_id_nvpa_spn_tcp_ip_client_protocol != null && m_id_nvpa_spn_tcp_ip_client_protocol.getCount() > 0){
             m_id_nvpa_cb_enable_tcp_ip_client_protocol.setEnabled(true);
@@ -473,6 +475,9 @@ public class SensorValuePropActivity extends Activity implements
 
     private void save(int iDialogOriginID) {
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
+        if(!StringEditText.validateInputData(findViewById(android.R.id.content))){
+            return;
+        }
 
         if(m_id_et_name != null){
             long lRoomID;
@@ -587,15 +592,15 @@ public class SensorValuePropActivity extends Activity implements
         }
 
         m_svd.setProtTcpIpClientSendDataOnChange(true);
-/*
-        if(SQLContract.NumericValueEntry.save(m_svd)){
+
+        if(SQLContract.SensorValueEntry.save(m_svd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         } else {
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }
-*/
+
     }
 
     private void delete(int iDialogOriginID){

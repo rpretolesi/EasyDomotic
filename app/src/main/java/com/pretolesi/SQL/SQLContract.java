@@ -2239,18 +2239,11 @@ public class SQLContract
                         svd.setSensorType(
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_TYPE_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_VALUE_ID)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM))
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_ENABLE_SIMULATION)) == 0) ? false : true),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_AMPL_K))),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K))),
-
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_SAMPLE_TIME))
                         );
-                        ,
-                                ,
-                                ,
-                                COLUMN_NAME_SENSOR_AMPL_K,
-                                COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
-                                COLUMN_NAME_SENSOR_SAMPLE_TIME,
 
                         alsvd.add(svd);
                     }

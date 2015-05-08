@@ -42,7 +42,7 @@ public class StringEditText extends EditText {
     }
 
     public boolean validateInputLimit(){
-        if(m_shMin != 0 && m_shMax != 0) {
+        if(m_shMin != 0 || m_shMax != 0) {
             try {
                 short shValue = (short) this.getText().toString().length();
                 if (!isInRange(m_shMin, m_shMax, shValue)) {
