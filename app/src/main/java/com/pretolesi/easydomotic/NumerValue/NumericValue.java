@@ -101,7 +101,7 @@ public class NumericValue extends TextView implements
         public void run() {
             if(m_nvd != null && m_TimerHandler != null) {
                 // Read Request
-                readNumericValue();
+                readValue();
 
                 m_TimerHandler.postDelayed(m_TimerRunnable, m_nvd.getProtTcpIpClientValueUpdateMillis());
             }
@@ -150,8 +150,8 @@ public class NumericValue extends TextView implements
         // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
-    private void readNumericValue(){
-        if(m_nvd != null){
+    private void readValue(){
+        if(m_nvd != null && m_nvd.getProtTcpIpClientEnable()){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null && m_netdt != null){
                 tic.readNumericValue(getContext(),m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), m_netdt);
@@ -160,7 +160,7 @@ public class NumericValue extends TextView implements
     }
 
     private void writeValue(String strValue){
-        if(m_nvd != null){
+        if(m_nvd != null && m_nvd.getProtTcpIpClientEnable()){
             if(m_netdt != null){
                 switch (m_netdt) {
                     case SHORT16:
@@ -175,7 +175,7 @@ public class NumericValue extends TextView implements
 
                             return;
 
-                        } catch (Exception ignored) {
+                        } catch (Exception ignore) {
                         }
                         break;
 
@@ -191,7 +191,7 @@ public class NumericValue extends TextView implements
 
                             return;
 
-                        } catch (Exception ignored) {
+                        } catch (Exception ignore) {
                         }
                         break;
 
@@ -207,7 +207,7 @@ public class NumericValue extends TextView implements
 
                             return;
 
-                        } catch (Exception ignored) {
+                        } catch (Exception ignore) {
                         }
                         break;
 
@@ -223,7 +223,7 @@ public class NumericValue extends TextView implements
 
                             return;
 
-                        } catch (Exception ignored) {
+                        } catch (Exception ignore) {
                         }
                         break;
 
@@ -239,15 +239,12 @@ public class NumericValue extends TextView implements
 
                             return;
 
-                        } catch (Exception ignored) {
+                        } catch (Exception ignore) {
                         }
                         break;
 
                 }
             }
-        }
-        if(m_edEditText != null){
-            m_edEditText.setError("");
         }
     }
 
@@ -300,11 +297,11 @@ public class NumericValue extends TextView implements
                         break;
                     case FLOAT32:
                         m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        m_edEditText.setInputLimit(Float.MIN_VALUE, Float.MAX_VALUE);
+                        m_edEditText.setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
                         break;
                     case DOUBLE64:
                         m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        m_edEditText.setInputLimit(Double.MIN_VALUE, Double.MAX_VALUE);
+                        m_edEditText.setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
                         break;
                 }
             }
@@ -390,14 +387,14 @@ public class NumericValue extends TextView implements
                                 case SHORT16:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 2) {
                                         short shValue = ByteBuffer.wrap(ticrs.getValue()).getShort();
-                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue, m_nvd.getProtTcpIpClientValueUM());
+                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)shValue/Math.pow(10,m_nvd.getProtTcpIpClientValueNrOfDecimal()), m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
                                 case INT32:
                                     if(ticrs.getValue() != null && ticrs.getValue().length == 4) {
                                         int iValue = ByteBuffer.wrap(ticrs.getValue()).getInt();
-                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue, m_nvd.getProtTcpIpClientValueUM());
+                                        strValue = String.format("% " + m_nvd.getProtTcpIpClientValueMinNrCharToShow() + "." + m_nvd.getProtTcpIpClientValueNrOfDecimal() + "f %s", (double)iValue/Math.pow(10,m_nvd.getProtTcpIpClientValueNrOfDecimal()), m_nvd.getProtTcpIpClientValueUM());
                                     }
                                     break;
 
@@ -505,9 +502,9 @@ public class NumericValue extends TextView implements
 
                 }
                 case MotionEvent.ACTION_UP: {
-
-                    openWriteInput();
-
+                    if(m_nvd != null && !m_nvd.getProtTcpIpClientValueReadOnly()) {
+                        openWriteInput();
+                    }
                     break;
                 }
             }

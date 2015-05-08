@@ -160,10 +160,20 @@ public class NumericEditText extends EditText {
         return b > a ? c >= a && c <= b : c >= b && c <= a;
     }
     private boolean isInRange(float a, float b, float c) {
-        return b > a ? c >= a && c <= b : c >= b && c <= a;
+        int iac = Float.compare(c,a); // < 0 if c < a
+        int ibc = Float.compare(c,b); // > 0 if c > b
+        if(iac < 0 || ibc > 0){
+            return false;
+        }
+        return true;
     }
     private boolean isInRange(double a, double b, double c) {
-        return b > a ? c >= a && c <= b : c >= b && c <= a;
+        int iac = Double.compare(c,a); // < 0 if c < a
+        int ibc = Double.compare(c,b); // > 0 if c > b
+        if(iac < 0 || ibc > 0){
+            return false;
+        }
+        return true;
     }
 
     private void makeDialogAlert(String strMessage) {
