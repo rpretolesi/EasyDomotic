@@ -3,6 +3,9 @@ package com.pretolesi.easydomotic.SensorValue;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  */
@@ -68,8 +71,8 @@ public class SensorValueData implements Parcelable {
     private String m_strValueUM;
 
     // Sensor
-    private int m_iSensorTypeID;
-    private int m_iSensorValueID;
+    private long m_lSensorTypeID;
+    private long m_lSensorValueID;
     private boolean m_bSensorEnableSimulation;
     private float m_fSensorAmplK;
     private float m_fSensorLowPassFilterK;
@@ -98,8 +101,8 @@ public class SensorValueData implements Parcelable {
         this.m_iValueNrOfDecimal = 0;
         this.m_strValueUM = "";
 
-        this.m_iSensorTypeID = -1;
-        this.m_iSensorValueID = -1;
+        this.m_lSensorTypeID = -1;
+        this.m_lSensorValueID = -1;
         this.m_bSensorEnableSimulation = false;
         this.m_fSensorAmplK = 1.0f;
         this.m_fSensorLowPassFilterK = 1.0f;
@@ -129,8 +132,8 @@ public class SensorValueData implements Parcelable {
         this.m_iValueNrOfDecimal = 0;
         this.m_strValueUM = "";
 
-        this.m_iSensorTypeID = -1;
-        this.m_iSensorValueID = -1;
+        this.m_lSensorTypeID = -1;
+        this.m_lSensorValueID = -1;
         this.m_bSensorEnableSimulation = false;
         this.m_fSensorAmplK = 1.0f;
         this.m_fSensorLowPassFilterK = 1.0f;
@@ -155,8 +158,8 @@ public class SensorValueData implements Parcelable {
     }
 
     public void setSensorType(int iSensorTypeID, int iSensorValueID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
-        this.m_iSensorTypeID = iSensorTypeID;
-        this.m_iSensorValueID = iSensorValueID;
+        this.m_lSensorTypeID = iSensorTypeID;
+        this.m_lSensorValueID = iSensorValueID;
         this.m_bSensorEnableSimulation = bSensorEnableSimulation;
         this.m_fSensorAmplK = fSensorK;
         this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
@@ -233,12 +236,12 @@ public class SensorValueData implements Parcelable {
     }
 
     // Sensor
-    public void setSensorTypeID(int iSensorTypeID) {
-        this.m_iSensorTypeID = iSensorTypeID;
+    public void setSensorTypeID(long lSensorTypeID) {
+        this.m_lSensorTypeID = lSensorTypeID;
     }
 
-    public void setSensorValueID(int iSensorValueID) {
-        this.m_iSensorValueID = iSensorValueID;
+    public void setSensorValueID(long lSensorValueID) {
+        this.m_lSensorValueID = lSensorValueID;
     }
 
     public void setSensorEnableSimulation(boolean bSensorEnableSimulation) {
@@ -323,12 +326,12 @@ public class SensorValueData implements Parcelable {
     }
 
     // Sensor
-    public int getSensorTypeID() {
-        return m_iSensorTypeID;
+    public long getSensorTypeID() {
+        return m_lSensorTypeID;
     }
 
-    public int getSensorValueID() {
-        return m_iSensorValueID;
+    public long getSensorValueID() {
+        return m_lSensorValueID;
     }
 
     public boolean getSensorEnableSimulation() {
@@ -370,8 +373,8 @@ public class SensorValueData implements Parcelable {
         m_iValueNrOfDecimal = in.readInt();
         m_strValueUM = in.readString();
 
-        m_iSensorTypeID = in.readInt();
-        m_iSensorValueID = in.readInt();
+        m_lSensorTypeID = in.readLong();
+        m_lSensorValueID = in.readLong();
         m_bSensorEnableSimulation = in.readByte() != 0;
         m_fSensorAmplK = in.readFloat();
         m_fSensorLowPassFilterK = in.readFloat();
@@ -407,8 +410,8 @@ public class SensorValueData implements Parcelable {
         dest.writeInt(m_iValueNrOfDecimal);
         dest.writeString(m_strValueUM);
 
-        dest.writeInt(m_iSensorTypeID);
-        dest.writeInt(m_iSensorValueID);
+        dest.writeLong(m_lSensorTypeID);
+        dest.writeLong(m_lSensorValueID);
         dest.writeByte((byte) (m_bSensorEnableSimulation ? 1 : 0));
         dest.writeFloat(m_fSensorAmplK);
         dest.writeFloat(m_fSensorLowPassFilterK);
@@ -436,29 +439,29 @@ public class SensorValueData implements Parcelable {
         LEVEL_RIGHT(3, "Level Right"),
         COMPASS(4, "Compass");
 
-        private int m_iSensorTypeID;
+        private long m_lSensorTypeID;
         private String m_strSensorTypeName;
 
         SensorType(int iSensorTypeID, String strSensorTypelName) {
 
-            m_iSensorTypeID = iSensorTypeID;
+            m_lSensorTypeID = lSensorTypeID;
             m_strSensorTypeName = strSensorTypelName;
         }
 
-        public static SensorType getSensorType(int iSensorTypeID) {
-            if(iSensorTypeID == SensorType.LEVEL.m_iSensorTypeID) {
+        public static SensorType getSensorType(long lSensorTypeID) {
+            if(lSensorTypeID == SensorType.LEVEL.m_lSensorTypeID) {
                 return SensorType.LEVEL;
             }
-            if(iSensorTypeID == SensorType.LEVEL_FRONT.m_iSensorTypeID) {
+            if(iSensorTypeID == SensorType.LEVEL_FRONT.m_lSensorTypeID) {
                 return SensorType.LEVEL_FRONT;
             }
-            if(iSensorTypeID == SensorType.LEVEL_REAR.m_iSensorTypeID) {
+            if(iSensorTypeID == SensorType.LEVEL_REAR.m_lSensorTypeID) {
                 return SensorType.LEVEL_REAR;
             }
-            if(iSensorTypeID == SensorType.LEVEL_LEFT.m_iSensorTypeID) {
+            if(iSensorTypeID == SensorType.LEVEL_LEFT.m_lSensorTypeID) {
                 return SensorType.LEVEL_LEFT;
             }
-            if(iSensorTypeID == SensorType.LEVEL_RIGHT.m_iSensorTypeID) {
+            if(iSensorTypeID == SensorType.LEVEL_RIGHT.m_lSensorTypeID) {
                 return SensorType.LEVEL_RIGHT;
             }
             return null;
@@ -466,8 +469,66 @@ public class SensorValueData implements Parcelable {
 
         @Override
         public String toString() {
-            return Integer.toString(m_iSensorTypeID) + "-" + m_strSensorTypeName;
+            return Integer.toString(m_lSensorTypeID) + "-" + m_strSensorTypeName;
         }
     }
 */
+
+
+    public enum SensorValue {
+        X_1(0, "X1 axis value or single value"),
+        Y_1(1, "Y1 axis value"),
+        Z_1(2, "Z1 axis value"),
+        X_2(3, "X2 axis or aux value 1"),
+        Y_2(4, "Y2 axis or aux value 2"),
+        Z_2(5, "Z2 axis or aux value 3");
+
+        private long m_lSensorValueID;
+        private String m_strSensorValueName;
+
+        SensorValue(long lSensorValueID, String strSensorValueName) {
+            m_lSensorValueID = lSensorValueID;
+            m_strSensorValueName = strSensorValueName;
+        }
+
+        public static SensorValue getSensorValue(long lSensorValueID) {
+            if(lSensorValueID == SensorValue.X_1.m_lSensorValueID) {
+                return SensorValue.X_1;
+            }
+            if(lSensorValueID == SensorValue.Y_1.m_lSensorValueID) {
+                return SensorValue.Y_1;
+            }
+            if(lSensorValueID == SensorValue.Z_1.m_lSensorValueID) {
+                return SensorValue.Z_1;
+            }
+            if(lSensorValueID == SensorValue.X_2.m_lSensorValueID) {
+                return SensorValue.X_2;
+            }
+            if(lSensorValueID == SensorValue.Y_2.m_lSensorValueID) {
+                return SensorValue.Y_2;
+            }
+            if(lSensorValueID == SensorValue.Z_2.m_lSensorValueID) {
+                return SensorValue.Z_2;
+            }
+            return null;
+        }
+/*
+        public static List<SensorValue> getListSensorValue() {
+            List<SensorValue> list;
+            list = new ArrayList<SensorValue>();
+                    list.add(X_1);
+                    list.add(Y_1);
+                    list.add(Z_1);
+                    list.add(X_2);
+                    list.add(Y_2);
+                    list.add(Z_2);
+            return list;
+        }
+*/
+        @Override
+        public String toString() {
+            return Long.toString(m_lSensorValueID) + "-" + m_strSensorValueName;
+        }
+
+    }
 }

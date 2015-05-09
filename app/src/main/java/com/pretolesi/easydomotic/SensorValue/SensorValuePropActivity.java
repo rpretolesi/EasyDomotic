@@ -8,6 +8,8 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -67,6 +70,10 @@ public class SensorValuePropActivity extends Activity implements
     private NumericEditText m_id_nvpa_et_min_nr_char_to_show;
     private NumericEditText m_id_nvpa_et_nr_of_decimal;
     private StringEditText m_id_nvpa_et_um;
+
+    private Spinner m_id_spn_sensor_type;
+    private Spinner m_id_spn_sensor_value;
+
 
     private SensorValueData m_svd;
     private long m_lRoomIDParameter;
@@ -121,6 +128,13 @@ public class SensorValuePropActivity extends Activity implements
         m_id_nvpa_et_um.setInputLimit(SensorValueData.ValueUMMinValue, SensorValueData.ValueUMMaxValue);
         m_id_nvpa_et_um.setText(SensorValueData.ValueUMDefaulValue);
 
+        // Sensor
+        m_id_spn_sensor_type = (Spinner)findViewById(R.id.id_spn_sensor_type);
+        m_id_spn_sensor_type.setSelection(-1);
+
+        m_id_spn_sensor_value = (Spinner)findViewById(R.id.id_spn_sensor_value);
+        m_id_spn_sensor_value.setSelection(-1);
+
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +177,17 @@ public class SensorValuePropActivity extends Activity implements
                 new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
         m_id_nvpa_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
+
+        // Get sensor list
+        SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if(sm != null){
+            List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
+            m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, ls));
+        }
+        //List<SensorValueData.SensorValue> ls = SensorValueData.SensorValue.getListSensorValue();
+        m_id_spn_sensor_value.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, SensorValueData.SensorValue.values()));
 
         // Primo
         getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
@@ -432,7 +457,7 @@ public class SensorValuePropActivity extends Activity implements
                 try{
                     lItem = m_svd.getProtTcpIpClientValueDataType();
                 } catch (Exception ignore) { }
-                m_id_nvpa_spn_data_type.setSelection((int)lItem);
+                m_id_nvpa_spn_data_type.setSelection((int) lItem);
             }
             if (m_id_nvpa_et_nr_of_decimal != null) {
                 m_id_nvpa_et_nr_of_decimal.setText(Integer.toString(m_svd.getValueNrOfDecimal()));
@@ -468,6 +493,22 @@ public class SensorValuePropActivity extends Activity implements
             }
             if (m_id_nvpa_et_protocol_field_2 != null) {
                 m_id_nvpa_et_protocol_field_2.setText(Integer.toString(m_svd.getProtTcpIpClientValueAddress()));
+            }
+
+            // Sensor
+            if(m_id_spn_sensor_type != null) {
+                long lItem = -1;
+                try{
+                    lItem = m_svd.getSensorTypeID();
+                } catch (Exception ignore) { }
+                m_id_spn_sensor_type.setSelection((int) lItem);
+            }
+            if(m_id_spn_sensor_value != null) {
+                long lItem = -1;
+                try{
+                    lItem = m_svd.getSensorValueID();
+                } catch (Exception ignore) { }
+                m_id_spn_sensor_value.setSelection((int) lItem);
             }
         }
     }
@@ -591,6 +632,15 @@ public class SensorValuePropActivity extends Activity implements
         }
 
         m_svd.setProtTcpIpClientSendDataOnChange(true);
+
+        // Sensor
+        if(m_id_spn_sensor_type != null) {
+            m_svd.setSensorTypeID(m_id_spn_sensor_type.getSelectedItemId());
+        }
+
+        if(m_id_spn_sensor_value != null) {
+            m_svd.setSensorValueID(m_id_spn_sensor_value.getSelectedItemId());
+        }
 
         if(SQLContract.SensorValueEntry.save(m_svd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
