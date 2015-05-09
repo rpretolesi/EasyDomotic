@@ -47,7 +47,6 @@ public class SensorValuePropActivity extends Activity implements
     private static final String SENSOR_VALUE_ID = "Sensor_Value_ID";
     private static final String SENSOR_VALUE_DATA = "Sensor_Value_Data";
 
-
     private Spinner m_id_spn_room;
     private SimpleCursorAdapter m_SCASpnRoom;
 

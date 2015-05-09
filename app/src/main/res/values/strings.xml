@@ -158,6 +158,11 @@
     <string name="text_tv_update_millis">Update millis</string>
     <string name="text_tv_sensor_type">Sensor type</string>
     <string name="text_tv_sensor_value">Sensor value</string>
+    <string name="text_tv_sensor_enable_simulation">Enable simulation</string>
+    <string name="text_tv_sensor_ampl_k">Amplifier k</string>
+    <string name="text_tv_sensor_low_pass_filter_k">Low pass filter k</string>
+    <string name="text_tv_sensor_sample_time_k">Sensor sample time k</string>
+
 
     <!--
     light_switch_prop_activity

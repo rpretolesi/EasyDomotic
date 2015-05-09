@@ -551,7 +551,7 @@ public class SensorValue extends TextView implements
             case Sensor.TYPE_MAGNETIC_FIELD:
                 m_Geomagnetic = new float[3];
                 System.arraycopy(event.values, 0, m_Geomagnetic, 0, 3);
-
+                setText(Double.toString(m_Geomagnetic[0]) + " - " + Double.toString(m_Geomagnetic[1]) + " - " + Double.toString(m_Geomagnetic[2]));
                 break;
         }
         // If we have readings from both sensors then
@@ -581,7 +581,7 @@ public class SensorValue extends TextView implements
                 double dblRotationInDegress = Math.toDegrees(fRotationInRadians);
 
                 // Visualizzo il risultato
-                setText(Double.toString(dblRotationInDegress));
+//                setText(Double.toString(dblRotationInDegress));
 
                 // Reset sensor event data arrays
                 m_Gravity = m_Geomagnetic = null;
