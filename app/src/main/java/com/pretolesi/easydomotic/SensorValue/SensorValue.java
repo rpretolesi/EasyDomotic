@@ -27,6 +27,8 @@ import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 
+import java.util.List;
+
 /**
  *
  */
@@ -52,15 +54,14 @@ public class SensorValue extends TextView implements
 
     // Sensors & SensorManager
     private SensorManager m_SensorManager;
-    private Sensor m_Accelerometer;
-    private Sensor m_Magnetometer;
+    private Sensor m_Sensor;
+    private int m_iSensorTypeID;
 
     // Storage for Sensor readings
-    private float[] m_Gravity;
-    private float[] m_Geomagnetic;
+    private float[] m_SensorValue;
 
     // Rotation around the Z axis
-    private double m_RotationInDegress;
+//    private double m_RotationInDegress;
 
 
     public SensorValue(Context context) {
@@ -72,15 +73,8 @@ public class SensorValue extends TextView implements
 
         // Sensors & SensorManager
         m_SensorManager = null;
-        m_Accelerometer = null;
-        m_Magnetometer = null;
-
-        // Storage for Sensor readings
-        m_Gravity = null;
-        m_Geomagnetic = null;
-
-        // Rotation around the Z axis
-        m_RotationInDegress = 0.0f;
+        m_Sensor = null;
+        m_SensorValue = null;
     }
 
     public SensorValue(Context context, com.pretolesi.easydomotic.SensorValue.SensorValueData svd, int iMsgID, boolean bEditMode) {
@@ -94,15 +88,8 @@ public class SensorValue extends TextView implements
         this.m_bEditMode = bEditMode;
         // Sensors & SensorManager
         m_SensorManager = null;
-        m_Accelerometer = null;
-        m_Magnetometer = null;
-
-        // Storage for Sensor readings
-        m_Gravity = null;
-        m_Geomagnetic = null;
-
-        // Rotation around the Z axis
-        m_RotationInDegress = 0.0f;
+        m_Sensor = null;
+        m_SensorValue = null;
     }
 
     /*
@@ -162,12 +149,15 @@ public class SensorValue extends TextView implements
             m_SensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
             if (m_SensorManager != null) {
                 // Get reference to Sensor
-                m_Accelerometer = m_SensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                m_Magnetometer = m_SensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-                if (m_Accelerometer != null && m_Magnetometer != null) {
+                List<Sensor> ls = m_SensorManager.getSensorList(Sensor.TYPE_ALL);
+                controllare tutti i dati se necessario...
+                if(ls != null){
+                    m_iSensorTypeID = ls.get((int)m_svd.getSensorTypeID()).getType();
+                }
+                m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorTypeID);
+                if (m_Sensor != null) {
                     // Sensor Available
-                    m_SensorManager.registerListener(this, m_Accelerometer, SensorManager.SENSOR_DELAY_UI);
-                    m_SensorManager.registerListener(this, m_Magnetometer, SensorManager.SENSOR_DELAY_UI);
+                    m_SensorManager.registerListener(this, m_Sensor, SensorManager.SENSOR_DELAY_UI);
 
                 }
             }
@@ -541,52 +531,10 @@ public class SensorValue extends TextView implements
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch (event.sensor.getType()){
-            case Sensor.TYPE_ACCELEROMETER:
-                m_Gravity = new float[3];
-                System.arraycopy(event.values, 0, m_Gravity, 0, 3);
-
-                break;
-
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                m_Geomagnetic = new float[3];
-                System.arraycopy(event.values, 0, m_Geomagnetic, 0, 3);
-                setText(Double.toString(m_Geomagnetic[0]) + " - " + Double.toString(m_Geomagnetic[1]) + " - " + Double.toString(m_Geomagnetic[2]));
-                break;
-        }
-        // If we have readings from both sensors then
-        // use the readings to compute the device's orientation
-        // and then update the display.
-        if (m_Gravity != null && m_Geomagnetic != null) {
-            float fRrotationMatrix[] = new float[9];
-
-            // Users the accelerometer and magnetometer readings
-            // to compute the device's rotation with respect to
-            // a real world coordinate system
-            boolean bRes = SensorManager.getRotationMatrix(fRrotationMatrix, null, m_Gravity, m_Geomagnetic);
-
-            if (bRes) {
-                float fOrientationMatrix[] = new float[3];
-
-                // Returns the device's orientation given
-                // the rotationMatrix
-                SensorManager.getOrientation(fRrotationMatrix, fOrientationMatrix);
-
-                // Get the rotation, measured in radians, around the Z-axis
-                // Note: This assumes the device is held flat and parallel
-                // to the ground
-                float fRotationInRadians = fOrientationMatrix[0];
-
-                // Convert from radians to degrees
-                double dblRotationInDegress = Math.toDegrees(fRotationInRadians);
-
-                // Visualizzo il risultato
-//                setText(Double.toString(dblRotationInDegress));
-
-                // Reset sensor event data arrays
-                m_Gravity = m_Geomagnetic = null;
-
-            }
+        if(event.sensor.getType() == m_iSensorTypeID){
+            m_SensorValue = new float[6];
+            System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
+            setText(Double.toString(m_SensorValue[(int)m_svd.getSensorValueID()]));
         }
     }
 

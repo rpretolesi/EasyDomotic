@@ -284,23 +284,18 @@ public class NumericValue extends TextView implements
             if(m_netdt != null) {
                 switch (m_netdt) {
                     case SHORT16:
-                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         m_edEditText.setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
                         break;
                     case INT32:
-                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         m_edEditText.setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
                         break;
                     case LONG64:
-                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         m_edEditText.setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
                         break;
                     case FLOAT32:
-                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                         m_edEditText.setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
                         break;
                     case DOUBLE64:
-                        m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                         m_edEditText.setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
                         break;
                 }

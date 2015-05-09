@@ -73,7 +73,10 @@ public class SensorValuePropActivity extends Activity implements
 
     private Spinner m_id_spn_sensor_type;
     private Spinner m_id_spn_sensor_value;
-
+    private CheckBox m_id_cb_sensor_enable_simulation;
+    private NumericEditText m_id_et_sensor_ampl_k;
+    private NumericEditText m_id_et_sensor_low_pass_filter_k;
+    private NumericEditText m_id_et_sensor_sample_time_k;
 
     private SensorValueData m_svd;
     private long m_lRoomIDParameter;
@@ -131,9 +134,18 @@ public class SensorValuePropActivity extends Activity implements
         // Sensor
         m_id_spn_sensor_type = (Spinner)findViewById(R.id.id_spn_sensor_type);
         m_id_spn_sensor_type.setSelection(-1);
-
         m_id_spn_sensor_value = (Spinner)findViewById(R.id.id_spn_sensor_value);
         m_id_spn_sensor_value.setSelection(-1);
+        m_id_cb_sensor_enable_simulation = (CheckBox)findViewById(R.id.id_cb_sensor_enable_simulation);
+        m_id_et_sensor_ampl_k = (NumericEditText)findViewById(R.id.id_et_sensor_ampl_k);
+        m_id_et_sensor_ampl_k.setInputLimit(SensorValueData.SensorAmplKMinValue, SensorValueData.SensorAmplKMaxValue);
+        m_id_et_sensor_ampl_k.setText(SensorValueData.SensorAmplKDefaulValue);
+        m_id_et_sensor_low_pass_filter_k = (NumericEditText)findViewById(R.id.id_et_sensor_low_pass_filter_k);
+        m_id_et_sensor_low_pass_filter_k.setInputLimit(SensorValueData.SensorLowPassFilterKMinValue, SensorValueData.SensorLowPassFilterKMaxValue);
+        m_id_et_sensor_low_pass_filter_k.setText(SensorValueData.SensorLowPassFilterKDefaulValue);
+        m_id_et_sensor_sample_time_k = (NumericEditText)findViewById(R.id.id_et_sensor_sample_time_k);
+        m_id_et_sensor_sample_time_k.setInputLimit(SensorValueData.SensorSampleTimeMinValue, SensorValueData.SensorSampleTimeMaxValue);
+        m_id_et_sensor_sample_time_k.setText(SensorValueData.SensorSampleTimeDefaulValue);
 
         m_id_nvpa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -510,6 +522,18 @@ public class SensorValuePropActivity extends Activity implements
                 } catch (Exception ignore) { }
                 m_id_spn_sensor_value.setSelection((int) lItem);
             }
+            if(m_id_cb_sensor_enable_simulation != null) {
+                m_id_cb_sensor_enable_simulation.setChecked(m_svd.getSensorEnableSimulation());
+            }
+            if (m_id_et_sensor_ampl_k != null) {
+                m_id_et_sensor_ampl_k.setText(Float.toString(m_svd.getSensorAmplK()));
+            }
+            if (m_id_et_sensor_low_pass_filter_k != null) {
+                m_id_et_sensor_low_pass_filter_k.setText(Float.toString(m_svd.getSensorLowPassFilterK()));
+            }
+            if (m_id_et_sensor_sample_time_k != null) {
+                m_id_et_sensor_sample_time_k.setText(Integer.toString(m_svd.getSensorSampleTime()));
+            }
         }
     }
 
@@ -640,6 +664,18 @@ public class SensorValuePropActivity extends Activity implements
 
         if(m_id_spn_sensor_value != null) {
             m_svd.setSensorValueID(m_id_spn_sensor_value.getSelectedItemId());
+        }
+        if(m_id_cb_sensor_enable_simulation != null) {
+            m_svd.setSensorEnableSimulation(m_id_cb_sensor_enable_simulation.isChecked());
+        }
+        if (m_id_et_sensor_ampl_k != null) {
+            m_svd.setSensorAmplK(Float.parseFloat(m_id_et_sensor_ampl_k.getText().toString()));
+        }
+        if (m_id_et_sensor_low_pass_filter_k != null) {
+            m_svd.setSensorLowPassFilterK(Float.parseFloat(m_id_et_sensor_low_pass_filter_k.getText().toString()));
+        }
+        if (m_id_et_sensor_sample_time_k != null) {
+            m_svd.setSensorSampleTime(Integer.parseInt(m_id_et_sensor_sample_time_k.getText().toString()));
         }
 
         if(SQLContract.SensorValueEntry.save(m_svd)){

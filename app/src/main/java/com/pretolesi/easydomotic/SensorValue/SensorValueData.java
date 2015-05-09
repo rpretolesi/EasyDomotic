@@ -46,6 +46,19 @@ public class SensorValueData implements Parcelable {
 
     public static String DefaultValue = "#####";
 
+    // Sensor
+    public static float SensorAmplKMinValue = 0.001f;
+    public static float SensorAmplKMaxValue = 1000.0f;
+    public static String SensorAmplKDefaulValue = "1.0";
+
+    public static float SensorLowPassFilterKMinValue = 0.001f;
+    public static float SensorLowPassFilterKMaxValue = 1000.0f;
+    public static String SensorLowPassFilterKDefaulValue = "1.0";
+
+    public static int SensorSampleTimeMinValue = 1;
+    public static int SensorSampleTimeMaxValue = 60000;
+    public static String SensorSampleTimeDefaulValue = "300";
+
     private long m_ID;
     private boolean m_bSaved;
     private long m_lRoomID;

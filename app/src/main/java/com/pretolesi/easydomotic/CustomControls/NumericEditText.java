@@ -31,42 +31,50 @@ public class NumericEditText extends EditText {
     // Default Constructor
     public NumericEditText(Context context) {
         super(context);
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     public NumericEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     public NumericEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     // Custom Constructor
     public void setInputLimit(short shMin, short shMax) {
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         m_dt = DataType.SHORT16;
         m_shMin = shMin;
         m_shMax = shMax;
     }
 
     public void setInputLimit(int iMin, int iMax) {
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         m_dt = DataType.INT32;
         m_iMin = iMin;
         m_iMax = iMax;
     }
 
     public void setInputLimit(long lMin, long lMax) {
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         m_dt = DataType.LONG64;
         m_lMin = lMin;
         m_lMax = lMax;
     }
 
     public void setInputLimit(float fMin, float fMax) {
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         m_dt = DataType.FLOAT32;
         m_fMin = fMin;
         m_fMax = fMax;
     }
 
     public void setInputLimit(double dblMin, double dblMax) {
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         m_dt = DataType.DOUBLE64;
         m_dblMin = dblMin;
         m_dblMax = dblMax;
