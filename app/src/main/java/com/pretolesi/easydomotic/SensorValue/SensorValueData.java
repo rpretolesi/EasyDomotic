@@ -443,19 +443,19 @@ public class SensorValueData implements Parcelable {
             return new SensorValueData[size];
         }
     };
-/*
+
     public enum SensorType {
-        LEVEL(0, "Level"),
-        LEVEL_FRONT(0, "Level Front"),
-        LEVEL_REAR(1, "Level Rear"),
-        LEVEL_LEFT(2, "Level Left"),
-        LEVEL_RIGHT(3, "Level Right"),
+        LEVEL(256, "Level"),
+        LEVEL_FRONT(257, "Level Front"),
+        LEVEL_REAR(258, "Level Rear"),
+        LEVEL_LEFT(259, "Level Left"),
+        LEVEL_RIGHT(260, "Level Right"),
         COMPASS(4, "Compass");
 
         private long m_lSensorTypeID;
         private String m_strSensorTypeName;
 
-        SensorType(int iSensorTypeID, String strSensorTypelName) {
+        SensorType(long lSensorTypeID, String strSensorTypelName) {
 
             m_lSensorTypeID = lSensorTypeID;
             m_strSensorTypeName = strSensorTypelName;
@@ -465,16 +465,16 @@ public class SensorValueData implements Parcelable {
             if(lSensorTypeID == SensorType.LEVEL.m_lSensorTypeID) {
                 return SensorType.LEVEL;
             }
-            if(iSensorTypeID == SensorType.LEVEL_FRONT.m_lSensorTypeID) {
+            if(lSensorTypeID == SensorType.LEVEL_FRONT.m_lSensorTypeID) {
                 return SensorType.LEVEL_FRONT;
             }
-            if(iSensorTypeID == SensorType.LEVEL_REAR.m_lSensorTypeID) {
+            if(lSensorTypeID == SensorType.LEVEL_REAR.m_lSensorTypeID) {
                 return SensorType.LEVEL_REAR;
             }
-            if(iSensorTypeID == SensorType.LEVEL_LEFT.m_lSensorTypeID) {
+            if(lSensorTypeID == SensorType.LEVEL_LEFT.m_lSensorTypeID) {
                 return SensorType.LEVEL_LEFT;
             }
-            if(iSensorTypeID == SensorType.LEVEL_RIGHT.m_lSensorTypeID) {
+            if(lSensorTypeID == SensorType.LEVEL_RIGHT.m_lSensorTypeID) {
                 return SensorType.LEVEL_RIGHT;
             }
             return null;
@@ -482,11 +482,9 @@ public class SensorValueData implements Parcelable {
 
         @Override
         public String toString() {
-            return Integer.toString(m_lSensorTypeID) + "-" + m_strSensorTypeName;
+            return Long.toString(m_lSensorTypeID) + "-" + m_strSensorTypeName;
         }
     }
-*/
-
 
     public enum SensorValue {
         X_1(0, "X1 axis value or single value"),

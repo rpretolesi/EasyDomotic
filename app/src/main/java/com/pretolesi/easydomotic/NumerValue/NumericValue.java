@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -28,7 +29,7 @@ import java.nio.ByteBuffer;
 /**
  *
  */
-public class NumericValue extends TextView implements
+public class NumericValue extends BaseValue implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         TCPIPClient.TcpIpClientReadValueStatusListener,
@@ -36,16 +37,13 @@ public class NumericValue extends TextView implements
 
     private static final String TAG = "NumericValue";
     private GestureDetectorCompat mDetector;
+    private float mLastTouchX;
+    private float mLastTouchY;
 
     private NumericValueData m_nvd;
     private int m_iMsgID;
     private int m_iTIDRead;
     private int m_iTIDWrite;
-
-    private float mLastTouchX;
-    private float mLastTouchY;
-
-    private DataType m_netdt;
 
     private boolean m_bEditMode;
 

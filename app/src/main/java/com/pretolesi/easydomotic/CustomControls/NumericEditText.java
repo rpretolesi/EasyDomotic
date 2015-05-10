@@ -44,7 +44,6 @@ public class NumericEditText extends EditText {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
-    // Custom Constructor
     public void setInputLimit(short shMin, short shMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         m_dt = DataType.SHORT16;

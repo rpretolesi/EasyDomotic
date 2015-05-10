@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
@@ -32,7 +33,7 @@ import java.util.List;
 /**
  *
  */
-public class SensorValue extends TextView implements
+public class SensorValue extends BaseValue implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         TCPIPClient.TcpIpClientWriteSwitchStatusListener,
@@ -55,7 +56,7 @@ public class SensorValue extends TextView implements
     // Sensors & SensorManager
     private SensorManager m_SensorManager;
     private Sensor m_Sensor;
-    private int m_iSensorTypeID;
+    private int m_iSensorType;
 
     // Storage for Sensor readings
     private float[] m_SensorValue;
@@ -74,6 +75,7 @@ public class SensorValue extends TextView implements
         // Sensors & SensorManager
         m_SensorManager = null;
         m_Sensor = null;
+        m_iSensorType = 0;
         m_SensorValue = null;
     }
 
@@ -89,6 +91,7 @@ public class SensorValue extends TextView implements
         // Sensors & SensorManager
         m_SensorManager = null;
         m_Sensor = null;
+        m_iSensorType = 0;
         m_SensorValue = null;
     }
 
@@ -129,6 +132,9 @@ public class SensorValue extends TextView implements
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        // Set default value
+        setText(getDefaultValue());
+
         // Listener
         if(!m_bEditMode) {
             if(m_svd != null){
@@ -140,27 +146,34 @@ public class SensorValue extends TextView implements
             setTimerHandler();
         }
 
-        this.setError("");
-        setText(getDefaultValue());
-
         // Sensor
+        boolean bSensorOk = false;
         if(m_svd != null && !m_svd.getSensorEnableSimulation()) {
             // Get reference to SensorManager
             m_SensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
             if (m_SensorManager != null) {
                 // Get reference to Sensor
                 List<Sensor> ls = m_SensorManager.getSensorList(Sensor.TYPE_ALL);
-                controllare tutti i dati se necessario...
                 if(ls != null){
-                    m_iSensorTypeID = ls.get((int)m_svd.getSensorTypeID()).getType();
-                }
-                m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorTypeID);
-                if (m_Sensor != null) {
-                    // Sensor Available
-                    m_SensorManager.registerListener(this, m_Sensor, SensorManager.SENSOR_DELAY_UI);
+                    m_iSensorType = ls.get((int)m_svd.getSensorTypeID()).getType();
+                    if(m_iSensorType > 0){
+                        m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorType);
+                        if (m_Sensor != null) {
+                            // Create array for value
+                            m_SensorValue = new float[6];
 
+                            // Sensor Available
+                            m_SensorManager.registerListener(this, m_Sensor, SensorManager.SENSOR_DELAY_UI);
+                            bSensorOk = true;
+                        }
+                    }
                 }
             }
+        }
+        if(bSensorOk){
+            this.setError(null);
+        } else {
+            this.setError("");
         }
 
         // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
@@ -531,10 +544,12 @@ public class SensorValue extends TextView implements
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == m_iSensorTypeID){
-            m_SensorValue = new float[6];
-            System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
-            setText(Double.toString(m_SensorValue[(int)m_svd.getSensorValueID()]));
+        if(m_SensorValue != null && m_svd != null){
+            if(event.sensor.getType() == m_iSensorType){
+                System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
+                String strValue = String.format("% " + m_svd.getValueMinNrCharToShow() + "." + m_svd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int)m_svd.getSensorValueID()]/Math.pow(10,m_svd.getValueNrOfDecimal()), m_svd.getValueUM());
+                setText(strValue);
+            }
         }
     }
 
