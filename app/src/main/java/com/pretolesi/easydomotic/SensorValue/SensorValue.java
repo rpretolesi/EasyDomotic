@@ -547,7 +547,7 @@ public class SensorValue extends BaseValue implements
         if(m_SensorValue != null && m_svd != null){
             if(event.sensor.getType() == m_iSensorType){
                 System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
-                String strValue = String.format("% " + m_svd.getValueMinNrCharToShow() + "." + m_svd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int)m_svd.getSensorValueID()]/Math.pow(10,m_svd.getValueNrOfDecimal()), m_svd.getValueUM());
+                String strValue = String.format("% " + m_svd.getValueMinNrCharToShow() + "." + m_svd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int)m_svd.getSensorValueID()], m_svd.getValueUM());
                 setText(strValue);
             }
         }

@@ -38,7 +38,7 @@ public class SensorValueData implements Parcelable {
 
     public static int ValueNrOfDecimalMinValue = 0;
     public static int ValueNrOfDecimalMaxValue = 5;
-    public static String ValueNrOfDecimalDefaulValue = "3";
+    public static String ValueNrOfDecimalDefaulValue = "5";
 
     public static short ValueUMMinValue = 0;
     public static short ValueUMMaxValue = 9;
