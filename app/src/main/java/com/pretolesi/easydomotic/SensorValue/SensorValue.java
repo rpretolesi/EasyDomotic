@@ -34,24 +34,22 @@ import java.util.List;
  *
  */
 public class SensorValue extends BaseValue implements
-        GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener,
         TCPIPClient.TcpIpClientWriteSwitchStatusListener,
         SensorEventListener {
 
     private static final String TAG = "SensorValue";
-    private GestureDetectorCompat mDetector;
+//    private GestureDetectorCompat mDetector;
 
     private com.pretolesi.easydomotic.SensorValue.SensorValueData m_svd;
     private int m_iMsgID;
     private int m_iTIDWrite;
 
-    private float mLastTouchX;
-    private float mLastTouchY;
+//    private float mLastTouchX;
+//    private float mLastTouchY;
 
-    private boolean m_bEditMode;
+//    private boolean m_bEditMode;
 
-    private NumericEditText m_edEditText;
+//    private NumericEditText m_edEditText;
 
     // Sensors & SensorManager
     private SensorManager m_SensorManager;
@@ -70,7 +68,6 @@ public class SensorValue extends BaseValue implements
         this.m_svd = null;
         this.m_iMsgID = -1;
         this.m_iTIDWrite = -1;
-        this.m_bEditMode = false;
 
         // Sensors & SensorManager
         m_SensorManager = null;
@@ -80,14 +77,13 @@ public class SensorValue extends BaseValue implements
     }
 
     public SensorValue(Context context, com.pretolesi.easydomotic.SensorValue.SensorValueData svd, int iMsgID, boolean bEditMode) {
-        super(context);
+        super(context, bEditMode);
         if(svd != null) {
             this.m_svd = svd;
             this.m_iMsgID = iMsgID;
             this.m_iTIDWrite = m_iMsgID + 1;
             this.setTag(svd.getTag());
         }
-        this.m_bEditMode = bEditMode;
         // Sensors & SensorManager
         m_SensorManager = null;
         m_Sensor = null;
@@ -136,7 +132,7 @@ public class SensorValue extends BaseValue implements
         setText(getDefaultValue());
 
         // Listener
-        if(!m_bEditMode) {
+        if(!getEditMode()) {
             if(m_svd != null){
                 TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
                 if(tic != null){
@@ -188,7 +184,7 @@ public class SensorValue extends BaseValue implements
             m_SensorManager.unregisterListener(this);
         }
 
-        if(!m_bEditMode) {
+        if(!!getEditMode()) {
             resetTimerHandler();
         }
 
@@ -203,7 +199,9 @@ public class SensorValue extends BaseValue implements
         // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
-    private void writeValue(String strValue){
+    @Override
+    protected void writeWriteInputValue(String strValue){
+        super.writeWriteInputValue(strValue);
         if(m_svd != null){
             DataType dtDataType = DataType.getDataType(m_svd.getProtTcpIpClientValueDataType());
             if(dtDataType != null){
@@ -319,7 +317,7 @@ public class SensorValue extends BaseValue implements
     private String getTimeoutValue(){
         return "Timeout";
     }
-
+/*
     private void openWriteInput(){
         if(m_edEditText == null){
             m_edEditText = new NumericEditText(getContext());
@@ -391,7 +389,7 @@ public class SensorValue extends BaseValue implements
 
         this.setVisibility(VISIBLE);
     }
-
+*/
     @Override
     public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticws) {
         if(ticws != null && m_svd != null && m_edEditText != null){
@@ -408,7 +406,7 @@ public class SensorValue extends BaseValue implements
             }
         }
     }
-
+/*
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -540,7 +538,7 @@ public class SensorValue extends BaseValue implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
-
+*/
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -557,4 +555,23 @@ public class SensorValue extends BaseValue implements
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    @Override
+    protected void onTouchActionUp(boolean bEditMode){
+        super.onTouchActionUp(bEditMode);
+        if(m_svd != null) {
+            if(bEditMode) {
+                m_svd.setSaved(false);
+                m_svd.setPosX((int)getX());
+                m_svd.setPosY((int)getY());
+                Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this.getContext(), m_svd);
+                this.getContext().startActivity(intent);
+            } else {
+                if(m_svd.getSensorEnableSimulation()){
+                    openWriteInput();
+                }
+            }
+        }
+    }
+
 }
