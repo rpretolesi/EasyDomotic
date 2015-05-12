@@ -1,5 +1,7 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+
 /**
  *
  */

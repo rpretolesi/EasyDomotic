@@ -22,43 +22,57 @@ import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
 
 /**
- * Created by ricca_000 on 10/05/2015.
+ *
  */
 public class BaseValue extends TextView implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
-    protected NumericEditText.DataType m_netdt;
+
+    private NumericEditText.DataType m_dtDataType;
 
     private GestureDetectorCompat mDetector;
     private float m_LastTouchX;
     private float m_LastTouchY;
 
+    private Handler m_TimerHandler;
+    private long m_lRepeatingTime;
+
     private boolean m_bEditMode;
-
     private NumericEditText m_edEditText;
-
-    Handler m_TimerHandler;
 
     public BaseValue(Context context) {
         super(context);
+        m_bEditMode = false;
+        m_dtDataType = NumericEditText.DataType.SHORT16;
     }
 
-    public BaseValue(Context context, boolean bEditMode) {
-        super(context);
+    protected void setEditMode(boolean bEditMode){
         m_bEditMode = bEditMode;
     }
+
+    protected void setNumericDataType(NumericEditText.DataType dtDataType){
+        m_dtDataType = dtDataType;
+    }
+
+    protected boolean getEditMode(){
+        return m_bEditMode;
+    }
+
+    protected NumericEditText.DataType getNumericDataType(){
+        return m_dtDataType;
+    }
+
     /*
      * Begin
      * Timer variable and function
      */
-    public void setTimerHandler() {
-        if(m_svd != null) {
-            m_TimerHandler = new Handler();
-            m_TimerHandler.postDelayed(m_TimerRunnable, m_svd.getProtTcpIpClientValueUpdateMillis());
-        }
+    protected void setTimer(long lRepeatingTime) {
+        m_lRepeatingTime = lRepeatingTime;
+        m_TimerHandler = new Handler();
+        m_TimerHandler.postDelayed(m_TimerRunnable, lRepeatingTime);
     }
 
-    public void resetTimerHandler() {
+    protected void resetTimer() {
         if(m_TimerHandler != null){
             m_TimerHandler.removeCallbacks(m_TimerRunnable);
         }
@@ -67,15 +81,17 @@ public class BaseValue extends TextView implements
     private Runnable m_TimerRunnable = new Runnable() {
         @Override
         public void run() {
-            if(m_svd != null && m_TimerHandler != null) {
-                if(!m_svd.getProtTcpIpClientSendDataOnChange()) {
-                    // Write Sensor Data
-                }
+            if(m_TimerHandler != null) {
+                onTimer();
 
-                m_TimerHandler.postDelayed(m_TimerRunnable, m_svd.getProtTcpIpClientValueUpdateMillis());
+                m_TimerHandler.postDelayed(m_TimerRunnable, m_lRepeatingTime);
             }
         }
     };
+
+    protected void onTimer() {
+
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -206,21 +222,42 @@ public class BaseValue extends TextView implements
 
     }
 
-    protected void openWriteInput() {
-        if (m_edEditText == null) {
+    protected void openInputField() {
+        if(m_edEditText == null){
+            // Create....
             m_edEditText = new NumericEditText(getContext());
-            m_edEditText.setInputLimit(0, 655353);
-            m_edEditText.setText("");
+            // Set Input Limit
+            m_edEditText.setSingleLine();
+            if(m_dtDataType != null) {
+                switch (m_dtDataType) {
+                    case SHORT16:
+                        m_edEditText.setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
+                        break;
+                    case INT32:
+                        m_edEditText.setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
+                        break;
+                    case LONG64:
+                        m_edEditText.setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
+                        break;
+                    case FLOAT32:
+                        m_edEditText.setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
+                        break;
+                    case DOUBLE64:
+                        m_edEditText.setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
+                        break;
+                }
+            }
+            // Visualizzo valore corrente
+            m_edEditText.setHint(this.getText());
+            // Creo i parametri per il layout
             ViewParent view = this.getParent();
-            if (view != null && view instanceof RelativeLayout) {
-                RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams) this.getLayoutParams();
+            if(view != null && view instanceof RelativeLayout){
+                RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
                 m_edEditText.setLayoutParams(rllp);
-                m_edEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                m_edEditText.setSingleLine();
                 ((RelativeLayout) view).addView(m_edEditText);
                 m_edEditText.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
+                InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(imm != null){
                     imm.showSoftInput(m_edEditText, InputMethodManager.SHOW_IMPLICIT);
                 }
                 this.setVisibility(GONE);
@@ -238,7 +275,9 @@ public class BaseValue extends TextView implements
 
                         if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
                             if (m_edEditText != null) {
-                                writeWriteInputValue(m_edEditText.getText().toString());
+                                if (m_edEditText.validateInputLimit()) {
+                                    OnWriteInputField(m_edEditText.getText().toString());
+                                }
                             }
                             return true;
                         }
@@ -252,7 +291,7 @@ public class BaseValue extends TextView implements
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
-                            closeWriteInput();
+                            removeInputField();
                         }
                     }
                 });
@@ -260,13 +299,13 @@ public class BaseValue extends TextView implements
         }
     }
 
-    protected synchronized void closeWriteInput() {
-        if (m_edEditText != null) {
+    private synchronized void removeInputField() {
+        if(m_edEditText != null){
             ViewParent view = m_edEditText.getParent();
             if (view instanceof RelativeLayout) {
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (m_edEditText.getWindowToken() != null) {
-                    if (imm != null) {
+                    if(imm != null) {
                         imm.hideSoftInputFromWindow(m_edEditText.getWindowToken(), 0);
                     }
                     ((RelativeLayout) view).removeView(m_edEditText);
@@ -278,11 +317,23 @@ public class BaseValue extends TextView implements
         this.setVisibility(VISIBLE);
     }
 
-    protected synchronized void writeWriteInputValue(String strValue) {
-
+    protected synchronized void closeInputField(){
+        if (m_edEditText != null) {
+            m_edEditText.clearFocus();
+        }
     }
 
-    protected boolean getEditMode(){
-        return m_bEditMode;
+    protected synchronized void setErrorInputField(boolean bError){
+        if (m_edEditText != null) {
+            if(bError){
+                m_edEditText.setError("");
+            } else {
+                m_edEditText.setError(null);
+            }
+        }
+    }
+
+    protected synchronized void OnWriteInputField(String strValue) {
+
     }
 }

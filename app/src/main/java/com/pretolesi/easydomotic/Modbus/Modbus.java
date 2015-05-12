@@ -2,6 +2,7 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
+import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
@@ -120,7 +121,7 @@ public class Modbus {
         return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
-    public static synchronized TcpIpMsg readHoldingRegisters(Context context, int iTID, int iUID, int iStartingAddress, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
+    public static synchronized TcpIpMsg readHoldingRegisterss(Context context, int iTID, int iUID, int iStartingAddress, NumericEditText.DataType dtDataType) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
         short shTID;
         byte byteUID;
         short shAddress;
@@ -140,9 +141,27 @@ public class Modbus {
         } else {
             throw new ModbusAddressOutOfRangeException(context.getString(R.string.ModbusAddressOutOfRangeException));
         }
-        if(iNrOfRegisters > 0 && iNrOfRegisters < 126) {
-            shNrOfRegisters = (short) iNrOfRegisters;
-        } else {
+        switch (dtDataType) {
+            case SHORT16:
+                shNrOfRegisters = 1;
+                break;
+
+            case INT32:
+            case FLOAT32:
+                shNrOfRegisters = 2;
+                break;
+
+            case LONG64:
+            case DOUBLE64:
+                shNrOfRegisters = 4;
+                break;
+
+            default:
+                shNrOfRegisters = 0;
+                break;
+        }
+
+        if(shNrOfRegisters < 1 || shNrOfRegisters > 125) {
             throw new ModbusQuantityOfRegistersOutOfRange(context.getString(R.string.ModbusValueArrayLengthOutOfRangeException));
         }
 
