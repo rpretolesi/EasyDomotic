@@ -1,6 +1,6 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
-import com.pretolesi.easydomotic.CustomControls.NumericEditText;
+import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 
 /**
  *
@@ -8,6 +8,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 public class TcpIpMsg {
     private long m_lTID;
     private long m_lUID;
+    DataType m_dtDataType;
     private byte[] m_byteMsgData;
     private boolean m_bMsgSent;
     private long m_lSentTimeMS;
@@ -15,6 +16,7 @@ public class TcpIpMsg {
     public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData){
         m_lTID = lTID;
         m_lUID = lUID;
+        m_dtDataType = null;
         m_byteMsgData = byteMsgData;
         m_bMsgSent = false;
         m_lSentTimeMS = System.currentTimeMillis();
@@ -28,6 +30,10 @@ public class TcpIpMsg {
         return m_lUID;
     }
 
+    public DataType getDataType(){
+        return m_dtDataType;
+    }
+
     public byte[] getMsgData(){
         return m_byteMsgData;
     }
@@ -36,6 +42,10 @@ public class TcpIpMsg {
 
     public long getSentTimeMS(){
         return m_lSentTimeMS;
+    }
+
+    public void setDataType(DataType dtDataType){
+        m_dtDataType = dtDataType;
     }
 
     public void setMsgAsSent(boolean bMsgSent ){ m_bMsgSent = bMsgSent; }

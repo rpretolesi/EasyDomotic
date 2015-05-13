@@ -259,7 +259,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
         if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
 
-            // In case of timeout, i pute the message in queue again
+            // In case of timeout, i put the message in queue again
             boolean bMsgSent = false;
             for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
                 TcpIpMsg tim = iterator.next();
@@ -286,7 +286,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                 try {
                                     m_dataInputStream.readFully(byteDATA, 0, iLength);
                                     try {
-                                        ModbusPDU mpdu = Modbus.getPDU(m_context, m_ticd.getID(), byteMBAP, byteDATA);
+                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteMBAP, byteDATA);
                                         if (mpdu != null) {
 
                                             // Tutto Ok, rimuovo l'elemento
@@ -464,10 +464,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
-
                     TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue);
-
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.SHORT16);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -506,8 +505,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
                     TcpIpMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue);
-
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.INT32);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -546,8 +545,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
                     TcpIpMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue);
-
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.LONG64);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -586,8 +585,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
                     TcpIpMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue);
-
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.FLOAT32);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -626,8 +625,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
                     TcpIpMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue);
-
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.DOUBLE64);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -729,37 +728,199 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-    public synchronized void readNumericValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataTypeValue){
+    public synchronized void readShort(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
-                    TcpIpMsg tim = Modbus.readHoldingRegisters(context, iTID, iUID, iAddress, dtDataTypeValue);
+                    TcpIpMsg tim = Modbus.readShort(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.SHORT16);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
                     }
-                } catch (ModbusTransIdOutOfRangeException ex) {
-                    // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
-                    // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
-                    // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
-                    // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
+                } catch (ModbusValueOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
-                    // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
+                } catch (ModbusTransIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
-                    // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
+            }
+        }
+    }
+
+    public synchronized void readInt(Context context, int iTID, int iUID, int iAddress){
+        if(m_ticd != null) {
+            if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                try {
+                    TcpIpMsg tim = Modbus.readInt(context, iTID, iUID, iAddress);
+                    if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.INT32);
+                        if(!m_vtim.contains(tim)){
+                            m_vtim.add(tim);
+                        }
+                    }
+                } catch (ModbusUnitIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusAddressOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusValueOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusQuantityOfRegistersOutOfRange ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusTransIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                }
+            }
+        }
+    }
+
+    public synchronized void readLong(Context context, int iTID, int iUID, int iAddress){
+        if(m_ticd != null) {
+            if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                try {
+                    TcpIpMsg tim = Modbus.readLong(context, iTID, iUID, iAddress);
+                    if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.LONG64);
+                        if(!m_vtim.contains(tim)){
+                            m_vtim.add(tim);
+                        }
+                    }
+                } catch (ModbusUnitIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusAddressOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusValueOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusQuantityOfRegistersOutOfRange ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusTransIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                }
+            }
+        }
+    }
+
+    public synchronized void readFloat(Context context, int iTID, int iUID, int iAddress){
+        if(m_ticd != null) {
+            if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                try {
+                    TcpIpMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress);
+                    if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.FLOAT32);
+                        if(!m_vtim.contains(tim)){
+                            m_vtim.add(tim);
+                        }
+                    }
+                } catch (ModbusUnitIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusAddressOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusValueOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusQuantityOfRegistersOutOfRange ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusTransIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                }
+            }
+        }
+    }
+
+    public synchronized void readDouble(Context context, int iTID, int iUID, int iAddress){
+        if(m_ticd != null) {
+            if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+                try {
+                    TcpIpMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress);
+                    if (m_vtim != null && tim != null) {
+                        tim.setDataType(DataType.DOUBLE64);
+                        if(!m_vtim.contains(tim)){
+                            m_vtim.add(tim);
+                        }
+                    }
+                } catch (ModbusUnitIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusAddressOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusValueOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusQuantityOfRegistersOutOfRange ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (ModbusTransIdOutOfRangeException ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                } catch (Exception ex) {
+                    // Callbacks on UI
+                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                }
+            }
+        }
+    }
+
+    public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
+        if(dtDataType != null){
+            switch (dtDataType) {
+                case SHORT16:
+                    readShort(context, iTID, iUID, iAddress);
+                    break;
+
+                case INT32:
+                    readInt(context, iTID, iUID, iAddress);
+                    break;
+
+                case LONG64:
+                    readLong(context, iTID, iUID, iAddress);
+                    break;
+
+                case FLOAT32:
+                    readFloat(context, iTID, iUID, iAddress);
+                    break;
+
+                case DOUBLE64:
+                    readDouble(context, iTID, iUID, iAddress);
+                    break;
+
             }
         }
     }

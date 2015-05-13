@@ -116,7 +116,7 @@ public class NumericValue extends BaseValue implements
         if(m_nvd != null && m_nvd.getProtTcpIpClientEnable()){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_nvd.getProtTcpIpClientID());
             if(tic != null){
-                tic.readNumericValue(getContext(), m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+                tic.readValue(getContext(), m_iTIDRead, m_nvd.getProtTcpIpClientValueID(), m_nvd.getProtTcpIpClientValueAddress(), getNumericDataType());
             }
         }
     }

@@ -121,11 +121,31 @@ public class Modbus {
         return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
-    public static synchronized TcpIpMsg readHoldingRegisterss(Context context, int iTID, int iUID, int iStartingAddress, NumericEditText.DataType dtDataType) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
+    public static synchronized TcpIpMsg readShort(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+        return readHoldingRegisters(context, iTID, iUID, iAddress, (short) 1);
+    }
+
+    public static synchronized TcpIpMsg readInt(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+        return readHoldingRegisters(context, iTID, iUID, iAddress, (short) 2);
+    }
+
+    public static synchronized TcpIpMsg readLong(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+        return readHoldingRegisters(context, iTID, iUID, iAddress, (short) 4);
+    }
+
+    public static synchronized TcpIpMsg readFloat(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+        return readHoldingRegisters(context, iTID, iUID, iAddress, (short) 2);
+    }
+
+    public static synchronized TcpIpMsg readDouble(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+        return readHoldingRegisters(context, iTID, iUID, iAddress, (short) 4);
+    }
+
+    private static synchronized TcpIpMsg readHoldingRegisters(Context context, int iTID, int iUID, int iStartingAddress, short shNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
         short shTID;
         byte byteUID;
         short shAddress;
-        short shNrOfRegisters;
+
         if(iTID >= 0 && iTID <= 65535){
             shTID = (short) iTID;
         } else {
@@ -140,25 +160,6 @@ public class Modbus {
             shAddress = (short) iStartingAddress;
         } else {
             throw new ModbusAddressOutOfRangeException(context.getString(R.string.ModbusAddressOutOfRangeException));
-        }
-        switch (dtDataType) {
-            case SHORT16:
-                shNrOfRegisters = 1;
-                break;
-
-            case INT32:
-            case FLOAT32:
-                shNrOfRegisters = 2;
-                break;
-
-            case LONG64:
-            case DOUBLE64:
-                shNrOfRegisters = 4;
-                break;
-
-            default:
-                shNrOfRegisters = 0;
-                break;
         }
 
         if(shNrOfRegisters < 1 || shNrOfRegisters > 125) {
@@ -196,7 +197,7 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized ModbusPDU getPDU(Context context, long lProtTcpIpClientID, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException, ModbusByteCountOutOfRangeException {
+    public static synchronized ModbusPDU getPDU(Context context, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException, ModbusByteCountOutOfRangeException {
         // Max total message length 260 byte
         ModbusPDU mpdu = null;
 
@@ -274,4 +275,5 @@ public class Modbus {
 
         return mpdu;
     }
+
 }

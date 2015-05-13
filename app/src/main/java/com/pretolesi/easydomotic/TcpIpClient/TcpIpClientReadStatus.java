@@ -15,6 +15,7 @@ public class TcpIpClientReadStatus {
     private Status m_sStatus;
     private int m_iErrorCode;
     private String m_strErrorMessage;
+    private Object m_objValue;
     private byte[] m_abyteValue;
 
     public TcpIpClientReadStatus(){
@@ -24,19 +25,21 @@ public class TcpIpClientReadStatus {
         m_sStatus = Status.IDLE;
         m_iErrorCode = 0;
         m_strErrorMessage = "";
+        m_objValue = null;
         m_abyteValue = null;
     }
 
-    public TcpIpClientReadStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
+    public TcpIpClientReadStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, Object objValue, byte[] abyteValue){
         m_lServerID = lServerID;
         m_iTID = iTID;
         m_iUID = iUID;
         m_sStatus = sStatus;
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
+        m_objValue = objValue;
         m_abyteValue = abyteValue;
     }
-
+/*
     public void setData(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
         m_lServerID = lServerID;
         m_iTID = iTID;
@@ -66,7 +69,7 @@ public class TcpIpClientReadStatus {
         m_strErrorMessage = "";
         m_abyteValue = null;
     }
-
+*/
     public void setServerID(long lServerID){
         m_lServerID = lServerID;
     }
@@ -99,10 +102,14 @@ public class TcpIpClientReadStatus {
         return m_strErrorMessage;
     }
 
+    public Object getValue(){
+        return m_objValue;
+    }
+/*
     public byte[] getValue(){
         return m_abyteValue;
     }
-
+*/
     public static enum Status
     {
         IDLE(0, R.string.ticwos_idle),
