@@ -17,7 +17,7 @@ import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAP;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -311,7 +311,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                                 if (mpdu.getExC() == 0) {
                                                     publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", mpdu.getByteValue()));
                                                 } else {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", mpdu.getByteValue()));
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
                                                 }
                                             }
 
@@ -466,7 +466,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.SHORT16);
+                        tim.setDataType(DataType.SHORT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -506,7 +506,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.INT32);
+                        tim.setDataType(DataType.INT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -546,7 +546,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.LONG64);
+                        tim.setDataType(DataType.LONG);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -586,7 +586,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.FLOAT32);
+                        tim.setDataType(DataType.FLOAT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -626,7 +626,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.DOUBLE64);
+                        tim.setDataType(DataType.DOUBLE);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -663,7 +663,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
         if(dtDataType != null){
             switch (dtDataType) {
-                case SHORT16:
+                case SHORT:
                     int iValue;
                     try {
                         iValue = Integer.parseInt(strValue);
@@ -675,7 +675,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                     break;
 
-                case INT32:
+                case INT:
                     long lValue;
                     try {
                         lValue = Long.parseLong(strValue);
@@ -687,7 +687,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                     break;
 
-                case LONG64:
+                case LONG:
                     long lValue64;
                     try {
                         lValue64 = Long.parseLong(strValue);
@@ -699,7 +699,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                     break;
 
-                case FLOAT32:
+                case FLOAT:
                     float fValue;
                     try {
                         fValue = Float.parseFloat(strValue);
@@ -711,7 +711,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
                     break;
 
-                case DOUBLE64:
+                case DOUBLE:
                     double dblValue;
                     try {
                         dblValue = Double.parseDouble(strValue);
@@ -734,7 +734,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.readShort(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.SHORT16);
+                        tim.setDataType(DataType.SHORT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -768,7 +768,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.readInt(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.INT32);
+                        tim.setDataType(DataType.INT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -802,7 +802,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.readLong(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.LONG64);
+                        tim.setDataType(DataType.LONG);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -836,7 +836,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.FLOAT32);
+                        tim.setDataType(DataType.FLOAT);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -870,7 +870,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 try {
                     TcpIpMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress);
                     if (m_vtim != null && tim != null) {
-                        tim.setDataType(DataType.DOUBLE64);
+                        tim.setDataType(DataType.DOUBLE);
                         if(!m_vtim.contains(tim)){
                             m_vtim.add(tim);
                         }
@@ -901,23 +901,23 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
         if(dtDataType != null){
             switch (dtDataType) {
-                case SHORT16:
+                case SHORT:
                     readShort(context, iTID, iUID, iAddress);
                     break;
 
-                case INT32:
+                case INT:
                     readInt(context, iTID, iUID, iAddress);
                     break;
 
-                case LONG64:
+                case LONG:
                     readLong(context, iTID, iUID, iAddress);
                     break;
 
-                case FLOAT32:
+                case FLOAT:
                     readFloat(context, iTID, iUID, iAddress);
                     break;
 
-                case DOUBLE64:
+                case DOUBLE:
                     readDouble(context, iTID, iUID, iAddress);
                     break;
 

@@ -1,6 +1,6 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
-import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 
 /**
  *
@@ -8,7 +8,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
 public class TcpIpMsg {
     private long m_lTID;
     private long m_lUID;
-    DataType m_dtDataType;
+    private DataType m_dtDataType;
     private byte[] m_byteMsgData;
     private boolean m_bMsgSent;
     private long m_lSentTimeMS;

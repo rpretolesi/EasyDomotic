@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
 
@@ -28,7 +29,7 @@ public class BaseValue extends TextView implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
-    private NumericEditText.DataType m_dtDataType;
+    private DataType m_dtDataType;
 
     private GestureDetectorCompat mDetector;
     private float m_LastTouchX;
@@ -43,14 +44,14 @@ public class BaseValue extends TextView implements
     public BaseValue(Context context) {
         super(context);
         m_bEditMode = false;
-        m_dtDataType = NumericEditText.DataType.SHORT16;
+        m_dtDataType = DataType.SHORT;
     }
 
     protected void setEditMode(boolean bEditMode){
         m_bEditMode = bEditMode;
     }
 
-    protected void setNumericDataType(NumericEditText.DataType dtDataType){
+    protected void setNumericDataType(DataType dtDataType){
         m_dtDataType = dtDataType;
     }
 
@@ -58,7 +59,7 @@ public class BaseValue extends TextView implements
         return m_bEditMode;
     }
 
-    protected NumericEditText.DataType getNumericDataType(){
+    protected DataType getNumericDataType(){
         return m_dtDataType;
     }
 
@@ -230,19 +231,19 @@ public class BaseValue extends TextView implements
             m_edEditText.setSingleLine();
             if(m_dtDataType != null) {
                 switch (m_dtDataType) {
-                    case SHORT16:
+                    case SHORT:
                         m_edEditText.setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
                         break;
-                    case INT32:
+                    case INT:
                         m_edEditText.setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
                         break;
-                    case LONG64:
+                    case LONG:
                         m_edEditText.setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
                         break;
-                    case FLOAT32:
+                    case FLOAT:
                         m_edEditText.setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
                         break;
-                    case DOUBLE64:
+                    case DOUBLE:
                         m_edEditText.setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
                         break;
                 }

@@ -54,28 +54,28 @@ public class NumericEditText extends EditText {
 
     public void setInputLimit(int iMin, int iMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        m_dt = DataType.INT32;
+        m_dt = DataType.INT;
         m_iMin = iMin;
         m_iMax = iMax;
     }
 
     public void setInputLimit(long lMin, long lMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        m_dt = DataType.LONG64;
+        m_dt = DataType.LONG;
         m_lMin = lMin;
         m_lMax = lMax;
     }
 
     public void setInputLimit(float fMin, float fMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        m_dt = DataType.FLOAT32;
+        m_dt = DataType.FLOAT;
         m_fMin = fMin;
         m_fMax = fMax;
     }
 
     public void setInputLimit(double dblMin, double dblMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        m_dt = DataType.DOUBLE64;
+        m_dt = DataType.DOUBLE;
         m_dblMin = dblMin;
         m_dblMax = dblMax;
     }
@@ -97,7 +97,7 @@ public class NumericEditText extends EditText {
                         return false;
                     }
                     break;
-                case INT32:
+                case INT:
                     try {
                         int iValue = Integer.parseInt(this.getText().toString());
                         if (!isInRange(m_iMin, m_iMax, iValue)) {
@@ -111,7 +111,7 @@ public class NumericEditText extends EditText {
                         return false;
                     }
                     break;
-                case LONG64:
+                case LONG:
                     try {
                         long lValue = Integer.parseInt(this.getText().toString());
                         if (!isInRange(m_lMin, m_lMax, lValue)) {
@@ -125,7 +125,7 @@ public class NumericEditText extends EditText {
                         return false;
                     }
                     break;
-                case FLOAT32:
+                case FLOAT:
                     try {
                         float fValue = Float.parseFloat(this.getText().toString());
                         if (!isInRange(m_fMin, m_fMax, fValue)) {
@@ -139,7 +139,7 @@ public class NumericEditText extends EditText {
                         return false;
                     }
                     break;
-                case DOUBLE64:
+                case DOUBLE:
                     try {
                         double dblValue = Double.parseDouble(this.getText().toString());
                         if (!isInRange(m_dblMin, m_dblMax, dblValue)) {

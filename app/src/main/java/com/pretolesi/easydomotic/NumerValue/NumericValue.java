@@ -2,23 +2,11 @@ package com.pretolesi.easydomotic.NumerValue;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.text.InputType;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewParent;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -35,8 +23,6 @@ public class NumericValue extends BaseValue implements
 
     private static final String TAG = "NumericValue";
     private GestureDetectorCompat mDetector;
-    private float mLastTouchX;
-    private float mLastTouchY;
 
     private NumericValueData m_nvd;
     private int m_iMsgID;

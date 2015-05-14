@@ -16,7 +16,6 @@ public class TcpIpClientReadStatus {
     private int m_iErrorCode;
     private String m_strErrorMessage;
     private Object m_objValue;
-    private byte[] m_abyteValue;
 
     public TcpIpClientReadStatus(){
         m_lServerID = -1;
@@ -26,10 +25,9 @@ public class TcpIpClientReadStatus {
         m_iErrorCode = 0;
         m_strErrorMessage = "";
         m_objValue = null;
-        m_abyteValue = null;
     }
 
-    public TcpIpClientReadStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, Object objValue, byte[] abyteValue){
+    public TcpIpClientReadStatus(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, Object objValue){
         m_lServerID = lServerID;
         m_iTID = iTID;
         m_iUID = iUID;
@@ -37,7 +35,6 @@ public class TcpIpClientReadStatus {
         m_iErrorCode = iErrorCode;
         m_strErrorMessage = strErrorMessage;
         m_objValue = objValue;
-        m_abyteValue = abyteValue;
     }
 /*
     public void setData(long lServerID, int iTID, int iUID, Status sStatus, int iErrorCode, String strErrorMessage, byte[] abyteValue){
