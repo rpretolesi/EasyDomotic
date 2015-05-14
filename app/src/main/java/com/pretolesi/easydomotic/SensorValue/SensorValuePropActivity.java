@@ -24,7 +24,7 @@ import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;

@@ -2,10 +2,8 @@ package com.pretolesi.easydomotic.LightSwitch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.CompoundButton;
@@ -26,7 +24,7 @@ public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         ToggleButton.OnCheckedChangeListener,
-        TCPIPClient.TcpIpClientWriteSwitchStatusListener {
+        TCPIPClient.TcpIpClientWriteStatusListener {
 
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
@@ -146,7 +144,7 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticws) {
+    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
 
         if(ticws != null && m_lsd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
@@ -159,7 +157,6 @@ public class LightSwitch extends Switch implements
                     }
                 }
             }
-            // // Log.d(TAG, this.toString() + ": " + "onWriteSwitchStatusCallback() ID: " + ms.getServerID() + " TID: " + ms.getTID() + " Status: " + ms.getStatus().toString());
         }
     }
 

@@ -2,8 +2,8 @@ package com.pretolesi.easydomotic.TcpIpClient;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
+import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusLengthOutOfRangeException;
@@ -27,7 +27,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.nio.ByteBuffer;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +35,8 @@ import java.util.Vector;
 /**
  *
  */
+
+sistemare tutte le variabili che non servono e lasciare solo quelle che servono, a partire dallo switch!!!!
 public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     private static final String TAG = "TCPIPClient";
 
@@ -55,16 +56,16 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     }
 
     // Write
-    private List<TcpIpClientWriteSwitchStatusListener> m_vTcpIpClientWriteSwitchStatusListener = null;
+    private List<TcpIpClientWriteStatusListener> m_vTcpIpClientWriteStatusListener = null;
     // Imposto il listener
-    public synchronized void registerTcpIpClientWriteSwitchStatus(TcpIpClientWriteSwitchStatusListener listener) {
-        if(m_vTcpIpClientWriteSwitchStatusListener != null && !m_vTcpIpClientWriteSwitchStatusListener.contains(listener)){
-            m_vTcpIpClientWriteSwitchStatusListener.add(listener);
+    public synchronized void registerTcpIpClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
+        if(m_vTcpIpClientWriteStatusListener != null && !m_vTcpIpClientWriteStatusListener.contains(listener)){
+            m_vTcpIpClientWriteStatusListener.add(listener);
         }
     }
-    public synchronized void unregisterTcpIpClientWriteSwitchStatus(TcpIpClientWriteSwitchStatusListener listener) {
-        if(m_vTcpIpClientWriteSwitchStatusListener != null && m_vTcpIpClientWriteSwitchStatusListener.contains(listener)){
-            m_vTcpIpClientWriteSwitchStatusListener.remove(listener);
+    public synchronized void unregisterTcpIpClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
+        if(m_vTcpIpClientWriteStatusListener != null && m_vTcpIpClientWriteStatusListener.contains(listener)){
+            m_vTcpIpClientWriteStatusListener.remove(listener);
         }
     }
 
@@ -103,7 +104,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
     public TCPIPClient (Context context){
         m_vTcpIpClientStatusListener = new Vector<>();
-        m_vTcpIpClientWriteSwitchStatusListener = new Vector<>();
+        m_vTcpIpClientWriteStatusListener = new Vector<>();
         m_vTcpIpClientReadValueStatusListener = new Vector<>();
         m_context = context;
         m_vtim = new Vector<>();
@@ -270,7 +271,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 }
             }
 
-            if (bMsgSent) {
+            if (bMsgSent)
                 if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                     // MBAP
                     byte[] byteMBAP = new byte[6];
@@ -290,14 +291,17 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                         if (mpdu != null) {
 
                                             // Tutto Ok, rimuovo l'elemento
-                                            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+                                            DataType dtDataType = null;
+                                            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext(); ) {
                                                 TcpIpMsg tim = iterator.next();
                                                 if (tim != null && tim.getTID() == mmbap.getTID() && tim.getUID() == mpdu.getUID()) {
+                                                    dtDataType = tim.getDataType();
                                                     iterator.remove();
                                                 }
                                             }
 
-                                            if(mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
+                                            if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
+
                                                 // Check Return code
                                                 if (mpdu.getExC() == 0) {
                                                     publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
@@ -306,10 +310,10 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                                 }
                                             }
 
-                                            if(mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
+                                            if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                                 // Check Return code
-                                                if (mpdu.getExC() == 0) {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", mpdu.getByteValue()));
+                                                if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getByteValue() != null) {
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getByteValue())));
                                                 } else {
                                                     publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
                                                 }
@@ -400,7 +404,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     }
 
                 }
-            } else {
+            else {
                 return true;
             }
         }
@@ -728,6 +732,36 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
+    public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){
+        Object obj = null;
+
+        if(dtDataType != null && aByteValue != null){
+            switch (dtDataType) {
+                case SHORT:
+                    obj = NumericDataType.getShort(aByteValue);
+                    break;
+
+                case INT:
+                    obj = NumericDataType.getInt(aByteValue);
+                    break;
+
+                case LONG:
+                    obj = NumericDataType.getLong(aByteValue);
+                    break;
+
+                case FLOAT:
+                    obj = NumericDataType.getFloat(aByteValue);
+                    break;
+
+                case DOUBLE:
+                    obj = NumericDataType.getDouble(aByteValue);
+                    break;
+
+            }
+        }
+        return obj;
+    }
+
     public synchronized void readShort(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
@@ -1004,9 +1038,9 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 }
             }
             if(obj[0] instanceof TcpIpClientWriteStatus){
-                if(m_vTcpIpClientWriteSwitchStatusListener != null) {
-                    for (TcpIpClientWriteSwitchStatusListener ticwsl : m_vTcpIpClientWriteSwitchStatusListener) {
-                        ticwsl.onWriteSwitchStatusCallback((TcpIpClientWriteStatus) obj[0]);
+                if(m_vTcpIpClientWriteStatusListener != null) {
+                    for (TcpIpClientWriteStatusListener ticwsl : m_vTcpIpClientWriteStatusListener) {
+                        ticwsl.onWriteValueStatusCallback((TcpIpClientWriteStatus) obj[0]);
                     }
                 }
             }
@@ -1034,11 +1068,11 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
          */
         void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
     }
-    public static interface TcpIpClientWriteSwitchStatusListener {
+    public static interface TcpIpClientWriteStatusListener {
         /**
          * Callbacks
          */
-        void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticws);
+        void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws);
     }
     public static interface TcpIpClientReadValueStatusListener {
         /**

@@ -6,23 +6,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.text.InputType;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewParent;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText.DataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -34,7 +19,7 @@ import java.util.List;
  *
  */
 public class SensorValue extends BaseValue implements
-        TCPIPClient.TcpIpClientWriteSwitchStatusListener,
+        TCPIPClient.TcpIpClientWriteStatusListener,
         SensorEventListener {
 
     private static final String TAG = "SensorValue";
@@ -169,7 +154,7 @@ public class SensorValue extends BaseValue implements
             DataType dtDataType = DataType.getDataType(m_svd.getProtTcpIpClientValueDataType());
             if(dtDataType != null){
                 switch (dtDataType) {
-                    case SHORT16:
+                    case SHORT:
                         int iValue;
                         try {
                             iValue = Integer.parseInt(strValue);
@@ -185,7 +170,7 @@ public class SensorValue extends BaseValue implements
                         }
                         break;
 
-                    case INT32:
+                    case INT:
                         long lValue;
                         try {
                             lValue = Long.parseLong(strValue);
@@ -201,7 +186,7 @@ public class SensorValue extends BaseValue implements
                         }
                         break;
 
-                    case LONG64:
+                    case LONG:
                         long lValue64;
                         try {
                             lValue64 = Long.parseLong(strValue);
@@ -217,7 +202,7 @@ public class SensorValue extends BaseValue implements
                         }
                         break;
 
-                    case FLOAT32:
+                    case FLOAT:
                         float fValue;
                         try {
                             fValue = Float.parseFloat(strValue);
@@ -233,7 +218,7 @@ public class SensorValue extends BaseValue implements
                         }
                         break;
 
-                    case DOUBLE64:
+                    case DOUBLE:
                         double dblValue;
                         try {
                             dblValue = Double.parseDouble(strValue);
@@ -282,7 +267,7 @@ public class SensorValue extends BaseValue implements
     }
 
     @Override
-    public void onWriteSwitchStatusCallback(TcpIpClientWriteStatus ticws) {
+    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
         if(ticws != null && m_svd != null){
             if(ticws.getServerID() == m_svd.getProtTcpIpClientID()){
                 if(ticws.getTID() == m_iTIDWrite) {
