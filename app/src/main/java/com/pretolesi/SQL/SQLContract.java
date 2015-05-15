@@ -290,6 +290,509 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
+    public static abstract class BaseValueEntry implements BaseColumns {
+        public static final String TABLE_NAME = "BaseValue";
+        public static final String COLUMN_NAME_TYPE = "Type";
+        public static final String COLUMN_NAME_ROOM_ID = "Room_ID";
+        public static final String COLUMN_NAME_TAG = "TAG";
+        public static final String COLUMN_NAME_X = "X";
+        public static final String COLUMN_NAME_Y = "Y";
+        public static final String COLUMN_NAME_Z = "Z";
+        public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
+
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE = "ProtTcpIpClientEnable";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ID = "ProtTcpIpClientID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
+        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
+
+        public static final String COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW = "ValueMinNrCharToShow";
+        public static final String COLUMN_NAME_VALUE_NR_OF_DECIMAL = "ValueNrOfDecimal";
+        public static final String COLUMN_NAME_VALUE_UM = "ValueUM";
+        public static final String COLUMN_NAME_VALUE_UPDATE_MILLIS = "ValueUpdateMillis";
+
+        public static final String COLUMN_NAME_VALUE_OFF = "ValueOFF";
+        public static final String COLUMN_NAME_VALUE_OFF_ON = "ValueOFFON";
+        public static final String COLUMN_NAME_VALUE_ON_OFF = "ValueONOFF";
+        public static final String COLUMN_NAME_VALUE_ON = "ValueON";
+
+        public static final String COLUMN_NAME_SENSOR_TYPE_ID = "SensorTypeID";
+        public static final String COLUMN_NAME_SENSOR_VALUE_ID = "SensorValueID";
+        public static final String COLUMN_NAME_SENSOR_ENABLE_SIMULATION = "SensorEnableSimulation";
+        public static final String COLUMN_NAME_SENSOR_AMPL_K = "SensorAmplK";
+        public static final String COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K = "SensorLowPassFilterK";
+        public static final String COLUMN_NAME_SENSOR_SAMPLE_TIME = "SensorSampleTime";
+
+        // Used only in MatrixCursor
+        public static final String COLUMN_NAME_ORIGIN = "Origin";
+
+        public static final String SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + TABLE_NAME +
+                        " (" +
+                        _ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ROOM_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
+                        " )";
+
+        public static final String SQL_DELETE_ENTRIES =
+                "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+
+        public static boolean save(ArrayList<LightSwitchData> allsd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+
+                if(db != null && allsd != null) {
+
+                    ContentValues values = new ContentValues();
+                    for(LightSwitchData lsdTemp:allsd){
+                        if(lsdTemp != null) {
+                            values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
+                            values.put(COLUMN_NAME_ROOM_ID, lsdTemp.getRoomID());
+                            values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
+
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getProtTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsdTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsdTemp.getProtTcpIpClientValueOFF());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsdTemp.getProtTcpIpClientValueOFFON());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFF());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsdTemp.getProtTcpIpClientValueON());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsdTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsdTemp.getProtTcpIpClientValueUpdateMillis());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                            String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
+
+                            String[] whereArgs = {String.valueOf(lsdTemp.getID()), String.valueOf(lsdTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsdTemp.getID());
+                            // Update or Save
+                            if (id > 0) {
+                                lsdTemp.setID(id);
+                                lsdTemp.setSaved(true);
+                            } else {
+                                bRes = false;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+
+        public static boolean save(LightSwitchData lsd)  {
+
+            boolean bRes = true;
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null && lsd != null) {
+
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTag()));
+                    values.put(COLUMN_NAME_ROOM_ID, lsd.getRoomID());
+                    values.put(COLUMN_NAME_X, Float.toString(lsd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(lsd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
+
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsd.getProtTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsd.getProtTcpIpClientValueID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsd.getProtTcpIpClientValueOFF());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsd.getProtTcpIpClientValueOFFON());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFF());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsd.getProtTcpIpClientValueON());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsd.getProtTcpIpClientValueAddress());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsd.getProtTcpIpClientValueUpdateMillis());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+
+                    String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] whereArgs = {String.valueOf(lsd.getID()), String.valueOf(lsd.getRoomID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsd.getID());
+                    // Update or Save
+                    if (id > 0) {
+                        lsd.setID(id);
+                        lsd.setSaved(true);
+                    } else {
+                        bRes = false;
+                    }
+                }
+            } finally {
+                m_LockCommandHolder.unlock();
+            }
+
+            return bRes;
+
+        }
+
+        public static Cursor loadFromLightSwitchData(LightSwitchData lsd)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                MatrixCursor cursor = null;
+
+                if(lsd != null){
+
+                    String[] columns = new String[] {
+                            _ID,
+                            COLUMN_NAME_TAG,
+                            COLUMN_NAME_ROOM_ID,
+                            COLUMN_NAME_X,
+                            COLUMN_NAME_Y,
+                            COLUMN_NAME_Z,
+                            COLUMN_NAME_LANDSCAPE,
+
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+
+                            COLUMN_NAME_ORIGIN
+                    };
+
+                    cursor = new MatrixCursor(columns);
+                    cursor.addRow(new Object[] {
+                            lsd.getID(),
+                            lsd.getTag(),
+                            lsd.getRoomID(),
+                            lsd.getPosX(),
+                            lsd.getPosY(),
+                            lsd.getPosZ(),
+                            Integer.valueOf(lsd.getLandscape() ? 1 : 0),
+
+                            Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0),
+                            lsd.getProtTcpIpClientID(),
+                            lsd.getProtTcpIpClientValueID(),
+                            lsd.getProtTcpIpClientValueOFF(),
+                            lsd.getProtTcpIpClientValueOFFON(),
+                            lsd.getProtTcpIpClientValueONOFF(),
+                            lsd.getProtTcpIpClientValueON(),
+                            lsd.getProtTcpIpClientValueAddress(),
+                            lsd.getProtTcpIpClientValueUpdateMillis(),
+                            Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
+                            Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
+
+                            0   // Origin
+                    });
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(long lID, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE,
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE,
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_ROOM_ID + " = ?";
+
+                    String[] wherenArgs = { String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean delete(long lID, long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
+                {
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lID), String.valueOf(lRoomID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean isTagPresent(String strTag, long lRoomID) {
+
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                boolean bRes = false;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_TAG + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] whereArgs = { String.valueOf(strTag), String.valueOf(lRoomID) };
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            whereClause,                                      // The columns for the WHERE clause
+                            whereArgs,                                      // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+                    if ((cursor != null) && (cursor.getCount() > 0)) {
+                        bRes = true;
+                        // Chiudo il cursore
+                        cursor.close();
+                    }
+                }
+
+                return bRes;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static ArrayList<LightSwitchData> get(Cursor cursor){
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                LightSwitchData lsd = null;
+                ArrayList<LightSwitchData> allsd = null;
+                if((cursor != null) && (cursor.getCount() > 0))
+                {
+                    for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                    {
+                        if(allsd == null){
+                            allsd = new ArrayList<>();
+                        }
+                        // Origin
+                        boolean bSaved = true;
+                        if(cursor.getColumnIndex(COLUMN_NAME_ORIGIN) > -1){
+                            if(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ORIGIN)) == 0){
+                                // Data come direct from LightSwithData Class
+                                bSaved = false;
+                            }
+                        }
+                        lsd = new LightSwitchData(
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
+                                bSaved,
+                                false,
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Y))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_Z))),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
+                        );
+
+                        lsd.setProtTcpIpClient(
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
+                        );
+                        allsd.add(lsd);
+                    }
+                }
+                return allsd;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+    }
+
+    /* Inner class that defines the table contents */
     public static abstract class TcpIpClientEntry implements BaseColumns {
         public static final String TABLE_NAME = "TCPIPClient";
         public static final String COLUMN_NAME_ENABLE = "Enable";
