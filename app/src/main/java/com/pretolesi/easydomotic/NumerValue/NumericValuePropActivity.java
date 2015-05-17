@@ -94,7 +94,7 @@ public class NumericValuePropActivity extends Activity implements
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
 
-        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_data_type);
+        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
         m_id_nvpa_spn_data_type.setSelection(NumericValueData.ProtTcpIpClientValueDataTypeDefaulValue);
         m_id_nvpa_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
         m_id_nvpa_et_nr_of_decimal.setInputLimit(NumericValueData.ProtTcpIpClientValueNrOfDecimalMinValue, NumericValueData.ProtTcpIpClientValueNrOfDecimalMaxValue);

@@ -153,7 +153,7 @@
             android:text="@string/text_tv_data_type"/>
 
         <Spinner
-            android:id="@+id/id_spn_data_type"
+            android:id="@+id/id_spn_protocol_data_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -163,7 +163,7 @@
                               android:id="@+id/id_hsv_1"
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
-                              android:layout_below="@+id/id_spn_data_type"
+                              android:layout_below="@+id/id_spn_protocol_data_type"
                               android:layout_alignParentStart="true" >
             <RelativeLayout
                 android:id="@+id/id_rl_1"

@@ -603,7 +603,7 @@ long getLongFromBytes(byte* bytearrayVal){
   return u.temp_long;
 }
 
-// Float
+// Float 4 byte
 void setFloatToBytes(float floatVal, byte* bytearrayVal){
   // Create union of shared memory space
   union {

@@ -20,6 +20,8 @@ import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
@@ -52,25 +54,29 @@ public class LightSwitchPropActivity extends Activity implements
     private SimpleCursorAdapter m_SCAdapter;
 
     private StringEditText m_id_et_light_switch_name;
-    private RadioButton m_id_rb_portrait;
-    private RadioButton m_id_rb_landscape;
     private EditText m_id_et_position_x;
     private EditText m_id_et_position_y;
     private EditText m_id_et_position_z;
-    private CheckBox m_id_lspa_cb_enable_tcp_ip_client_protocol;
-    private Spinner m_id_lspa_spn_tcp_ip_client_protocol;
+    private RadioButton m_id_rb_portrait;
+    private RadioButton m_id_rb_landscape;
 
-    private NumericEditText m_id_lspa_et_protocol_field_1;
-    private NumericEditText m_id_lspa_et_protocol_field_2;
-    private NumericEditText m_id_lspa_et_protocol_field_3;
-    private NumericEditText m_id_lspa_et_protocol_field_4;
-    private NumericEditText m_id_lspa_et_protocol_field_5;
-    private NumericEditText m_id_lspa_et_protocol_field_6;
+    private CheckBox m_id_cb_enable_tcp_ip_client_protocol;
+    private Spinner m_id_spn_tcp_ip_client_protocol;
 
-    private LightSwitchData m_lsd;
+    private NumericEditText m_id_et_protocol_ui;
+    private NumericEditText m_id_et_protocol_addr_value;
+
+    private Spinner m_id_spn_protocol_data_type;
+
+    private NumericEditText m_id_et_write_value_off;
+    private NumericEditText m_id_et_write_value_off_on;
+    private NumericEditText m_id_et_write_value_on_off;
+    private NumericEditText m_id_et_write_value_on;
+
+    private BaseValueData m_bvd;
     private long m_lRoomIDParameter;
     private long m_lIDParameter;
-    private LightSwitchData m_lsdParameter;
+    private BaseValueData m_bvdParameter;
     private SimpleCursorAdapter m_TcpIpClientAdapter;
 
     @Override
@@ -80,8 +86,8 @@ public class LightSwitchPropActivity extends Activity implements
 
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
         m_id_et_light_switch_name = (StringEditText)findViewById(R.id.id_et_name);
-        m_id_et_light_switch_name.setInputLimit(LightSwitchData.TAGMinChar, LightSwitchData.TAGMaxChar);
-        m_id_et_light_switch_name.setText(LightSwitchData.TAGDefaultValue);
+        m_id_et_light_switch_name.setInputLimit(BaseValueData.TAGMinChar, BaseValueData.TAGMaxChar);
+        m_id_et_light_switch_name.setText(BaseValueData.TAGDefaultValue);
 
         m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
         m_id_rb_portrait.setChecked(true);
@@ -90,49 +96,48 @@ public class LightSwitchPropActivity extends Activity implements
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
-        m_id_lspa_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_lspa_cb_enable_tcp_ip_client_protocol);
-        m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
-        m_id_lspa_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_lspa_spn_tcp_ip_client_protocol);
-        m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(false);
+        m_id_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
+        m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
+        m_id_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
+        m_id_spn_tcp_ip_client_protocol.setEnabled(false);
 
-        m_id_lspa_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
+        m_id_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_1.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_2.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_3.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_4.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_5.setEnabled(((CheckBox) v).isChecked());
-                m_id_lspa_et_protocol_field_6.setEnabled(((CheckBox) v).isChecked());
+                m_id_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_protocol_ui.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_protocol_addr_value.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_write_value_off.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_write_value_off_on.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_write_value_on_off.setEnabled(((CheckBox) v).isChecked());
+                m_id_et_write_value_on.setEnabled(((CheckBox) v).isChecked());
             }
         });
 
-        m_id_lspa_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_1);
-        m_id_lspa_et_protocol_field_1.setInputLimit(LightSwitchData.ProtTcpIpClientValueIDMinValue, LightSwitchData.ProtTcpIpClientValueIDMaxValue);
-        m_id_lspa_et_protocol_field_1.setText(LightSwitchData.ProtTcpIpClientValueIDDefaulValue);
-        m_id_lspa_et_protocol_field_1.setEnabled(false);
-        m_id_lspa_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_2);
-        m_id_lspa_et_protocol_field_2.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFMinValue, LightSwitchData.ProtTcpIpClientValueOFFMaxValue);
-        m_id_lspa_et_protocol_field_2.setText(LightSwitchData.ProtTcpIpClientValueOFFDefaulValue);
-        m_id_lspa_et_protocol_field_2.setEnabled(false);
-        m_id_lspa_et_protocol_field_3 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_3);
-        m_id_lspa_et_protocol_field_3.setInputLimit(LightSwitchData.ProtTcpIpClientValueOFFONMinValue, LightSwitchData.ProtTcpIpClientValueOFFONMaxValue);
-        m_id_lspa_et_protocol_field_3.setText(LightSwitchData.ProtTcpIpClientValueOFFONDefaulValue);
-        m_id_lspa_et_protocol_field_3.setEnabled(false);
-        m_id_lspa_et_protocol_field_4 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_4);
-        m_id_lspa_et_protocol_field_4.setInputLimit(LightSwitchData.ProtTcpIpClientValueONOFFMinValue, LightSwitchData.ProtTcpIpClientValueONOFFMaxValue);
-        m_id_lspa_et_protocol_field_4.setText(LightSwitchData.ProtTcpIpClientValueONOFFDefaulValue);
-        m_id_lspa_et_protocol_field_4.setEnabled(false);
-        m_id_lspa_et_protocol_field_5 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_5);
-        m_id_lspa_et_protocol_field_5.setInputLimit(LightSwitchData.ProtTcpIpClientValueONMinValue, LightSwitchData.ProtTcpIpClientValueONMaxValue);
-        m_id_lspa_et_protocol_field_5.setText(LightSwitchData.ProtTcpIpClientValueONDefaulValue);
-        m_id_lspa_et_protocol_field_5.setEnabled(false);
-        m_id_lspa_et_protocol_field_6 = (NumericEditText)findViewById(R.id.id_lspa_et_protocol_field_6);
-        m_id_lspa_et_protocol_field_6.setInputLimit(LightSwitchData.ProtTcpIpClientValueAddressMinValue, LightSwitchData.ProtTcpIpClientValueAddressMaxValue);
-        m_id_lspa_et_protocol_field_6.setText(LightSwitchData.ProtTcpIpClientValueAddressDefaulValue);
-        m_id_lspa_et_protocol_field_6.setEnabled(false);
+        m_id_et_protocol_ui = (NumericEditText)findViewById(R.id.id_et_protocol_ui);
+        m_id_et_protocol_ui.setInputLimit(BaseValueData.ProtTcpIpClientValueIDMinValue, BaseValueData.ProtTcpIpClientValueIDMaxValue);
+        m_id_et_protocol_ui.setText(BaseValueData.ProtTcpIpClientValueIDDefaulValue);
+        m_id_et_protocol_ui.setEnabled(false);
+        m_id_et_protocol_addr_value = (NumericEditText)findViewById(R.id.id_et_protocol_addr_value);
+        m_id_et_protocol_addr_value.setInputLimit(BaseValueData.ProtTcpIpClientValueAddressMin, BaseValueData.ProtTcpIpClientValueAddressMax);
+        m_id_et_protocol_addr_value.setText(BaseValueData.ProtTcpIpClientValueAddressDefaul);
+        m_id_et_protocol_addr_value.setEnabled(false);
+        m_id_spn_protocol_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
+        m_id_spn_protocol_data_type.setSelection(BaseValueData.ProtTcpIpClientValueDataTypeDefaul);
+
+        m_id_et_write_value_off = (NumericEditText)findViewById(R.id.id_et_write_value_off);
+        m_id_et_write_value_off.setText(BaseValueData.WriteValueOFFDefault);
+        m_id_et_write_value_off.setEnabled(false);
+        m_id_et_write_value_off_on = (NumericEditText)findViewById(R.id.id_et_write_value_off_on);
+        m_id_et_write_value_off_on.setText(BaseValueData.WriteValueOFFONDefault);
+        m_id_et_write_value_off_on.setEnabled(false);
+        m_id_et_write_value_on_off = (NumericEditText)findViewById(R.id.id_et_write_value_on_off);
+        m_id_et_write_value_on_off.setText(BaseValueData.WriteValueONOFFDefault);
+        m_id_et_write_value_on_off.setEnabled(false);
+        m_id_et_write_value_on = (NumericEditText)findViewById(R.id.id_et_write_value_on);
+        m_id_et_write_value_on.setText(BaseValueData.WriteValueONDefault);
+        m_id_et_write_value_on.setEnabled(false);
 
         setActionBar();
 
@@ -143,10 +148,10 @@ public class LightSwitchPropActivity extends Activity implements
         if(intent != null) {
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
             m_lIDParameter = intent.getLongExtra(LIGHT_SWITCH_ID, -1);
-            m_lsdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
+            m_bvdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
         }
 
-        m_id_lspa_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
+        m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
@@ -155,8 +160,10 @@ public class LightSwitchPropActivity extends Activity implements
                 null,
                 new String[] {SQLContract.RoomEntry.COLUMN_NAME_TAG},
                 new int[] {android.R.id.text1}, 0);
-
         m_id_spn_room.setAdapter(m_SCAdapter);
+
+        m_id_spn_protocol_data_type.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, NumericDataType.DataType.values()));
 
         m_TcpIpClientAdapter = new SimpleCursorAdapter(
                 this,
@@ -164,8 +171,7 @@ public class LightSwitchPropActivity extends Activity implements
                 null,
                 new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
-
-        m_id_lspa_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
+        m_id_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
 
         // Primo
         getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
@@ -211,8 +217,8 @@ public class LightSwitchPropActivity extends Activity implements
     @Override
     public void onBackPressed() {
         boolean bAskForSave = false;
-        if (m_lsd != null) {
-            if(!m_lsd.getSaved()){
+        if (m_bvd != null) {
+            if(!m_bvd.getSaved()){
                 bAskForSave = true;
             }
         } else {
@@ -249,10 +255,10 @@ public class LightSwitchPropActivity extends Activity implements
                 @Override
                 public Cursor loadInBackground() {
                     Cursor cursor;
-                    if(m_lsdParameter != null){
-                        cursor = SQLContract.LightSwitchEntry.loadFromLightSwitchData(m_lsdParameter);
+                    if(m_bvdParameter != null){
+                        cursor = SQLContract.BaseValueEntry.loadFromBaseValueData(m_bvdParameter);
                     } else {
-                        cursor = SQLContract.LightSwitchEntry.load(m_lIDParameter, m_lRoomIDParameter);
+                        cursor = SQLContract.BaseValueEntry.load(m_lIDParameter, m_lRoomIDParameter);
                     }
                     return cursor;
                 }
@@ -279,8 +285,8 @@ public class LightSwitchPropActivity extends Activity implements
             m_SCAdapter.swapCursor(cursor);
             if(m_id_spn_room != null) {
                 long lRoomID;
-                if(m_lsdParameter != null){
-                    lRoomID = m_lsdParameter.getRoomID();
+                if(m_bvdParameter != null){
+                    lRoomID = m_bvdParameter.getRoomID();
                 } else {
                     lRoomID = m_lRoomIDParameter;
                 }
@@ -296,9 +302,9 @@ public class LightSwitchPropActivity extends Activity implements
         }
 
         if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
-            ArrayList<LightSwitchData> allsd = SQLContract.LightSwitchEntry.get(cursor);
-            if(allsd != null && !allsd.isEmpty()){
-                m_lsd = allsd.get(0);
+            ArrayList<BaseValueData> albve = SQLContract.BaseValueEntry.get(cursor);
+            if(albve != null && !albve.isEmpty()){
+                m_bvd = albve.get(0);
             }
 
             // Terzo
@@ -393,19 +399,28 @@ public class LightSwitchPropActivity extends Activity implements
 
     private void updateLightSwitch() {
         // Stato
-        if(m_id_lspa_spn_tcp_ip_client_protocol!= null && m_id_lspa_spn_tcp_ip_client_protocol.getCount() > 0){
-            m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(true);
+        if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() > 0){
+            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
         } else {
-            m_id_lspa_cb_enable_tcp_ip_client_protocol.setEnabled(false);
+            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
         }
 
         // Dati
-        if (m_lsd != null) {
+        if (m_bvd != null) {
             if (m_id_et_light_switch_name != null) {
-                m_id_et_light_switch_name.setText(m_lsd.getTag());
+                m_id_et_light_switch_name.setText(m_bvd.getTag());
             }
 
-            if (m_lsd.getLandscape()) {
+            if (m_id_et_position_x != null) {
+                m_id_et_position_x.setText(Float.toString(m_bvd.getPosX()));
+            }
+            if (m_id_et_position_y != null) {
+                m_id_et_position_y.setText(Float.toString(m_bvd.getPosY()));
+            }
+            if (m_id_et_position_z != null) {
+                m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
+            }
+            if (m_bvd.getLandscape()) {
                 if (m_id_rb_landscape != null) {
                     m_id_rb_landscape.setChecked(true);
                 }
@@ -420,52 +435,52 @@ public class LightSwitchPropActivity extends Activity implements
                     m_id_rb_portrait.setChecked(true);
                 }
             }
-            if (m_id_et_position_x != null) {
-                m_id_et_position_x.setText(Float.toString(m_lsd.getPosX()));
-            }
-            if (m_id_et_position_y != null) {
-                m_id_et_position_y.setText(Float.toString(m_lsd.getPosY()));
-            }
-            if (m_id_et_position_z != null) {
-                m_id_et_position_z.setText(Float.toString(m_lsd.getPosZ()));
-            }
-            if (m_id_lspa_spn_tcp_ip_client_protocol != null && m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
-                for (int i = 0; i < m_id_lspa_spn_tcp_ip_client_protocol.getCount(); i++) {
-                    Cursor value = (Cursor) m_id_lspa_spn_tcp_ip_client_protocol.getItemAtPosition(i);
+
+            if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
+                for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
+                    Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
                     if (value != null) {
                         long id = value.getLong(value.getColumnIndex("_id"));
-                        if (id == m_lsd.getProtTcpIpClientID()) {
-                            m_id_lspa_cb_enable_tcp_ip_client_protocol.setChecked(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_spn_tcp_ip_client_protocol.setSelection(i);
+                        if (id == m_bvd.getProtTcpIpClientID()) {
+                            m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
+                            m_id_spn_tcp_ip_client_protocol.setSelection(i);
 
-                            m_id_lspa_spn_tcp_ip_client_protocol.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_1.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_2.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_3.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_4.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_5.setEnabled(m_lsd.getProtTcpIpClientEnable());
-                            m_id_lspa_et_protocol_field_6.setEnabled(m_lsd.getProtTcpIpClientEnable());
+                            m_id_spn_tcp_ip_client_protocol.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_protocol_ui.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_protocol_addr_value.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_write_value_off.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_write_value_off_on.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_write_value_on_off.setEnabled(m_bvd.getProtTcpIpClientEnable());
+                            m_id_et_write_value_on.setEnabled(m_bvd.getProtTcpIpClientEnable());
                         }
                     }
                 }
             }
-            if (m_id_lspa_et_protocol_field_1 != null) {
-                m_id_lspa_et_protocol_field_1.setText(Integer.toString(m_lsd.getProtTcpIpClientValueID()));
+            if (m_id_et_protocol_ui != null) {
+                m_id_et_protocol_ui.setText(Integer.toString(m_bvd.getProtTcpIpClientValueID()));
             }
-            if (m_id_lspa_et_protocol_field_2 != null) {
-                m_id_lspa_et_protocol_field_2.setText(Integer.toString(m_lsd.getProtTcpIpClientValueOFF()));
+            if (m_id_et_protocol_addr_value != null) {
+                m_id_et_protocol_addr_value.setText(Integer.toString(m_bvd.getProtTcpIpClientValueAddress()));
             }
-            if (m_id_lspa_et_protocol_field_3 != null) {
-                m_id_lspa_et_protocol_field_3.setText(Integer.toString(m_lsd.getProtTcpIpClientValueOFFON()));
+            if(m_id_spn_protocol_data_type != null) {
+                long lItem = -1;
+                try{
+                    lItem = m_bvd.getProtTcpIpClientValueDataType();
+                } catch (Exception ignore) { }
+                m_id_spn_protocol_data_type.setSelection((int) lItem);
             }
-            if (m_id_lspa_et_protocol_field_4 != null) {
-                m_id_lspa_et_protocol_field_4.setText(Integer.toString(m_lsd.getProtTcpIpClientValueONOFF()));
+
+            if (m_id_et_write_value_off != null) {
+                m_id_et_write_value_off.setText(Integer.toString(m_bvd.getWriteValueOFF()));
             }
-            if (m_id_lspa_et_protocol_field_5 != null) {
-                m_id_lspa_et_protocol_field_5.setText(Integer.toString(m_lsd.getProtTcpIpClientValueON()));
+            if (m_id_et_write_value_off_on != null) {
+                m_id_et_write_value_off_on.setText(Integer.toString(m_bvd.getWriteValueOFFON()));
             }
-            if (m_id_lspa_et_protocol_field_6 != null) {
-                m_id_lspa_et_protocol_field_6.setText(Integer.toString(m_lsd.getProtTcpIpClientValueAddress()));
+            if (m_id_et_write_value_on_off != null) {
+                m_id_et_write_value_on_off.setText(Integer.toString(m_bvd.getWriteValueONOFF()));
+            }
+            if (m_id_et_write_value_on != null) {
+                m_id_et_write_value_on.setText(Integer.toString(m_bvd.getWriteValueON()));
             }
         }
     }
@@ -478,8 +493,8 @@ public class LightSwitchPropActivity extends Activity implements
 
         if(m_id_et_light_switch_name != null){
             long lRoomID;
-            if(m_lsdParameter != null){
-                lRoomID = m_lsdParameter.getRoomID();
+            if(m_bvdParameter != null){
+                lRoomID = m_bvdParameter.getRoomID();
             } else {
                 lRoomID = m_lRoomIDParameter;
             }
@@ -499,8 +514,8 @@ public class LightSwitchPropActivity extends Activity implements
     }
 
     private void saveLightSwitchData(int iDialogOriginID){
-        if (m_lsd == null) {
-            m_lsd = new LightSwitchData();
+        if (m_bvd == null) {
+            m_bvd = new BaseValueData();
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
@@ -521,61 +536,65 @@ public class LightSwitchPropActivity extends Activity implements
         }
 
         // Set the selected Room
-        m_lsd.setRoomID(m_id_spn_room.getSelectedItemId());
+        m_bvd.setRoomID(m_id_spn_room.getSelectedItemId());
 
         if (m_id_et_light_switch_name != null) {
-            m_lsd.setTAG(m_id_et_light_switch_name.getText().toString());
+            m_bvd.setTAG(m_id_et_light_switch_name.getText().toString());
         }
 
-        if(getOrientation() == Orientation.PORTRAIT ){
-            m_lsd.setLandscape(false);
-        }
-        if(getOrientation() == Orientation.LANDSCAPE ){
-            m_lsd.setLandscape(true);
-        }
         try {
             if (m_id_et_position_x != null) {
-                m_lsd.setPosX(Float.parseFloat(m_id_et_position_x.getText().toString()));
+                m_bvd.setPosX(Float.parseFloat(m_id_et_position_x.getText().toString()));
             }
             if (m_id_et_position_y != null) {
-                m_lsd.setPosY(Float.parseFloat(m_id_et_position_y.getText().toString()));
+                m_bvd.setPosY(Float.parseFloat(m_id_et_position_y.getText().toString()));
             }
             if (m_id_et_position_z != null) {
-                m_lsd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
+                m_bvd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
             }
         } catch (Exception ex) {
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return ;
         }
-
-        if(m_id_lspa_cb_enable_tcp_ip_client_protocol != null) {
-            m_lsd.setProtTcpIpClientEnable(m_id_lspa_cb_enable_tcp_ip_client_protocol.isChecked());
+        if(getOrientation() == Orientation.PORTRAIT ){
+            m_bvd.setLandscape(false);
+        }
+        if(getOrientation() == Orientation.LANDSCAPE ){
+            m_bvd.setLandscape(true);
         }
 
-        if(m_lsd.getProtTcpIpClientEnable()){
-            if(m_id_lspa_spn_tcp_ip_client_protocol != null) {
-                m_lsd.setProtTcpIpClientID(m_id_lspa_spn_tcp_ip_client_protocol.getSelectedItemId());
+        if(m_id_cb_enable_tcp_ip_client_protocol != null) {
+            m_bvd.setProtTcpIpClientEnable(m_id_cb_enable_tcp_ip_client_protocol.isChecked());
+        }
+
+        if(m_bvd.getProtTcpIpClientEnable()){
+            if(m_id_spn_tcp_ip_client_protocol != null) {
+                m_bvd.setProtTcpIpClientID(m_id_spn_tcp_ip_client_protocol.getSelectedItemId());
             }
 
             try {
-                if (m_id_lspa_et_protocol_field_1 != null) {
-                    m_lsd.setProtTcpIpClientValueID(Integer.parseInt(m_id_lspa_et_protocol_field_1.getText().toString()));
+                if (m_id_et_protocol_ui != null) {
+                    m_bvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
                 }
-                if (m_id_lspa_et_protocol_field_2 != null) {
-                    m_lsd.setProtTcpIpClientValueOFF(Integer.parseInt(m_id_lspa_et_protocol_field_2.getText().toString()));
+                if (m_id_et_protocol_addr_value != null) {
+                    m_bvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_et_protocol_addr_value.getText().toString()));
                 }
-                if (m_id_lspa_et_protocol_field_3 != null) {
-                    m_lsd.setProtTcpIpClientValueOFFON(Integer.parseInt(m_id_lspa_et_protocol_field_3.getText().toString()));
+                if(m_id_spn_protocol_data_type != null) {
+                    m_bvd.setProtTcpIpClientValueDataType((int) m_id_spn_protocol_data_type.getSelectedItemId());
                 }
-                if (m_id_lspa_et_protocol_field_4 != null) {
-                    m_lsd.setProtTcpIpClientValueONOFF(Integer.parseInt(m_id_lspa_et_protocol_field_4.getText().toString()));
+
+                if (m_id_et_write_value_off != null) {
+                    m_bvd.setWriteValueOFF(Integer.parseInt(m_id_et_write_value_off.getText().toString()));
                 }
-                if (m_id_lspa_et_protocol_field_5 != null) {
-                    m_lsd.setProtTcpIpClientValueON(Integer.parseInt(m_id_lspa_et_protocol_field_5.getText().toString()));
+                if (m_id_et_write_value_off_on != null) {
+                    m_bvd.setWriteValueOFFON(Integer.parseInt(m_id_et_write_value_off_on.getText().toString()));
                 }
-                if (m_id_lspa_et_protocol_field_6 != null) {
-                    m_lsd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_lspa_et_protocol_field_6.getText().toString()));
+                if (m_id_et_write_value_on_off != null) {
+                    m_bvd.setWriteValueONOFF(Integer.parseInt(m_id_et_write_value_on_off.getText().toString()));
+                }
+                if (m_id_et_write_value_on != null) {
+                    m_bvd.setWriteValueON(Integer.parseInt(m_id_et_write_value_on.getText().toString()));
                 }
             } catch (Exception ex) {
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
@@ -584,8 +603,7 @@ public class LightSwitchPropActivity extends Activity implements
             }
         }
 
-        m_lsd.setProtTcpIpClientSendDataOnChange(true);
-        if(SQLContract.LightSwitchEntry.save(m_lsd)){
+        if(SQLContract.BaseValueEntry.save(m_bvd)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         } else {
@@ -605,8 +623,8 @@ public class LightSwitchPropActivity extends Activity implements
         ).show(getFragmentManager(), "");
     }
     private void deleteLightSwitchData(int iDialogOriginID) {
-        if(m_lsd != null) {
-            SQLContract.LightSwitchEntry.delete(m_lsd.getID(), m_lsd.getRoomID());
+        if(m_bvd != null) {
+            SQLContract.LightSwitchEntry.delete(m_bvd.getID(), m_bvd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }

@@ -115,7 +115,7 @@ public class SensorValuePropActivity extends Activity implements
         m_id_nvpa_et_protocol_field_2.setInputLimit(SensorValueData.ProtTcpIpClientValueAddressMinValue, SensorValueData.ProtTcpIpClientValueAddressMaxValue);
         m_id_nvpa_et_protocol_field_2.setText(SensorValueData.ProtTcpIpClientValueAddressDefaulValue);
         m_id_nvpa_et_protocol_field_2.setEnabled(false);
-        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_data_type);
+        m_id_nvpa_spn_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
         m_id_nvpa_spn_data_type.setSelection(SensorValueData.ProtTcpIpClientValueDataTypeDefaulValue);
         m_id_nvpa_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
         m_id_nvpa_et_update_millis.setInputLimit(SensorValueData.ProtTcpIpClientValueUpdateMillisMinValue, SensorValueData.ProtTcpIpClientValueUpdateMillisMaxValue);

@@ -12,6 +12,23 @@ public class BaseValueData implements Parcelable {
     public static final int TYPE_NUMERIC_VALUE = 2;
     public static final int TYPE_SENSOR_VALUE = 3;
 
+    public static short TAGMinChar = 1;
+    public static short TAGMaxChar = 128;
+    public static String TAGDefaultValue = "My Name";
+
+    public static int ProtTcpIpClientValueIDMinValue = 0;
+    public static int ProtTcpIpClientValueIDMaxValue = 32768;
+    public static String ProtTcpIpClientValueIDDefaulValue = "0";
+    public static int ProtTcpIpClientValueAddressMin = 0;
+    public static int ProtTcpIpClientValueAddressMax = 65535;
+    public static String ProtTcpIpClientValueAddressDefaul = "10000";
+    public static int ProtTcpIpClientValueDataTypeDefaul = -1;
+
+    public static String WriteValueOFFDefault = "1";
+    public static String WriteValueOFFONDefault = "3";
+    public static String WriteValueONOFFDefault = "7";
+    public static String WriteValueONDefault = "4";
+
     // Graphic
     private long m_ID;
     private int m_iType;
@@ -42,6 +59,13 @@ public class BaseValueData implements Parcelable {
     private int m_iWriteValueONOFF;
     private int m_iWriteValueON;
 
+    // Sensor
+    private long m_lSensorTypeID;
+    private long m_lSensorValueID;
+    private boolean m_bSensorEnableSimulation;
+    private float m_fSensorAmplK;
+    private float m_fSensorLowPassFilterK;
+    private int m_iSensorSampleTime;
 
     public BaseValueData() {
         // Graphic
@@ -83,37 +107,16 @@ public class BaseValueData implements Parcelable {
         m_iSensorSampleTime = 100;
     }
 
-    public BaseValueData(long id, int iType, boolean bSaved, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public void setPositionValue(long id, int iType,long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         // Graphic
         m_ID = id;
         m_iType = iType;
-        m_bSaved = bSaved;
         m_lRoomID = lRoomID;
         m_strTAG = strTAG;
         m_fPosX = fPosX;
         m_fPosY = fPosY;
         m_fPosZ = fPosZ;
         m_bLandscape = bLandscape;
-
-        // Protocol Tcp Ip Client
-        m_bProtTcpIpClientEnable = false;
-        m_lProtTcpIpClientID = -1;
-        m_iProtTcpIpClientValueID = -1;
-        m_iProtTcpIpClientValueAddress = 0;
-        m_iProtTcpIpClientValueDataType = -1;
-
-        // Format Value
-        m_iValueMinNrCharToShow = 0;
-        m_iValueNrOfDecimal = 0;
-        m_strValueUM = "";
-        m_iValueUpdateMillis = 1000;
-
-        // Switch
-        m_iWriteValueOFF = 0;
-        m_iWriteValueOFFON = 0;
-        m_iWriteValueONOFF = 0;
-        m_iWriteValueON = 0;
-
     }
 
     public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType) {
@@ -130,6 +133,23 @@ public class BaseValueData implements Parcelable {
         m_iValueNrOfDecimal = iValueNrOfDecimal;
         m_strValueUM = strValueUM;
         m_iValueUpdateMillis = iValueUpdateMillis;
+    }
+
+    public void setSwitchValue(int iWriteValueOFF, int iWriteValueOFFON, int iWriteValueONOFF, int iWriteValueON) {
+        // Switch Value
+        m_iWriteValueOFF = iWriteValueOFF;
+        m_iWriteValueOFFON = iWriteValueOFFON;
+        m_iWriteValueONOFF = iWriteValueONOFF;
+        m_iWriteValueON = iWriteValueON;
+    }
+
+    public void setSensorType(long lSensorTypeID, long lSensorValueID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
+        m_lSensorTypeID = lSensorTypeID;
+        m_lSensorValueID = lSensorValueID;
+        m_bSensorEnableSimulation = bSensorEnableSimulation;
+        m_fSensorAmplK = fSensorK;
+        m_fSensorLowPassFilterK = fSensorLowPassFilterK;
+        m_iSensorSampleTime = iSensorSampleTime;
     }
 
     // Set Method
@@ -170,6 +190,40 @@ public class BaseValueData implements Parcelable {
     public void setValueUM(String strValueUM) { this.m_strValueUM = strValueUM; }
 
     public void setValueUpdateMillis(int iValueUpdateMillis) { this.m_iValueUpdateMillis = iValueUpdateMillis; }
+
+    // Switch
+    public void setWriteValueOFF(int iWriteValueOFF) { this.m_iWriteValueOFF = iWriteValueOFF; }
+
+    public void setWriteValueOFFON(int iWriteValueOFFON) { this.m_iWriteValueOFFON = iWriteValueOFFON; }
+
+    public void setWriteValueONOFF(int iWriteValueONOFF) { this.m_iWriteValueONOFF = iWriteValueONOFF; }
+
+    public void setWriteValueON(int iWriteValueON) { this.m_iWriteValueON = iWriteValueON; }
+
+    // Sensor
+    public void setSensorTypeID(long lSensorTypeID) {
+        this.m_lSensorTypeID = lSensorTypeID;
+    }
+
+    public void setSensorValueID(long lSensorValueID) {
+        this.m_lSensorValueID = lSensorValueID;
+    }
+
+    public void setSensorEnableSimulation(boolean bSensorEnableSimulation) {
+        this.m_bSensorEnableSimulation = bSensorEnableSimulation;
+    }
+
+    public void setSensorAmplK(float fSensorAmplK) {
+        this.m_fSensorAmplK = fSensorAmplK;
+    }
+
+    public void setSensorLowPassFilterK(float fSensorLowPassFilterK) {
+        this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
+    }
+
+    public void setSensorSampleTime(int iSensorSampleTime) {
+        this.m_iSensorSampleTime = iSensorSampleTime;
+    }
 
     // Get Method
     public long getID() { return m_ID; }
@@ -223,6 +277,40 @@ public class BaseValueData implements Parcelable {
     }
 
     public int getValueUpdateMillis() { return m_iValueUpdateMillis; }
+
+    // Switch
+    public int getWriteValueOFF() { return m_iWriteValueOFF; }
+
+    public int getWriteValueOFFON() { return m_iWriteValueOFFON; }
+
+    public int getWriteValueONOFF() { return m_iWriteValueONOFF; }
+
+    public int getWriteValueON() { return m_iWriteValueON; }
+
+    // Sensor
+    public long getSensorTypeID() {
+        return m_lSensorTypeID;
+    }
+
+    public long getSensorValueID() {
+        return m_lSensorValueID;
+    }
+
+    public boolean getSensorEnableSimulation() {
+        return m_bSensorEnableSimulation;
+    }
+
+    public float getSensorAmplK() {
+        return m_fSensorAmplK;
+    }
+
+    public float getSensorLowPassFilterK() {
+        return m_fSensorLowPassFilterK;
+    }
+
+    public int getSensorSampleTime() {
+        return m_iSensorSampleTime;
+    }
 
     protected BaseValueData(Parcel in) {
         m_ID = in.readLong();

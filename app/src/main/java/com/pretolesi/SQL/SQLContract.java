@@ -8,6 +8,8 @@ import android.provider.BaseColumns;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.R;
@@ -311,10 +313,10 @@ public class SQLContract
         public static final String COLUMN_NAME_VALUE_UM = "ValueUM";
         public static final String COLUMN_NAME_VALUE_UPDATE_MILLIS = "ValueUpdateMillis";
 
-        public static final String COLUMN_NAME_VALUE_OFF = "ValueOFF";
-        public static final String COLUMN_NAME_VALUE_OFF_ON = "ValueOFFON";
-        public static final String COLUMN_NAME_VALUE_ON_OFF = "ValueONOFF";
-        public static final String COLUMN_NAME_VALUE_ON = "ValueON";
+        public static final String COLUMN_NAME_WRITE_VALUE_OFF = "WriteValueOFF";
+        public static final String COLUMN_NAME_WRITE_VALUE_OFF_ON = "WriteValueOFFON";
+        public static final String COLUMN_NAME_WRITE_VALUE_ON_OFF = "WriteValueONOFF";
+        public static final String COLUMN_NAME_WRITE_VALUE_ON = "WriteValueON";
 
         public static final String COLUMN_NAME_SENSOR_TYPE_ID = "SensorTypeID";
         public static final String COLUMN_NAME_SENSOR_VALUE_ID = "SensorValueID";
@@ -330,30 +332,43 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TYPE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ROOM_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TAG + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_X + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Y + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
+
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA + INT_TYPE +
+                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
+
+                        COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_UM + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
+
+                        COLUMN_NAME_WRITE_VALUE_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_WRITE_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_WRITE_VALUE_ON_OFF + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_WRITE_VALUE_ON + INT_TYPE + COMMA_SEP +
+
+                        COLUMN_NAME_SENSOR_TYPE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_VALUE_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_ENABLE_SIMULATION + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_AMPL_K + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_SAMPLE_TIME + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
-        public static boolean save(ArrayList<LightSwitchData> allsd)  {
+        public static boolean save(ArrayList<BaseValueData> albve)  {
 
             boolean bRes = true;
             try
@@ -362,38 +377,50 @@ public class SQLContract
 
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
 
-                if(db != null && allsd != null) {
+                if(db != null && albve != null) {
 
                     ContentValues values = new ContentValues();
-                    for(LightSwitchData lsdTemp:allsd){
-                        if(lsdTemp != null) {
-                            values.put(COLUMN_NAME_TAG, String.valueOf(lsdTemp.getTag()));
-                            values.put(COLUMN_NAME_ROOM_ID, lsdTemp.getRoomID());
-                            values.put(COLUMN_NAME_X, Float.toString(lsdTemp.getPosX()));
-                            values.put(COLUMN_NAME_Y, Float.toString(lsdTemp.getPosY()));
-                            values.put(COLUMN_NAME_Z, Float.toString(lsdTemp.getPosZ()));
-                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsdTemp.getLandscape() ? 1 : 0));
+                    for(BaseValueData bveTemp:albve){
+                        if(bveTemp != null) {
+                            values.put(COLUMN_NAME_TYPE, bveTemp.getType());
+                            values.put(COLUMN_NAME_ROOM_ID, bveTemp.getRoomID());
+                            values.put(COLUMN_NAME_TAG, String.valueOf(bveTemp.getTag()));
+                            values.put(COLUMN_NAME_X, Float.toString(bveTemp.getPosX()));
+                            values.put(COLUMN_NAME_Y, Float.toString(bveTemp.getPosY()));
+                            values.put(COLUMN_NAME_Z, Float.toString(bveTemp.getPosZ()));
+                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bveTemp.getLandscape() ? 1 : 0));
 
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsdTemp.getProtTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsdTemp.getProtTcpIpClientID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsdTemp.getProtTcpIpClientValueID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsdTemp.getProtTcpIpClientValueOFF());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsdTemp.getProtTcpIpClientValueOFFON());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsdTemp.getProtTcpIpClientValueONOFF());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsdTemp.getProtTcpIpClientValueON());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsdTemp.getProtTcpIpClientValueAddress());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsdTemp.getProtTcpIpClientValueUpdateMillis());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsdTemp.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsdTemp.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(bveTemp.getProtTcpIpClientEnable() ? 1 : 0));
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, bveTemp.getProtTcpIpClientID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, bveTemp.getProtTcpIpClientValueID());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, bveTemp.getProtTcpIpClientValueAddress());
+                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, bveTemp.getProtTcpIpClientValueDataType());
+
+                            values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, bveTemp.getValueMinNrCharToShow());
+                            values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, bveTemp.getValueNrOfDecimal());
+                            values.put(COLUMN_NAME_VALUE_UM, bveTemp.getValueUM());
+                            values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, bveTemp.getValueUpdateMillis());
+
+                            values.put(COLUMN_NAME_WRITE_VALUE_OFF, bveTemp.getWriteValueOFF());
+                            values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, bveTemp.getWriteValueOFFON());
+                            values.put(COLUMN_NAME_WRITE_VALUE_ON_OFF, bveTemp.getWriteValueONOFF());
+                            values.put(COLUMN_NAME_WRITE_VALUE_ON, bveTemp.getWriteValueON());
+
+                            values.put(COLUMN_NAME_SENSOR_TYPE_ID, bveTemp.getSensorTypeID());
+                            values.put(COLUMN_NAME_SENSOR_VALUE_ID, bveTemp.getSensorValueID());
+                            values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(bveTemp.getSensorEnableSimulation() ? 1 : 0));
+                            values.put(COLUMN_NAME_SENSOR_AMPL_K, bveTemp.getSensorAmplK());
+                            values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bveTemp.getSensorLowPassFilterK());
+                            values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bveTemp.getSensorSampleTime());
 
                             String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
 
-                            String[] whereArgs = {String.valueOf(lsdTemp.getID()), String.valueOf(lsdTemp.getRoomID())};
-                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsdTemp.getID());
+                            String[] whereArgs = {String.valueOf(bveTemp.getID()), String.valueOf(bveTemp.getRoomID())};
+                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, bveTemp.getID());
                             // Update or Save
                             if (id > 0) {
-                                lsdTemp.setID(id);
-                                lsdTemp.setSaved(true);
+                                bveTemp.setID(id);
+                                bveTemp.setSaved(true);
                             } else {
                                 bRes = false;
                             }
@@ -408,43 +435,56 @@ public class SQLContract
 
         }
 
-        public static boolean save(LightSwitchData lsd)  {
+        public static boolean save(BaseValueData bve)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null && lsd != null) {
+                if(db != null && bve != null) {
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_TAG, String.valueOf(lsd.getTag()));
-                    values.put(COLUMN_NAME_ROOM_ID, lsd.getRoomID());
-                    values.put(COLUMN_NAME_X, Float.toString(lsd.getPosX()));
-                    values.put(COLUMN_NAME_Y, Float.toString(lsd.getPosY()));
-                    values.put(COLUMN_NAME_Z, Float.toString(lsd.getPosZ()));
-                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(lsd.getLandscape() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, lsd.getProtTcpIpClientID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, lsd.getProtTcpIpClientValueID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF, lsd.getProtTcpIpClientValueOFF());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON, lsd.getProtTcpIpClientValueOFFON());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF, lsd.getProtTcpIpClientValueONOFF());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON, lsd.getProtTcpIpClientValueON());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, lsd.getProtTcpIpClientValueAddress());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS, lsd.getProtTcpIpClientValueUpdateMillis());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE, Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA, Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0));
+                    values.put(COLUMN_NAME_TYPE, bve.getType());
+                    values.put(COLUMN_NAME_ROOM_ID, bve.getRoomID());
+                    values.put(COLUMN_NAME_TAG, String.valueOf(bve.getTag()));
+                    values.put(COLUMN_NAME_X, Float.toString(bve.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(bve.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(bve.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bve.getLandscape() ? 1 : 0));
+
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, bve.getProtTcpIpClientID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, bve.getProtTcpIpClientValueID());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, bve.getProtTcpIpClientValueAddress());
+                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, bve.getProtTcpIpClientValueDataType());
+
+                    values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, bve.getValueMinNrCharToShow());
+                    values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, bve.getValueNrOfDecimal());
+                    values.put(COLUMN_NAME_VALUE_UM, bve.getValueUM());
+                    values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, bve.getValueUpdateMillis());
+
+                    values.put(COLUMN_NAME_WRITE_VALUE_OFF, bve.getWriteValueOFF());
+                    values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, bve.getWriteValueOFFON());
+                    values.put(COLUMN_NAME_WRITE_VALUE_ON_OFF, bve.getWriteValueONOFF());
+                    values.put(COLUMN_NAME_WRITE_VALUE_ON, bve.getWriteValueON());
+
+                    values.put(COLUMN_NAME_SENSOR_TYPE_ID, bve.getSensorTypeID());
+                    values.put(COLUMN_NAME_SENSOR_VALUE_ID, bve.getSensorValueID());
+                    values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0));
+                    values.put(COLUMN_NAME_SENSOR_AMPL_K, bve.getSensorAmplK());
+                    values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bve.getSensorLowPassFilterK());
+                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bve.getSensorSampleTime());
 
                     String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
 
-                    String[] whereArgs = {String.valueOf(lsd.getID()), String.valueOf(lsd.getRoomID())};
-                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, lsd.getID());
+                    String[] whereArgs = {String.valueOf(bve.getID()), String.valueOf(bve.getRoomID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, bve.getID());
                     // Update or Save
                     if (id > 0) {
-                        lsd.setID(id);
-                        lsd.setSaved(true);
+                        bve.setID(id);
+                        bve.setSaved(true);
                     } else {
                         bRes = false;
                     }
@@ -457,7 +497,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromLightSwitchData(LightSwitchData lsd)
+        public static Cursor loadFromBaseValueData(BaseValueData bve)
         {
             try
             {
@@ -465,12 +505,13 @@ public class SQLContract
 
                 MatrixCursor cursor = null;
 
-                if(lsd != null){
+                if(bve != null){
 
                     String[] columns = new String[] {
                             _ID,
-                            COLUMN_NAME_TAG,
+                            COLUMN_NAME_TYPE,
                             COLUMN_NAME_ROOM_ID,
+                            COLUMN_NAME_TAG,
                             COLUMN_NAME_X,
                             COLUMN_NAME_Y,
                             COLUMN_NAME_Z,
@@ -479,39 +520,61 @@ public class SQLContract
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA,
+                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+
+                            COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                            COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                            COLUMN_NAME_VALUE_UM,
+                            COLUMN_NAME_VALUE_UPDATE_MILLIS,
+
+                            COLUMN_NAME_WRITE_VALUE_OFF,
+                            COLUMN_NAME_WRITE_VALUE_OFF_ON,
+                            COLUMN_NAME_WRITE_VALUE_ON_OFF,
+                            COLUMN_NAME_WRITE_VALUE_ON,
+
+                            COLUMN_NAME_SENSOR_TYPE_ID,
+                            COLUMN_NAME_SENSOR_VALUE_ID,
+                            COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                            COLUMN_NAME_SENSOR_AMPL_K,
+                            COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                            COLUMN_NAME_SENSOR_SAMPLE_TIME,
 
                             COLUMN_NAME_ORIGIN
                     };
 
                     cursor = new MatrixCursor(columns);
-                    cursor.addRow(new Object[] {
-                            lsd.getID(),
-                            lsd.getTag(),
-                            lsd.getRoomID(),
-                            lsd.getPosX(),
-                            lsd.getPosY(),
-                            lsd.getPosZ(),
-                            Integer.valueOf(lsd.getLandscape() ? 1 : 0),
+                    cursor.addRow(new Object[]{
+                            bve.getType(),
+                            bve.getRoomID(),
+                            bve.getTag(),
+                            bve.getPosX(),
+                            bve.getPosY(),
+                            bve.getPosZ(),
+                            Integer.valueOf(bve.getLandscape() ? 1 : 0),
 
-                            Integer.valueOf(lsd.getProtTcpIpClientEnable() ? 1 : 0),
-                            lsd.getProtTcpIpClientID(),
-                            lsd.getProtTcpIpClientValueID(),
-                            lsd.getProtTcpIpClientValueOFF(),
-                            lsd.getProtTcpIpClientValueOFFON(),
-                            lsd.getProtTcpIpClientValueONOFF(),
-                            lsd.getProtTcpIpClientValueON(),
-                            lsd.getProtTcpIpClientValueAddress(),
-                            lsd.getProtTcpIpClientValueUpdateMillis(),
-                            Integer.valueOf(lsd.getProtTcpIpClientSendDataOnChange() ? 1 : 0),
-                            Integer.valueOf(lsd.getProtTcpIpClientWaitAnswerBeforeSendNextData() ? 1 : 0),
+                            Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0),
+                            bve.getProtTcpIpClientID(),
+                            bve.getProtTcpIpClientValueID(),
+                            bve.getProtTcpIpClientValueAddress(),
+                            bve.getProtTcpIpClientValueDataType(),
+
+                            bve.getValueMinNrCharToShow(),
+                            bve.getValueNrOfDecimal(),
+                            bve.getValueUM(),
+                            bve.getValueUpdateMillis(),
+
+                            bve.getWriteValueOFF(),
+                            bve.getWriteValueOFFON(),
+                            bve.getWriteValueONOFF(),
+                            bve.getWriteValueON(),
+
+                            bve.getSensorTypeID(),
+                            bve.getSensorValueID(),
+                            Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0),
+                            bve.getSensorAmplK(),
+                            bve.getSensorLowPassFilterK(),
+                            bve.getSensorSampleTime(),
 
                             0   // Origin
                     });
@@ -542,8 +605,9 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_TYPE,
                                     COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_TAG,
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
@@ -552,14 +616,25 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+
+                                    COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_VALUE_UM,
+                                    COLUMN_NAME_VALUE_UPDATE_MILLIS,
+
+                                    COLUMN_NAME_WRITE_VALUE_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_OFF_ON,
+                                    COLUMN_NAME_WRITE_VALUE_ON_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_ON,
+
+                                    COLUMN_NAME_SENSOR_TYPE_ID,
+                                    COLUMN_NAME_SENSOR_VALUE_ID,
+                                    COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                                    COLUMN_NAME_SENSOR_AMPL_K,
+                                    COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -590,7 +665,7 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(long lRoomID)
+        public static Cursor load(int iType, long lRoomID)
         {
             try
             {
@@ -606,8 +681,9 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_TYPE,
                                     COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_TAG,
                                     COLUMN_NAME_X,
                                     COLUMN_NAME_Y,
                                     COLUMN_NAME_Z,
@@ -616,23 +692,34 @@ public class SQLContract
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+
+                                    COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_VALUE_UM,
+                                    COLUMN_NAME_VALUE_UPDATE_MILLIS,
+
+                                    COLUMN_NAME_WRITE_VALUE_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_OFF_ON,
+                                    COLUMN_NAME_WRITE_VALUE_ON_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_ON,
+
+                                    COLUMN_NAME_SENSOR_TYPE_ID,
+                                    COLUMN_NAME_SENSOR_VALUE_ID,
+                                    COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                                    COLUMN_NAME_SENSOR_AMPL_K,
+                                    COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
                             };
 
                     // How you want the results sorted in the resulting Cursor
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String whereClause = COLUMN_NAME_ROOM_ID + " = ?";
+                    String whereClause = COLUMN_NAME_TYPE + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
 
-                    String[] wherenArgs = { String.valueOf(lRoomID) };
+                    String[] wherenArgs = { String.valueOf(iType), String.valueOf(lRoomID) };
 
                     cursor = db.query(
                             TABLE_NAME,                 // The table to query
@@ -732,19 +819,19 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<LightSwitchData> get(Cursor cursor){
+        public static ArrayList<BaseValueData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                LightSwitchData lsd = null;
-                ArrayList<LightSwitchData> allsd = null;
+                BaseValueData bve = null;
+                ArrayList<BaseValueData> albve = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                     {
-                        if(allsd == null){
-                            allsd = new ArrayList<>();
+                        if(albve == null){
+                            albve = new ArrayList<>();
                         }
                         // Origin
                         boolean bSaved = true;
@@ -754,10 +841,10 @@ public class SQLContract
                                 bSaved = false;
                             }
                         }
-                        lsd = new LightSwitchData(
+                        bve = new BaseValueData();
+                        bve.setPositionValue(
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
-                                bSaved,
-                                false,
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),
@@ -766,23 +853,42 @@ public class SQLContract
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
                         );
 
-                        lsd.setProtTcpIpClient(
+                        bve.setProtTcpIpClient(
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_OFF_ON)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON_OFF)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ON)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_UPDATE_MILLIS)),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_SEND_DATA_ON_CHANGE)) == 0) ? false : true),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_WAIT_ANSWER_BEFORE_SEND_NEXT_DATA)) == 0) ? false : true)
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE))
                         );
-                        allsd.add(lsd);
+
+                        bve.setFormatValue(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_NR_OF_DECIMAL)),
+                                cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_UPDATE_MILLIS))
+
+                        );
+
+                        bve.setSwitchValue(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_OFF_ON)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_ON_OFF)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_ON))
+                        );
+
+                        bve.setSensorType(
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_SENSOR_TYPE_ID)),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_SENSOR_VALUE_ID)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_ENABLE_SIMULATION)) == 0) ? false : true),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_AMPL_K))),
+                                Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K))),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_SAMPLE_TIME))
+                        );
+
+                        albve.add(bve);
                     }
                 }
-                return allsd;
+                return albve;
             }
             finally
             {

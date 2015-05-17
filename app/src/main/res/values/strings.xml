@@ -150,6 +150,15 @@
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>
     <string name="text_tv_position_z">Z:</string>
+
+    <string name="text_tv_protocol_ui">IDENTIFIER</string>
+    <string name="text_tv_protocol_addr_value">ADDRESS:</string>
+
+    <string name="text_tv_write_value_off">Value off:</string>
+    <string name="text_tv_write_value_off_on">Value off->on:</string>
+    <string name="text_tv_write_value_on_off">Value on->off:</string>
+    <string name="text_tv_write_value_on">Value on:</string>
+
     <string name="text_tv_data_type">Data type</string>
     <string name="text_tv_nr_of_decimal">Nr of decimal</string>
     <string name="text_tv_um">Unit of measure</string>
@@ -163,16 +172,6 @@
     <string name="text_tv_sensor_low_pass_filter_k">Low pass filter k</string>
     <string name="text_tv_sensor_sample_time_k">Sensor sample time k</string>
 
-
-    <!--
-    light_switch_prop_activity
-    -->
-    <string name="text_lspa_tv_protocol_field_1">IDENTIFIER(2 byte long)</string>
-    <string name="text_lspa_tv_protocol_field_2">OFF BYTE(1 byte long)</string>
-    <string name="text_lspa_tv_protocol_field_3">OFF-ON BYTE(1 byte long)</string>
-    <string name="text_lspa_tv_protocol_field_4">ON-OFF BYTE(1 byte long)</string>
-    <string name="text_lspa_tv_protocol_field_5">ON BYTE(1 byte long)</string>
-    <string name="text_lspa_tv_protocol_field_6">ADDRESS(2 byte long)</string>
 
     <!--
     numeric_value_prop_activity

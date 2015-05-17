@@ -36,7 +36,7 @@ import java.util.Vector;
  *
  */
 
-sistemare tutte le variabili che non servono e lasciare solo quelle che servono, a partire dallo switch!!!!
+//sistemare tutte le variabili che non servono e lasciare solo quelle che servono, a partire dallo switch!!!!
 public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     private static final String TAG = "TCPIPClient";
 
