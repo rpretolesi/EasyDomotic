@@ -121,8 +121,8 @@
     <string name="text_yndf_title_tcp_ip_client_name_already_exist">Tcp Ip Client name already exist.</string>
     <string name="text_yndf_message_tcp_ip_client_name_already_exist_confirmation">Do you want to overwrite it ?</string>
 
-    <string name="text_yndf_title_light_switch_name_already_exist">Light Switch name already exist.</string>
-    <string name="text_yndf_message_light_switch_name_already_exist_confirmation">Do you want to overwrite it ?</string>
+    <string name="text_yndf_title_base_value_name_already_exist">Name already exist.</string>
+    <string name="text_yndf_message_base_value_name_already_exist_confirmation">Do you want to overwrite it ?</string>
 
     <string name="text_yndf_title_numeric_value_name_already_exist">Numeric Value name already exist.</string>
     <string name="text_yndf_message_numeric_value_name_already_exist_confirmation">Do you want to overwrite it ?</string>

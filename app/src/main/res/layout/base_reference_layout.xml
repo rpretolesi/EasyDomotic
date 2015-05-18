@@ -136,130 +136,96 @@
 
                 </LinearLayout>
             </HorizontalScrollView>
-    <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:id="@+id/id_hsv_protocol_fields"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_alignParentStart="true"
-                          android:layout_below="@id/id_cb_enable_tcp_ip_client_protocol"
-                          android:layout_marginTop="20dp">
-
-        <RelativeLayout
-            android:id="@+id/id_rl_protocol_fields"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/id_tv_protocol_ui"
+                android:id="@+id/id_tv_protocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_tv_protocol_ui"
-                android:labelFor="@+id/id_et_protocol_ui"/>
+                android:layout_below="@id/id_hsv_position_1"
+                android:layout_alignParentStart="true"
+                android:text="@string/text_tv_protocol" />
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_protocol_ui"
+            <CheckBox
+                android:id="@+id/id_cb_enable_tcp_ip_client_protocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_protocol_ui"
-                android:text="0"
-                android:inputType="number"/>
+                android:layout_below="@+id/id_tv_protocol"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"/>
 
-            <TextView
-                android:id="@+id/id_tv_protocol_addr_value"
+            <Spinner
+                android:id="@+id/id_spn_tcp_ip_client_protocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/id_tv_protocol_ui"
-                android:layout_marginStart="10dp"
-                android:text="@string/text_tv_protocol_addr_value"
-                android:labelFor="@+id/id_et_protocol_addr_value"/>
+                android:layout_alignStart="@+id/id_cb_enable_tcp_ip_client_protocol"
+                android:layout_marginStart="40dp"
+                android:layout_below="@id/id_tv_protocol" />
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_protocol_addr_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_protocol_addr_value"
-                android:layout_toEndOf="@+id/id_tv_protocol_ui"
-                android:layout_marginStart="10dp"
-                android:text="0"
-                android:inputType="number"/>
+            <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                  android:id="@+id/id_hsv_protocol_fields"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentStart="true"
+                                  android:layout_below="@id/id_spn_tcp_ip_client_protocol"
+                                  android:layout_marginTop="20dp">
 
-            <TextView
-                android:id="@+id/id_tv_write_value_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/id_tv_protocol_addr_value"
-                android:layout_marginStart="10dp"
-                android:text="@string/text_tv_write_value_off"
-                android:labelFor="@+id/id_et_write_value_off"/>
+                <RelativeLayout
+                    android:id="@+id/id_rl_protocol_fields"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_write_value_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_write_value_off"
-                android:layout_toEndOf="@+id/id_tv_protocol_addr_value"
-                android:layout_marginStart="10dp"
-                android:text="0"
-                android:inputType="number"/>
+                    <TextView
+                        android:id="@+id/id_tv_protocol_ui"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_tv_protocol_ui"
+                        android:labelFor="@+id/id_et_protocol_ui"/>
 
-            <TextView
-                android:id="@+id/id_tv_write_value_off_on"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/id_tv_write_value_off"
-                android:layout_marginStart="10dp"
-                android:text="@string/text_tv_write_value_off_on"
-                android:labelFor="@+id/id_et_write_value_off_on"/>
+                    <com.pretolesi.easydomotic.CustomControls.NumericEditText
+                        android:id="@+id/id_et_protocol_ui"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_tv_protocol_ui"
+                        android:text="0"
+                        android:inputType="number"/>
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_write_value_off_on"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_write_value_off_on"
-                android:layout_toEndOf="@+id/id_tv_write_value_off"
-                android:layout_marginStart="10dp"
-                android:text="0"
-                android:inputType="number"/>
+                    <TextView
+                        android:id="@+id/id_tv_protocol_addr_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/id_tv_protocol_ui"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/text_tv_protocol_addr_value"
+                        android:labelFor="@+id/id_et_protocol_addr_value"/>
 
-            <TextView
-                android:id="@+id/id_tv_write_value_on_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/id_tv_write_value_off_on"
-                android:layout_marginStart="10dp"
-                android:text="@string/text_tv_write_value_on_off"
-                android:labelFor="@+id/id_et_write_value_on_off"/>
+                    <com.pretolesi.easydomotic.CustomControls.NumericEditText
+                        android:id="@+id/id_et_protocol_addr_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_tv_protocol_addr_value"
+                        android:layout_toEndOf="@+id/id_tv_protocol_ui"
+                        android:layout_marginStart="10dp"
+                        android:text="0"
+                        android:inputType="number"/>
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_write_value_on_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_write_value_on_off"
-                android:layout_toEndOf="@+id/id_tv_write_value_off_on"
-                android:layout_marginStart="10dp"
-                android:text="0"
-                android:inputType="number"/>
+                </RelativeLayout>
+            </HorizontalScrollView>
 
             <TextView
-                android:id="@+id/id_tv_write_value_on"
+                android:id="@+id/id_tv_protocol_data_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/id_tv_write_value_off_on"
-                android:layout_marginStart="10dp"
-                android:text="@string/text_tv_write_value_on"
-                android:labelFor="@+id/id_et_write_value_on"/>
+                android:layout_below="@+id/id_hsv_protocol_fields"
+                android:layout_alignParentStart="true"
+                android:text="@string/text_tv_data_type"/>
 
-            <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                android:id="@+id/id_et_write_value_on"
+            <Spinner
+                android:id="@+id/id_spn_protocol_data_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/id_tv_write_value_on"
-                android:layout_toEndOf="@+id/id_tv_write_value_off_on"
-                android:layout_marginStart="10dp"
-                android:text="0"
-                android:inputType="number"/>
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/id_tv_protocol_data_type" />
 
-        </RelativeLayout>
-    </HorizontalScrollView>
+
 </RelativeLayout>
