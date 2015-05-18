@@ -84,7 +84,7 @@ public class LightSwitchPropActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.light_switch_property_activity);
 
-        m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
+        m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room_name);
         m_id_et_light_switch_name = (StringEditText)findViewById(R.id.id_et_name);
         m_id_et_light_switch_name.setInputLimit(BaseValueData.TAGMinChar, BaseValueData.TAGMaxChar);
         m_id_et_light_switch_name.setText(BaseValueData.TAGDefaultValue);

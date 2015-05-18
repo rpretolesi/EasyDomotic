@@ -81,7 +81,7 @@ public class NumericValuePropActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nnumeric_vvalue_property_activity);
 
-        m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room);
+        m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room_name);
         m_id_et_name = (StringEditText)findViewById(R.id.id_et_name);
         m_id_et_name.setInputLimit(NumericValueData.TAGMinChar, NumericValueData.TAGMaxChar);
         m_id_et_name.setText(NumericValueData.TAGDefaultValue);
