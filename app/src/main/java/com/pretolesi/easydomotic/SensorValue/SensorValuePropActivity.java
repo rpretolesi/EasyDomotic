@@ -550,7 +550,7 @@ public class SensorValuePropActivity extends Activity implements
             } else {
                 lRoomID = m_lRoomIDParameter;
             }
-
+/*
             if (!SQLContract.NumericValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
                 saveSensorValueData(iDialogOriginID);
             } else {
@@ -562,6 +562,7 @@ public class SensorValuePropActivity extends Activity implements
                         getString(R.string.text_yndf_btn_no)
                 ).show(getFragmentManager(), "");
             }
+*/
         }
     }
 
@@ -700,7 +701,7 @@ public class SensorValuePropActivity extends Activity implements
     }
     private void deleteSensorValueData(int iDialogOriginID) {
         if(m_svd != null) {
-            SQLContract.NumericValueEntry.delete(m_svd.getID(), m_svd.getRoomID());
+//            SQLContract.NumericValueEntry.delete(m_svd.getID(), m_svd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }

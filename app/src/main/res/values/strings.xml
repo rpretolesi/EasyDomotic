@@ -98,6 +98,9 @@
     <string name="text_odf_title_protocol_not_valid">Protocol values are not valid.</string>
     <string name="text_odf_message_protocol_not_valid">Please set a valid Protocol values.</string>
 
+    <string name="text_odf_title_format_not_valid">Format values are not valid.</string>
+    <string name="text_odf_message_format_not_valid">Please set a valid Format values.</string>
+
     <string name="text_odf_title_saving">Saving &#8230; </string>
     <string name="text_odf_message_saving_ok">Saving OK.</string>
     <string name="text_odf_message_saving_error">Saving Error.</string>

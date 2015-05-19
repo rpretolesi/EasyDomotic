@@ -69,7 +69,6 @@ public class SQLHelper extends SQLiteOpenHelper {
         db.execSQL(SQLContract.TcpIpClientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.BaseValueEntry.SQL_CREATE_ENTRIES);
-        db.execSQL(SQLContract.NumericValueEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.SensorValueEntry.SQL_CREATE_ENTRIES);
     }
 
@@ -80,7 +79,6 @@ public class SQLHelper extends SQLiteOpenHelper {
         db.execSQL(SQLContract.TcpIpClientEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.BaseValueEntry.SQL_DELETE_ENTRIES);
-        db.execSQL(SQLContract.NumericValueEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.SensorValueEntry.SQL_DELETE_ENTRIES);
 
         onCreate(db);

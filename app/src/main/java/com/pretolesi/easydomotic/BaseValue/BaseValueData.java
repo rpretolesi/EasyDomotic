@@ -26,6 +26,24 @@ public class BaseValueData implements Parcelable {
 
     public static int ProtTcpIpClientValueDataTypeDefaul = -1;
 
+    public static String ValueDefaulValue = "###";
+
+    public static int ValueMinNrCharToShowMinValue = 1;
+    public static int ValueMinNrCharToShowMaxValue = 9;
+    public static String ValueMinNrCharToShowDefaulValue = "3";
+
+    public static int ValueNrOfDecimalMinValue = 0;
+    public static int ValueNrOfDecimalMaxValue = 5;
+    public static String ValueNrOfDecimalDefaulValue = "0";
+
+    public static short ValueUMMinValue = 0;
+    public static short ValueUMMaxValue = 9;
+    public static String ValueUMDefaulValue = "";
+
+    public static int ValueUpdateMillisMinValue = 100;
+    public static int ValueUpdateMillisMaxValue = 65535;
+    public static String ValueUpdateMillisDefaulValue = "1000";
+
     public static String WriteValueOFFDefault = "1";
     public static String WriteValueOFFONDefault = "3";
     public static String WriteValueONOFFDefault = "7";
@@ -54,6 +72,7 @@ public class BaseValueData implements Parcelable {
     private int m_iValueNrOfDecimal;
     private String m_strValueUM;
     private int m_iValueUpdateMillis;
+    private boolean m_bValueReadOnly;
 
     // Switch
     private int m_iWriteValueOFF;
@@ -99,6 +118,7 @@ public class BaseValueData implements Parcelable {
         m_iWriteValueOFFON = 3;
         m_iWriteValueONOFF = 7;
         m_iWriteValueON = 4;
+        m_bValueReadOnly = false;
 
         // Sensor
         m_lSensorTypeID = -1;
@@ -129,12 +149,13 @@ public class BaseValueData implements Parcelable {
         this.m_iProtTcpIpClientValueDataType = iProtTcpIpClientValueDataType;
     }
 
-    public void setFormatValue(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, int iValueUpdateMillis) {
+    public void setFormatValue(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, int iValueUpdateMillis, boolean bValueReadOnly) {
         // Format Value
         m_iValueMinNrCharToShow = iValueMinNrCharToShow;
         m_iValueNrOfDecimal = iValueNrOfDecimal;
         m_strValueUM = strValueUM;
         m_iValueUpdateMillis = iValueUpdateMillis;
+        m_bValueReadOnly = bValueReadOnly;
     }
 
     public void setSwitchValue(int iWriteValueOFF, int iWriteValueOFFON, int iWriteValueONOFF, int iWriteValueON) {
@@ -192,6 +213,8 @@ public class BaseValueData implements Parcelable {
     public void setValueUM(String strValueUM) { this.m_strValueUM = strValueUM; }
 
     public void setValueUpdateMillis(int iValueUpdateMillis) { this.m_iValueUpdateMillis = iValueUpdateMillis; }
+
+    public void setValueValueReadOnly(boolean bValueReadOnly) { this.m_bValueReadOnly = bValueReadOnly; }
 
     // Switch
     public void setWriteValueOFF(int iWriteValueOFF) { this.m_iWriteValueOFF = iWriteValueOFF; }
@@ -280,6 +303,8 @@ public class BaseValueData implements Parcelable {
 
     public int getValueUpdateMillis() { return m_iValueUpdateMillis; }
 
+    public boolean getValueReadOnly() { return m_bValueReadOnly; }
+
     // Switch
     public int getWriteValueOFF() { return m_iWriteValueOFF; }
 
@@ -335,6 +360,7 @@ public class BaseValueData implements Parcelable {
         m_iValueNrOfDecimal = in.readInt();
         m_strValueUM = in.readString();
         m_iValueUpdateMillis = in.readInt();
+        m_bValueReadOnly = in.readByte() != 0;
 
         m_iWriteValueOFF = in.readInt();
         m_iWriteValueOFFON = in.readInt();
@@ -369,6 +395,7 @@ public class BaseValueData implements Parcelable {
         dest.writeInt(m_iValueNrOfDecimal);
         dest.writeString(m_strValueUM);
         dest.writeInt(m_iValueUpdateMillis);
+        dest.writeByte((byte) (m_bValueReadOnly ? 1 : 0));
 
         dest.writeInt(m_iWriteValueOFF);
         dest.writeInt(m_iWriteValueOFFON);

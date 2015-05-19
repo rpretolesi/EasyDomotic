@@ -22,7 +22,6 @@ import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
-import com.pretolesi.easydomotic.NumerValue.NumericValueData;
 import com.pretolesi.easydomotic.SensorValue.SensorValue;
 import com.pretolesi.easydomotic.SensorValue.SensorValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -58,7 +57,6 @@ public class BaseFragment extends Fragment implements
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<BaseValueData> m_albvd;
-    protected ArrayList<NumericValueData> m_alnvd;
     protected ArrayList<SensorValueData> m_alsvd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
@@ -168,7 +166,6 @@ public class BaseFragment extends Fragment implements
         getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.SENSOR_VALUE_LOADER_ID);
 
         // Log.d(TAG, this.toString() + ": " + "onPause()");
@@ -224,16 +221,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.BaseValueEntry.load(BaseValueData.TYPE_LIGHT_SWITCH, getArguments().getLong(ROOM_ID, -1));
-                }
-            };
-        }
-
-        if(id == Loaders.NUMERIC_VALUE_LOADER_ID){
-            return new CursorLoader(getActivity()){
-                @Override
-                public Cursor loadInBackground() {
-                    return SQLContract.NumericValueEntry.load(getArguments().getLong(ROOM_ID, -1));
+                    return SQLContract.BaseValueEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -284,7 +272,6 @@ public class BaseFragment extends Fragment implements
 
                     // Room's elements
                     getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
-                    getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
                     getLoaderManager().initLoader(Loaders.SENSOR_VALUE_LOADER_ID, null, this);
                 }
             }
@@ -293,11 +280,6 @@ public class BaseFragment extends Fragment implements
         if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
             m_albvd = SQLContract.BaseValueEntry.get(cursor);
             update();
-        }
-
-        if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
-            m_alnvd = SQLContract.NumericValueEntry.get(cursor);
-            updateNumericValues();
         }
 
         if(loader.getId() == Loaders.SENSOR_VALUE_LOADER_ID) {
@@ -402,23 +384,23 @@ public class BaseFragment extends Fragment implements
                             }
                             setViewPosition(ls, bvd.getPosX(), bvd.getPosY());
                             m_rl.addView(ls);
-                    }
-                }
-            }
-        }
-    }
 
-    private void updateNumericValues(){
-        // Define the switch
-        if(m_rl != null && m_alnvd != null){
-            for(NumericValueData nvd : m_alnvd){
-                if(nvd != null){
-                    NumericValue nv = new NumericValue(getActivity(), nvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                    if(nvd.getLandscape()){
-                        ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
+                            break;
+
+                        case BaseValueData.TYPE_NUMERIC_VALUE:
+                            NumericValue nv = new NumericValue(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                            if(bvd.getLandscape()){
+                                ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
+                            }
+                            setViewPosition(nv, bvd.getPosX(), bvd.getPosY());
+                            m_rl.addView(nv);
+
+
+
+
+
+
                     }
-                    setViewPosition(nv, nvd.getPosX(), nvd.getPosY());
-                    m_rl.addView(nv);
                 }
             }
         }
