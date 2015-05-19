@@ -19,9 +19,11 @@ public class BaseValueData implements Parcelable {
     public static int ProtTcpIpClientValueIDMinValue = 0;
     public static int ProtTcpIpClientValueIDMaxValue = 32768;
     public static String ProtTcpIpClientValueIDDefaulValue = "0";
+
     public static int ProtTcpIpClientValueAddressMin = 0;
     public static int ProtTcpIpClientValueAddressMax = 65535;
-    public static String ProtTcpIpClientValueAddressDefaul = "10000";
+    public static String ProtTcpIpClientValueAddressDefaul = "0";
+
     public static int ProtTcpIpClientValueDataTypeDefaul = -1;
 
     public static String WriteValueOFFDefault = "1";
@@ -82,7 +84,7 @@ public class BaseValueData implements Parcelable {
         // Protocol Tcp Ip Client
         m_bProtTcpIpClientEnable = false;
         m_lProtTcpIpClientID = -1;
-        m_iProtTcpIpClientValueID = -1;
+        m_iProtTcpIpClientValueID = 0;
         m_iProtTcpIpClientValueAddress = 0;
         m_iProtTcpIpClientValueDataType = -1;
 
@@ -93,10 +95,10 @@ public class BaseValueData implements Parcelable {
         m_iValueUpdateMillis = 1000;
 
         // Switch
-        m_iWriteValueOFF = 0;
-        m_iWriteValueOFFON = 0;
-        m_iWriteValueONOFF = 0;
-        m_iWriteValueON = 0;
+        m_iWriteValueOFF = 1;
+        m_iWriteValueOFFON = 3;
+        m_iWriteValueONOFF = 7;
+        m_iWriteValueON = 4;
 
         // Sensor
         m_lSensorTypeID = -1;
@@ -333,6 +335,11 @@ public class BaseValueData implements Parcelable {
         m_iValueNrOfDecimal = in.readInt();
         m_strValueUM = in.readString();
         m_iValueUpdateMillis = in.readInt();
+
+        m_iWriteValueOFF = in.readInt();
+        m_iWriteValueOFFON = in.readInt();
+        m_iWriteValueONOFF = in.readInt();
+        m_iWriteValueON = in.readInt();
     }
 
     @Override
@@ -362,6 +369,11 @@ public class BaseValueData implements Parcelable {
         dest.writeInt(m_iValueNrOfDecimal);
         dest.writeString(m_strValueUM);
         dest.writeInt(m_iValueUpdateMillis);
+
+        dest.writeInt(m_iWriteValueOFF);
+        dest.writeInt(m_iWriteValueOFFON);
+        dest.writeInt(m_iWriteValueONOFF);
+        dest.writeInt(m_iWriteValueON);
     }
 
     @SuppressWarnings("unused")

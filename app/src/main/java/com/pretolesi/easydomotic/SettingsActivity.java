@@ -279,62 +279,6 @@ public class SettingsActivity extends BaseActivity implements
         Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
         return false;
     }
-
-//    /**
-//     * Room Fragment for build my custom fragment
-//     */
-//    public static class RoomFragment extends BaseFragment {
-
-        /**
-        * Returns a new instance of this fragment for the given section
-        * number.
-        */
-/*
-        public static RoomFragment newInstance(int sectionNumber, long id, RoomFragmentData rfd, ArrayList<LightSwitchData> allsd) {
-            RoomFragment fragment = new RoomFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            args.putLong(_ID, id);
-            args.putParcelable(ARG_ROOM_DATA, rfd);
-            args.putParcelableArrayList(ARG_LIGHT_SWITCH_DATA, allsd);
-            args.putBoolean(EDIT_MODE, false);
-            fragment.setArguments(args);
-            return fragment;
-        }
-*/
-        /*
-        public static RoomFragment newInstance(int sectionNumber, long id) {
-            RoomFragment fragment = new RoomFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            args.putLong(_ID, id);
-            args.putBoolean(EDIT_MODE, false);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public RoomFragment() {
-        }
-
-        @Override
-        public void  onCreate (Bundle savedInstanceState){
-            super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return super.onCreateView(inflater, container, savedInstanceState);
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((SettingsActivity) activity).onSectionAttached(getTag());
-            ((SettingsActivity) activity).restoreActionBar();
-        }
-
-    }
-*/
     public static Intent makeSettingsActivity(Context context)
     {
         Intent intent = new Intent();

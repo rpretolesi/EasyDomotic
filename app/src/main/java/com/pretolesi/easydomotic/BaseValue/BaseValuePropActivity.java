@@ -44,6 +44,7 @@ public class BaseValuePropActivity extends Activity implements
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
     protected static final String TAG = "BaseValuePropActivity";
 
+    protected static final String TYPE = "Type";
     protected static final String ROOM_ID = "Room_ID";
     protected static final String BASE_VALUE_ID = "Base_Value_ID";
     protected static final String BASE_VALUE_DATA = "Base_Value_Data";
@@ -69,8 +70,8 @@ public class BaseValuePropActivity extends Activity implements
     protected Spinner m_id_spn_protocol_data_type;
 
     protected BaseValueData m_bvd;
+    protected int m_iTypeParameter;
     protected long m_lRoomIDParameter;
-    protected long m_lIDParameter;
     protected BaseValueData m_bvdParameter;
     protected SimpleCursorAdapter m_TcpIpClientAdapter;
 
@@ -103,6 +104,7 @@ public class BaseValuePropActivity extends Activity implements
                 m_id_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
                 m_id_et_protocol_ui.setEnabled(((CheckBox) v).isChecked());
                 m_id_et_protocol_addr_value.setEnabled(((CheckBox) v).isChecked());
+                m_id_spn_protocol_data_type.setEnabled(((CheckBox) v).isChecked());
             }
         });
 
@@ -116,8 +118,15 @@ public class BaseValuePropActivity extends Activity implements
         m_id_et_protocol_addr_value.setEnabled(false);
         m_id_spn_protocol_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
         m_id_spn_protocol_data_type.setSelection(BaseValueData.ProtTcpIpClientValueDataTypeDefaul);
+        m_id_spn_protocol_data_type.setEnabled(false);
 
         setActionBar();
+        Intent intent = getIntent();
+        if(intent != null) {
+            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
+            m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
+            m_bvdParameter = intent.getParcelableExtra(BASE_VALUE_DATA);
+        }
 
         m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
@@ -227,7 +236,7 @@ public class BaseValuePropActivity extends Activity implements
                     if(m_bvdParameter != null){
                         cursor = SQLContract.BaseValueEntry.loadFromBaseValueData(m_bvdParameter);
                     } else {
-                        cursor = SQLContract.BaseValueEntry.load(m_lIDParameter, m_lRoomIDParameter);
+                        cursor = SQLContract.BaseValueEntry.load(m_iTypeParameter, m_lRoomIDParameter);
                     }
                     return cursor;
                 }
@@ -307,7 +316,15 @@ public class BaseValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    setBaseData(iDialogOriginID);
+                    if(setBaseData(iDialogOriginID)){
+                        if(SQLContract.BaseValueEntry.save(m_bvd)){
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        } else {
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        }
+                    }
                 }
                 if(bNo) {
                     // no action
@@ -317,7 +334,7 @@ public class BaseValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.DELETE_CONFIRM_ID) {
                 if(bYes) {
                     // Delete
-                    deleteLightSwitchData(iDialogOriginID);                }
+                    deleteBaseValueData(iDialogOriginID);                }
                 if(bNo) {
                     // No action...
                 }
@@ -328,7 +345,15 @@ public class BaseValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    setBaseData(iDialogOriginID);
+                    if(setBaseData(iDialogOriginID)){
+                        if(SQLContract.BaseValueEntry.save(m_bvd)){
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        } else {
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        }
+                    }
                 }
                 if(bNo) {
                     super.onBackPressed();
@@ -375,67 +400,72 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         // Dati
-        if (m_bvd != null) {
-            if (m_id_et_name != null) {
-                m_id_et_name.setText(m_bvd.getTag());
-            }
+        if (m_bvd == null) {
+            return ;
+        }
+        if (m_id_et_name != null) {
+            m_id_et_name.setText(m_bvd.getTag());
+        }
 
-            if (m_bvd.getLandscape()) {
-                if (m_id_rb_landscape != null) {
-                    m_id_rb_landscape.setChecked(true);
-                }
-                if (m_id_rb_portrait != null) {
-                    m_id_rb_portrait.setChecked(false);
-                }
-            } else {
-                if (m_id_rb_landscape != null) {
-                    m_id_rb_landscape.setChecked(false);
-                }
-                if (m_id_rb_portrait != null) {
-                    m_id_rb_portrait.setChecked(true);
-                }
+        if (m_bvd.getLandscape()) {
+            if (m_id_rb_landscape != null) {
+                m_id_rb_landscape.setChecked(true);
             }
+            if (m_id_rb_portrait != null) {
+                m_id_rb_portrait.setChecked(false);
+            }
+        } else {
+            if (m_id_rb_landscape != null) {
+                m_id_rb_landscape.setChecked(false);
+            }
+            if (m_id_rb_portrait != null) {
+                m_id_rb_portrait.setChecked(true);
+            }
+        }
 
-            if (m_id_et_position_x != null) {
-                m_id_et_position_x.setText(Float.toString(m_bvd.getPosX()));
-            }
-            if (m_id_et_position_y != null) {
-                m_id_et_position_y.setText(Float.toString(m_bvd.getPosY()));
-            }
-            if (m_id_et_position_z != null) {
-                m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
-            }
+        if (m_id_et_position_x != null) {
+            m_id_et_position_x.setText(Float.toString(m_bvd.getPosX()));
+        }
+        if (m_id_et_position_y != null) {
+            m_id_et_position_y.setText(Float.toString(m_bvd.getPosY()));
+        }
+        if (m_id_et_position_z != null) {
+            m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
+        }
 
-            if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
-                for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
-                    Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
-                    if (value != null) {
-                        long id = value.getLong(value.getColumnIndex("_id"));
-                        if (id == m_bvd.getProtTcpIpClientID()) {
-                            m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
-                            m_id_spn_tcp_ip_client_protocol.setSelection(i);
-
-                            m_id_spn_tcp_ip_client_protocol.setEnabled(m_bvd.getProtTcpIpClientEnable());
-                            m_id_et_protocol_ui.setEnabled(m_bvd.getProtTcpIpClientEnable());
-                            m_id_et_protocol_addr_value.setEnabled(m_bvd.getProtTcpIpClientEnable());
+        if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
+            for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
+                Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
+                if (value != null) {
+                    long id = value.getLong(value.getColumnIndex("_id"));
+                    if (id == m_bvd.getProtTcpIpClientID()) {
+                        m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
+                        m_id_spn_tcp_ip_client_protocol.setSelection(i);
+                        if (m_id_et_protocol_ui != null) {
+                            m_id_et_protocol_ui.setEnabled(true);
+                        }
+                        if (m_id_et_protocol_addr_value != null) {
+                            m_id_et_protocol_addr_value.setEnabled(true);
+                        }
+                        if(m_id_spn_protocol_data_type != null) {
+                            m_id_spn_protocol_data_type.setEnabled(true);
                         }
                     }
                 }
             }
-            if (m_id_et_protocol_ui != null) {
-                m_id_et_protocol_ui.setText(Integer.toString(m_bvd.getProtTcpIpClientValueID()));
-            }
-            if (m_id_et_protocol_addr_value != null) {
-                m_id_et_protocol_addr_value.setText(Integer.toString(m_bvd.getProtTcpIpClientValueAddress()));
-            }
-            if(m_id_spn_protocol_data_type != null) {
-                long lItem = -1;
-                try{
-                    lItem = m_bvd.getProtTcpIpClientValueDataType();
-                } catch (Exception ignore) { }
-                m_id_spn_protocol_data_type.setSelection((int) lItem);
-            }
-
+        }
+        if (m_id_et_protocol_ui != null) {
+            m_id_et_protocol_ui.setText(Integer.toString(m_bvd.getProtTcpIpClientValueID()));
+        }
+        if (m_id_et_protocol_addr_value != null) {
+            m_id_et_protocol_addr_value.setText(Integer.toString(m_bvd.getProtTcpIpClientValueAddress()));
+        }
+        if(m_id_spn_protocol_data_type != null) {
+            long lItem = -1;
+            try{
+                lItem = m_bvd.getProtTcpIpClientValueDataType();
+            } catch (Exception ignore) { }
+            m_id_spn_protocol_data_type.setSelection((int) lItem);
         }
     }
 
@@ -565,9 +595,9 @@ public class BaseValuePropActivity extends Activity implements
                 getString(R.string.text_yndf_btn_no)
         ).show(getFragmentManager(), "");
     }
-    private void deleteLightSwitchData(int iDialogOriginID) {
+    private void deleteBaseValueData(int iDialogOriginID) {
         if(m_bvd != null) {
-            SQLContract.LightSwitchEntry.delete(m_bvd.getID(), m_bvd.getRoomID());
+            SQLContract.BaseValueEntry.delete(m_bvd.getID(), m_bvd.getRoomID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }

@@ -49,7 +49,7 @@ public class BaseFragment extends Fragment implements
      */
     public static final String ARG_SECTION_NUMBER = "section_number";
     public static final String POSITION = "position";
-    protected static final String _ID = "id";
+    protected static final String ROOM_ID = "id";
     protected static final String EDIT_MODE = "edit_mode";
 
     protected int m_iChildID;
@@ -68,7 +68,7 @@ public class BaseFragment extends Fragment implements
         BaseFragment fragment = new BaseFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putLong(_ID, id);
+        args.putLong(ROOM_ID, id);
         args.putBoolean(EDIT_MODE, bEditMode);
         fragment.setArguments(args);
         return fragment;
@@ -215,7 +215,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.RoomEntry.load(getArguments().getLong(_ID, -1));
+                    return SQLContract.RoomEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -224,7 +224,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.LightSwitchEntry.load(getArguments().getLong(_ID, -1));
+                    return SQLContract.BaseValueEntry.load(BaseValueData.TYPE_LIGHT_SWITCH, getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -233,7 +233,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.NumericValueEntry.load(getArguments().getLong(_ID, -1));
+                    return SQLContract.NumericValueEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -242,7 +242,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.SensorValueEntry.load(getArguments().getLong(_ID, -1));
+                    return SQLContract.SensorValueEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
