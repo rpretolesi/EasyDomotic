@@ -282,7 +282,7 @@ public class BaseValuePropActivity extends Activity implements
 
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
             m_TcpIpClientAdapter.swapCursor(cursor);
-            updateBaseValue();
+            getBaseValue();
         }
 
         // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
@@ -307,7 +307,7 @@ public class BaseValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveBaseData(iDialogOriginID);
+                    setBaseData(iDialogOriginID);
                 }
                 if(bNo) {
                     // no action
@@ -328,7 +328,7 @@ public class BaseValuePropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveBaseData(iDialogOriginID);
+                    setBaseData(iDialogOriginID);
                 }
                 if(bNo) {
                     super.onBackPressed();
@@ -366,7 +366,7 @@ public class BaseValuePropActivity extends Activity implements
         }
     }
 
-    protected void updateBaseValue() {
+    protected void getBaseValue() {
         // Stato
         if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() > 0){
             m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
@@ -439,7 +439,7 @@ public class BaseValuePropActivity extends Activity implements
         }
     }
 
-    protected void save(int iDialogOriginID) {
+    private void save(int iDialogOriginID) {
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
         if(!StringEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
@@ -452,7 +452,15 @@ public class BaseValuePropActivity extends Activity implements
             }
 
             if (!SQLContract.BaseValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
-                saveBaseData(iDialogOriginID);
+                if(setBaseData(iDialogOriginID)){
+                    if(SQLContract.BaseValueEntry.save(m_bvd)){
+                        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                .show(getFragmentManager(), "");
+                    } else {
+                        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                .show(getFragmentManager(), "");
+                    }
+                }
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
                         DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
@@ -465,7 +473,7 @@ public class BaseValuePropActivity extends Activity implements
         }
     }
 
-    protected void saveBaseData(int iDialogOriginID){
+    protected boolean setBaseData(int iDialogOriginID){
         if (m_bvd == null) {
             m_bvd = new BaseValueData();
         }
@@ -473,18 +481,18 @@ public class BaseValuePropActivity extends Activity implements
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
-            return ;
+            return false;
         }
         if (m_id_et_name == null || m_id_et_name.getText().toString().equals("")) {
             OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.LIGHT_SWITCH_ERROR_NAME, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
             odf.show(getFragmentManager(), "");
-            return ;
+            return false;
         }
 
         if(getOrientation() == Orientation.UNDEFINED ) {
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.ORIENTATION_ERROR_ID, getString(R.string.text_odf_title_orientation_not_set), getString(R.string.text_odf_message_orientation_not_set), getString(R.string.text_odf_message_ok_button))
             .show(getFragmentManager(), "");
-            return ;
+            return false;
         }
 
         // Set the selected Room
@@ -515,7 +523,7 @@ public class BaseValuePropActivity extends Activity implements
         } catch (Exception ex) {
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
-            return ;
+            return false;
         }
         if(m_id_cb_enable_tcp_ip_client_protocol != null) {
             m_bvd.setProtTcpIpClientEnable(m_id_cb_enable_tcp_ip_client_protocol.isChecked());
@@ -540,17 +548,11 @@ public class BaseValuePropActivity extends Activity implements
             } catch (Exception ex) {
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
-                return ;
+                return false;
             }
         }
 
-        if(SQLContract.BaseValueEntry.save(m_bvd)){
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
-        } else {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
-        }
+        return true;
     }
 
     private void delete(int iDialogOriginID){
@@ -582,21 +584,4 @@ public class BaseValuePropActivity extends Activity implements
 
         return Orientation.UNDEFINED;
     }
-
-
-    public static Intent makeBaseValuePropActivity(Context context, long lRoomID, long lID) {
-        Intent intent = new Intent();
-        intent.setClass(context, BaseValuePropActivity.class);
-        intent.putExtra(BaseValuePropActivity.ROOM_ID, lRoomID);
-        intent.putExtra(BaseValuePropActivity.BASE_VALUE_ID, lID);
-        return intent;
-    }
-
-    public static Intent makeBaseValuePropActivity(Context context, BaseValueData bvd) {
-        Intent intent = new Intent();
-        intent.setClass(context, BaseValuePropActivity.class);
-        intent.putExtra(BaseValuePropActivity.BASE_VALUE_DATA, bvd);
-        return intent;
-    }
-
 }

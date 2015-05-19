@@ -228,7 +228,7 @@ public class BaseValueData implements Parcelable {
     // Get Method
     public long getID() { return m_ID; }
 
-    public long getType() { return m_iType; }
+    public int getType() { return m_iType; }
 
     public boolean getSaved() { return m_bSaved; }
 

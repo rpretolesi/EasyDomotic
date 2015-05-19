@@ -9,7 +9,6 @@ import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchData;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
 import com.pretolesi.easydomotic.NumerValue.NumericValueData;
@@ -58,7 +57,7 @@ public class BaseFragment extends Fragment implements
     protected TextView m_tvRoomName;
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
-    protected ArrayList<LightSwitchData> m_allsd;
+    protected ArrayList<BaseValueData> m_albvd;
     protected ArrayList<NumericValueData> m_alnvd;
     protected ArrayList<SensorValueData> m_alsvd;
 
@@ -168,7 +167,7 @@ public class BaseFragment extends Fragment implements
 
         getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.LIGHT_SWITCH_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.NUMERIC_VALUE_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.SENSOR_VALUE_LOADER_ID);
 
@@ -221,7 +220,7 @@ public class BaseFragment extends Fragment implements
             };
         }
 
-        if(id == Loaders.LIGHT_SWITCH_LOADER_ID){
+        if(id == Loaders.BASE_VALUE_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
@@ -284,16 +283,16 @@ public class BaseFragment extends Fragment implements
                     updateRoom();
 
                     // Room's elements
-                    getLoaderManager().initLoader(Loaders.LIGHT_SWITCH_LOADER_ID, null, this);
+                    getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
                     getLoaderManager().initLoader(Loaders.NUMERIC_VALUE_LOADER_ID, null, this);
                     getLoaderManager().initLoader(Loaders.SENSOR_VALUE_LOADER_ID, null, this);
                 }
             }
         }
 
-        if(loader.getId() == Loaders.LIGHT_SWITCH_LOADER_ID) {
-            m_allsd = SQLContract.LightSwitchEntry.get(cursor);
-            updateLightSwitchs();
+        if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
+            m_albvd = SQLContract.BaseValueEntry.get(cursor);
+            update();
         }
 
         if(loader.getId() == Loaders.NUMERIC_VALUE_LOADER_ID) {
@@ -390,17 +389,20 @@ public class BaseFragment extends Fragment implements
     }
 
     // Helper function
-    private void updateLightSwitchs(){
+    private void update(){
         // Define the switch
-        if(m_rl != null && m_allsd != null){
-            for(LightSwitchData lsd : m_allsd){
-                if(lsd != null){
-                    LightSwitch ls = new LightSwitch(getActivity(), lsd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                    if(lsd.getLandscape()){
-                        ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+        if(m_rl != null && m_albvd != null){
+            for(BaseValueData bvd : m_albvd){
+                if(bvd != null){
+                    switch (bvd.getType()){
+                        case BaseValueData.TYPE_LIGHT_SWITCH:
+                            LightSwitch ls = new LightSwitch(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                            if(bvd.getLandscape()){
+                                ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+                            }
+                            setViewPosition(ls, bvd.getPosX(), bvd.getPosY());
+                            m_rl.addView(ls);
                     }
-                    setViewPosition(ls, lsd.getPosX(), lsd.getPosY());
-                    m_rl.addView(ls);
                 }
             }
         }

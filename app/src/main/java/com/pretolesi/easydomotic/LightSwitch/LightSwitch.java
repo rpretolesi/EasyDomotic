@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -29,7 +30,7 @@ public class LightSwitch extends Switch implements
     private static final String TAG = "LightSwitch";
     private GestureDetectorCompat mDetector;
 
-    private LightSwitchData m_lsd;
+    private BaseValueData m_bvd;
     private int m_iMsgID;
     private int m_iTIDOFF;
     private int m_iTIDOFFON;
@@ -43,7 +44,7 @@ public class LightSwitch extends Switch implements
 
     public LightSwitch(Context context) {
         super(context);
-        this.m_lsd = null;
+        this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDOFF = -1;
         this.m_iTIDOFFON = -1;
@@ -52,22 +53,18 @@ public class LightSwitch extends Switch implements
         this.m_bEditMode = false;
     }
 
-    public LightSwitch(Context context, LightSwitchData lsd, int iMsgID, boolean bEditMode) {
+    public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
         super(context);
-        if(lsd != null) {
-            this.m_lsd = lsd;
+        if(bvd != null) {
+            this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
             this.m_iTIDOFF = m_iMsgID + 1;
             this.m_iTIDOFFON = m_iMsgID + 2;
             this.m_iTIDONOFF = m_iMsgID + 3;
             this.m_iTIDON = m_iMsgID + 4;
-            this.setTag(lsd.getTag());
+            this.setTag(bvd.getTag());
         }
         this.m_bEditMode = bEditMode;
-    }
-
-    public LightSwitchData getLightSwitchData() {
-        return m_lsd;
     }
 
     /*
@@ -78,8 +75,8 @@ public class LightSwitch extends Switch implements
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         // Listener
-        if(m_lsd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
+        if(m_bvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.registerTcpIpClientWriteSwitchStatus(this);
             }
@@ -97,8 +94,8 @@ public class LightSwitch extends Switch implements
         setOnCheckedChangeListener(null);
 
         // Listener
-        if(m_lsd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
+        if(m_bvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -110,35 +107,18 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        // Log.d(TAG, this.toString() + ": " + "onCheckedChanged() enter Check Status: " + isChecked);
+        writeSwitchValue(isChecked);
+    }
 
-        if(m_lsd != null) {
-            if(m_lsd.getProtTcpIpClientSendDataOnChange()){
-                if(isChecked){
-                    writeSwitchValueON();
+    private void writeSwitchValue(boolean bValue){
+        if(m_bvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            if(tic != null){
+                if(bValue) {
+                    tic.writeShort(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueON());
                 } else {
-                    writeSwitchValueOFF();
+                    tic.writeShort(getContext(), m_iTIDOFF, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueOFF());
                 }
-            }
-        }
-
-        // Log.d(TAG, this.toString() + ": " + "onCheckedChanged() return Check Status: " + isChecked);
-    }
-
-    private void writeSwitchValueOFF(){
-        if(m_lsd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.writeShort(getContext(), m_iTIDOFF, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueOFF());
-            }
-        }
-    }
-
-    private void writeSwitchValueON(){
-        if(m_lsd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_lsd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.writeShort(getContext(), m_iTIDON, m_lsd.getProtTcpIpClientValueID(), m_lsd.getProtTcpIpClientValueAddress(), m_lsd.getProtTcpIpClientValueON());
             }
         }
     }
@@ -146,9 +126,9 @@ public class LightSwitch extends Switch implements
     @Override
     public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
 
-        if(ticws != null && m_lsd != null){
+        if(ticws != null && m_bvd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
-                if(ticws.getServerID() == m_lsd.getProtTcpIpClientID()) {
+                if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         setError(null);
                     } else {
@@ -186,9 +166,9 @@ public class LightSwitch extends Switch implements
                 }
 
                 case MotionEvent.ACTION_UP: {
-                    if(m_lsd != null) {
-                        m_lsd.setSaved(false);
-                        Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_lsd);
+                    if(m_bvd != null) {
+                        m_bvd.setSaved(false);
+                        Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_bvd);
                         this.getContext().startActivity(intent);
                     }
                     break;
@@ -221,8 +201,8 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onDown(MotionEvent event) {
-        if(m_lsd != null) {
-            m_lsd.setSaved(false);
+        if(m_bvd != null) {
+            m_bvd.setSaved(false);
         }
 
         if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
@@ -254,10 +234,10 @@ public class LightSwitch extends Switch implements
         final float dx = x - mLastTouchX;
         final float dy = y - mLastTouchY;
 
-        if(m_lsd != null) {
+        if(m_bvd != null) {
             BaseFragment.setViewPosition(this, (int) dx, (int) dy);
-            m_lsd.setPosX((int)dx);
-            m_lsd.setPosY((int)dy);
+            m_bvd.setPosX((int)dx);
+            m_bvd.setPosY((int)dy);
         }
 
 //        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
@@ -267,12 +247,6 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onLongPress(MotionEvent e) {
-/*
-        if(m_lsd != null) {
-            Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_lsd);
-            this.getContext().startActivity(intent);
-        }
-*/
     }
 
     @Override
