@@ -24,6 +24,7 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
+import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
@@ -44,7 +45,6 @@ public class BaseValuePropActivity extends Activity implements
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
     protected static final String TAG = "BaseValuePropActivity";
 
-    protected static final String TYPE = "Type";
     protected static final String ROOM_ID = "Room_ID";
     protected static final String BASE_VALUE_ID = "Base_Value_ID";
     protected static final String BASE_VALUE_DATA = "Base_Value_Data";
@@ -70,8 +70,8 @@ public class BaseValuePropActivity extends Activity implements
     protected Spinner m_id_spn_protocol_data_type;
 
     protected BaseValueData m_bvd;
-    protected int m_iTypeParameter;
     protected long m_lRoomIDParameter;
+    protected long m_lIDParameter;
     protected BaseValueData m_bvdParameter;
     protected SimpleCursorAdapter m_TcpIpClientAdapter;
 
@@ -123,8 +123,8 @@ public class BaseValuePropActivity extends Activity implements
         setActionBar();
         Intent intent = getIntent();
         if(intent != null) {
-            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
+            m_lIDParameter = intent.getIntExtra(BASE_VALUE_ID, -1);
             m_bvdParameter = intent.getParcelableExtra(BASE_VALUE_DATA);
         }
 
@@ -232,11 +232,11 @@ public class BaseValuePropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    Cursor cursor;
+                    Cursor cursor = null;
                     if(m_bvdParameter != null){
                         cursor = SQLContract.BaseValueEntry.loadFromBaseValueData(m_bvdParameter);
-                    } else {
-                        cursor = SQLContract.BaseValueEntry.load(m_iTypeParameter, m_lRoomIDParameter);
+                    } else if (m_lIDParameter > 0){
+                        cursor = SQLContract.BaseValueEntry.loadByID(m_lIDParameter);
                     }
                     return cursor;
                 }
@@ -261,20 +261,7 @@ public class BaseValuePropActivity extends Activity implements
         // The list should now be shown.
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(cursor);
-            if(m_id_spn_room != null) {
-                long lRoomID;
-                if(m_bvdParameter != null){
-                    lRoomID = m_bvdParameter.getRoomID();
-                } else {
-                    lRoomID = m_lRoomIDParameter;
-                }
-                for (int i = 0; i < m_id_spn_room.getCount(); i++) {
-                    if (m_id_spn_room.getItemIdAtPosition(i) == lRoomID) {
-                        m_id_spn_room.setSelection(i);
-                        m_id_spn_room.setEnabled(false);
-                    }
-                }
-            }
+
             // Secondo
             getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
         }
@@ -283,6 +270,19 @@ public class BaseValuePropActivity extends Activity implements
             ArrayList<BaseValueData> albve = SQLContract.BaseValueEntry.get(cursor);
             if(albve != null && !albve.isEmpty()){
                 m_bvd = albve.get(0);
+            }
+            if(m_id_spn_room != null) {
+                long lRoomID;
+                if(m_bvd != null) {
+                    lRoomID = m_bvd.getRoomID();
+                } else {
+                    lRoomID = m_lRoomIDParameter;
+                }
+                for (int i = 0; i < m_id_spn_room.getCount(); i++) {
+                    if (m_id_spn_room.getItemIdAtPosition(i) == lRoomID) {
+                        m_id_spn_room.setSelection(i);
+                    }
+                }
             }
 
             // Terzo
@@ -481,7 +481,12 @@ public class BaseValuePropActivity extends Activity implements
                 lRoomID = m_lRoomIDParameter;
             }
 
-            if (!SQLContract.BaseValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
+            // Se non e' null, ed ha l'ID impostato,
+            // oppure
+            // Se l'ID e' maggiore di 0
+            // il Record esiste Gia'
+//            if (!SQLContract.BaseValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
+            if(!(m_bvd != null && (m_bvd.getID() > 0)) || (m_lIDParameter > 0)){
                 if(setBaseData(iDialogOriginID)){
                     if(SQLContract.BaseValueEntry.save(m_bvd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
@@ -613,5 +618,32 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         return Orientation.UNDEFINED;
+    }
+
+    public static Intent makeBaseValuePropActivity(Context context, Class cls, long lRoomID) {
+        Intent intent = new Intent();
+        intent.setClass(context, cls);
+        return intent;
+    }
+
+    public static Intent makeBaseValuePropActivityByRoomID(Context context, Class cls, long lRoomID) {
+        Intent intent = new Intent();
+        intent.setClass(context, cls);
+        intent.putExtra(BaseValuePropActivity.ROOM_ID, lRoomID);
+        return intent;
+    }
+
+    public static Intent makeBaseValuePropActivityByValueID(Context context, Class cls, long lID) {
+        Intent intent = new Intent();
+        intent.setClass(context, cls);
+        intent.putExtra(BaseValuePropActivity.BASE_VALUE_ID, lID);
+        return intent;
+    }
+
+    public static Intent makeBaseValuePropActivityByValueData(Context context, Class cls, BaseValueData bvd) {
+        Intent intent = new Intent();
+        intent.setClass(context, cls);
+        intent.putExtra(BaseValuePropActivity.BASE_VALUE_DATA, bvd);
+        return intent;
     }
 }

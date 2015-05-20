@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.NumerValue.NumericValuePropActivity;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
@@ -92,7 +93,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this, rfd.getID(), -1);
+                    Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchPropActivity.class, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -110,7 +111,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = NumericValuePropActivity.makeNumericValuePropActivity(this, rfd.getID(), -1);
+                    Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByRoomID(this, NumericValuePropActivity.class, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -128,7 +129,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this, rfd.getID(), -1);
+                    Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this, rfd.getID(), BaseValueData.TYPE_SENSOR_VALUE);
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))

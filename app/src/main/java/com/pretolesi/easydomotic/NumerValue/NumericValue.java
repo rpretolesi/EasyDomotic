@@ -214,7 +214,7 @@ public class NumericValue extends BaseValue implements
                 m_bvd.setSaved(false);
                 m_bvd.setPosX((int)getX());
                 m_bvd.setPosY((int)getY());
-                Intent intent = NumericValuePropActivity.makeNumericValuePropActivity(this.getContext(), m_bvd);
+                Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByValueData(this.getContext(), NumericValuePropActivity.class, m_bvd);
                 this.getContext().startActivity(intent);
             } else {
                 if(!m_bvd.getValueReadOnly()){

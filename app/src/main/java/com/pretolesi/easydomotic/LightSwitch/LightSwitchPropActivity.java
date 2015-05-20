@@ -111,19 +111,4 @@ public class LightSwitchPropActivity extends BaseValuePropActivity implements
 
         return bRes;
     }
-
-    public static Intent makeLightSwitchPropActivity(Context context, long lRoomID, long lID) {
-        Intent intent = new Intent();
-        intent.setClass(context, LightSwitchPropActivity.class);
-        intent.putExtra(LightSwitchPropActivity.ROOM_ID, lRoomID);
-        intent.putExtra(LightSwitchPropActivity.BASE_VALUE_ID, lID);
-        return intent;
-    }
-
-    public static Intent makeLightSwitchPropActivity(Context context, BaseValueData bvd) {
-        Intent intent = new Intent();
-        intent.setClass(context, LightSwitchPropActivity.class);
-        intent.putExtra(LightSwitchPropActivity.BASE_VALUE_DATA, bvd);
-        return intent;
-    }
 }

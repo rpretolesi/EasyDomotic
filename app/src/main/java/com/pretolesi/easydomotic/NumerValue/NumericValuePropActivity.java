@@ -134,20 +134,4 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
 
         return bRes;
     }
-
-     public static Intent makeNumericValuePropActivity(Context context, long lRoomID, long lID) {
-        Intent intent = new Intent();
-        intent.setClass(context, NumericValuePropActivity.class);
-        intent.putExtra(NumericValuePropActivity.ROOM_ID, lRoomID);
-        intent.putExtra(NumericValuePropActivity.BASE_VALUE_ID, lID);
-        return intent;
-    }
-
-    public static Intent makeNumericValuePropActivity(Context context, BaseValueData bvd) {
-        Intent intent = new Intent();
-        intent.setClass(context, NumericValuePropActivity.class);
-        intent.putExtra(NumericValuePropActivity.BASE_VALUE_ID, bvd);
-        return intent;
-    }
-
 }

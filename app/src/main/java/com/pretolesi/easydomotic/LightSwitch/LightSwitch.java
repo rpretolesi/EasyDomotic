@@ -168,7 +168,7 @@ public class LightSwitch extends Switch implements
                 case MotionEvent.ACTION_UP: {
                     if(m_bvd != null) {
                         m_bvd.setSaved(false);
-                        Intent intent = LightSwitchPropActivity.makeLightSwitchPropActivity(this.getContext(), m_bvd);
+                        Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByValueData(this.getContext(), LightSwitchPropActivity.class, m_bvd);
                         this.getContext().startActivity(intent);
                     }
                     break;

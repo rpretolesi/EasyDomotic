@@ -367,7 +367,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-
+/*
         public static boolean save(ArrayList<BaseValueData> albve)  {
 
             boolean bRes = true;
@@ -435,7 +435,7 @@ public class SQLContract
             return bRes;
 
         }
-
+*/
         public static boolean save(BaseValueData bve)  {
 
             boolean bRes = true;
@@ -479,9 +479,9 @@ public class SQLContract
                     values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bve.getSensorLowPassFilterK());
                     values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bve.getSensorSampleTime());
 
-                    String whereClause = _ID + " = ? AND " +  COLUMN_NAME_ROOM_ID + " = ?";
+                    String whereClause = _ID + " = ? ";
 
-                    String[] whereArgs = {String.valueOf(bve.getID()), String.valueOf(bve.getRoomID())};
+                    String[] whereArgs = {String.valueOf(bve.getID())};
                     long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, bve.getID());
                     // Update or Save
                     if (id > 0) {
@@ -650,6 +650,83 @@ public class SQLContract
                     String whereClause = COLUMN_NAME_TYPE + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
 
                     String[] wherenArgs = { String.valueOf(iType), String.valueOf(lRoomID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor loadByID(long lID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TYPE,
+                                    COLUMN_NAME_ROOM_ID,
+                                    COLUMN_NAME_TAG,
+                                    COLUMN_NAME_X,
+                                    COLUMN_NAME_Y,
+                                    COLUMN_NAME_Z,
+                                    COLUMN_NAME_LANDSCAPE,
+
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+
+                                    COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
+                                    COLUMN_NAME_VALUE_NR_OF_DECIMAL,
+                                    COLUMN_NAME_VALUE_UM,
+                                    COLUMN_NAME_VALUE_UPDATE_MILLIS,
+                                    COLUMN_NAME_VALUE_READ_ONLY,
+
+                                    COLUMN_NAME_WRITE_VALUE_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_OFF_ON,
+                                    COLUMN_NAME_WRITE_VALUE_ON_OFF,
+                                    COLUMN_NAME_WRITE_VALUE_ON,
+
+                                    COLUMN_NAME_SENSOR_TYPE_ID,
+                                    COLUMN_NAME_SENSOR_VALUE_ID,
+                                    COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
+                                    COLUMN_NAME_SENSOR_AMPL_K,
+                                    COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(lID) };
 
                     cursor = db.query(
                             TABLE_NAME,                 // The table to query
