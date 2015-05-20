@@ -55,8 +55,8 @@ public class BaseValueData implements Parcelable {
     public static String SensorAmplKDefaulValue = "1.0";
 
     public static float SensorLowPassFilterKMinValue = 0.001f;
-    public static float SensorLowPassFilterKMaxValue = 1000.0f;
-    public static String SensorLowPassFilterKDefaulValue = "1.0";
+    public static float SensorLowPassFilterKMaxValue = 0.999f;
+    public static String SensorLowPassFilterKDefaulValue = "0.1";
 
     public static int SensorSampleTimeMinValue = 1;
     public static int SensorSampleTimeMaxValue = 60000;
@@ -138,8 +138,8 @@ public class BaseValueData implements Parcelable {
         m_lSensorValueID = -1;
         m_bSensorEnableSimulation = false;
         m_fSensorAmplK = 1.0f;
-        m_fSensorLowPassFilterK = 1.0f;
-        m_iSensorSampleTime = 100;
+        m_fSensorLowPassFilterK = 0.1f;
+        m_iSensorSampleTime = 300;
     }
 
     public void setPositionValue(long id, int iType,long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
@@ -379,6 +379,13 @@ public class BaseValueData implements Parcelable {
         m_iWriteValueOFFON = in.readInt();
         m_iWriteValueONOFF = in.readInt();
         m_iWriteValueON = in.readInt();
+
+        m_lSensorTypeID = in.readLong();
+        m_lSensorValueID = in.readLong();
+        m_bSensorEnableSimulation = in.readByte() != 0;
+        m_fSensorAmplK = in.readFloat();
+        m_fSensorLowPassFilterK = in.readFloat();
+        m_iSensorSampleTime = in.readInt();
     }
 
     @Override
@@ -414,6 +421,13 @@ public class BaseValueData implements Parcelable {
         dest.writeInt(m_iWriteValueOFFON);
         dest.writeInt(m_iWriteValueONOFF);
         dest.writeInt(m_iWriteValueON);
+
+        dest.writeLong(m_lSensorTypeID);
+        dest.writeLong(m_lSensorValueID);
+        dest.writeByte((byte) (m_bSensorEnableSimulation ? 1 : 0));
+        dest.writeFloat(m_fSensorAmplK);
+        dest.writeFloat(m_fSensorLowPassFilterK);
+        dest.writeInt(m_iSensorSampleTime);
     }
 
     @SuppressWarnings("unused")

@@ -34,7 +34,11 @@ public class SensorValue extends BaseValue implements
     private int m_iSensorType;
 
     // Storage for Sensor readings
-    private float[] m_SensorValue;
+    private float[] m_SensorValueNow;
+    private float[] m_SensorValueFiltered;
+    private float[] m_SensorValueOut;
+
+    private long m_lTimeLast;
 
     // Rotation around the Z axis
 //    private double m_RotationInDegress;
@@ -50,7 +54,9 @@ public class SensorValue extends BaseValue implements
         m_SensorManager = null;
         m_Sensor = null;
         m_iSensorType = 0;
-        m_SensorValue = null;
+        m_SensorValueNow = null;
+        m_SensorValueFiltered = null;
+        m_SensorValueOut = null;
     }
 
     public SensorValue(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
@@ -68,7 +74,9 @@ public class SensorValue extends BaseValue implements
         m_SensorManager = null;
         m_Sensor = null;
         m_iSensorType = 0;
-        m_SensorValue = null;
+        m_SensorValueNow = null;
+        m_SensorValueFiltered = null;
+        m_SensorValueOut = null;
     }
 
     @Override
@@ -104,7 +112,9 @@ public class SensorValue extends BaseValue implements
                         m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorType);
                         if (m_Sensor != null) {
                             // Create array for value
-                            m_SensorValue = new float[6];
+                            m_SensorValueNow = new float[6];
+                            m_SensorValueFiltered = new float[6];
+                            m_SensorValueOut = new float[6];
 
                             // Sensor Available
                             m_SensorManager.registerListener(this, m_Sensor, SensorManager.SENSOR_DELAY_UI);
@@ -280,15 +290,30 @@ public class SensorValue extends BaseValue implements
             }
         }
     }
-
+fare la scrittura e verificare se e' il caso di visualizzare il valore in edit. provare ance la simulazione.'
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(m_SensorValue != null && m_bvd != null){
+        if(m_SensorValueOut != null && m_bvd != null){
             if(event.sensor.getType() == m_iSensorType){
-                System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
-                String strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
-                setText(strValue);
+                System.arraycopy(event.values, 0, m_SensorValueNow, 0, event.values.length);
+                long lTimeNow = System.currentTimeMillis();
+                if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTime()) {
+                    m_lTimeLast = lTimeNow;
+
+                    // Apply low-pass filter
+                    for(int i = 0; i < event.values.length; i++){
+                        m_SensorValueFiltered[i] = lowPass(m_SensorValueNow[i], m_SensorValueFiltered[i], m_bvd.getSensorLowPassFilterK());
+                        m_SensorValueOut[i] = m_SensorValueFiltered[i] * m_bvd.getSensorAmplK();
+                    }
+                    String strValue = "";
+                    if(m_bvd.getValueMinNrCharToShow() > 0){
+                        strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
+                    } else {
+                        strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
+                    }
+                    setText(strValue);
+                }
             }
         }
     }
@@ -324,4 +349,8 @@ public class SensorValue extends BaseValue implements
         }
     }
 
+    // Deemphasize transient forces
+    static float lowPass(float current, float last, float alpha) {
+        return last * alpha + current * ((float)1.0 - alpha);
+    }
 }

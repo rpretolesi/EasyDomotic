@@ -166,7 +166,7 @@
     <string name="text_tv_sensor_enable_simulation">Enable simulation</string>
     <string name="text_tv_sensor_ampl_k">Amplifier k</string>
     <string name="text_tv_sensor_low_pass_filter_k">Low pass filter k</string>
-    <string name="text_tv_sensor_sample_time_k">Sensor sample time k</string>
+    <string name="text_tv_sensor_sample_time_ms">Sensor sample time ms</string>
 
 
     <!--
