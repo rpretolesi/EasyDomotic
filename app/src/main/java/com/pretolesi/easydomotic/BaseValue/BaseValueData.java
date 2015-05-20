@@ -49,6 +49,19 @@ public class BaseValueData implements Parcelable {
     public static String WriteValueONOFFDefault = "7";
     public static String WriteValueONDefault = "4";
 
+    // Sensor
+    public static float SensorAmplKMinValue = 0.001f;
+    public static float SensorAmplKMaxValue = 1000.0f;
+    public static String SensorAmplKDefaulValue = "1.0";
+
+    public static float SensorLowPassFilterKMinValue = 0.001f;
+    public static float SensorLowPassFilterKMaxValue = 1000.0f;
+    public static String SensorLowPassFilterKDefaulValue = "1.0";
+
+    public static int SensorSampleTimeMinValue = 1;
+    public static int SensorSampleTimeMaxValue = 60000;
+    public static String SensorSampleTimeDefaulValue = "300";
+
     // Graphic
     private long m_ID;
     private int m_iType;
@@ -415,4 +428,61 @@ public class BaseValueData implements Parcelable {
             return new BaseValueData[size];
         }
     };
+
+    public enum SensorValue {
+        X_1(0, "X1 axis value or single value"),
+        Y_1(1, "Y1 axis value"),
+        Z_1(2, "Z1 axis value"),
+        X_2(3, "X2 axis or aux value 1"),
+        Y_2(4, "Y2 axis or aux value 2"),
+        Z_2(5, "Z2 axis or aux value 3");
+
+        private long m_lSensorValueID;
+        private String m_strSensorValueName;
+
+        SensorValue(long lSensorValueID, String strSensorValueName) {
+            m_lSensorValueID = lSensorValueID;
+            m_strSensorValueName = strSensorValueName;
+        }
+
+        public static SensorValue getSensorValue(long lSensorValueID) {
+            if(lSensorValueID == SensorValue.X_1.m_lSensorValueID) {
+                return SensorValue.X_1;
+            }
+            if(lSensorValueID == SensorValue.Y_1.m_lSensorValueID) {
+                return SensorValue.Y_1;
+            }
+            if(lSensorValueID == SensorValue.Z_1.m_lSensorValueID) {
+                return SensorValue.Z_1;
+            }
+            if(lSensorValueID == SensorValue.X_2.m_lSensorValueID) {
+                return SensorValue.X_2;
+            }
+            if(lSensorValueID == SensorValue.Y_2.m_lSensorValueID) {
+                return SensorValue.Y_2;
+            }
+            if(lSensorValueID == SensorValue.Z_2.m_lSensorValueID) {
+                return SensorValue.Z_2;
+            }
+            return null;
+        }
+        /*
+                public static List<SensorValue> getListSensorValue() {
+                    List<SensorValue> list;
+                    list = new ArrayList<SensorValue>();
+                            list.add(X_1);
+                            list.add(Y_1);
+                            list.add(Z_1);
+                            list.add(X_2);
+                            list.add(Y_2);
+                            list.add(Z_2);
+                    return list;
+                }
+        */
+        @Override
+        public String toString() {
+            return Long.toString(m_lSensorValueID) + "-" + m_strSensorValueName;
+        }
+
+    }
 }

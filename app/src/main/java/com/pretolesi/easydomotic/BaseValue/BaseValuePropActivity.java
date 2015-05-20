@@ -24,7 +24,6 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
@@ -474,12 +473,6 @@ public class BaseValuePropActivity extends Activity implements
         if(!StringEditText.validateInputData(findViewById(android.R.id.content))){ return; }
 
         if(m_id_et_name != null){
-            long lRoomID;
-            if(m_bvdParameter != null){
-                lRoomID = m_bvdParameter.getRoomID();
-            } else {
-                lRoomID = m_lRoomIDParameter;
-            }
 
             // Se non e' null, ed ha l'ID impostato,
             // oppure
@@ -519,7 +512,7 @@ public class BaseValuePropActivity extends Activity implements
             return false;
         }
         if (m_id_et_name == null || m_id_et_name.getText().toString().equals("")) {
-            OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.LIGHT_SWITCH_ERROR_NAME, getString(R.string.text_odf_title_light_switch_name_error), getString(R.string.text_odf_message_light_switch_name_not_valid), getString(R.string.text_odf_message_ok_button));
+            OkDialogFragment odf = OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_name_error), getString(R.string.text_odf_message_name_not_valid), getString(R.string.text_odf_message_ok_button));
             odf.show(getFragmentManager(), "");
             return false;
         }
@@ -556,7 +549,7 @@ public class BaseValuePropActivity extends Activity implements
                 m_bvd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
             }
         } catch (Exception ex) {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_position_not_valid), getString(R.string.text_odf_message_position_not_valid), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return false;
         }
@@ -581,7 +574,7 @@ public class BaseValuePropActivity extends Activity implements
                 }
 
             } catch (Exception ex) {
-                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
+                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return false;
             }
@@ -601,11 +594,30 @@ public class BaseValuePropActivity extends Activity implements
         ).show(getFragmentManager(), "");
     }
     private void deleteBaseValueData(int iDialogOriginID) {
+        long lID = -1;
+        if(m_bvd != null && m_bvd.getID() > 0) {
+            lID = m_bvd.getID();
+        } else {
+            lID = m_lIDParameter;
+        }
+        if(lID > 0){
+            if(SQLContract.BaseValueEntry.delete(lID)){
+                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+                return;
+            }
+        }
+
+        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_ERROR_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_error), getString(R.string.text_odf_message_ok_button))
+                .show(getFragmentManager(), "");
+
+/*
         if(m_bvd != null) {
-            SQLContract.BaseValueEntry.delete(m_bvd.getID(), m_bvd.getRoomID());
+            SQLContract.BaseValueEntry.delete(m_bvd.getID());
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
         }
+*/
     }
     private Orientation getOrientation() {
         if (m_id_rb_landscape != null && m_id_rb_portrait != null) {

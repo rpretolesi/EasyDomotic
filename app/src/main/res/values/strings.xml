@@ -84,16 +84,9 @@
     <string name="text_odf_title_orientation_not_set">Orientation not Set.</string>
     <string name="text_odf_message_orientation_not_set">Please set the orientation.</string>
 
-    <string name="text_odf_title_light_switch_name_error">Light Switch Name Error.</string>
-    <string name="text_odf_message_light_switch_name_not_valid">Light Switch Name not valid.</string>
-    <string name="text_odf_message_light_switch_name_already_exist">LightSwitch Name already exist.</string>
-
-    <string name="text_odf_title_numeric_value_name_error">Numeric Value Name Error.</string>
-    <string name="text_odf_message_numeric_value_name_not_valid">Numeric Value Name not valid.</string>
-    <string name="text_odf_message_numeric_value_name_already_exist">Numeric Value Name already exist.</string>
-
-    <string name="text_odf_title_position_not_valid">Position values are not valid.</string>
-    <string name="text_odf_message_position_not_valid">Please set a valid Position values.</string>
+    <string name="text_odf_title_name_error">Name Error.</string>
+    <string name="text_odf_message_name_not_valid">Name not valid.</string>
+    <string name="text_odf_message_name_already_exist">Name already exist.</string>
 
     <string name="text_odf_title_protocol_not_valid">Protocol values are not valid.</string>
     <string name="text_odf_message_protocol_not_valid">Please set a valid Protocol values.</string>

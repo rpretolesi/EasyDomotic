@@ -8,5 +8,4 @@ public class Loaders {
     public static final int ROOM_LOADER_ID = 2;
     public static final int BASE_VALUE_LOADER_ID = 3;
 
-    public static final int SENSOR_VALUE_LOADER_ID = 5;
 }

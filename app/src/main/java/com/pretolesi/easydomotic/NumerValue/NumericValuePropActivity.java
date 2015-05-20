@@ -1,40 +1,15 @@
 package com.pretolesi.easydomotic.NumerValue;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 
-import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.BaseValue.BaseValuePropActivity;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
-import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
-import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
-import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
-
-import java.util.ArrayList;
 
 /**
  *
@@ -51,7 +26,7 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.numeric_value_property_activity);
+        setContentView(R.layout.numeric_value_property_activity_1);
 
         m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
         m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
@@ -127,7 +102,7 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
             }
 
         } catch (Exception ex) {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return false;
         }

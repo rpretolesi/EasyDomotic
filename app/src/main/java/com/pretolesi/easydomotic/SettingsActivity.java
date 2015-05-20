@@ -129,7 +129,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this, rfd.getID(), BaseValueData.TYPE_SENSOR_VALUE);
+                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))

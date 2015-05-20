@@ -23,10 +23,7 @@ import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 /**
  *
  */
-public class LightSwitchPropActivity extends BaseValuePropActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>,
-        OkDialogFragment.OkDialogFragmentCallbacks,
-        YesNoDialogFragment.YesNoDialogFragmentCallbacks{
+public class LightSwitchPropActivity extends BaseValuePropActivity {
     private static final String TAG = "LightSwitchPropAct";
 
     private NumericEditText m_id_et_write_value_off;
@@ -104,7 +101,7 @@ public class LightSwitchPropActivity extends BaseValuePropActivity implements
                 m_bvd.setWriteValueON(Integer.parseInt(m_id_et_write_value_on.getText().toString()));
             }
         } catch (Exception ex) {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.POSITION_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_protocol_not_valid), getString(R.string.text_odf_message_protocol_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return false;
         }

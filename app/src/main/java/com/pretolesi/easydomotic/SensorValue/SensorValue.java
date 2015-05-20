@@ -24,7 +24,7 @@ public class SensorValue extends BaseValue implements
 
     private static final String TAG = "SensorValue";
 
-    private com.pretolesi.easydomotic.SensorValue.SensorValueData m_svd;
+    private BaseValueData m_bvd;
     private int m_iMsgID;
     private int m_iTIDWrite;
 
@@ -42,7 +42,7 @@ public class SensorValue extends BaseValue implements
 
     public SensorValue(Context context) {
         super(context);
-        this.m_svd = null;
+        this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDWrite = -1;
 
@@ -53,15 +53,15 @@ public class SensorValue extends BaseValue implements
         m_SensorValue = null;
     }
 
-    public SensorValue(Context context, com.pretolesi.easydomotic.SensorValue.SensorValueData svd, int iMsgID, boolean bEditMode) {
+    public SensorValue(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
         super(context);
-        if(svd != null) {
-            this.m_svd = svd;
+        if(bvd != null) {
+            this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
             this.m_iTIDWrite = m_iMsgID + 1;
-            this.setTag(svd.getTag());
+            this.setTag(bvd.getTag());
 
-            setNumericDataType(DataType.getDataType(m_svd.getProtTcpIpClientValueDataType()));
+            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
             setEditMode(bEditMode);
         }
         // Sensors & SensorManager
@@ -78,28 +78,28 @@ public class SensorValue extends BaseValue implements
         setText(getDefaultValue());
 
         // Listener
-        if(m_svd != null){
+        if(m_bvd != null){
             if(!getEditMode()) {
-                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                 if(tic != null){
                     tic.registerTcpIpClientWriteSwitchStatus(this);
                 }
-                if(!m_svd.getSensorEnableSimulation() && !m_svd.getProtTcpIpClientSendDataOnChange()) {
-                    setTimer(m_svd.getProtTcpIpClientValueUpdateMillis());
+                if(!m_bvd.getSensorEnableSimulation()) {
+                    setTimer(m_bvd.getValueUpdateMillis());
                 }
             }
         }
 
         // Sensor
         boolean bSensorOk = false;
-        if(m_svd != null && !m_svd.getSensorEnableSimulation()) {
+        if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
             // Get reference to SensorManager
             m_SensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
             if (m_SensorManager != null) {
                 // Get reference to Sensor
                 List<Sensor> ls = m_SensorManager.getSensorList(Sensor.TYPE_ALL);
                 if(ls != null){
-                    m_iSensorType = ls.get((int)m_svd.getSensorTypeID()).getType();
+                    m_iSensorType = ls.get((int) m_bvd.getSensorTypeID()).getType();
                     if(m_iSensorType > 0){
                         m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorType);
                         if (m_Sensor != null) {
@@ -137,8 +137,8 @@ public class SensorValue extends BaseValue implements
         }
 
         // Listener
-        if(m_svd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+        if(m_bvd != null){
+            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -150,8 +150,8 @@ public class SensorValue extends BaseValue implements
     @Override
     protected synchronized void OnWriteInputField(String strValue){
         super.OnWriteInputField(strValue);
-        if(m_svd != null){
-            DataType dtDataType = DataType.getDataType(m_svd.getProtTcpIpClientValueDataType());
+        if(m_bvd != null){
+            DataType dtDataType = DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType());
             if(dtDataType != null){
                 switch (dtDataType) {
                     case SHORT:
@@ -159,9 +159,9 @@ public class SensorValue extends BaseValue implements
                         try {
                             iValue = Integer.parseInt(strValue);
                             // Write Request
-                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeShort(getContext(), m_iTIDWrite, m_svd.getProtTcpIpClientValueID(), m_svd.getProtTcpIpClientValueAddress(), iValue);
+                                tic.writeShort(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), iValue);
                             }
 
                             return;
@@ -175,9 +175,9 @@ public class SensorValue extends BaseValue implements
                         try {
                             lValue = Long.parseLong(strValue);
                             // Write Request
-                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeInteger(getContext(), m_iTIDWrite, m_svd.getProtTcpIpClientValueID(), m_svd.getProtTcpIpClientValueAddress(), lValue);
+                                tic.writeInteger(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), lValue);
                             }
 
                             return;
@@ -191,9 +191,9 @@ public class SensorValue extends BaseValue implements
                         try {
                             lValue64 = Long.parseLong(strValue);
                             // Write Request
-                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeLong(getContext(), m_iTIDWrite, m_svd.getProtTcpIpClientValueID(), m_svd.getProtTcpIpClientValueAddress(), lValue64);
+                                tic.writeLong(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), lValue64);
                             }
 
                             return;
@@ -207,9 +207,9 @@ public class SensorValue extends BaseValue implements
                         try {
                             fValue = Float.parseFloat(strValue);
                             // Write Request
-                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeFloat(getContext(), m_iTIDWrite, m_svd.getProtTcpIpClientValueID(), m_svd.getProtTcpIpClientValueAddress(), fValue);
+                                tic.writeFloat(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), fValue);
                             }
 
                             return;
@@ -223,9 +223,9 @@ public class SensorValue extends BaseValue implements
                         try {
                             dblValue = Double.parseDouble(strValue);
                             // Write Request
-                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_svd.getProtTcpIpClientID());
+                            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                             if(tic != null){
-                                tic.writeDouble(getContext(), m_iTIDWrite, m_svd.getProtTcpIpClientValueID(), m_svd.getProtTcpIpClientValueAddress(), dblValue);
+                                tic.writeDouble(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), dblValue);
                             }
 
                             return;
@@ -242,15 +242,15 @@ public class SensorValue extends BaseValue implements
     private String getDefaultValue(){
         String strDefaultValue = "";
 
-        if(m_svd != null){
-             for(int iIndice = m_svd.getValueMinNrCharToShow() + m_svd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
-                 if(iIndice == m_svd.getValueNrOfDecimal()){
+        if(m_bvd != null){
+             for(int iIndice = m_bvd.getValueMinNrCharToShow() + m_bvd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
+                 if(iIndice == m_bvd.getValueNrOfDecimal()){
                      strDefaultValue = strDefaultValue + ".";
                  }
                  strDefaultValue = strDefaultValue + "#";
              }
-            if(m_svd.getValueUM() != null && !m_svd.getValueUM().equals("")){
-                strDefaultValue = strDefaultValue + " " + m_svd.getValueUM();
+            if(m_bvd.getValueUM() != null && !m_bvd.getValueUM().equals("")){
+                strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
             }
         } else {
             strDefaultValue = BaseValueData.ValueDefaulValue;
@@ -268,8 +268,8 @@ public class SensorValue extends BaseValue implements
 
     @Override
     public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
-        if(ticws != null && m_svd != null){
-            if(ticws.getServerID() == m_svd.getProtTcpIpClientID()){
+        if(ticws != null && m_bvd != null){
+            if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()){
                 if(ticws.getTID() == m_iTIDWrite) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         // Write Ok, i can close the Input
@@ -284,10 +284,10 @@ public class SensorValue extends BaseValue implements
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(m_SensorValue != null && m_svd != null){
+        if(m_SensorValue != null && m_bvd != null){
             if(event.sensor.getType() == m_iSensorType){
                 System.arraycopy(event.values, 0, m_SensorValue, 0, event.values.length);
-                String strValue = String.format("% " + m_svd.getValueMinNrCharToShow() + "." + m_svd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int)m_svd.getSensorValueID()], m_svd.getValueUM());
+                String strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double)m_SensorValue[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
                 setText(strValue);
             }
         }
@@ -301,15 +301,15 @@ public class SensorValue extends BaseValue implements
     @Override
     protected void onTouchActionUp(boolean bEditMode){
         super.onTouchActionUp(bEditMode);
-        if(m_svd != null) {
+        if(m_bvd != null) {
             if(bEditMode) {
-                m_svd.setSaved(false);
-                m_svd.setPosX((int)getX());
-                m_svd.setPosY((int)getY());
-                Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this.getContext(), m_svd);
+                m_bvd.setSaved(false);
+                m_bvd.setPosX((int)getX());
+                m_bvd.setPosY((int)getY());
+                Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByValueData(this.getContext(), SensorValuePropActivity.class, m_bvd);
                 this.getContext().startActivity(intent);
             } else {
-                if(m_svd.getSensorEnableSimulation()){
+                if(m_bvd.getSensorEnableSimulation()){
                     openInputField();
                 }
             }
@@ -319,7 +319,7 @@ public class SensorValue extends BaseValue implements
     @Override
     protected void onTimer(){
         super.onTimer();
-        if(m_svd != null && !m_svd.getProtTcpIpClientSendDataOnChange()) {
+        if(m_bvd != null) {
             // Write Sensor Data
         }
     }

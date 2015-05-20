@@ -18,7 +18,5 @@ public class DialogActionID {
 
     public static final int ROOM_ERROR_ID = 200;
     public static final int ORIENTATION_ERROR_ID = 201;
-    public static final int POSITION_ERROR_ID = 202;
-    public static final int LIGHT_SWITCH_ERROR_NAME = 203;
-    public static final int NUMERIC_VALUE_ERROR_NAME = 204;
+    public static final int VALUE_ERROR_ID = 203;
 }
