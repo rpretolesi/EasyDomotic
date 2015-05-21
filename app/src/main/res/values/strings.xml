@@ -50,7 +50,8 @@
     <string name="settings_title_section_edit_numeric_value">Edit Numeric Value</string>
 
     <string name="settings_title_dialog_section_add_sensor_value">Sensor Value</string>
-    <string name="settings_title_section_add_sensor_value">Add Sensor Value</string>
+    <string name="settings_title_section_add_raw_sensor_value">Add Raw Sensor Value</string>
+    <string name="settings_title_section_add_calibr_sensor_value">Add Cal. Sensor Value</string>
     <string name="settings_title_section_open_sensor_value">Open Sensor Value</string>
     <string name="settings_title_section_edit_sensor_value">Edit Sensor Value</string>
 

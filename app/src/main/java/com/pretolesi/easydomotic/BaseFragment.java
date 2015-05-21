@@ -22,6 +22,7 @@ import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
+import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
@@ -378,13 +379,23 @@ public class BaseFragment extends Fragment implements
 
                             break;
 
-                        case BaseValueData.TYPE_SENSOR_VALUE:
-                            SensorValueRaw sv = new SensorValueRaw(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        case BaseValueData.TYPE_SENSOR_RAW_VALUE:
+                            SensorValueRaw svr = new SensorValueRaw(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getLandscape()){
-                                ObjectAnimator.ofFloat(sv, "rotation", 0, 90).start();
+                                ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
                             }
-                            setViewPosition(sv, bvd.getPosX(), bvd.getPosY());
-                            m_rl.addView(sv);
+                            setViewPosition(svr, bvd.getPosX(), bvd.getPosY());
+                            m_rl.addView(svr);
+
+                            break;
+
+                        case BaseValueData.TYPE_SENSOR_CALIBR_VALUE:
+                            SensorValueCalibr svc = new SensorValueCalibr(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                            if(bvd.getLandscape()){
+                                ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();
+                            }
+                            setViewPosition(svc, bvd.getPosX(), bvd.getPosY());
+                            m_rl.addView(svc);
 
                             break;
                     }

@@ -45,6 +45,7 @@ public class BaseValuePropActivity extends Activity implements
     protected static final String TAG = "BaseValuePropActivity";
 
     protected static final String ROOM_ID = "Room_ID";
+    protected static final String TYPE = "Type";
     protected static final String BASE_VALUE_ID = "Base_Value_ID";
     protected static final String BASE_VALUE_DATA = "Base_Value_Data";
 
@@ -69,6 +70,7 @@ public class BaseValuePropActivity extends Activity implements
     protected Spinner m_id_spn_protocol_data_type;
 
     protected BaseValueData m_bvd;
+    protected int m_iTypeParameter;
     protected long m_lRoomIDParameter;
     protected long m_lIDParameter;
     protected BaseValueData m_bvdParameter;
@@ -122,6 +124,7 @@ public class BaseValuePropActivity extends Activity implements
         setActionBar();
         Intent intent = getIntent();
         if(intent != null) {
+            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
             m_lIDParameter = intent.getIntExtra(BASE_VALUE_ID, -1);
             m_bvdParameter = intent.getParcelableExtra(BASE_VALUE_DATA);
@@ -150,8 +153,6 @@ public class BaseValuePropActivity extends Activity implements
                 android.R.layout.simple_list_item_1, NumericDataType.DataType.values()));
 
 
-        // Primo
-        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
     }
 
     public void setActionBar() {
@@ -160,6 +161,21 @@ public class BaseValuePropActivity extends Activity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Primo
+        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
     }
 
     @Override
@@ -503,7 +519,7 @@ public class BaseValuePropActivity extends Activity implements
 
     protected boolean setBaseData(int iDialogOriginID){
         if (m_bvd == null) {
-            m_bvd = new BaseValueData();
+            m_bvd = new BaseValueData(m_iTypeParameter);
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
@@ -632,15 +648,17 @@ public class BaseValuePropActivity extends Activity implements
         return Orientation.UNDEFINED;
     }
 
-    public static Intent makeBaseValuePropActivity(Context context, Class cls, long lRoomID) {
+    public static Intent makeBaseValuePropActivity(Context context, Class cls, int iType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
+        intent.putExtra(BaseValuePropActivity.TYPE, iType);
         return intent;
     }
 
-    public static Intent makeBaseValuePropActivityByRoomID(Context context, Class cls, long lRoomID) {
+    public static Intent makeBaseValuePropActivityByRoomID(Context context, Class cls, int iType, long lRoomID) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
+        intent.putExtra(BaseValuePropActivity.TYPE, iType);
         intent.putExtra(BaseValuePropActivity.ROOM_ID, lRoomID);
         return intent;
     }

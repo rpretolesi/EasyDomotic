@@ -36,6 +36,9 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.light_switch_property_activity);
 
+        // Base
+        onBaseCreate();
+
         m_id_et_write_value_off = (NumericEditText)findViewById(R.id.id_et_write_value_off);
         m_id_et_write_value_off.setText(BaseValueData.WriteValueOFFDefault);
         m_id_et_write_value_off_on = (NumericEditText)findViewById(R.id.id_et_write_value_off_on);
@@ -44,10 +47,6 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         m_id_et_write_value_on_off.setText(BaseValueData.WriteValueONOFFDefault);
         m_id_et_write_value_on = (NumericEditText)findViewById(R.id.id_et_write_value_on);
         m_id_et_write_value_on.setText(BaseValueData.WriteValueONDefault);
-
-
-        // Base
-        onBaseCreate();
 
     }
 
@@ -82,9 +81,6 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         if (m_bvd == null) {
             return false;
         }
-
-        // Type Light Switch
-        m_bvd.setType(BaseValueData.TYPE_LIGHT_SWITCH);
 
         try {
 

@@ -110,7 +110,7 @@ public class SensorValueCalibr extends SensorValueBase {
             }
 
             // Acquire magnetometer event data
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 if(m_Geomagnetic != null){
                     System.arraycopy(event.values, 0, m_Geomagnetic, 0, 3);
                 }

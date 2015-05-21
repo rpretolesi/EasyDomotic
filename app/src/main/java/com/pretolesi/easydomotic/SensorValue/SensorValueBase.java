@@ -191,15 +191,6 @@ public class SensorValueBase extends BaseValue implements
     protected void onTimer(){
         super.onTimer();
         if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
-            // Show Sensor Data
-            String strValue = "";
-            if(m_bvd.getValueMinNrCharToShow() > 0){
-                strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
-            } else {
-                strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
-            }
-            setText(strValue);
-
             // Write Sensor Data
             String strData = Float.toString(m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
             WriteInputField(strData);
@@ -217,15 +208,23 @@ public class SensorValueBase extends BaseValue implements
 
     protected void setOutputFilter(float[] afSensorValue ){
         long lTimeNow = System.currentTimeMillis();
-        if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTime()) {
-            m_lTimeLast = lTimeNow;
+        if(afSensorValue != null && m_bvd != null && m_SensorValueFiltered != null && m_SensorValueOut!= null) {
+            if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTime()) {
+                m_lTimeLast = lTimeNow;
 
-            if(afSensorValue != null && m_SensorValueFiltered != null && m_SensorValueOut!= null) {
                 // Apply low-pass filter
                 for (int i = 0; i < afSensorValue.length; i++) {
                     m_SensorValueFiltered[i] = lowPass(afSensorValue[i], m_SensorValueFiltered[i], m_bvd.getSensorLowPassFilterK());
                     m_SensorValueOut[i] = m_SensorValueFiltered[i] * m_bvd.getSensorAmplK();
                 }
+                // Show Sensor Data
+                String strValue = "";
+                if(m_bvd.getValueMinNrCharToShow() > 0){
+                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
+                } else {
+                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
+                }
+                setText(strValue);
             }
         }
     }

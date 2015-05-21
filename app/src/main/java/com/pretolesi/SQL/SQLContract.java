@@ -924,10 +924,10 @@ public class SQLContract
                                 bSaved = false;
                             }
                         }
-                        bve = new BaseValueData();
+                        bve = new BaseValueData(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)));
                         bve.setPositionValue(
-                                cursor.getLong(cursor.getColumnIndex(_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)),
+                                cursor.getLong(cursor.getColumnIndex(_ID)),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TAG)),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_X))),

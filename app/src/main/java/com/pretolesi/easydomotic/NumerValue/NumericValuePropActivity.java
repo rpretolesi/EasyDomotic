@@ -28,6 +28,9 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.numeric_value_property_activity_1);
 
+        // Base
+        onBaseCreate();
+
         m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
         m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
         m_id_et_min_nr_char_to_show.setText(BaseValueData.ValueMinNrCharToShowDefaulValue);
@@ -41,9 +44,6 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
         m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
         m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
         m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
-
-        // Base
-        onBaseCreate();
 
     }
     @Override
@@ -79,9 +79,6 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
         if (m_bvd == null) {
             return false;
         }
-
-        // Type Light Switch
-        m_bvd.setType(BaseValueData.TYPE_NUMERIC_VALUE);
 
         try {
 

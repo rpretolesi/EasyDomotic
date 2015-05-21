@@ -1,40 +1,20 @@
 package com.pretolesi.easydomotic.SensorValue;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-
-import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.BaseValue.BaseValueData.SensorTypeCalibr;
 import com.pretolesi.easydomotic.BaseValue.BaseValuePropActivity;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
-import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
-import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
-import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +43,9 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sensor_value_property_activity);
+
+        // Base
+        onBaseCreate();
 
         m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
         m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
@@ -95,18 +78,22 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         m_id_et_sensor_sample_time_k.setText(BaseValueData.SensorSampleTimeDefaulValue);
 
         // Get sensor list
-        SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if(sm != null){
-            List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
+        if(m_iTypeParameter == BaseValueData.TYPE_SENSOR_RAW_VALUE){
+            SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            if(sm != null){
+                List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
+                m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
+                        android.R.layout.simple_list_item_1, ls));
+            }
+        } else if(m_iTypeParameter == BaseValueData.TYPE_SENSOR_CALIBR_VALUE){
+            ArrayList<SensorTypeCalibr> alstc = SensorTypeCalibr.getListSensorTypeCalibr();
             m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, ls));
+                    android.R.layout.simple_list_item_1, alstc));
+
         }
-        //List<SensorValueData.SensorValue> ls = SensorValueData.SensorValue.getListSensorValue();
         m_id_spn_sensor_value.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, BaseValueData.SensorValue.values()));
 
-        // Base
-        onBaseCreate();
     }
 
     @Override
@@ -170,9 +157,6 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         if (m_bvd == null) {
             return false;
         }
-
-        // Type Light Switch
-        m_bvd.setType(BaseValueData.TYPE_SENSOR_VALUE);
 
         try {
             if (m_id_et_min_nr_char_to_show != null) {

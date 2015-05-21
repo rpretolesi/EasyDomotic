@@ -13,7 +13,8 @@ public class BaseValueData implements Parcelable {
 
     public static final int TYPE_LIGHT_SWITCH = 1;
     public static final int TYPE_NUMERIC_VALUE = 2;
-    public static final int TYPE_SENSOR_VALUE = 3;
+    public static final int TYPE_SENSOR_RAW_VALUE = 3;
+    public static final int TYPE_SENSOR_CALIBR_VALUE = 4;
 
     public static short TAGMinChar = 1;
     public static short TAGMaxChar = 128;
@@ -104,10 +105,10 @@ public class BaseValueData implements Parcelable {
     private float m_fSensorLowPassFilterK;
     private int m_iSensorSampleTime;
 
-    public BaseValueData() {
+    public BaseValueData(int iType) {
         // Graphic
+        m_iType = iType;
         m_ID = -1;
-        m_iType = -1;
         m_bSaved = false;
         m_lRoomID = -1;
         m_strTAG = "";
@@ -145,10 +146,10 @@ public class BaseValueData implements Parcelable {
         m_iSensorSampleTime = 300;
     }
 
-    public void setPositionValue(long id, int iType,long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public void setPositionValue(int iType, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         // Graphic
-        m_ID = id;
         m_iType = iType;
+        m_ID = id;
         m_lRoomID = lRoomID;
         m_strTAG = strTAG;
         m_fPosX = fPosX;
@@ -192,9 +193,9 @@ public class BaseValueData implements Parcelable {
     }
 
     // Set Method
-    public void setID(long id) { this.m_ID = id; }
-
     public void setType(int iType) { this.m_iType = iType; }
+
+    public void setID(long id) { this.m_ID = id; }
 
     public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
 
@@ -267,9 +268,9 @@ public class BaseValueData implements Parcelable {
     }
 
     // Get Method
-    public long getID() { return m_ID; }
-
     public int getType() { return m_iType; }
+
+    public long getID() { return m_ID; }
 
     public boolean getSaved() { return m_bSaved; }
 
@@ -356,8 +357,8 @@ public class BaseValueData implements Parcelable {
     }
 
     protected BaseValueData(Parcel in) {
-        m_ID = in.readLong();
         m_iType = in.readInt();
+        m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_lRoomID = in.readLong();
         m_strTAG = in.readString();
@@ -398,8 +399,8 @@ public class BaseValueData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(m_ID);
         dest.writeInt(m_iType);
+        dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeLong(m_lRoomID);
         dest.writeString(m_strTAG);

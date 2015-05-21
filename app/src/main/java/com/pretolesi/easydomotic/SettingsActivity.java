@@ -23,7 +23,6 @@ import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
-import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 
@@ -93,7 +92,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchPropActivity.class, rfd.getID());
+                    Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchPropActivity.class, BaseValueData.TYPE_LIGHT_SWITCH, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -111,7 +110,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByRoomID(this, NumericValuePropActivity.class, rfd.getID());
+                    Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByRoomID(this, NumericValuePropActivity.class, BaseValueData.TYPE_NUMERIC_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -129,7 +128,7 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
-                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, rfd.getID());
+                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_RAW_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -142,10 +141,28 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 5){
+            Fragment f = getFragmentManager().findFragmentById(R.id.container);
+            if(f != null && f instanceof BaseFragment){
+                BaseFragment bf = (BaseFragment)f;
+                RoomFragmentData rfd = bf.getRoomFragmentData();
+                if(rfd != null) {
+                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_CALIBR_VALUE, rfd.getID());
+                    startActivity(intent);
+                }else {
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+                }
+            } else {
+                OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+            }
+        }
+
+        if(position == 6){
             Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, -1);
             startActivity(intent);
         }
-        if(position == 6){
+        if(position == 7){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
