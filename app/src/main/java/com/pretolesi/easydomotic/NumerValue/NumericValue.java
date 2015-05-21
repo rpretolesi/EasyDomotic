@@ -150,14 +150,25 @@ public class NumericValue extends BaseValue implements
                                 strValue = String.format("%d %s", l, m_bvd.getValueUM());
                                 this.setError(null);
                             }
+
                             if(ticrs.getValue() instanceof Float){
                                 Float f = (Float)ticrs.getValue();
-                                strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + ".f %s", f, m_bvd.getValueUM());
+                                if(m_bvd.getValueMinNrCharToShow() > 0){
+                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
+                                } else {
+                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
+                                }
+
                                 this.setError(null);
                             }
-                            if(ticrs.getValue() instanceof Float || ticrs.getValue() instanceof Double){
+
+                            if(ticrs.getValue() instanceof Double){
                                 Double dbl = (Double)ticrs.getValue();
-                                strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + ".f %s", dbl, m_bvd.getValueUM());
+                                if(m_bvd.getValueMinNrCharToShow() > 0){
+                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
+                                } else {
+                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
+                                }
                                 this.setError(null);
                             }
                         } else {

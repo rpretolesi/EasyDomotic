@@ -271,7 +271,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                 }
             }
 
-            if (bMsgSent)
+            if (bMsgSent){
                 if (m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                     // MBAP
                     byte[] byteMBAP = new byte[6];
@@ -403,12 +403,14 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                         // Log.d(TAG, this.toString() + "receive() MBAP->" + "Exception ex: " + ex.getMessage());
                     }
 
+                } else {
+                    return true;
                 }
-            else {
+            } else {
                 return true;
+
             }
         }
-
         // Log.d(TAG, this.toString() + "receive() return false");
         return false;
     }

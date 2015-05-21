@@ -45,6 +45,13 @@ import java.util.List;
 public class SensorValuePropActivity extends BaseValuePropActivity {
     private static final String TAG = "SensorValuePropAct";
 
+    private NumericEditText m_id_et_min_nr_char_to_show;
+    private NumericEditText m_id_et_nr_of_decimal;
+    private StringEditText m_id_et_um;
+    private NumericEditText m_id_et_update_millis;
+    private CheckBox m_id_cb_read_only;
+
+    // Sensor
     private Spinner m_id_spn_sensor_type;
     private Spinner m_id_spn_sensor_value;
     private CheckBox m_id_cb_sensor_enable_simulation;
@@ -56,6 +63,20 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sensor_value_property_activity);
+
+        m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
+        m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
+        m_id_et_min_nr_char_to_show.setText(BaseValueData.ValueMinNrCharToShowDefaulValue);
+        m_id_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
+        m_id_et_nr_of_decimal.setInputLimit(BaseValueData.ValueNrOfDecimalMinValue, BaseValueData.ValueNrOfDecimalMaxValue);
+        m_id_et_nr_of_decimal.setText(BaseValueData.ValueNrOfDecimalDefaulValue);
+        m_id_et_um = (StringEditText)findViewById(R.id.id_et_um);
+        m_id_et_um.setInputLimit(BaseValueData.ValueUMMinValue, BaseValueData.ValueUMMaxValue);
+        m_id_et_um.setText(BaseValueData.ValueUMDefaulValue);
+        m_id_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
+        m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
+        m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
+        m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
 
         // Sensor
         m_id_spn_sensor_type = (Spinner)findViewById(R.id.id_spn_sensor_type);
@@ -96,6 +117,23 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         if (m_bvd == null) {
             return ;
         }
+
+        if (m_id_et_min_nr_char_to_show != null) {
+            m_id_et_min_nr_char_to_show.setText(Integer.toString(m_bvd.getValueMinNrCharToShow()));
+        }
+        if (m_id_et_nr_of_decimal != null) {
+            m_id_et_nr_of_decimal.setText(Integer.toString(m_bvd.getValueNrOfDecimal()));
+        }
+        if (m_id_et_um != null) {
+            m_id_et_um.setText(m_bvd.getValueUM());
+        }
+        if (m_id_et_update_millis != null) {
+            m_id_et_update_millis.setText(Integer.toString(m_bvd.getValueUpdateMillis()));
+        }
+        if (m_id_cb_read_only != null) {
+            m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+        }
+
         // Sensor
         if(m_id_spn_sensor_type != null) {
             long lItem = -1;
@@ -137,6 +175,22 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         m_bvd.setType(BaseValueData.TYPE_SENSOR_VALUE);
 
         try {
+            if (m_id_et_min_nr_char_to_show != null) {
+                m_bvd.setValueMinNrCharToShow(Integer.parseInt(m_id_et_min_nr_char_to_show.getText().toString()));
+            }
+            if (m_id_et_nr_of_decimal != null) {
+                m_bvd.setValueNrOfDecimal(Integer.parseInt(m_id_et_nr_of_decimal.getText().toString()));
+            }
+            if (m_id_et_um != null) {
+                m_bvd.setValueUM(m_id_et_um.getText().toString());
+            }
+            if (m_id_et_update_millis != null) {
+                m_bvd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
+            }
+            if (m_id_cb_read_only != null) {
+                m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+            }
+
             // Sensor
             if(m_id_spn_sensor_type != null) {
                 m_bvd.setSensorTypeID(m_id_spn_sensor_type.getSelectedItemId());
