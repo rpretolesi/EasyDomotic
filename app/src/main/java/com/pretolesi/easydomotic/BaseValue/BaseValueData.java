@@ -3,6 +3,9 @@ package com.pretolesi.easydomotic.BaseValue;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  */
@@ -442,6 +445,45 @@ public class BaseValueData implements Parcelable {
             return new BaseValueData[size];
         }
     };
+
+    public enum SensorTypeCalibr {
+        COMPASS(0, "Compass");
+/*
+        Y_1(1, "Y1 axis value"),
+        Z_1(2, "Z1 axis value"),
+        X_2(3, "X2 axis or aux value 1"),
+        Y_2(4, "Y2 axis or aux value 2"),
+        Z_2(5, "Z2 axis or aux value 3");
+*/
+        private long m_lSensorTypeCalibrID;
+        private String m_strSensorTypeCalibrName;
+
+        SensorTypeCalibr(long lSensorTypeCalibrID, String strSensorTypeCalibrName) {
+            m_lSensorTypeCalibrID = lSensorTypeCalibrID;
+            m_strSensorTypeCalibrName = strSensorTypeCalibrName;
+        }
+
+        public static SensorTypeCalibr getSensorTypeCalibr(long lSensorTypeCalibrID) {
+            if(lSensorTypeCalibrID == SensorTypeCalibr.COMPASS.m_lSensorTypeCalibrID) {
+                return SensorTypeCalibr.COMPASS;
+            }
+
+            return null;
+        }
+
+        public static ArrayList<SensorTypeCalibr> getListSensorTypeCalibr() {
+            ArrayList<SensorTypeCalibr> alstc;
+            alstc = new ArrayList<>();
+            alstc.add(COMPASS);
+            return alstc;
+        }
+
+        @Override
+        public String toString() {
+            return Long.toString(m_lSensorTypeCalibrID) + "-" + m_strSensorTypeCalibrName;
+        }
+
+    }
 
     public enum SensorValue {
         X_1(0, "X1 axis value or single value"),
