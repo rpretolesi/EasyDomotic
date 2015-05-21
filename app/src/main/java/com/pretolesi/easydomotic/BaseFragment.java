@@ -22,7 +22,7 @@ import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumerValue.NumericValue;
-import com.pretolesi.easydomotic.SensorValue.SensorValue;
+import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -379,7 +379,7 @@ public class BaseFragment extends Fragment implements
                             break;
 
                         case BaseValueData.TYPE_SENSOR_VALUE:
-                            SensorValue sv = new SensorValue(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                            SensorValueRaw sv = new SensorValueRaw(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getLandscape()){
                                 ObjectAnimator.ofFloat(sv, "rotation", 0, 90).start();
                             }

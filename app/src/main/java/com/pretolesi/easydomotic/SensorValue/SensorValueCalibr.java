@@ -1,133 +1,50 @@
 package com.pretolesi.easydomotic.SensorValue;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData.SensorTypeCalibr;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-
 import java.util.List;
 
 /**
  *
  */
-public class SensorValueCalibr extends BaseValue implements
-        TCPIPClient.TcpIpClientWriteStatusListener,
-        SensorEventListener {
+public class SensorValueCalibr extends SensorValueBase {
 
-    private static final String TAG = "SensorValue";
-
-    private BaseValueData m_bvd;
-    private int m_iMsgID;
-    private int m_iTIDWrite;
+    private static final String TAG = "SensorValueCalibr";
 
     // Sensors & SensorManager
-    private SensorManager m_SensorManager;
-    private Sensor m_SensorAccelerometer;
-    private Sensor m_SensorMagnetometer;
-    private int m_iSensorTypeID;
+    private SensorManager m_SensorManager = null;
+    private Sensor m_SensorAccelerometer = null;
+    private Sensor m_SensorMagnetometer = null;
 
     // Storage for Sensor readings
     private float[] m_Gravity = null;
     private float[] m_Geomagnetic = null;
     private float[] m_RotationMatrix = null;
-
-    // Storage for Sensor readings
-    private float[] m_SensorValueNow;
-    private float[] m_SensorValueFiltered;
-    private float[] m_SensorValueOut;
-
-    private long m_lTimeLast;
-
-    // Rotation around the Z axis
-//    private double m_RotationInDegress;
-
+    private float[] m_OrientationMatrix = null;
+    private float[] m_RotationInDegress = null;
 
     public SensorValueCalibr(Context context) {
         super(context);
-        this.m_bvd = null;
-        this.m_iMsgID = -1;
-        this.m_iTIDWrite = -1;
-
-        // Sensors & SensorManager
-        m_SensorManager = null;
-        m_Sensor = null;
-        m_iSensorTypeID = 0;
-        m_SensorValueNow = null;
-        m_SensorValueFiltered = null;
-        m_SensorValueOut = null;
     }
 
     public SensorValueCalibr(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
-        super(context);
-        if(bvd != null) {
-            this.m_bvd = bvd;
-            this.m_iMsgID = iMsgID;
-            this.m_iTIDWrite = m_iMsgID + 1;
-            this.setTag(bvd.getTag());
-
-            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
-            setEditMode(bEditMode);
-        }
-        // Sensors & SensorManager
-        m_SensorManager = null;
-        m_Sensor = null;
-        m_iSensorTypeID = 0;
-        m_SensorValueNow = null;
-        m_SensorValueFiltered = null;
-        m_SensorValueOut = null;
+        super(context, bvd, iMsgID, bEditMode);
     }
 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // Set default value
-        setText(getDefaultValue());
 
-        // Listener
-        if(m_bvd != null){
-            if(!getEditMode()) {
-                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-                if(tic != null){
-                    tic.registerTcpIpClientWriteSwitchStatus(this);
-                }
-                if(!m_bvd.getSensorEnableSimulation()) {
-                    setTimer(m_bvd.getValueUpdateMillis());
-                }
-            }
-        }
-
-
-
-        // Get a reference to the SensorManager
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
-        // Get a reference to the accelerometer
-        m_SensorAccelerometer = m_SensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-        // Get a reference to the magnetometer
-        m_SensorAccelerometer = m_SensorManager
-                .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
-        // Exit unless both sensors are available
-        if (null == accelerometer || null == magnetometer)
-            finish();
-
-
-
-
-
-
+        // Create array for value
+        m_Gravity = new float[3];
+        m_Geomagnetic = new float[3];
+        m_RotationMatrix = new float[9];
+        m_OrientationMatrix = new float[3];
+        m_RotationInDegress = new float[6];
 
         // Sensor
         boolean bSensorOk = false;
@@ -149,34 +66,11 @@ public class SensorValueCalibr extends BaseValue implements
                             if (m_SensorAccelerometer != null && m_SensorMagnetometer != null){
                                 m_SensorManager.registerListener(this, m_SensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
                                 m_SensorManager.registerListener(this, m_SensorMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-                                m_Gravity = new float[3];
-                                m_Geomagnetic = new float[3];
-                                m_RotationMatrix = new float[9];
                                 bSensorOk = true;
                             }
                             break;
                     }
                 }
-
-/*
-                List<Sensor> ls = m_SensorManager.getSensorList(Sensor.TYPE_ALL);
-                if(ls != null){
-                    m_iSensorType = ls.get((int) m_bvd.getSensorTypeID()).getType();
-                    if(m_iSensorType > 0){
-                        m_Sensor = m_SensorManager.getDefaultSensor(m_iSensorType);
-                        if (m_Sensor != null) {
-                            // Create array for value
-                            m_SensorValueNow = new float[6];
-                            m_SensorValueFiltered = new float[6];
-                            m_SensorValueOut = new float[6];
-
-                            // Sensor Available
-                            m_SensorManager.registerListener(this, m_Sensor, SensorManager.SENSOR_DELAY_UI);
-                            bSensorOk = true;
-                        }
-                    }
-                }
-*/
             }
         }
         if(bSensorOk){
@@ -184,96 +78,30 @@ public class SensorValueCalibr extends BaseValue implements
         } else {
             this.setError("");
         }
-
-        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
         // Sensor
         // Get reference to SensorManager
         if(m_SensorManager != null) {
             m_SensorManager.unregisterListener(this);
         }
-
-        if(!getEditMode()) {
-            resetTimer();
-        }
-
-        // Listener
-        if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.unregisterTcpIpClientWriteSwitchStatus(this);
-            }
-        }
-
-        // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
-    }
-
-    @Override
-    protected synchronized void OnWriteInputField(String strValue){
-        super.OnWriteInputField(strValue);
-        WriteInputField(strValue);
-    }
-
-    private String getDefaultValue(){
-        String strDefaultValue = "";
-
-        if(m_bvd != null){
-             for(int iIndice = m_bvd.getValueMinNrCharToShow() + m_bvd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
-                 if(iIndice == m_bvd.getValueNrOfDecimal()){
-                     strDefaultValue = strDefaultValue + ".";
-                 }
-                 strDefaultValue = strDefaultValue + "#";
-             }
-            if(m_bvd.getValueUM() != null && !m_bvd.getValueUM().equals("")){
-                strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
-            }
-        } else {
-            strDefaultValue = BaseValueData.ValueDefaulValue;
-        }
-
-        return strDefaultValue;
-    }
-    private String getErrorValue(int iErrorCode){
-        return "Error Code: " + iErrorCode;
-    }
-
-    private String getTimeoutValue(){
-        return "Timeout";
-    }
-
-    @Override
-    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
-        if(ticws != null && m_bvd != null){
-            if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()){
-                if(ticws.getTID() == m_iTIDWrite) {
-                    if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
-                        if(m_bvd.getSensorEnableSimulation()){
-                            // Write Ok, i can close the Input
-                            closeInputField();
-                        } else {
-                            setError(null);
-                        }
-                    } else {
-                        if(m_bvd.getSensorEnableSimulation()){
-                            // Write Ok, i can close the Input
-                            setErrorInputField(true);
-                        } else {
-                            setError("");
-                        }
-                    }
-                }
-            }
-        }
+        // Create array for value
+        m_Gravity = null;
+        m_Geomagnetic = null;
+        m_RotationMatrix = null;
+        m_OrientationMatrix = null;
+        m_RotationInDegress = null;
     }
 
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(m_SensorValueOut != null && m_bvd != null){
+        super.onSensorChanged(event);
+        if(m_bvd != null){
             // Acquire accelerometer event data
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 if(m_Gravity != null){
@@ -293,126 +121,29 @@ public class SensorValueCalibr extends BaseValue implements
                 SensorTypeCalibr stc = alstc.get((int) m_bvd.getSensorTypeID());
                 switch (stc) {
                     case COMPASS:
-                        if (m_Gravity != null && m_Geomagnetic != null) {
-
-                            float rotationMatrix[] = new float[9];
-
+                        if (m_Gravity != null && m_Geomagnetic != null && m_RotationMatrix != null && m_OrientationMatrix != null && m_RotationInDegress != null) {
                             // Users the accelerometer and magnetometer readings
                             // to compute the device's rotation with respect to
                             // a real world coordinate system
-
-                            boolean success = SensorManager.getRotationMatrix(rotationMatrix,
-                                    null, mGravity, mGeomagnetic);
-
-                            if (success) {
-
-                                float orientationMatrix[] = new float[3];
-
+                            boolean bRes = SensorManager.getRotationMatrix(m_RotationMatrix, null, m_Gravity, m_Geomagnetic);
+                            if (bRes) {
                                 // Returns the device's orientation given
                                 // the rotationMatrix
-
-                                SensorManager.getOrientation(rotationMatrix, orientationMatrix);
+                                SensorManager.getOrientation(m_RotationMatrix, m_OrientationMatrix);
 
                                 // Get the rotation, measured in radians, around the Z-axis
                                 // Note: This assumes the device is held flat and parallel
                                 // to the ground
-
-                                float rotationInRadians = orientationMatrix[0];
-
                                 // Convert from radians to degrees
-                                mRotationInDegress = Math.toDegrees(rotationInRadians);
-
-                                // Request redraw
-                                mCompassArrow.invalidate();
-
-                                // Reset sensor event data arrays
-                                mGravity = mGeomagnetic = null;
-
+                                m_RotationInDegress[0] = (float)Math.toDegrees(m_OrientationMatrix[0]);
+                                m_RotationInDegress[1] = (float)Math.toDegrees(m_OrientationMatrix[1]);
+                                m_RotationInDegress[2] = (float)Math.toDegrees(m_OrientationMatrix[2]);
+                                setOutputFilter(m_RotationInDegress);
                             }
                         }
-
-
-
-
-
-
-
-
                         break;
                 }
             }
-
-/*
-            if(event.sensor.getType() == m_iSensorType){
-                System.arraycopy(event.values, 0, m_SensorValueNow, 0, event.values.length);
-                long lTimeNow = System.currentTimeMillis();
-                if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTime()) {
-                    m_lTimeLast = lTimeNow;
-
-                    // Apply low-pass filter
-                    for(int i = 0; i < event.values.length; i++){
-                        m_SensorValueFiltered[i] = lowPass(m_SensorValueNow[i], m_SensorValueFiltered[i], m_bvd.getSensorLowPassFilterK());
-                        m_SensorValueOut[i] = m_SensorValueFiltered[i] * m_bvd.getSensorAmplK();
-                    }
-                }
-            }
-*/
         }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    @Override
-    protected void onTouchActionUp(boolean bEditMode){
-        super.onTouchActionUp(bEditMode);
-        if(m_bvd != null) {
-            if(bEditMode) {
-                m_bvd.setSaved(false);
-                m_bvd.setPosX((int)getX());
-                m_bvd.setPosY((int)getY());
-                Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByValueData(this.getContext(), SensorValuePropActivity.class, m_bvd);
-                this.getContext().startActivity(intent);
-            } else {
-                if(m_bvd.getSensorEnableSimulation()){
-                    openInputField();
-                }
-            }
-        }
-    }
-provare la simulazione
-    @Override
-    protected void onTimer(){
-        super.onTimer();
-        if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
-            // Show Sensor Data
-            String strValue = "";
-            if(m_bvd.getValueMinNrCharToShow() > 0){
-                strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
-            } else {
-                strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", (double) m_SensorValueOut[(int) m_bvd.getSensorValueID()], m_bvd.getValueUM());
-            }
-            setText(strValue);
-
-            // Write Sensor Data
-            String strData = Float.toString(m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
-            WriteInputField(strData);
-        }
-    }
-
-    protected synchronized void WriteInputField(String strValue){
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if (tic != null) {
-                tic.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
-            }
-        }
-    }
-
-    // Deemphasize transient forces
-    static float lowPass(float current, float last, float alpha) {
-        return last * alpha + current * ((float)1.0 - alpha);
     }
 }
