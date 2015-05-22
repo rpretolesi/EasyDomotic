@@ -192,7 +192,8 @@ public class SensorValueBase extends BaseValue implements
         super.onTimer();
         if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
             // Write Sensor Data
-            String strData = Float.toString(m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
+//            String strData = Float.toString(m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
+            String strData = convertFormatValueToString(getNumericDataType(), m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
             WriteInputField(strData);
         }
     }
@@ -229,8 +230,61 @@ public class SensorValueBase extends BaseValue implements
         }
     }
 
+
+    private String convertFormatValueToString(DataType dtDataType, double dblValueToConvert){
+        String strValue = "0";
+        if(dtDataType != null){
+            long lValue = 0;
+            try{
+                lValue = Math.round(dblValueToConvert);
+            } catch (Exception ignore){
+            }
+
+            switch (dtDataType) {
+                case SHORT:
+                    try {
+                        strValue = Integer.toString((int)lValue);
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case INT:
+                    try {
+                        strValue = Integer.toString((int)lValue);
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case LONG:
+                    try {
+                        strValue = Long.toString(lValue);
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case FLOAT:
+                    try {
+                        strValue = Float.toString((float) dblValueToConvert);
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case DOUBLE:
+                    try {
+                        strValue = Double.toString(dblValueToConvert);
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+            }
+        }
+
+        return strValue;
+    }
+
     // Deemphasize transient forces
-    static float lowPass(float current, float last, float alpha) {
+    public static float lowPass(float current, float last, float alpha) {
         return last * alpha + current * ((float)1.0 - alpha);
     }
 }

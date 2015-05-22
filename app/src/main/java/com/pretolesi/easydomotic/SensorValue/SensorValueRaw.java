@@ -72,7 +72,6 @@ public class SensorValueRaw extends SensorValueBase {
             this.setError("");
         }
 
-        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
@@ -99,6 +98,6 @@ public class SensorValueRaw extends SensorValueBase {
         }
     }
 
-provare a mettere la simulazione nella classe base ed eventualmente verificare il read only
+//provare a mettere la simulazione nella classe base ed eventualmente verificare il read only
 
 }

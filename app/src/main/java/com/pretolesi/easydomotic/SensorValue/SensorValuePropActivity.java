@@ -28,8 +28,8 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     private NumericEditText m_id_et_min_nr_char_to_show;
     private NumericEditText m_id_et_nr_of_decimal;
     private StringEditText m_id_et_um;
-    private NumericEditText m_id_et_update_millis;
-    private CheckBox m_id_cb_read_only;
+togliere    private NumericEditText m_id_et_update_millis;
+togliere    private CheckBox m_id_cb_read_only;
 
     // Sensor
     private Spinner m_id_spn_sensor_type;
@@ -38,7 +38,7 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     private NumericEditText m_id_et_sensor_ampl_k;
     private NumericEditText m_id_et_sensor_low_pass_filter_k;
     private NumericEditText m_id_et_sensor_sample_time_k;
-
+mettere private NumericEditText m_id_et_sensor_write_update_millis;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +78,21 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         m_id_et_sensor_sample_time_k.setText(BaseValueData.SensorSampleTimeDefaulValue);
 
         // Get sensor list
-        if(m_iTypeParameter == BaseValueData.TYPE_SENSOR_RAW_VALUE){
+        int iTypeParameter;
+        if(m_bvdParameter != null){
+            iTypeParameter = m_bvdParameter.getType();
+        } else {
+            iTypeParameter = m_iTypeParameter;
+        }
+
+        if(iTypeParameter == BaseValueData.TYPE_SENSOR_RAW_VALUE){
             SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if(sm != null){
                 List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
                 m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                         android.R.layout.simple_list_item_1, ls));
             }
-        } else if(m_iTypeParameter == BaseValueData.TYPE_SENSOR_CALIBR_VALUE){
+        } else if(iTypeParameter == BaseValueData.TYPE_SENSOR_CALIBR_VALUE){
             ArrayList<SensorTypeCalibr> alstc = SensorTypeCalibr.getListSensorTypeCalibr();
             m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, alstc));
