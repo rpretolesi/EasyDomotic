@@ -21,7 +21,7 @@ import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.NumerValue.NumericValue;
+import com.pretolesi.easydomotic.NumericValue.NumericValue;
 import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;

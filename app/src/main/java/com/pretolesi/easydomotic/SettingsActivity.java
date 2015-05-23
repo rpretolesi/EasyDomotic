@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
-import com.pretolesi.easydomotic.NumerValue.NumericValuePropActivity;
+import com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientListFragment;
@@ -234,7 +234,7 @@ public class SettingsActivity extends BaseActivity implements
 
     @Override
     public void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id) {
-        if(position == 6){
+        if(position == 7){
             Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, id);
             startActivity(intent);
         }

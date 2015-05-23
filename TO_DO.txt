@@ -1,3 +1,6 @@
 Mettere nel title bar il nome della stanza.
 Vedere se e' possibile impostare il dato del typo di dato anche se non ho protocolli
 Verificare che se selezione un protocollo errato(knx) non si inizializza il tcp-ip
+Verificare bene Open e New del Tcp/Ip
+Specificare che 0 nelle funzioni degli holding register = 40001 e sistemare questo anche nella simulazione su arduino
+Capire perche' scrivendo un int 32 non scrive bene...

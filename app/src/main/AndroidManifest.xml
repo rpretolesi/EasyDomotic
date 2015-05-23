@@ -36,10 +36,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:parentActivityName = "com.pretolesi.easydomotic.NumerValue.NumericValuePropActivity"
+            android:parentActivityName = "com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name="com.pretolesi.easydomotic.NumerValue.NumericValuePropActivity"
+            android:name="com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

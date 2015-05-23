@@ -282,7 +282,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                         try {
                             ModbusMBAP mmbap = Modbus.getMBAP(m_context, byteMBAP);
                             if (mmbap != null) {
-                                iLength = mmbap.getLength() - 6;
+                                iLength = mmbap.getLength();
                                 byte[] byteDATA = new byte[iLength];
                                 try {
                                     m_dataInputStream.readFully(byteDATA, 0, iLength);

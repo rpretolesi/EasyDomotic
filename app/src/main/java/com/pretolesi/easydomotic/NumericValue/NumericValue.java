@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.NumerValue;
+package com.pretolesi.easydomotic.NumericValue;
 
 import android.content.Context;
 import android.content.Intent;

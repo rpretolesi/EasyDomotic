@@ -291,7 +291,7 @@ void Communication(){
               }
             }
 
-            if(ushortModbusAddress == 10000) {
+            if(ushortModbusAddress == 40001) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -327,7 +327,7 @@ void Communication(){
             if(bAddressOk == true){
               if(bValueOk == true) {
                 // Tutto Ok, costruisco la risposta, 2° parte
-                short shortMBAPMsgLength = 12;
+                short shortMBAPMsgLength = 6;
                 m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
                 m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
@@ -356,10 +356,10 @@ void Communication(){
           Serial.print("Quantity of Register: ");
           Serial.println(shortQuantityOfRegisters);
           if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
-            if(ushortModbusAddress == 10000) {  
+            if(ushortModbusAddress == 40001) {  
               if(shortQuantityOfRegisters == 1){
                 shOutValue = shInValue;
-                shortMBAPMsgLength = 11;
+                shortMBAPMsgLength = 5;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("shOutValue: ");
                 Serial.println(shOutValue);
@@ -372,7 +372,7 @@ void Communication(){
             if(ushortModbusAddress == 10001) {  
               if(shortQuantityOfRegisters == 2){
                 lOutValue = lInValue;
-                shortMBAPMsgLength = 13;
+                shortMBAPMsgLength = 7;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("lOutValue: ");
                 Serial.println(lOutValue);
@@ -385,7 +385,7 @@ void Communication(){
             if(ushortModbusAddress == 10003) {  
               if(shortQuantityOfRegisters == 2){
                 fOutValue = fInValue;
-                shortMBAPMsgLength = 13;
+                shortMBAPMsgLength = 7;
                 // Tutto Ok, costruisco la risposta, 3° parte
                 Serial.print("fOutValue: ");
                 Serial.println(fOutValue);

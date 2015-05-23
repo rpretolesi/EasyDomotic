@@ -98,8 +98,8 @@ public class Modbus {
 
         ByteBuffer bb = ByteBuffer.allocate(13 + byteByteCount);
         bb.putShort(shTID);
-        bb.putShort((short)0);
-        bb.putShort((short)(7 + byteByteCount));
+        bb.putShort((short) 0);
+        bb.putShort((short) (7 + byteByteCount));
         bb.put(byteUID);
         bb.put((byte)0x10);
         bb.putShort(shAddress);
@@ -168,8 +168,8 @@ public class Modbus {
 
         ByteBuffer bb = ByteBuffer.allocate(12);
         bb.putShort(shTID);
-        bb.putShort((short)0);
-        bb.putShort((short)6);
+        bb.putShort((short) 0);
+        bb.putShort((short) 6);
         bb.put(byteUID);
         bb.put((byte)0x03);
         bb.putShort(shAddress);
@@ -218,7 +218,7 @@ public class Modbus {
             throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
         }
 
-        if(byteDATA != null && byteDATA.length == iLength - 6){
+        if(byteDATA != null && byteDATA.length == iLength){
             ByteBuffer bb = ByteBuffer.wrap(byteDATA);
             if(byteDATA.length < 3 || byteDATA.length > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
