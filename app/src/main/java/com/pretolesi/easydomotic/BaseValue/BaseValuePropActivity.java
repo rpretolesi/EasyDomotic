@@ -91,8 +91,11 @@ public class BaseValuePropActivity extends Activity implements
         m_id_rb_landscape = (RadioButton)findViewById(R.id.id_rb_landscape);
         m_id_rb_landscape.setChecked(false);
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
+        m_id_et_position_x.setText(BaseValueData.PosXDefaultValue);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
+        m_id_et_position_y.setText(BaseValueData.PosYDefaultValue);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
+        m_id_et_position_z.setText(BaseValueData.PosZDefaultValue);
         m_id_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
         m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
         m_id_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);

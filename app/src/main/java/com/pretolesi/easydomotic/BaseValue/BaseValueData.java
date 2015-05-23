@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -19,6 +18,12 @@ public class BaseValueData implements Parcelable {
     public static short TAGMinChar = 1;
     public static short TAGMaxChar = 128;
     public static String TAGDefaultValue = "My Name";
+
+    public static String PosXDefaultValue = "30";
+
+    public static String PosYDefaultValue = "30";
+
+    public static String PosZDefaultValue = "0";
 
     public static int ProtTcpIpClientValueIDMinValue = 0;
     public static int ProtTcpIpClientValueIDMaxValue = 32768;
@@ -66,6 +71,10 @@ public class BaseValueData implements Parcelable {
     public static int SensorSampleTimeMaxValue = 60000;
     public static String SensorSampleTimeDefaulValue = "300";
 
+    public static int SensorWriteUpdateTimeMinValue = 100;
+    public static int SensorWriteUpdateTimeMaxValue = 60000;
+    public static String SensorWriteUpdateTimeDefaulValue = "1000";
+
     // Graphic
     private long m_ID;
     private int m_iType;
@@ -103,7 +112,8 @@ public class BaseValueData implements Parcelable {
     private boolean m_bSensorEnableSimulation;
     private float m_fSensorAmplK;
     private float m_fSensorLowPassFilterK;
-    private int m_iSensorSampleTime;
+    private int m_iSensorSampleTimeMillis;
+    private int m_iSensorWriteUpdateTimeMillis;
 
     public BaseValueData(int iType) {
         // Graphic
@@ -112,8 +122,8 @@ public class BaseValueData implements Parcelable {
         m_bSaved = false;
         m_lRoomID = -1;
         m_strTAG = "";
-        m_fPosX = 0;
-        m_fPosY = 0;
+        m_fPosX = 20;
+        m_fPosY = 20;
         m_fPosZ = 0;
         m_bLandscape = false;
 
@@ -143,7 +153,7 @@ public class BaseValueData implements Parcelable {
         m_bSensorEnableSimulation = false;
         m_fSensorAmplK = 1.0f;
         m_fSensorLowPassFilterK = 0.1f;
-        m_iSensorSampleTime = 300;
+        m_iSensorSampleTimeMillis = 300;
     }
 
     public void setPositionValue(int iType, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
@@ -183,13 +193,14 @@ public class BaseValueData implements Parcelable {
         m_iWriteValueON = iWriteValueON;
     }
 
-    public void setSensorType(long lSensorTypeID, long lSensorValueID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime) {
+    public void setSensorType(long lSensorTypeID, long lSensorValueID, boolean bSensorEnableSimulation, float fSensorK, float fSensorLowPassFilterK, int iSensorSampleTime, int iSensorWriteUpdateTimeMillis) {
         m_lSensorTypeID = lSensorTypeID;
         m_lSensorValueID = lSensorValueID;
         m_bSensorEnableSimulation = bSensorEnableSimulation;
         m_fSensorAmplK = fSensorK;
         m_fSensorLowPassFilterK = fSensorLowPassFilterK;
-        m_iSensorSampleTime = iSensorSampleTime;
+        m_iSensorSampleTimeMillis = iSensorSampleTime;
+        m_iSensorWriteUpdateTimeMillis = iSensorWriteUpdateTimeMillis;
     }
 
     // Set Method
@@ -263,8 +274,12 @@ public class BaseValueData implements Parcelable {
         this.m_fSensorLowPassFilterK = fSensorLowPassFilterK;
     }
 
-    public void setSensorSampleTime(int iSensorSampleTime) {
-        this.m_iSensorSampleTime = iSensorSampleTime;
+    public void setSensorSampleTimeMillis(int iSensorSampleTimeMillis) {
+        this.m_iSensorSampleTimeMillis = iSensorSampleTimeMillis;
+    }
+
+    public void setSensorWriteUpdateTimeMillis(int iSensorWriteUpdateTimeMillis) {
+        this.m_iSensorWriteUpdateTimeMillis = iSensorWriteUpdateTimeMillis;
     }
 
     // Get Method
@@ -352,8 +367,12 @@ public class BaseValueData implements Parcelable {
         return m_fSensorLowPassFilterK;
     }
 
-    public int getSensorSampleTime() {
-        return m_iSensorSampleTime;
+    public int getSensorSampleTimeMillis() {
+        return m_iSensorSampleTimeMillis;
+    }
+
+    public int getSensorWriteUpdateTimeMillis() {
+        return m_iSensorWriteUpdateTimeMillis;
     }
 
     protected BaseValueData(Parcel in) {
@@ -389,7 +408,8 @@ public class BaseValueData implements Parcelable {
         m_bSensorEnableSimulation = in.readByte() != 0;
         m_fSensorAmplK = in.readFloat();
         m_fSensorLowPassFilterK = in.readFloat();
-        m_iSensorSampleTime = in.readInt();
+        m_iSensorSampleTimeMillis = in.readInt();
+        m_iSensorWriteUpdateTimeMillis = in.readInt();
     }
 
     @Override
@@ -431,7 +451,8 @@ public class BaseValueData implements Parcelable {
         dest.writeByte((byte) (m_bSensorEnableSimulation ? 1 : 0));
         dest.writeFloat(m_fSensorAmplK);
         dest.writeFloat(m_fSensorLowPassFilterK);
-        dest.writeInt(m_iSensorSampleTime);
+        dest.writeInt(m_iSensorSampleTimeMillis);
+        dest.writeInt(m_iSensorWriteUpdateTimeMillis);
     }
 
     @SuppressWarnings("unused")

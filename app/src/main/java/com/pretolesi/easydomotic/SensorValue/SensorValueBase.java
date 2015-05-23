@@ -210,7 +210,7 @@ public class SensorValueBase extends BaseValue implements
     protected void setOutputFilter(float[] afSensorValue ){
         long lTimeNow = System.currentTimeMillis();
         if(afSensorValue != null && m_bvd != null && m_SensorValueFiltered != null && m_SensorValueOut!= null) {
-            if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTime()) {
+            if (lTimeNow - m_lTimeLast > m_bvd.getSensorSampleTimeMillis()) {
                 m_lTimeLast = lTimeNow;
 
                 // Apply low-pass filter

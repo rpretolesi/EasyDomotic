@@ -322,6 +322,7 @@ public class SQLContract
         public static final String COLUMN_NAME_SENSOR_AMPL_K = "SensorAmplK";
         public static final String COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K = "SensorLowPassFilterK";
         public static final String COLUMN_NAME_SENSOR_SAMPLE_TIME = "SensorSampleTime";
+        public static final String COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME = "SensorWriteUpdateTime";
 
         // Used only in MatrixCursor
         public static final String COLUMN_NAME_ORIGIN = "Origin";
@@ -360,81 +361,13 @@ public class SQLContract
                         COLUMN_NAME_SENSOR_ENABLE_SIMULATION + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_SENSOR_AMPL_K + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_SENSOR_SAMPLE_TIME + INT_TYPE +
+                        COLUMN_NAME_SENSOR_SAMPLE_TIME + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME + INT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-/*
-        public static boolean save(ArrayList<BaseValueData> albve)  {
-
-            boolean bRes = true;
-            try
-            {
-                m_LockCommandHolder.lock();
-
-                SQLiteDatabase db = SQLHelper.getInstance().getDB();
-
-                if(db != null && albve != null) {
-
-                    ContentValues values = new ContentValues();
-                    for(BaseValueData bveTemp:albve){
-                        if(bveTemp != null) {
-                            values.put(COLUMN_NAME_TYPE, bveTemp.getType());
-                            values.put(COLUMN_NAME_ROOM_ID, bveTemp.getRoomID());
-                            values.put(COLUMN_NAME_TAG, String.valueOf(bveTemp.getTag()));
-                            values.put(COLUMN_NAME_X, Float.toString(bveTemp.getPosX()));
-                            values.put(COLUMN_NAME_Y, Float.toString(bveTemp.getPosY()));
-                            values.put(COLUMN_NAME_Z, Float.toString(bveTemp.getPosZ()));
-                            values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bveTemp.getLandscape() ? 1 : 0));
-
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(bveTemp.getProtTcpIpClientEnable() ? 1 : 0));
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, bveTemp.getProtTcpIpClientID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, bveTemp.getProtTcpIpClientValueID());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, bveTemp.getProtTcpIpClientValueAddress());
-                            values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, bveTemp.getProtTcpIpClientValueDataType());
-
-                            values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, bveTemp.getValueMinNrCharToShow());
-                            values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, bveTemp.getValueNrOfDecimal());
-                            values.put(COLUMN_NAME_VALUE_UM, bveTemp.getValueUM());
-                            values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, bveTemp.getValueUpdateMillis());
-                            values.put(COLUMN_NAME_VALUE_READ_ONLY, Integer.valueOf(bveTemp.getValueReadOnly() ? 1 : 0));
-
-                            values.put(COLUMN_NAME_WRITE_VALUE_OFF, bveTemp.getWriteValueOFF());
-                            values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, bveTemp.getWriteValueOFFON());
-                            values.put(COLUMN_NAME_WRITE_VALUE_ON_OFF, bveTemp.getWriteValueONOFF());
-                            values.put(COLUMN_NAME_WRITE_VALUE_ON, bveTemp.getWriteValueON());
-
-                            values.put(COLUMN_NAME_SENSOR_TYPE_ID, bveTemp.getSensorTypeID());
-                            values.put(COLUMN_NAME_SENSOR_VALUE_ID, bveTemp.getSensorValueID());
-                            values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(bveTemp.getSensorEnableSimulation() ? 1 : 0));
-                            values.put(COLUMN_NAME_SENSOR_AMPL_K, bveTemp.getSensorAmplK());
-                            values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bveTemp.getSensorLowPassFilterK());
-                            values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bveTemp.getSensorSampleTime());
-
-                            String whereClause = _ID + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?";
-
-                            String[] whereArgs = {String.valueOf(bveTemp.getID()), String.valueOf(bveTemp.getRoomID())};
-                            long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, bveTemp.getID());
-                            // Update or Save
-                            if (id > 0) {
-                                bveTemp.setID(id);
-                                bveTemp.setSaved(true);
-                            } else {
-                                bRes = false;
-                            }
-                        }
-                    }
-                }
-            } finally {
-                m_LockCommandHolder.unlock();
-            }
-
-            return bRes;
-
-        }
-*/
         public static boolean save(BaseValueData bve)  {
 
             boolean bRes = true;
@@ -476,7 +409,8 @@ public class SQLContract
                     values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0));
                     values.put(COLUMN_NAME_SENSOR_AMPL_K, bve.getSensorAmplK());
                     values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bve.getSensorLowPassFilterK());
-                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bve.getSensorSampleTime());
+                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bve.getSensorSampleTimeMillis());
+                    values.put(COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME, bve.getSensorWriteUpdateTimeMillis());
 
                     String whereClause = _ID + " = ? ";
 
@@ -541,6 +475,7 @@ public class SQLContract
                             COLUMN_NAME_SENSOR_AMPL_K,
                             COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
                             COLUMN_NAME_SENSOR_SAMPLE_TIME,
+                            COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME,
 
                             COLUMN_NAME_ORIGIN
                     };
@@ -578,7 +513,8 @@ public class SQLContract
                             Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0),
                             bve.getSensorAmplK(),
                             bve.getSensorLowPassFilterK(),
-                            bve.getSensorSampleTime(),
+                            bve.getSensorSampleTimeMillis(),
+                            bve.getSensorWriteUpdateTimeMillis(),
 
                             0   // Origin
                     });
@@ -639,7 +575,9 @@ public class SQLContract
                                     COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
                                     COLUMN_NAME_SENSOR_AMPL_K,
                                     COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
-                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME,
+                                    COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME
+
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -716,7 +654,9 @@ public class SQLContract
                                     COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
                                     COLUMN_NAME_SENSOR_AMPL_K,
                                     COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
-                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME,
+                                    COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME
+
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -793,7 +733,9 @@ public class SQLContract
                                     COLUMN_NAME_SENSOR_ENABLE_SIMULATION,
                                     COLUMN_NAME_SENSOR_AMPL_K,
                                     COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K,
-                                    COLUMN_NAME_SENSOR_SAMPLE_TIME
+                                    COLUMN_NAME_SENSOR_SAMPLE_TIME,
+                                    COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME
+
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -965,7 +907,8 @@ public class SQLContract
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_ENABLE_SIMULATION)) == 0) ? false : true),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_AMPL_K))),
                                 Float.parseFloat(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K))),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_SAMPLE_TIME))
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_SAMPLE_TIME)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME))
                         );
 
                         albve.add(bve);

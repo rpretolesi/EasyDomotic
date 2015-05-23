@@ -146,13 +146,7 @@ public class BaseValue extends TextView implements
                 }
                 case MotionEvent.ACTION_UP: {
                     onTouchActionUp(m_bEditMode);
-
-/*
-                    if(m_svd.getSensorEnableSimulation()){
-                        openWriteInput();
-                    }
-*/
-                    break;
+                 break;
                 }
             }
         }
@@ -220,7 +214,6 @@ public class BaseValue extends TextView implements
     }
 
     protected void onTouchActionUp(boolean bEditMode) {
-
     }
 
     protected void openInputField() {

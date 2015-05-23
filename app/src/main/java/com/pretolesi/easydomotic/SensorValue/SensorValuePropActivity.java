@@ -28,8 +28,6 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     private NumericEditText m_id_et_min_nr_char_to_show;
     private NumericEditText m_id_et_nr_of_decimal;
     private StringEditText m_id_et_um;
-togliere    private NumericEditText m_id_et_update_millis;
-togliere    private CheckBox m_id_cb_read_only;
 
     // Sensor
     private Spinner m_id_spn_sensor_type;
@@ -37,8 +35,8 @@ togliere    private CheckBox m_id_cb_read_only;
     private CheckBox m_id_cb_sensor_enable_simulation;
     private NumericEditText m_id_et_sensor_ampl_k;
     private NumericEditText m_id_et_sensor_low_pass_filter_k;
-    private NumericEditText m_id_et_sensor_sample_time_k;
-mettere private NumericEditText m_id_et_sensor_write_update_millis;
+    private NumericEditText m_id_et_sensor_sample_time_millis;
+    private NumericEditText m_id_et_sensor_write_update_millis;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +54,6 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
         m_id_et_um = (StringEditText)findViewById(R.id.id_et_um);
         m_id_et_um.setInputLimit(BaseValueData.ValueUMMinValue, BaseValueData.ValueUMMaxValue);
         m_id_et_um.setText(BaseValueData.ValueUMDefaulValue);
-        m_id_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
-        m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
-        m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
-        m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
 
         // Sensor
         m_id_spn_sensor_type = (Spinner)findViewById(R.id.id_spn_sensor_type);
@@ -73,9 +67,12 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
         m_id_et_sensor_low_pass_filter_k = (NumericEditText)findViewById(R.id.id_et_sensor_low_pass_filter_k);
         m_id_et_sensor_low_pass_filter_k.setInputLimit(BaseValueData.SensorLowPassFilterKMinValue, BaseValueData.SensorLowPassFilterKMaxValue);
         m_id_et_sensor_low_pass_filter_k.setText(BaseValueData.SensorLowPassFilterKDefaulValue);
-        m_id_et_sensor_sample_time_k = (NumericEditText)findViewById(R.id.id_et_sensor_sample_time_k);
-        m_id_et_sensor_sample_time_k.setInputLimit(BaseValueData.SensorSampleTimeMinValue, BaseValueData.SensorSampleTimeMaxValue);
-        m_id_et_sensor_sample_time_k.setText(BaseValueData.SensorSampleTimeDefaulValue);
+        m_id_et_sensor_sample_time_millis = (NumericEditText)findViewById(R.id.id_et_sensor_sample_time);
+        m_id_et_sensor_sample_time_millis.setInputLimit(BaseValueData.SensorSampleTimeMinValue, BaseValueData.SensorSampleTimeMaxValue);
+        m_id_et_sensor_sample_time_millis.setText(BaseValueData.SensorSampleTimeDefaulValue);
+        m_id_et_sensor_write_update_millis = (NumericEditText)findViewById(R.id.id_et_sensor_write_update_time);
+        m_id_et_sensor_write_update_millis.setInputLimit(BaseValueData.SensorWriteUpdateTimeMinValue, BaseValueData.SensorWriteUpdateTimeMaxValue);
+        m_id_et_sensor_write_update_millis.setText(BaseValueData.SensorWriteUpdateTimeDefaulValue);
 
         // Get sensor list
         int iTypeParameter;
@@ -121,12 +118,6 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
         if (m_id_et_um != null) {
             m_id_et_um.setText(m_bvd.getValueUM());
         }
-        if (m_id_et_update_millis != null) {
-            m_id_et_update_millis.setText(Integer.toString(m_bvd.getValueUpdateMillis()));
-        }
-        if (m_id_cb_read_only != null) {
-            m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
-        }
 
         // Sensor
         if(m_id_spn_sensor_type != null) {
@@ -152,8 +143,11 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
         if (m_id_et_sensor_low_pass_filter_k != null) {
             m_id_et_sensor_low_pass_filter_k.setText(Float.toString(m_bvd.getSensorLowPassFilterK()));
         }
-        if (m_id_et_sensor_sample_time_k != null) {
-            m_id_et_sensor_sample_time_k.setText(Integer.toString(m_bvd.getSensorSampleTime()));
+        if (m_id_et_sensor_sample_time_millis != null) {
+            m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_bvd.getSensorSampleTimeMillis()));
+        }
+        if (m_id_et_sensor_write_update_millis != null) {
+            m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_bvd.getSensorSampleTimeMillis()));
         }
     }
 
@@ -175,12 +169,6 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
             if (m_id_et_um != null) {
                 m_bvd.setValueUM(m_id_et_um.getText().toString());
             }
-            if (m_id_et_update_millis != null) {
-                m_bvd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
-            }
-            if (m_id_cb_read_only != null) {
-                m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
-            }
 
             // Sensor
             if(m_id_spn_sensor_type != null) {
@@ -199,8 +187,11 @@ mettere private NumericEditText m_id_et_sensor_write_update_millis;
             if (m_id_et_sensor_low_pass_filter_k != null) {
                 m_bvd.setSensorLowPassFilterK(Float.parseFloat(m_id_et_sensor_low_pass_filter_k.getText().toString()));
             }
-            if (m_id_et_sensor_sample_time_k != null) {
-                m_bvd.setSensorSampleTime(Integer.parseInt(m_id_et_sensor_sample_time_k.getText().toString()));
+            if (m_id_et_sensor_sample_time_millis != null) {
+                m_bvd.setSensorSampleTimeMillis(Integer.parseInt(m_id_et_sensor_sample_time_millis.getText().toString()));
+            }
+            if (m_id_et_sensor_write_update_millis != null) {
+                m_bvd.setSensorWriteUpdateTimeMillis(Integer.parseInt(m_id_et_sensor_write_update_millis.getText().toString()));
             }
 
         } catch (Exception ex) {

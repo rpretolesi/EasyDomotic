@@ -168,6 +168,7 @@
     <string name="text_tv_sensor_ampl_k">Amplifier k</string>
     <string name="text_tv_sensor_low_pass_filter_k">Low pass filter k</string>
     <string name="text_tv_sensor_sample_time_ms">Sensor sample time ms</string>
+    <string name="text_tv_sensor_write_update_time_ms">Sensor write update time ms</string>
 
 
     <!--
