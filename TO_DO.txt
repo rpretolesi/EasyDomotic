@@ -1,0 +1,3 @@
+Mettere nel title bar il nome della stanza.
+Vedere se e' possibile impostare il dato del typo di dato anche se non ho protocolli
+Verificare che se selezione un protocollo errato(knx) non si inizializza il tcp-ip

@@ -124,7 +124,6 @@ public class BaseValuePropActivity extends Activity implements
         m_id_spn_protocol_data_type.setSelection(BaseValueData.ProtTcpIpClientValueDataTypeDefaul);
         m_id_spn_protocol_data_type.setEnabled(false);
 
-        setActionBar();
         Intent intent = getIntent();
         if(intent != null) {
             m_iTypeParameter = intent.getIntExtra(TYPE, -1);
@@ -155,14 +154,31 @@ public class BaseValuePropActivity extends Activity implements
         m_id_spn_protocol_data_type.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, NumericDataType.DataType.values()));
 
-
+        setActionBar();
     }
 
-    public void setActionBar() {
+    private void setActionBar() {
         ActionBar actionBar = getActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
+            int iTypeParameter;
+            if(m_bvdParameter != null){
+                iTypeParameter = m_bvdParameter.getType();
+            } else {
+                iTypeParameter = m_iTypeParameter;
+            }
+            switch (iTypeParameter){
+                case BaseValueData.TYPE_LIGHT_SWITCH:
+                    actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
+                    break;
+                case BaseValueData.TYPE_NUMERIC_VALUE:
+                    actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
+                    break;
+                case BaseValueData.TYPE_SENSOR_RAW_VALUE:
+                case BaseValueData.TYPE_SENSOR_CALIBR_VALUE:
+                    actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
+                    break;
+            }
         }
     }
 

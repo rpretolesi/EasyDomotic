@@ -19,9 +19,9 @@ public class BaseValueData implements Parcelable {
     public static short TAGMaxChar = 128;
     public static String TAGDefaultValue = "My Name";
 
-    public static String PosXDefaultValue = "30";
+    public static String PosXDefaultValue = "50";
 
-    public static String PosYDefaultValue = "30";
+    public static String PosYDefaultValue = "50";
 
     public static String PosZDefaultValue = "0";
 

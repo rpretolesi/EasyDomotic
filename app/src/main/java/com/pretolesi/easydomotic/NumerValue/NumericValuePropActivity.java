@@ -26,7 +26,7 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.numeric_value_property_activity_1);
+        setContentView(R.layout.numeric_value_property_activity);
 
         // Base
         onBaseCreate();
