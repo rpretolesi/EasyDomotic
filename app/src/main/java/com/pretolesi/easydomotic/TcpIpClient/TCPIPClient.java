@@ -670,10 +670,10 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         if(dtDataType != null){
             switch (dtDataType) {
                 case SHORT:
-                    int iValue;
+                    short shValue;
                     try {
-                        iValue = Integer.parseInt(strValue);
-                        writeShort(context, iTID, iUID, iAddress, iValue);
+                        shValue = Short.parseShort(strValue);
+                        writeShort(context, iTID, iUID, iAddress, shValue);
 
                         return true;
 
@@ -682,10 +682,10 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     break;
 
                 case INT:
-                    long lValue;
+                    int iValue;
                     try {
-                        lValue = Long.parseLong(strValue);
-                        writeLong(context, iTID, iUID, iAddress, lValue);
+                        iValue = Integer.parseInt(strValue);
+                        writeInteger(context, iTID, iUID, iAddress, iValue);
 
                         return true;
 
@@ -694,10 +694,10 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                     break;
 
                 case LONG:
-                    long lValue64;
+                    long lValue;
                     try {
-                        lValue64 = Long.parseLong(strValue);
-                        writeLong(context, iTID, iUID, iAddress, lValue64);
+                        lValue = Long.parseLong(strValue);
+                        writeLong(context, iTID, iUID, iAddress, lValue);
 
                         return true;
 
