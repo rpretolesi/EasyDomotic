@@ -218,7 +218,7 @@ void Communication(){
               shInValue = getShortFromBytes(&m_byteReadMBMsg[4]);
             }
 
-            if(ushortModbusAddress == 20000) {
+            if(ushortModbusAddress == 10) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -236,7 +236,7 @@ void Communication(){
                   bValueOk = true;
               }
             }
-            if(ushortModbusAddress == 20001) {
+            if(ushortModbusAddress == 11) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -254,7 +254,7 @@ void Communication(){
                   bValueOk = true;
               }
             }            
-            if(ushortModbusAddress == 20002) {
+            if(ushortModbusAddress == 12) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -272,7 +272,7 @@ void Communication(){
                   bValueOk = true;
               }
             }            
-            if(ushortModbusAddress == 20003) {
+            if(ushortModbusAddress == 13) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -291,7 +291,7 @@ void Communication(){
               }
             }
 
-            if(ushortModbusAddress == 40001) {
+            if(ushortModbusAddress == 0) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 1){
@@ -302,7 +302,7 @@ void Communication(){
               Serial.println(shInValue);
             }
 
-            if(ushortModbusAddress == 10001) {
+            if(ushortModbusAddress == 1) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
@@ -313,7 +313,7 @@ void Communication(){
               Serial.println(lInValue);
             }
 
-            if(ushortModbusAddress == 10003) {
+            if(ushortModbusAddress == 2) {
               bAddressOk = true;
 
               if(shortQuantityOfRegisters == 2){
@@ -356,7 +356,7 @@ void Communication(){
           Serial.print("Quantity of Register: ");
           Serial.println(shortQuantityOfRegisters);
           if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
-            if(ushortModbusAddress == 40001) {  
+            if(ushortModbusAddress == 0) {  
               if(shortQuantityOfRegisters == 1){
                 shOutValue = shInValue;
                 shortMBAPMsgLength = 5;
@@ -369,7 +369,7 @@ void Communication(){
                 bValueOk = true;
               }
             }            
-            if(ushortModbusAddress == 10001) {  
+            if(ushortModbusAddress == 1) {  
               if(shortQuantityOfRegisters == 2){
                 lOutValue = lInValue;
                 shortMBAPMsgLength = 7;
@@ -382,7 +382,7 @@ void Communication(){
                 bValueOk = true;
               }
             }            
-            if(ushortModbusAddress == 10003) {  
+            if(ushortModbusAddress == 2) {  
               if(shortQuantityOfRegisters == 2){
                 fOutValue = fInValue;
                 shortMBAPMsgLength = 7;

@@ -74,10 +74,13 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((BaseActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
- //       ((BaseActivity) activity).restoreActionBar();
-
-        // Log.d(TAG, this.toString() + ": " + "onAttach()");
+/*
+        // Show title and Action Bar
+        if (getArguments().getBoolean(EDIT_MODE, false)) {
+            ((BaseActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
+            ((BaseActivity) activity).restoreActionBar();
+        }
+*/
     }
 
     @Override
@@ -345,6 +348,13 @@ public class BaseFragment extends Fragment implements
                     m_iChildID = iMaxID;
                 }
             }
+
+            // Show title and Action Bar
+//            if(!getArguments().getBoolean(EDIT_MODE, false)) {
+                ((BaseActivity) getActivity()).onSectionSetTitle(m_rfd.getTAG());
+                ((BaseActivity) getActivity()).restoreActionBar();
+//            }
+
         }
     }
 

@@ -76,28 +76,34 @@ public class BaseActivity extends Activity {
                 mTitle = getString(R.string.settings_title_section_add_switch);
                 break;
             case 4:
-                mTitle = getString(R.string.settings_title_section_disp);
+                mTitle = getString(R.string.settings_title_dialog_section_add_numeric_value);
                 break;
             case 5:
-                mTitle = getString(R.string.settings_title_section_save);
+                mTitle = getString(R.string.settings_title_section_add_raw_sensor_value);
                 break;
             case 6:
-                mTitle = getString(R.string.settings_title_section_new_tcp_ip_client);
+                mTitle = getString(R.string.settings_title_section_add_calibr_sensor_value);
                 break;
             case 7:
-                mTitle = getString(R.string.settings_title_section_open_tcp_ip_client);
+                mTitle = getString(R.string.settings_title_section_new_tcp_ip_client);
                 break;
             case 8:
-                mTitle = getString(R.string.settings_title_section_save);
+                mTitle = getString(R.string.settings_title_section_open_tcp_ip_client);
                 break;
         }
 
     }
 
+    public void onSectionSetTitle(String strTitle) {
+        mTitle = strTitle;
+    }
+
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        if(actionBar != null) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
     }
 }

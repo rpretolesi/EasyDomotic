@@ -92,6 +92,10 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
+                    // Show title when close activity
+                    onSectionSetTitle(getString(R.string.app_name));
+                    restoreActionBar();
+
                     Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchPropActivity.class, BaseValueData.TYPE_LIGHT_SWITCH, rfd.getID());
                     startActivity(intent);
                 }else {
@@ -110,6 +114,10 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
+                    // Show title when close activity
+                    onSectionSetTitle(getString(R.string.app_name));
+                    restoreActionBar();
+
                     Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByRoomID(this, NumericValuePropActivity.class, BaseValueData.TYPE_NUMERIC_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
@@ -128,6 +136,10 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
+                    // Show title when close activity
+                    onSectionSetTitle(getString(R.string.app_name));
+                    restoreActionBar();
+
                     Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_RAW_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
@@ -146,6 +158,10 @@ public class SettingsActivity extends BaseActivity implements
                 BaseFragment bf = (BaseFragment)f;
                 RoomFragmentData rfd = bf.getRoomFragmentData();
                 if(rfd != null) {
+                    // Show title when close activity
+                    onSectionSetTitle(getString(R.string.app_name));
+                    restoreActionBar();
+
                     Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_CALIBR_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
@@ -159,6 +175,10 @@ public class SettingsActivity extends BaseActivity implements
         }
 
         if(position == 6){
+            // Show title when close activity
+            onSectionSetTitle(getString(R.string.app_name));
+            restoreActionBar();
+
             Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, -1);
             startActivity(intent);
         }
@@ -235,6 +255,10 @@ public class SettingsActivity extends BaseActivity implements
     @Override
     public void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id) {
         if(position == 7){
+            // Show title when close activity
+            onSectionSetTitle(getString(R.string.app_name));
+            restoreActionBar();
+
             Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, id);
             startActivity(intent);
         }

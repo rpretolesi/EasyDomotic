@@ -149,7 +149,7 @@
     <string name="text_tv_position_z">Z:</string>
 
     <string name="text_tv_protocol_ui">IDENTIFIER</string>
-    <string name="text_tv_protocol_addr_value">ADDRESS:</string>
+    <string name="text_tv_protocol_addr_value">ADDRESS: (Holding Registers, 0=40001)</string>
 
     <string name="text_tv_write_value_off">Value off:</string>
     <string name="text_tv_write_value_off_on">Value off->on:</string>

@@ -513,8 +513,7 @@ public class BaseValuePropActivity extends Activity implements
             // oppure
             // Se l'ID e' maggiore di 0
             // il Record esiste Gia'
-//            if (!SQLContract.BaseValueEntry.isTagPresent(m_id_et_name.getText().toString(), lRoomID)) {
-            if(!(m_bvd != null && (m_bvd.getID() > 0)) || (m_lIDParameter > 0)){
+            if(!((m_bvd != null && (m_bvd.getID() > 0)) || (m_lIDParameter > 0))){
                 if(setBaseData(iDialogOriginID)){
                     if(SQLContract.BaseValueEntry.save(m_bvd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
@@ -646,13 +645,6 @@ public class BaseValuePropActivity extends Activity implements
         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_ERROR_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_error), getString(R.string.text_odf_message_ok_button))
                 .show(getFragmentManager(), "");
 
-/*
-        if(m_bvd != null) {
-            SQLContract.BaseValueEntry.delete(m_bvd.getID());
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
-        }
-*/
     }
     private Orientation getOrientation() {
         if (m_id_rb_landscape != null && m_id_rb_portrait != null) {

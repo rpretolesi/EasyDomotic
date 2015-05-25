@@ -50,7 +50,6 @@ public class TCPIPClientPropActivity extends Activity implements
 
     private SimpleCursorAdapter m_SCAdapter;
     private TCPIPClientData m_ticd;
-    private long m_lID;
     private long m_lIDParameter;
 
     @Override
@@ -82,22 +81,17 @@ public class TCPIPClientPropActivity extends Activity implements
         m_id_stica_et_protocol_field_2.setInputLimit(TCPIPClientData.TailMinValue, TCPIPClientData.TailMaxValue);
         m_id_stica_et_protocol_field_2.setText(TCPIPClientData.TailDefaulValue);
 
-        setActionBar();
-
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         Intent intent = getIntent();
-        m_lID = -1;
-        m_lIDParameter = -1;
         if(intent != null) {
             m_lIDParameter = intent.getLongExtra(TCP_IP_CLIENT_ID, -1);
-//            m_lsdParameter = intent.getParcelableExtra(LightSwitchPropActivity.LIGHT_SWITCH_DATA);
         }
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
 
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+        setActionBar();
     }
 
     public void setActionBar() {
@@ -106,6 +100,18 @@ public class TCPIPClientPropActivity extends Activity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
     }
 
     @Override
@@ -140,7 +146,6 @@ public class TCPIPClientPropActivity extends Activity implements
     @Override
     public void onBackPressed() {
         boolean bAskForSave = false;
-
         if (m_ticd != null) {
             if(!m_ticd.getSaved()){
                 bAskForSave = true;
@@ -148,7 +153,6 @@ public class TCPIPClientPropActivity extends Activity implements
         } else {
             bAskForSave = true;
         }
-
         if(bAskForSave){
             YesNoDialogFragment.newInstance(DialogOriginID.ORIGIN_BACK_BUTTON_ID,
                     DialogActionID.SAVE_ITEM_NOT_SAVED_CONFIRM_ID,
@@ -185,11 +189,9 @@ public class TCPIPClientPropActivity extends Activity implements
             if(alticd != null && !alticd.isEmpty()){
                 m_ticd = alticd.get(0);
                 m_ticd.setSaved(false);
-                updateTcpIpClient();
+                getValue();
             }
         }
-
-        // Log.d(TAG, this.toString() + ": " + "onLoadFinished() id: " + loader.getId());
     }
 
     @Override
@@ -203,7 +205,15 @@ public class TCPIPClientPropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveTCPIPClientData(iDialogOriginID);
+                    if(setData(iDialogOriginID)){
+                        if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        } else {
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        }
+                    }
                 }
                 if(bNo) {
                     // no action
@@ -224,10 +234,18 @@ public class TCPIPClientPropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    saveTCPIPClientData(iDialogOriginID);
+                    if(setData(iDialogOriginID)){
+                        if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        } else {
+                            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                    .show(getFragmentManager(), "");
+                        }
+                    }
                 }
                 if(bNo) {
-                    // No action...
+                    super.onBackPressed();
                 }
             }
             if(iDialogActionID == DialogActionID.SAVE_ITEM_NOT_SAVED_CONFIRM_ID) {
@@ -262,57 +280,63 @@ public class TCPIPClientPropActivity extends Activity implements
         }
     }
 
-    private void updateTcpIpClient() {
-        if (m_ticd != null) {
+    private void getValue() {
+        if (m_ticd == null) {
+            return;
+        }
 
-            if(m_id_stica_et_server_name != null) {
-                m_id_stica_et_server_name.setText(m_ticd.getName());
-            }
-            if(m_id_stica_et_server_ip_address != null) {
-                m_id_stica_et_server_ip_address.setText(m_ticd.getAddress());
-            }
-            if(m_id_stica_et_server_port != null) {
-                m_id_stica_et_server_port.setText(Integer.toString(m_ticd.getPort()));
-            }
-            if(m_id_stica_et_timeout != null) {
-                m_id_stica_et_timeout.setText(Integer.toString(m_ticd.getTimeout()));
-            }
-            if(m_id_stica_et_comm_send_data_delay != null) {
-                m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getCommSendDelayData()));
-            }
-            if(m_id_stica_spn_protocol != null) {
-                long lItem = -1;
-                try{
-                    lItem = m_ticd.getProtocolID();
-                } catch (Exception ignore) { }
-                m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
-                m_id_stica_spn_protocol.setSelection((int)lItem);
-            }
-            if(m_id_stica_et_protocol_field_1 != null) {
-                m_id_stica_et_protocol_field_1.setText(Integer.toString(m_ticd.getHead()));
-            }
-            if(m_id_stica_et_protocol_field_2 != null) {
-                m_id_stica_et_protocol_field_2.setText(Integer.toString(m_ticd.getTail()));
-            }
+        if(m_id_stica_et_server_name != null) {
+            m_id_stica_et_server_name.setText(m_ticd.getName());
+        }
+        if(m_id_stica_et_server_ip_address != null) {
+            m_id_stica_et_server_ip_address.setText(m_ticd.getAddress());
+        }
+        if(m_id_stica_et_server_port != null) {
+            m_id_stica_et_server_port.setText(Integer.toString(m_ticd.getPort()));
+        }
+        if(m_id_stica_et_timeout != null) {
+            m_id_stica_et_timeout.setText(Integer.toString(m_ticd.getTimeout()));
+        }
+        if(m_id_stica_et_comm_send_data_delay != null) {
+            m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getCommSendDelayData()));
+        }
+        if(m_id_stica_spn_protocol != null) {
+            long lItem = -1;
+            try{
+                lItem = m_ticd.getProtocolID();
+            } catch (Exception ignore) { }
+            m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
+            m_id_stica_spn_protocol.setSelection((int)lItem);
+        }
+        if(m_id_stica_et_protocol_field_1 != null) {
+            m_id_stica_et_protocol_field_1.setText(Integer.toString(m_ticd.getHead()));
+        }
+        if(m_id_stica_et_protocol_field_2 != null) {
+            m_id_stica_et_protocol_field_2.setText(Integer.toString(m_ticd.getTail()));
         }
     }
 
     private void save(int iDialogOriginID) {
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
-        if(!StringEditText.validateInputData(findViewById(android.R.id.content))){
-            return;
-        }
+        if(!StringEditText.validateInputData(findViewById(android.R.id.content))){ return;  }
 
         if(m_id_stica_et_server_name != null) {
 
-            m_lID = SQLContract.TcpIpClientEntry.isAlreadyStored(m_id_stica_et_server_name.getText().toString());
-            if (m_lID < 0) {
-                saveTCPIPClientData(iDialogOriginID);
+            if(!((m_ticd != null && (m_ticd.getID() > 0)) || (m_lIDParameter > 0))){
+                if(setData(iDialogOriginID)){
+                    if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                                .show(getFragmentManager(), "");
+                    } else {
+                        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                                .show(getFragmentManager(), "");
+                    }
+                }
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
                         DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
-                        getString(R.string.text_yndf_title_tcp_ip_client_name_already_exist),
-                        getString(R.string.text_yndf_message_tcp_ip_client_name_already_exist_confirmation),
+                        getString(R.string.text_yndf_title_base_value_name_already_exist),
+                        getString(R.string.text_yndf_message_base_value_name_already_exist_confirmation),
                         getString(R.string.text_yndf_btn_yes),
                         getString(R.string.text_yndf_btn_no)
                 ).show(getFragmentManager(), "");
@@ -320,14 +344,13 @@ public class TCPIPClientPropActivity extends Activity implements
         }
     }
 
-    private void saveTCPIPClientData(int iDialogOriginID){
+    private boolean setData(int iDialogOriginID){
 
         if (m_ticd == null) {
             m_ticd = new TCPIPClientData();
             m_ticd.setEnable(true);
         }
 
-        m_ticd.setID(m_lID);
         m_ticd.setName(m_id_stica_et_server_name.getText().toString());
         m_ticd.setAddress(m_id_stica_et_server_ip_address.getText().toString());
         m_ticd.setPort(Integer.parseInt(m_id_stica_et_server_port.getText().toString()));
@@ -337,15 +360,7 @@ public class TCPIPClientPropActivity extends Activity implements
         m_ticd.setHead(Integer.parseInt(m_id_stica_et_protocol_field_1.getText().toString()));
         m_ticd.setTail(Integer.parseInt(m_id_stica_et_protocol_field_2.getText().toString()));
 
-        if(!SQLContract.TcpIpClientEntry.save(m_ticd)) {
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
-            return;
-        }
-
-        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
-                .show(getFragmentManager(), "");
-
+        return true;
     }
 
     private void delete(int iDialogOriginID){

@@ -61,7 +61,7 @@ public class BaseValueData implements Parcelable {
     // Sensor
     public static float SensorAmplKMinValue = 0.001f;
     public static float SensorAmplKMaxValue = 1000.0f;
-    public static String SensorAmplKDefaulValue = "1.0";
+    public static String SensorAmplKDefaulValue = "10.0";
 
     public static float SensorLowPassFilterKMinValue = 0.001f;
     public static float SensorLowPassFilterKMaxValue = 0.999f;
