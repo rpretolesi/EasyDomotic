@@ -1,6 +1,7 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import java.util.List;
 import java.util.Vector;
@@ -22,8 +23,9 @@ public class TciIpClientHelper {
                 m_ltic = new Vector<>();
                 for(TCPIPClientData ticd : lticd){
                     TCPIPClient tic = new TCPIPClient(m_context);
-                    tic.execute(ticd);
-                    m_ltic.add(tic);
+//                    tic.execute(ticd);
+                    tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
+                            m_ltic.add(tic);
                 }
             }
         }

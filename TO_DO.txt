@@ -1,7 +1,7 @@
 FATTO-Mettere nel title bar il nome della stanza.
-Vedere se e' possibile impostare il dato del typo di dato anche se non ho protocolli
+FATTO-Vedere se e' possibile impostare il dato del typo di dato anche se non ho protocolli
 Verificare che se selezione un protocollo errato(knx) non si inizializza il tcp-ip
 FATTO-Verificare bene Open e New del Tcp/Ip
 FATTO-Specificare che 0 nelle funzioni degli holding register = 40001 e sistemare questo anche nella simulazione su arduino
 FATTO-Capire perche' scrivendo un int 32 non scrive bene...
-Verificare bene, ancora 1 volta, se utilizzare lo short quando c'e' lo short, e non l'int. ecc...
+FATTO-Verificare bene, ancora 1 volta, se utilizzare lo short quando c'e' lo short, e non l'int. ecc...

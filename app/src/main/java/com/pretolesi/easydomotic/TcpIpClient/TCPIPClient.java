@@ -126,7 +126,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return 0;
     }
 
-    private synchronized boolean startConnection() {
+    private boolean startConnection() {
 
         // Log.d(TAG, this.toString() + "startConnection() enter");
         m_timeMillisecondsStart = System.currentTimeMillis();
@@ -177,7 +177,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-    private synchronized boolean isConnected() {
+    private boolean isConnected() {
         for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
             TcpIpMsg tim = iterator.next();
             if (tim != null) {
@@ -210,7 +210,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-    private synchronized boolean send() {
+    private boolean send() {
         // Log.d(TAG, this.toString() + "send() enter");
 
         m_timeMillisecondsSend = System.currentTimeMillis();
@@ -253,7 +253,8 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-    private synchronized boolean receive() {
+//    private synchronized boolean receive() {
+    private boolean receive() {
         // Log.d(TAG, this.toString() + "receive() enter");
 
         m_timeMillisecondsReceive = System.currentTimeMillis();
@@ -415,7 +416,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-    private synchronized void stopConnection() {
+    private void stopConnection() {
 
         // Log.d(TAG, this.toString() + "stopConnection() enter");
 

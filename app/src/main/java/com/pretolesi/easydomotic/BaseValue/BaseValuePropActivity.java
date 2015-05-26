@@ -96,6 +96,7 @@ public class BaseValuePropActivity extends Activity implements
         m_id_et_position_y.setText(BaseValueData.PosYDefaultValue);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
         m_id_et_position_z.setText(BaseValueData.PosZDefaultValue);
+
         m_id_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
         m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
         m_id_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
@@ -108,7 +109,6 @@ public class BaseValuePropActivity extends Activity implements
                 m_id_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
                 m_id_et_protocol_ui.setEnabled(((CheckBox) v).isChecked());
                 m_id_et_protocol_addr_value.setEnabled(((CheckBox) v).isChecked());
-                m_id_spn_protocol_data_type.setEnabled(((CheckBox) v).isChecked());
             }
         });
 
@@ -120,9 +120,9 @@ public class BaseValuePropActivity extends Activity implements
         m_id_et_protocol_addr_value.setInputLimit(BaseValueData.ProtTcpIpClientValueAddressMin, BaseValueData.ProtTcpIpClientValueAddressMax);
         m_id_et_protocol_addr_value.setText(BaseValueData.ProtTcpIpClientValueAddressDefaul);
         m_id_et_protocol_addr_value.setEnabled(false);
+
         m_id_spn_protocol_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
         m_id_spn_protocol_data_type.setSelection(BaseValueData.ProtTcpIpClientValueDataTypeDefaul);
-        m_id_spn_protocol_data_type.setEnabled(false);
 
         Intent intent = getIntent();
         if(intent != null) {
@@ -427,10 +427,19 @@ public class BaseValuePropActivity extends Activity implements
 
     protected void getBaseValue() {
         // Stato
+        if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() <= 0){
+            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
+            m_id_spn_tcp_ip_client_protocol.setEnabled(false);
+            if (m_id_et_protocol_ui != null) {
+                m_id_et_protocol_ui.setEnabled(false);
+            }
+            if (m_id_et_protocol_addr_value != null) {
+                m_id_et_protocol_addr_value.setEnabled(false);
+            }
+        }
+
         if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() > 0){
             m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
-        } else {
-            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
         }
 
         // Dati
@@ -467,33 +476,52 @@ public class BaseValuePropActivity extends Activity implements
             m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
         }
 
-        if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
+        if (m_id_cb_enable_tcp_ip_client_protocol != null) {
+            m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
+
+            if(m_id_cb_enable_tcp_ip_client_protocol.isChecked()){
+                if (m_id_spn_tcp_ip_client_protocol != null) {
+                    m_id_spn_tcp_ip_client_protocol.setEnabled(true);
+                }
+                if (m_id_et_protocol_ui != null) {
+                    m_id_et_protocol_ui.setEnabled(true);
+                }
+                if (m_id_et_protocol_addr_value != null) {
+                    m_id_et_protocol_addr_value.setEnabled(true);
+                }
+            } else {
+                if (m_id_spn_tcp_ip_client_protocol != null) {
+                    m_id_spn_tcp_ip_client_protocol.setEnabled(false);
+                }
+                if (m_id_et_protocol_ui != null) {
+                    m_id_et_protocol_ui.setEnabled(false);
+                }
+                if (m_id_et_protocol_addr_value != null) {
+                    m_id_et_protocol_addr_value.setEnabled(false);
+                }
+            }
+        }
+
+
+        if (m_id_spn_tcp_ip_client_protocol != null) {
             for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
                 Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
                 if (value != null) {
                     long id = value.getLong(value.getColumnIndex("_id"));
                     if (id == m_bvd.getProtTcpIpClientID()) {
-                        m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
                         m_id_spn_tcp_ip_client_protocol.setSelection(i);
-                        if (m_id_et_protocol_ui != null) {
-                            m_id_et_protocol_ui.setEnabled(true);
-                        }
-                        if (m_id_et_protocol_addr_value != null) {
-                            m_id_et_protocol_addr_value.setEnabled(true);
-                        }
-                        if(m_id_spn_protocol_data_type != null) {
-                            m_id_spn_protocol_data_type.setEnabled(true);
-                        }
                     }
                 }
             }
         }
+
         if (m_id_et_protocol_ui != null) {
             m_id_et_protocol_ui.setText(Integer.toString(m_bvd.getProtTcpIpClientValueID()));
         }
         if (m_id_et_protocol_addr_value != null) {
             m_id_et_protocol_addr_value.setText(Integer.toString(m_bvd.getProtTcpIpClientValueAddress()));
         }
+
         if(m_id_spn_protocol_data_type != null) {
             long lItem = -1;
             try{
@@ -591,27 +619,26 @@ public class BaseValuePropActivity extends Activity implements
             m_bvd.setProtTcpIpClientEnable(m_id_cb_enable_tcp_ip_client_protocol.isChecked());
         }
 
-        if(m_bvd.getProtTcpIpClientEnable()){
-            if(m_id_spn_tcp_ip_client_protocol != null) {
-                m_bvd.setProtTcpIpClientID(m_id_spn_tcp_ip_client_protocol.getSelectedItemId());
+        if(m_id_spn_tcp_ip_client_protocol != null) {
+            m_bvd.setProtTcpIpClientID(m_id_spn_tcp_ip_client_protocol.getSelectedItemId());
+        }
+
+        try {
+            if (m_id_et_protocol_ui != null) {
+                m_bvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
+            }
+            if (m_id_et_protocol_addr_value != null) {
+                m_bvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_et_protocol_addr_value.getText().toString()));
             }
 
-            try {
-                if (m_id_et_protocol_ui != null) {
-                    m_bvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
-                }
-                if (m_id_et_protocol_addr_value != null) {
-                    m_bvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_et_protocol_addr_value.getText().toString()));
-                }
-                if(m_id_spn_protocol_data_type != null) {
-                    m_bvd.setProtTcpIpClientValueDataType((int) m_id_spn_protocol_data_type.getSelectedItemId());
-                }
+        } catch (Exception ex) {
+            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
+                    .show(getFragmentManager(), "");
+            return false;
+        }
 
-            } catch (Exception ex) {
-                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
-                        .show(getFragmentManager(), "");
-                return false;
-            }
+        if(m_id_spn_protocol_data_type != null) {
+            m_bvd.setProtTcpIpClientValueDataType((int) m_id_spn_protocol_data_type.getSelectedItemId());
         }
 
         return true;
