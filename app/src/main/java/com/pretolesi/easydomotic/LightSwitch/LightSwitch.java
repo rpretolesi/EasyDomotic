@@ -55,6 +55,8 @@ public class LightSwitch extends Switch implements
         this.m_iTIDON = -1;
         setNumericDataType(DataType.SHORT);
         setEditMode(false);
+//        setTextOff("0");
+//        setTextOn("1");
     }
 
     public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
@@ -67,9 +69,11 @@ public class LightSwitch extends Switch implements
             this.m_iTIDONOFF = m_iMsgID + 3;
             this.m_iTIDON = m_iMsgID + 4;
             this.setTag(bvd.getTag());
-            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
+            setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
         }
+//        setTextOff("0");
+//        setTextOn("1");
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -104,8 +108,6 @@ public class LightSwitch extends Switch implements
         }
 
         setOnCheckedChangeListener(this);
-
-        // Log.d(TAG, this.toString() + ": " + "onAttachedToWindow()");
     }
 
     @Override
@@ -121,8 +123,6 @@ public class LightSwitch extends Switch implements
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
-
-        // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
 
@@ -135,11 +135,14 @@ public class LightSwitch extends Switch implements
         if(m_bvd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
+
+                Short sh;
                 if(bValue) {
-                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
-                    tic.writeShort(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueON());
-                } else {
-                    tic.writeShort(getContext(), m_iTIDOFF, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueOFF());
+                    sh = (short)m_bvd.getWriteValueON();
+                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(),  sh);
+                 } else {
+                    sh = (short)m_bvd.getWriteValueOFF();
+                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(),  sh);
                 }
             }
         }
@@ -232,9 +235,6 @@ public class LightSwitch extends Switch implements
             mLastTouchX = event.getRawX() - rllp.leftMargin;
             mLastTouchY = event.getRawY() - rllp.topMargin;
         }
-
-//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_DOWN mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY);
-
         return true;
     }
 
@@ -261,9 +261,6 @@ public class LightSwitch extends Switch implements
             m_bvd.setPosX((int)dx);
             m_bvd.setPosY((int)dy);
         }
-
-//        // Log.d(TAG, this.toString() + ": " + "onTouchEvent: ACTION_MOVE dx/dy: " + dx + "/" + dy + ", mLastTouchX/mLastTouchY: " + mLastTouchX + "/" + mLastTouchY + ", x/y: " + x + "/" + y);
-
         return true;
     }
 

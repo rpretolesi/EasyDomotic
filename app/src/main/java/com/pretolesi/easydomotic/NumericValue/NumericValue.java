@@ -90,7 +90,7 @@ public class NumericValue extends BaseValue implements
         // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
-    private void readValue(){
+    private synchronized void readValue(){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
@@ -190,7 +190,7 @@ public class NumericValue extends BaseValue implements
     }
 
     @Override
-    protected synchronized void OnWriteInputField(String strValue) {
+    protected void OnWriteInputField(String strValue) {
         super.OnWriteInputField(strValue);
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());

@@ -13,6 +13,7 @@ import android.widget.SimpleCursorAdapter;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.BaseValue.BaseValuePropActivity;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
@@ -53,6 +54,9 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
     @Override
     protected void getBaseValue() {
         super.getBaseValue();
+
+        // set DataType as Short
+        setDataType(NumericDataType.DataType.SHORT, false);
 
         // Dati
         if (m_bvd == null) {

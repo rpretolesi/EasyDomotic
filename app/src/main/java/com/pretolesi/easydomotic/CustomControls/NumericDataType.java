@@ -62,17 +62,6 @@ public class NumericDataType {
         return obj;
     }
 
-    public synchronized static Object getObject(DataType dtDataType, short shValue){
-        Object obj = null;
-        if(abyteValue != null) {
-            try{
-                obj = ByteBuffer.wrap(abyteValue).getDouble();
-            } catch(Exception ignored){
-            }
-        }
-        return obj;
-    }
-
     public enum DataType {
         SHORT(0, "Integer 16 bit"),
         INT(1, "Integer 32 bit"),
@@ -88,6 +77,8 @@ public class NumericDataType {
             m_iDataTypeID = iDataTypeID;
             m_strDataTypeName = strDataTypeName;
         }
+
+        public int getTypeID() { return m_iDataTypeID; }
 
         public static DataType getDataType(int iDataTypeID) {
             if(iDataTypeID == DataType.SHORT.m_iDataTypeID) {

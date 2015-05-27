@@ -442,7 +442,7 @@ public class BaseFragment extends Fragment implements
     public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
         TextView tv = (TextView)getActivity().findViewById((int)tics.getServerID());
         if(tv != null){
-            tv.setText(tics.getStatus().toString() + "\n" + tics.getError());
+            tv.setText(tics.getServerName() + "-" + tics.getStatus().toString() + "\n" + tics.getError());
         }
     }
 }

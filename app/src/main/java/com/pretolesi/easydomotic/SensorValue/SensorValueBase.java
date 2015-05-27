@@ -102,7 +102,7 @@ public class SensorValueBase extends BaseValue implements
     }
 
     @Override
-    protected synchronized void OnWriteInputField(String strValue){
+    protected void OnWriteInputField(String strValue){
         super.OnWriteInputField(strValue);
         WriteInputField(strValue);
     }
@@ -188,7 +188,7 @@ public class SensorValueBase extends BaseValue implements
     }
 
     @Override
-    protected void onTimer(){
+    protected synchronized void onTimer(){
         super.onTimer();
         if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
             // Write Sensor Data
@@ -198,7 +198,7 @@ public class SensorValueBase extends BaseValue implements
         }
     }
 
-    protected synchronized void WriteInputField(String strValue){
+    protected void WriteInputField(String strValue){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if (tic != null) {

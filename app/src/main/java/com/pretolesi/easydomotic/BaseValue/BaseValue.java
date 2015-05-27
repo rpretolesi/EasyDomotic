@@ -287,7 +287,7 @@ public class BaseValue extends TextView implements
         }
     }
 
-    private synchronized void removeInputField() {
+    private void removeInputField() {
         if(m_edEditText != null){
             ViewParent view = m_edEditText.getParent();
             if (view instanceof RelativeLayout) {
@@ -305,13 +305,13 @@ public class BaseValue extends TextView implements
         this.setVisibility(VISIBLE);
     }
 
-    protected synchronized void closeInputField(){
+    protected void closeInputField(){
         if (m_edEditText != null) {
             m_edEditText.clearFocus();
         }
     }
 
-    protected synchronized void setErrorInputField(boolean bError){
+    protected void setErrorInputField(boolean bError){
         if (m_edEditText != null) {
             if(bError){
                 m_edEditText.setError("");
@@ -321,7 +321,7 @@ public class BaseValue extends TextView implements
         }
     }
 
-    protected synchronized void OnWriteInputField(String strValue) {
+    protected void OnWriteInputField(String strValue) {
 
     }
 }

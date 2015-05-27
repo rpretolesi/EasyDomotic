@@ -9,41 +9,50 @@ public class TcpIpClientStatus {
     private static final String TAG = "TcpIpClientStatus";
 
     private long m_lServerID;
+    private String m_strServerName;
     private Status m_sStatus;
     private String m_strError;
 
     public TcpIpClientStatus(){
         m_lServerID = -1;
+        m_strServerName = "";
         m_sStatus = Status.IDLE;
         m_strError = "";
     }
 
-    public TcpIpClientStatus(long lServerID, Status sStatus, String strError){
+    public TcpIpClientStatus(long lServerID, String strServerName, Status sStatus, String strError){
         m_lServerID = lServerID;
+        m_strServerName = strServerName;
         m_sStatus = sStatus;
         m_strError = strError;
     }
 
-    public void setData(long lID, Status sStatus, String strError){
-        m_lServerID = lID;
+    public void setData(long lServerID, String strServerName, Status sStatus, String strError){
+        m_lServerID = lServerID;
+        m_strServerName = strServerName;
         m_sStatus = sStatus;
         m_strError = strError;
     }
 
     public void setData(TcpIpClientStatus pud){
         m_lServerID = pud.getServerID();
+        m_strServerName = pud.getServerName();
         m_sStatus = pud.getStatus();
         m_strError = pud.getError();
     }
 
     public void resetData(){
         m_lServerID = -1;
+        m_strServerName = "";
         m_sStatus = Status.IDLE;
         m_strError = "";
     }
 
     public long getServerID(){
         return m_lServerID;
+    }
+    public String getServerName(){
+        return m_strServerName;
     }
 
     public Status getStatus(){

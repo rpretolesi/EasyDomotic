@@ -644,6 +644,15 @@ public class BaseValuePropActivity extends Activity implements
         return true;
     }
 
+    protected void setDataType(NumericDataType.DataType dtDataType, boolean bCanByModified){
+        if(m_id_spn_protocol_data_type != null) {
+            m_id_spn_protocol_data_type.setEnabled(bCanByModified);
+            if(dtDataType != null){
+                m_id_spn_protocol_data_type.setSelection(dtDataType.getTypeID());
+            }
+        }
+    }
+
     private void delete(int iDialogOriginID){
         YesNoDialogFragment.newInstance(
                 iDialogOriginID,
