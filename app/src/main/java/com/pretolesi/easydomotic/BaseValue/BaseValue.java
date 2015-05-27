@@ -121,13 +121,7 @@ public class BaseValue extends TextView implements
 
                 case MotionEvent.ACTION_UP: {
                     onTouchActionUp(m_bEditMode);
-/*
-                    if(m_svd != null) {
-                        m_svd.setSaved(false);
-                        Intent intent = SensorValuePropActivity.makeSensorValuePropActivity(this.getContext(), m_svd);
-                        this.getContext().startActivity(intent);
-                    }
-*/
+
                     break;
                 }
             }

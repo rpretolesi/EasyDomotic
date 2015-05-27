@@ -705,6 +705,33 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
+        if(objValue == null) {
+            return false;
+        }
+        if(objValue instanceof Short){
+            writeShort(context, iTID, iUID, iAddress, (Short)objValue);
+            return true;
+        }
+        if(objValue instanceof Integer){
+            writeInteger(context, iTID, iUID, iAddress, (Integer) objValue);
+            return true;
+        }
+        if(objValue instanceof Long){
+            writeLong(context, iTID, iUID, iAddress, (Long) objValue);
+            return true;
+        }
+        if(objValue instanceof Float){
+            writeFloat(context, iTID, iUID, iAddress, (Float) objValue);
+            return true;
+        }
+        if(objValue instanceof Double){
+            writeDouble(context, iTID, iUID, iAddress, (Double) objValue);
+            return true;
+        }
+        return false;
+    }
+
     public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){
         Object obj = null;
 

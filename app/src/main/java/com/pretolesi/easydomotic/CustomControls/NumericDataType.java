@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  */
 public class NumericDataType {
 
-    public static Object getShort(byte[] abyteValue){
+    public synchronized static Object getShort(byte[] abyteValue){
         Object obj = null;
         if(abyteValue != null) {
             try{
@@ -18,7 +18,7 @@ public class NumericDataType {
         return obj;
     }
 
-    public static Object getInt(byte[] abyteValue){
+    public synchronized static Object getInt(byte[] abyteValue){
         Object obj = null;
         if(abyteValue != null) {
             try{
@@ -29,7 +29,7 @@ public class NumericDataType {
         return obj;
     }
 
-    public static Object getLong(byte[] abyteValue){
+    public synchronized static Object getLong(byte[] abyteValue){
         Object obj = null;
         if(abyteValue != null) {
             try{
@@ -40,7 +40,7 @@ public class NumericDataType {
         return obj;
     }
 
-    public static Object getFloat(byte[] abyteValue){
+    public synchronized static Object getFloat(byte[] abyteValue){
         Object obj = null;
         if(abyteValue != null) {
             try{
@@ -51,7 +51,18 @@ public class NumericDataType {
         return obj;
     }
 
-    public static Object getDouble(byte[] abyteValue){
+    public synchronized static Object getDouble(byte[] abyteValue){
+        Object obj = null;
+        if(abyteValue != null) {
+            try{
+                obj = ByteBuffer.wrap(abyteValue).getDouble();
+            } catch(Exception ignored){
+            }
+        }
+        return obj;
+    }
+
+    public synchronized static Object getObject(DataType dtDataType, short shValue){
         Object obj = null;
         if(abyteValue != null) {
             try{
