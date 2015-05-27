@@ -95,42 +95,22 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     private DataInputStream m_dataInputStream = null;
     private int iProgressCounter;;
 
-    private List<String> m_vstrMessageLog = null;
-    private String m_strStatus = null;
-
-    private long m_timeMillisecondsStart = 0;
-    private long m_timeMillisecondsSend = 0;
-    private long m_timeMillisecondsReceive = 0;
-
     public TCPIPClient (Context context){
         m_vTcpIpClientStatusListener = new Vector<>();
         m_vTcpIpClientWriteStatusListener = new Vector<>();
         m_vTcpIpClientReadValueStatusListener = new Vector<>();
         m_context = context;
         m_vtim = new Vector<>();
-        m_vstrMessageLog = new Vector<>();
-        m_strStatus = "";
     }
 
-    public synchronized long getID() {
+    private long getID() {
         if (m_ticd != null) {
             return m_ticd.getID();
         }
         return 0;
     }
 
-    public synchronized long getProtocolID() {
-        if (m_ticd != null) {
-            return m_ticd.getProtocolID();
-        }
-        return 0;
-    }
-
     private boolean startConnection() {
-
-        // Log.d(TAG, this.toString() + "startConnection() enter");
-        m_timeMillisecondsStart = System.currentTimeMillis();
-
         if (m_ticd != null) {
             // Callbacks on UI
             publishProgress(new TcpIpClientStatus(getID(), TcpIpClientStatus.Status.CONNECTING, ""));
@@ -211,10 +191,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     }
 
     private boolean send() {
-        // Log.d(TAG, this.toString() + "send() enter");
-
-        m_timeMillisecondsSend = System.currentTimeMillis();
-
         if (m_dataOutputStream != null && m_ticd != null && m_vtim != null) {
             if (!m_vtim.isEmpty()) {
                 try {
@@ -253,12 +229,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return false;
     }
 
-//    private synchronized boolean receive() {
     private boolean receive() {
-        // Log.d(TAG, this.toString() + "receive() enter");
-
-        m_timeMillisecondsReceive = System.currentTimeMillis();
-
         if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
 
             // In case of timeout, i put the message in queue again
@@ -412,7 +383,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
             }
         }
-        // Log.d(TAG, this.toString() + "receive() return false");
         return false;
     }
 
@@ -467,7 +437,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
     /*
      * Writing/Reading Function
      */
-    public synchronized void writeShort(Context context, int iTID, int iUID, int iAddress, int iValue){
+    private void writeShort(Context context, int iTID, int iUID, int iAddress, int iValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -507,7 +477,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue){
+    private void writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -547,7 +517,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void writeLong(Context context, int iTID, int iUID, int iAddress, long lValue){
+    private void writeLong(Context context, int iTID, int iUID, int iAddress, long lValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -587,7 +557,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue){
+    private void writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -627,7 +597,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue){
+    private void writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -765,7 +735,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         return obj;
     }
 
-    public synchronized void readShort(Context context, int iTID, int iUID, int iAddress){
+    private void readShort(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -799,7 +769,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void readInt(Context context, int iTID, int iUID, int iAddress){
+    private void readInt(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -833,7 +803,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void readLong(Context context, int iTID, int iUID, int iAddress){
+    private void readLong(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -867,7 +837,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void readFloat(Context context, int iTID, int iUID, int iAddress){
+    private void readFloat(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {
@@ -901,7 +871,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    public synchronized void readDouble(Context context, int iTID, int iUID, int iAddress){
+    private void readDouble(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == TCPIPClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
                 try {

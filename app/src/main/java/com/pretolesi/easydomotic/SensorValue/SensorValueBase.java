@@ -230,7 +230,6 @@ public class SensorValueBase extends BaseValue implements
         }
     }
 
-
     private String convertFormatValueToString(DataType dtDataType, double dblValueToConvert){
         String strValue = "0";
         if(dtDataType != null){

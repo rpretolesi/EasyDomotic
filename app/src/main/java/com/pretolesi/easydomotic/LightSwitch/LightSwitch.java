@@ -14,6 +14,8 @@ import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType;
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
@@ -28,7 +30,11 @@ public class LightSwitch extends Switch implements
         TCPIPClient.TcpIpClientWriteStatusListener {
 
     private static final String TAG = "LightSwitch";
+    private NumericDataType.DataType m_dtDataType;
+
     private GestureDetectorCompat mDetector;
+    private float mLastTouchX;
+    private float mLastTouchY;
 
     private BaseValueData m_bvd;
     private int m_iMsgID;
@@ -36,9 +42,6 @@ public class LightSwitch extends Switch implements
     private int m_iTIDOFFON;
     private int m_iTIDONOFF;
     private int m_iTIDON;
-
-    private float mLastTouchX;
-    private float mLastTouchY;
 
     private boolean m_bEditMode;
 
@@ -50,7 +53,8 @@ public class LightSwitch extends Switch implements
         this.m_iTIDOFFON = -1;
         this.m_iTIDONOFF = -1;
         this.m_iTIDON = -1;
-        this.m_bEditMode = false;
+        setNumericDataType(DataType.SHORT);
+        setEditMode(false);
     }
 
     public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
@@ -63,8 +67,25 @@ public class LightSwitch extends Switch implements
             this.m_iTIDONOFF = m_iMsgID + 3;
             this.m_iTIDON = m_iMsgID + 4;
             this.setTag(bvd.getTag());
+            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
+            setEditMode(bEditMode);
         }
-        this.m_bEditMode = bEditMode;
+    }
+
+    protected void setEditMode(boolean bEditMode){
+        m_bEditMode = bEditMode;
+    }
+
+    protected void setNumericDataType(NumericDataType.DataType dtDataType){
+        m_dtDataType = dtDataType;
+    }
+
+    protected boolean getEditMode(){
+        return m_bEditMode;
+    }
+
+    protected NumericDataType.DataType getNumericDataType(){
+        return m_dtDataType;
     }
 
     /*
@@ -115,6 +136,7 @@ public class LightSwitch extends Switch implements
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 if(bValue) {
+                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
                     tic.writeShort(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueON());
                 } else {
                     tic.writeShort(getContext(), m_iTIDOFF, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), m_bvd.getWriteValueOFF());
