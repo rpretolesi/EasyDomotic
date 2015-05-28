@@ -8,6 +8,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -297,7 +298,7 @@ public class BaseFragment extends Fragment implements
                 rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
                 m_tvRoomName.setLayoutParams(rlp);
             }
-
+            m_tvRoomName.setTextColor(Color.MAGENTA);
             m_tvRoomName.setText(m_rfd.getTAG());
 
             m_rl.addView(m_tvRoomName);

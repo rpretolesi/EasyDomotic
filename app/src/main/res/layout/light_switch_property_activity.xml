@@ -48,7 +48,8 @@
                     android:layout_toEndOf="@+id/id_tv_write_value_off"
                     android:layout_marginStart="10dp"
                     android:text="@string/text_tv_write_value_off_on"
-                    android:labelFor="@+id/id_et_write_value_off_on"/>
+                    android:labelFor="@+id/id_et_write_value_off_on"
+                    android:visibility="invisible"/>
 
                 <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_et_write_value_off_on"
@@ -67,7 +68,8 @@
                     android:layout_toEndOf="@+id/id_tv_write_value_off_on"
                     android:layout_marginStart="10dp"
                     android:text="@string/text_tv_write_value_on_off"
-                    android:labelFor="@+id/id_et_write_value_on_off"/>
+                    android:labelFor="@+id/id_et_write_value_on_off"
+                    android:visibility="invisible"/>
 
                 <com.pretolesi.easydomotic.CustomControls.NumericEditText
                     android:id="@+id/id_et_write_value_on_off"

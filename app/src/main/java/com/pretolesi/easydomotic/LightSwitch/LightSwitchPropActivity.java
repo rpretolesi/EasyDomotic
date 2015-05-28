@@ -44,8 +44,10 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         m_id_et_write_value_off.setText(BaseValueData.WriteValueOFFDefault);
         m_id_et_write_value_off_on = (NumericEditText)findViewById(R.id.id_et_write_value_off_on);
         m_id_et_write_value_off_on.setText(BaseValueData.WriteValueOFFONDefault);
+        m_id_et_write_value_off_on.setVisibility(View.INVISIBLE);
         m_id_et_write_value_on_off = (NumericEditText)findViewById(R.id.id_et_write_value_on_off);
         m_id_et_write_value_on_off.setText(BaseValueData.WriteValueONOFFDefault);
+        m_id_et_write_value_on_off.setVisibility(View.INVISIBLE);
         m_id_et_write_value_on = (NumericEditText)findViewById(R.id.id_et_write_value_on);
         m_id_et_write_value_on.setText(BaseValueData.WriteValueONDefault);
 

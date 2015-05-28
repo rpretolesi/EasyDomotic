@@ -2,13 +2,18 @@ package com.pretolesi.easydomotic.LightSwitch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -45,8 +50,12 @@ public class LightSwitch extends Switch implements
 
     private boolean m_bEditMode;
 
+    // Label for Switch
+    private TextView m_LabelTextViev;
+
     public LightSwitch(Context context) {
         super(context);
+        m_LabelTextViev = null;
         this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDOFF = -1;
@@ -55,12 +64,13 @@ public class LightSwitch extends Switch implements
         this.m_iTIDON = -1;
         setNumericDataType(DataType.SHORT);
         setEditMode(false);
-//        setTextOff("0");
-//        setTextOn("1");
+        setTextOff("0");
+        setTextOn("1");
     }
 
     public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
         super(context);
+        m_LabelTextViev = null;
         if(bvd != null) {
             this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
@@ -72,8 +82,8 @@ public class LightSwitch extends Switch implements
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
         }
-//        setTextOff("0");
-//        setTextOn("1");
+        setTextOff("0");
+        setTextOn("1");
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -99,6 +109,26 @@ public class LightSwitch extends Switch implements
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        // Label Text View
+        m_LabelTextViev = new TextView(getContext());
+        m_LabelTextViev.setGravity(Gravity.CENTER);
+        m_LabelTextViev.setTextColor(Color.GREEN);
+        m_LabelTextViev.setText(m_bvd.getTag());
+        // Creo i parametri per il layout
+        ViewParent view = this.getParent();
+        if(view != null && view instanceof RelativeLayout) {
+            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+            if(m_bvd != null){
+                if(m_bvd.getLandscape()){
+                    m_LabelTextViev.setY(-112);
+                } else {
+                    m_LabelTextViev.setY(-56);
+                }
+            }
+            m_LabelTextViev.setLayoutParams(rllp);
+            ((RelativeLayout) view).addView(m_LabelTextViev);
+        }
+
         // Listener
         if(m_bvd != null){
             TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
@@ -108,6 +138,12 @@ public class LightSwitch extends Switch implements
         }
 
         setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+//        m_LabelTextViev.setY(-getHeight());
     }
 
     @Override
@@ -123,8 +159,15 @@ public class LightSwitch extends Switch implements
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
+
+        // Delete
+        m_LabelTextViev = null;
     }
 
+    @Override
+    protected void onDraw (Canvas canvas){
+        super.onDraw(canvas);
+    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -139,10 +182,10 @@ public class LightSwitch extends Switch implements
                 Short sh;
                 if(bValue) {
                     sh = (short)m_bvd.getWriteValueON();
-                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(),  sh);
+                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                  } else {
                     sh = (short)m_bvd.getWriteValueOFF();
-                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(),  sh);
+                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                 }
             }
         }
@@ -201,11 +244,11 @@ public class LightSwitch extends Switch implements
             }
 
             this.mDetector.onTouchEvent(event);
-
             return true;
         }
 
-        return super.onTouchEvent(event);
+        super.onTouchEvent(event);
+        return true;
     }
 
     @Override
@@ -258,8 +301,9 @@ public class LightSwitch extends Switch implements
 
         if(m_bvd != null) {
             BaseFragment.setViewPosition(this, (int) dx, (int) dy);
-            m_bvd.setPosX((int)dx);
-            m_bvd.setPosY((int)dy);
+            m_bvd.setPosX((int) dx);
+            m_bvd.setPosY((int) dy);
+
         }
         return true;
     }

@@ -145,7 +145,8 @@ public class BaseValue extends TextView implements
             }
         }
 
-        return super.onTouchEvent(event);
+        super.onTouchEvent(event);
+        return true;
     }
 
     @Override
