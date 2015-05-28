@@ -3,12 +3,14 @@ package com.pretolesi.easydomotic.BaseValue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.SensorEventListener;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.text.InputType;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
@@ -41,10 +44,50 @@ public class BaseValue extends TextView implements
     private boolean m_bEditMode;
     private NumericEditText m_edEditText;
 
+    // Label for Switch
+    private LabelTextView m_LabelTextViev;
+
     public BaseValue(Context context) {
         super(context);
+        m_LabelTextViev = null;
         m_bEditMode = false;
         m_dtDataType = DataType.SHORT;
+
+        setGravity(Gravity.CENTER);
+        setTextSize(20.0f);
+        setTextColor(Color.BLUE);
+
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Label Text View
+        ViewParent view = this.getParent();
+        if(view != null && view instanceof RelativeLayout) {
+            m_LabelTextViev = new LabelTextView(getContext());
+            if(getTag() != null && getTag() instanceof String){
+                m_LabelTextViev.setText((String)getTag());
+//                if(m_bvd.getLandscape()){
+//                    m_LabelTextViev.setY(-112);
+//                } else {
+//                   m_LabelTextViev.setY(-56);
+//                }
+            }
+            ((RelativeLayout) view).addView(m_LabelTextViev);
+        }
+    }
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        m_LabelTextViev = null;
+    }
+
+    @Override
+    protected void onLayout(boolean changed,  int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -216,6 +259,8 @@ public class BaseValue extends TextView implements
             // Create....
             m_edEditText = new NumericEditText(getContext());
             // Set Input Limit
+            m_edEditText.setGravity(Gravity.CENTER);
+            m_edEditText.setTextColor(Color.RED);
             m_edEditText.setSingleLine();
             if(m_dtDataType != null) {
                 switch (m_dtDataType) {
@@ -249,7 +294,7 @@ public class BaseValue extends TextView implements
                 if(imm != null){
                     imm.showSoftInput(m_edEditText, InputMethodManager.SHOW_IMPLICIT);
                 }
-                this.setVisibility(GONE);
+                setVisibility(View.GONE);
 
                 // Set Listener
                 m_edEditText.setOnKeyListener(new OnKeyListener() {
@@ -290,7 +335,7 @@ public class BaseValue extends TextView implements
 
     private void removeInputField() {
         if(m_edEditText != null){
-            ViewParent view = m_edEditText.getParent();
+            ViewParent view = this.getParent();
             if (view instanceof RelativeLayout) {
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (m_edEditText.getWindowToken() != null) {
@@ -303,7 +348,7 @@ public class BaseValue extends TextView implements
         }
         m_edEditText = null;
 
-        this.setVisibility(VISIBLE);
+        setVisibility(VISIBLE);
     }
 
     protected void closeInputField(){

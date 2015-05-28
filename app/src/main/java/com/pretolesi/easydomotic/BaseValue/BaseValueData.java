@@ -39,7 +39,7 @@ public class BaseValueData implements Parcelable {
 
     public static int ValueMinNrCharToShowMinValue = 1;
     public static int ValueMinNrCharToShowMaxValue = 9;
-    public static String ValueMinNrCharToShowDefaulValue = "3";
+    public static String ValueMinNrCharToShowDefaulValue = "9";
 
     public static int ValueNrOfDecimalMinValue = 0;
     public static int ValueNrOfDecimalMaxValue = 5;

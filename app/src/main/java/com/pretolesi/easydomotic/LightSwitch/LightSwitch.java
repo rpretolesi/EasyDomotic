@@ -19,6 +19,7 @@ import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -51,7 +52,7 @@ public class LightSwitch extends Switch implements
     private boolean m_bEditMode;
 
     // Label for Switch
-    private TextView m_LabelTextViev;
+    private LabelTextView m_LabelTextViev;
 
     public LightSwitch(Context context) {
         super(context);
@@ -110,22 +111,12 @@ public class LightSwitch extends Switch implements
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         // Label Text View
-        m_LabelTextViev = new TextView(getContext());
-        m_LabelTextViev.setGravity(Gravity.CENTER);
-        m_LabelTextViev.setTextColor(Color.GREEN);
-        m_LabelTextViev.setText(m_bvd.getTag());
-        // Creo i parametri per il layout
         ViewParent view = this.getParent();
         if(view != null && view instanceof RelativeLayout) {
-            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+            m_LabelTextViev = new LabelTextView(getContext());
             if(m_bvd != null){
-                if(m_bvd.getLandscape()){
-                    m_LabelTextViev.setY(-112);
-                } else {
-                    m_LabelTextViev.setY(-56);
-                }
+                m_LabelTextViev.setText((String)getTag());
             }
-            m_LabelTextViev.setLayoutParams(rllp);
             ((RelativeLayout) view).addView(m_LabelTextViev);
         }
 
@@ -141,9 +132,9 @@ public class LightSwitch extends Switch implements
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    protected void onLayout(boolean changed,  int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-//        m_LabelTextViev.setY(-getHeight());
+        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
     }
 
     @Override

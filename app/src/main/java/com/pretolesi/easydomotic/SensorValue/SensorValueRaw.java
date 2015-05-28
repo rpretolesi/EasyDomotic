@@ -98,6 +98,4 @@ public class SensorValueRaw extends SensorValueBase {
         }
     }
 
-//provare a mettere la simulazione nella classe base ed eventualmente verificare il read only
-
 }

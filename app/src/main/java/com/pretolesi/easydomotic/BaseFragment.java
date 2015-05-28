@@ -299,6 +299,7 @@ public class BaseFragment extends Fragment implements
                 m_tvRoomName.setLayoutParams(rlp);
             }
             m_tvRoomName.setTextColor(Color.MAGENTA);
+            m_tvRoomName.setTextSize(30.0f);
             m_tvRoomName.setText(m_rfd.getTAG());
 
             m_rl.addView(m_tvRoomName);
