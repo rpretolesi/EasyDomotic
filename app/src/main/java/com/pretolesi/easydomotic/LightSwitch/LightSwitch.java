@@ -113,7 +113,7 @@ public class LightSwitch extends Switch implements
         // Label Text View
         ViewParent view = this.getParent();
         if(view != null && view instanceof RelativeLayout) {
-            m_LabelTextViev = new LabelTextView(getContext());
+            m_LabelTextViev = new LabelTextView(getContext(), this, false);
             if(m_bvd != null){
                 m_LabelTextViev.setText((String)getTag());
             }
@@ -134,7 +134,7 @@ public class LightSwitch extends Switch implements
     @Override
     protected void onLayout(boolean changed,  int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
+//        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
     }
 
     @Override

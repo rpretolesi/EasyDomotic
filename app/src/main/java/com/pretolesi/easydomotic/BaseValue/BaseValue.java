@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.BaseValue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.hardware.SensorEventListener;
 import android.os.Handler;
@@ -65,29 +66,28 @@ public class BaseValue extends TextView implements
         // Label Text View
         ViewParent view = this.getParent();
         if(view != null && view instanceof RelativeLayout) {
-            m_LabelTextViev = new LabelTextView(getContext());
+            m_LabelTextViev = new LabelTextView(getContext(), this, false);
             if(getTag() != null && getTag() instanceof String){
                 m_LabelTextViev.setText((String)getTag());
-//                if(m_bvd.getLandscape()){
-//                    m_LabelTextViev.setY(-112);
-//                } else {
-//                   m_LabelTextViev.setY(-56);
-//                }
+                ((RelativeLayout) view).addView(m_LabelTextViev);
             }
-            ((RelativeLayout) view).addView(m_LabelTextViev);
         }
     }
+
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
         m_LabelTextViev = null;
     }
 
     @Override
     protected void onLayout(boolean changed,  int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -237,6 +237,7 @@ public class BaseValue extends TextView implements
         final float dy = y - m_LastTouchY;
 
         BaseFragment.setViewPosition(this, (int) dx, (int) dy);
+//        BaseFragment.setViewPosition(m_LabelTextViev, (int) dx, (int) dy - 56);
 
         return true;
     }
@@ -287,6 +288,7 @@ public class BaseValue extends TextView implements
             ViewParent view = this.getParent();
             if(view != null && view instanceof RelativeLayout){
                 RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+                rllp.
                 m_edEditText.setLayoutParams(rllp);
                 ((RelativeLayout) view).addView(m_edEditText);
                 m_edEditText.requestFocus();
