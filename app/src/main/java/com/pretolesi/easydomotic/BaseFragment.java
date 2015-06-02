@@ -26,7 +26,7 @@ import com.pretolesi.easydomotic.NumericValue.NumericValue;
 import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -235,7 +235,7 @@ public class BaseFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // The list should now be shown.
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
-            ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+            ArrayList<CommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
 
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
@@ -373,7 +373,7 @@ public class BaseFragment extends Fragment implements
                     switch (bvd.getType()){
                         case BaseValueData.TYPE_LIGHT_SWITCH:
                             LightSwitch ls = new LightSwitch(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getLandscape()){
+                            if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
                             }
                             setViewPosition(ls, bvd.getPosX(), bvd.getPosY());
@@ -383,7 +383,7 @@ public class BaseFragment extends Fragment implements
 
                         case BaseValueData.TYPE_NUMERIC_VALUE:
                             NumericValue nv = new NumericValue(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getLandscape()){
+                            if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
                             }
                             setViewPosition(nv, bvd.getPosX(), bvd.getPosY());
@@ -393,7 +393,7 @@ public class BaseFragment extends Fragment implements
 
                         case BaseValueData.TYPE_SENSOR_RAW_VALUE:
                             SensorValueRaw svr = new SensorValueRaw(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getLandscape()){
+                            if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
                             }
                             setViewPosition(svr, bvd.getPosX(), bvd.getPosY());
@@ -403,7 +403,7 @@ public class BaseFragment extends Fragment implements
 
                         case BaseValueData.TYPE_SENSOR_CALIBR_VALUE:
                             SensorValueCalibr svc = new SensorValueCalibr(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getLandscape()){
+                            if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();
                             }
                             setViewPosition(svc, bvd.getPosX(), bvd.getPosY());

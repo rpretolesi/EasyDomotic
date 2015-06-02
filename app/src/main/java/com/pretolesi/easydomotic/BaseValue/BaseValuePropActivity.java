@@ -27,7 +27,7 @@ import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -58,8 +58,8 @@ public class BaseValuePropActivity extends Activity implements
     protected EditText m_id_et_position_x;
     protected EditText m_id_et_position_y;
     protected EditText m_id_et_position_z;
-    protected RadioButton m_id_rb_portrait;
-    protected RadioButton m_id_rb_landscape;
+    protected RadioButton m_id_rb_horizontal;
+    protected RadioButton m_id_rb_vertical;
 
     protected CheckBox m_id_cb_enable_tcp_ip_client_protocol;
     protected Spinner m_id_spn_tcp_ip_client_protocol;
@@ -86,10 +86,10 @@ public class BaseValuePropActivity extends Activity implements
         m_id_et_name = (StringEditText)findViewById(R.id.id_et_name);
         m_id_et_name.setInputLimit(BaseValueData.TAGMinChar, BaseValueData.TAGMaxChar);
         m_id_et_name.setText(BaseValueData.TAGDefaultValue);
-        m_id_rb_portrait = (RadioButton)findViewById(R.id.id_rb_portrait);
-        m_id_rb_portrait.setChecked(true);
-        m_id_rb_landscape = (RadioButton)findViewById(R.id.id_rb_landscape);
-        m_id_rb_landscape.setChecked(false);
+        m_id_rb_horizontal = (RadioButton)findViewById(R.id.id_rb_horizontal);
+        m_id_rb_horizontal.setChecked(true);
+        m_id_rb_vertical = (RadioButton)findViewById(R.id.id_rb_vertical);
+        m_id_rb_vertical.setChecked(false);
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
         m_id_et_position_x.setText(BaseValueData.PosXDefaultValue);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
@@ -133,7 +133,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, CommClientData.Protocol.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,
@@ -450,19 +450,19 @@ public class BaseValuePropActivity extends Activity implements
             m_id_et_name.setText(m_bvd.getTag());
         }
 
-        if (m_bvd.getLandscape()) {
-            if (m_id_rb_landscape != null) {
-                m_id_rb_landscape.setChecked(true);
+        if (m_bvd.getVertical()) {
+            if (m_id_rb_vertical != null) {
+                m_id_rb_vertical.setChecked(true);
             }
-            if (m_id_rb_portrait != null) {
-                m_id_rb_portrait.setChecked(false);
+            if (m_id_rb_horizontal != null) {
+                m_id_rb_horizontal.setChecked(false);
             }
         } else {
-            if (m_id_rb_landscape != null) {
-                m_id_rb_landscape.setChecked(false);
+            if (m_id_rb_vertical != null) {
+                m_id_rb_vertical.setChecked(false);
             }
-            if (m_id_rb_portrait != null) {
-                m_id_rb_portrait.setChecked(true);
+            if (m_id_rb_horizontal != null) {
+                m_id_rb_horizontal.setChecked(true);
             }
         }
 
@@ -593,10 +593,10 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if(getOrientation() == Orientation.PORTRAIT ){
-            m_bvd.setLandscape(false);
+            m_bvd.setVertical(false);
         }
         if(getOrientation() == Orientation.LANDSCAPE ){
-            m_bvd.setLandscape(true);
+            m_bvd.setVertical(true);
         }
 
 
@@ -683,11 +683,11 @@ public class BaseValuePropActivity extends Activity implements
 
     }
     private Orientation getOrientation() {
-        if (m_id_rb_landscape != null && m_id_rb_portrait != null) {
-            if(m_id_rb_landscape.isChecked() && !m_id_rb_portrait.isChecked()) {
+        if (m_id_rb_vertical != null && m_id_rb_horizontal != null) {
+            if(m_id_rb_vertical.isChecked() && !m_id_rb_horizontal.isChecked()) {
                 return Orientation.LANDSCAPE;
             }
-            if(!m_id_rb_landscape.isChecked() && m_id_rb_portrait.isChecked()) {
+            if(!m_id_rb_vertical.isChecked() && m_id_rb_horizontal.isChecked()) {
                 return Orientation.PORTRAIT;
             }
         }

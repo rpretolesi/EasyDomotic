@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
 
 /**
  *
@@ -385,7 +385,7 @@ public class SQLContract
                     values.put(COLUMN_NAME_X, Float.toString(bve.getPosX()));
                     values.put(COLUMN_NAME_Y, Float.toString(bve.getPosY()));
                     values.put(COLUMN_NAME_Z, Float.toString(bve.getPosZ()));
-                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bve.getLandscape() ? 1 : 0));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bve.getVertical() ? 1 : 0));
 
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0));
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, bve.getProtTcpIpClientID());
@@ -489,7 +489,7 @@ public class SQLContract
                             bve.getPosX(),
                             bve.getPosY(),
                             bve.getPosZ(),
-                            Integer.valueOf(bve.getLandscape() ? 1 : 0),
+                            Integer.valueOf(bve.getVertical() ? 1 : 0),
 
                             Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0),
                             bve.getProtTcpIpClientID(),
@@ -958,7 +958,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(TCPIPClientData ticd)  {
+        public static boolean save(CommClientData ticd)  {
 
             boolean bRes = true;
             try
@@ -998,7 +998,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromTCPIPClientData(TCPIPClientData ticd)
+        public static Cursor loadFromTCPIPClientData(CommClientData ticd)
         {
             try
             {
@@ -1286,13 +1286,13 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<TCPIPClientData> get(Cursor cursor){
+        public static ArrayList<CommClientData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                TCPIPClientData ticd = null;
-                ArrayList<TCPIPClientData> alticd = null;
+                CommClientData ticd = null;
+                ArrayList<CommClientData> alticd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
@@ -1309,7 +1309,7 @@ public class SQLContract
                             }
                         }
 
-                        ticd = new TCPIPClientData(
+                        ticd = new CommClientData(
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),

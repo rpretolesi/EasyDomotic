@@ -54,17 +54,17 @@
                         android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/id_rb_portrait"
+                    android:id="@+id/id_rb_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_rb_portrait" />
+                    android:text="@string/text_rb_horizontal" />
 
                 <RadioButton
-                    android:id="@+id/id_rb_landscape"
+                    android:id="@+id/id_rb_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:text="@string/text_rb_landscape" />
+                    android:text="@string/text_rb_vertical" />
 
             </RadioGroup>
 

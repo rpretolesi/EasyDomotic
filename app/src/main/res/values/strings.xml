@@ -141,8 +141,8 @@
     <string name="text_tv_name">Name</string>
     <string name="hint_et_name">Type a Name</string>
     <string name="text_tv_orientation">Orientation</string>
-    <string name="text_rb_portrait">Portrait</string>
-    <string name="text_rb_landscape">Landscape</string>
+    <string name="text_rb_horizontal">Horizontal</string>
+    <string name="text_rb_vertical">Vertical</string>
     <string name="text_tv_position">Position</string>
     <string name="text_tv_position_x">X:</string>
     <string name="text_tv_position_y">Y:</string>

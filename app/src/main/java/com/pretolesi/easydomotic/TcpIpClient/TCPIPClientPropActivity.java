@@ -49,7 +49,7 @@ public class TCPIPClientPropActivity extends Activity implements
     private NumericEditText m_id_stica_et_protocol_field_2;
 
     private SimpleCursorAdapter m_SCAdapter;
-    private TCPIPClientData m_ticd;
+    private CommClientData m_ticd;
     private long m_lIDParameter;
 
     @Override
@@ -58,28 +58,28 @@ public class TCPIPClientPropActivity extends Activity implements
         setContentView(R.layout.setting_tcp_ip_client_activity);
 
         m_id_stica_et_server_name = (StringEditText)findViewById(R.id.id_stica_et_server_name);
-        m_id_stica_et_server_name.setInputLimit(TCPIPClientData.NameMinChar, TCPIPClientData.NameMaxChar);
-        m_id_stica_et_server_name.setText(TCPIPClientData.NameDefaultValue);
+        m_id_stica_et_server_name.setInputLimit(CommClientData.NameMinChar, CommClientData.NameMaxChar);
+        m_id_stica_et_server_name.setText(CommClientData.NameDefaultValue);
         m_id_stica_et_server_ip_address = (StringEditText)findViewById(R.id.id_stica_et_server_ip_address);
-        m_id_stica_et_server_ip_address.setInputLimit(TCPIPClientData.AddressMinChar, TCPIPClientData.AddressMaxChar);
-        m_id_stica_et_server_ip_address.setText(TCPIPClientData.AddressDefaultValue);
+        m_id_stica_et_server_ip_address.setInputLimit(CommClientData.AddressMinChar, CommClientData.AddressMaxChar);
+        m_id_stica_et_server_ip_address.setText(CommClientData.AddressDefaultValue);
         m_id_stica_et_server_port = (NumericEditText)findViewById(R.id.id_stica_et_server_port);
-        m_id_stica_et_server_port.setInputLimit(TCPIPClientData.PortMinValue, TCPIPClientData.PortMaxValue);
-        m_id_stica_et_server_port.setText(TCPIPClientData.PortDefaultValue);
+        m_id_stica_et_server_port.setInputLimit(CommClientData.PortMinValue, CommClientData.PortMaxValue);
+        m_id_stica_et_server_port.setText(CommClientData.PortDefaultValue);
         m_id_stica_et_timeout = (NumericEditText)findViewById(R.id.id_stica_et_timeout);
-        m_id_stica_et_timeout.setInputLimit(TCPIPClientData.TimeoutMinValue, TCPIPClientData.TimeoutMaxValue);
-        m_id_stica_et_timeout.setText(TCPIPClientData.TimeouDefaultValue);
+        m_id_stica_et_timeout.setInputLimit(CommClientData.TimeoutMinValue, CommClientData.TimeoutMaxValue);
+        m_id_stica_et_timeout.setText(CommClientData.TimeouDefaultValue);
         m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
-        m_id_stica_et_comm_send_data_delay.setInputLimit(TCPIPClientData.CommSendDelayDataMinValue, TCPIPClientData.CommSendDelayDataMaxValue);
-        m_id_stica_et_comm_send_data_delay.setText(TCPIPClientData.CommSendDelayDataDefaultValue);
+        m_id_stica_et_comm_send_data_delay.setInputLimit(CommClientData.CommSendDelayDataMinValue, CommClientData.CommSendDelayDataMaxValue);
+        m_id_stica_et_comm_send_data_delay.setText(CommClientData.CommSendDelayDataDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
-        m_id_stica_spn_protocol.setSelection(TCPIPClientData.ProtocolDefaulValue);
+        m_id_stica_spn_protocol.setSelection(CommClientData.ProtocolDefaulValue);
         m_id_stica_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_1);
-        m_id_stica_et_protocol_field_1.setInputLimit(TCPIPClientData.HeadMinValue, TCPIPClientData.HeadMaxValue);
-        m_id_stica_et_protocol_field_1.setText(TCPIPClientData.HeadDefaulValue);
+        m_id_stica_et_protocol_field_1.setInputLimit(CommClientData.HeadMinValue, CommClientData.HeadMaxValue);
+        m_id_stica_et_protocol_field_1.setText(CommClientData.HeadDefaulValue);
         m_id_stica_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_2);
-        m_id_stica_et_protocol_field_2.setInputLimit(TCPIPClientData.TailMinValue, TCPIPClientData.TailMaxValue);
-        m_id_stica_et_protocol_field_2.setText(TCPIPClientData.TailDefaulValue);
+        m_id_stica_et_protocol_field_2.setInputLimit(CommClientData.TailMinValue, CommClientData.TailMaxValue);
+        m_id_stica_et_protocol_field_2.setText(CommClientData.TailDefaulValue);
 
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
@@ -89,7 +89,7 @@ public class TCPIPClientPropActivity extends Activity implements
         }
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, TCPIPClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, CommClientData.Protocol.values()));
 
         setActionBar();
     }
@@ -185,7 +185,7 @@ public class TCPIPClientPropActivity extends Activity implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
-            ArrayList<TCPIPClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+            ArrayList<CommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
             if(alticd != null && !alticd.isEmpty()){
                 m_ticd = alticd.get(0);
                 m_ticd.setSaved(false);
@@ -347,7 +347,7 @@ public class TCPIPClientPropActivity extends Activity implements
     private boolean setData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new TCPIPClientData();
+            m_ticd = new CommClientData();
             m_ticd.setEnable(true);
         }
 

@@ -2,23 +2,15 @@ package com.pretolesi.easydomotic;
 
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientData;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-
-import java.util.ArrayList;
 
 
 public class RunTimeActivity extends BaseActivity implements

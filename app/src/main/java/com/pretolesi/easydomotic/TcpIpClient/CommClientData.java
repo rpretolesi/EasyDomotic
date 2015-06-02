@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  *
  */
-public class TCPIPClientData implements Parcelable {
+public class CommClientData implements Parcelable {
 
     public static short NameMinChar = 1;
     public static short NameMaxChar = 128;
@@ -52,7 +52,7 @@ public class TCPIPClientData implements Parcelable {
     private int m_iHead;
     private int m_iTail;
 
-    public TCPIPClientData() {
+    public CommClientData() {
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
@@ -66,7 +66,7 @@ public class TCPIPClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public TCPIPClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
+    public CommClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -80,7 +80,7 @@ public class TCPIPClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public void update(TCPIPClientData lsd){
+    public void update(CommClientData lsd){
         if(lsd != null){
             this.m_ID = lsd.getID();
             this.m_bSaved = lsd.getSaved();
@@ -168,7 +168,7 @@ public class TCPIPClientData implements Parcelable {
         return m_iTail;
     }
 
-    protected TCPIPClientData(Parcel in) {
+    protected CommClientData(Parcel in) {
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_bEnable = in.readByte() != 0;
@@ -203,15 +203,15 @@ public class TCPIPClientData implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Creator<TCPIPClientData> CREATOR = new Creator<TCPIPClientData>() {
+    public static final Creator<CommClientData> CREATOR = new Creator<CommClientData>() {
         @Override
-        public TCPIPClientData createFromParcel(Parcel in) {
-            return new TCPIPClientData(in);
+        public CommClientData createFromParcel(Parcel in) {
+            return new CommClientData(in);
         }
 
         @Override
-        public TCPIPClientData[] newArray(int size) {
-            return new TCPIPClientData[size];
+        public CommClientData[] newArray(int size) {
+            return new CommClientData[size];
         }
     };
 

@@ -84,7 +84,7 @@ public class BaseValueData implements Parcelable {
     private float m_fPosX;
     private float m_fPosY;
     private float m_fPosZ;
-    private boolean m_bLandscape;
+    private boolean m_bVertical;
 
     // Protocol Tcp Ip Client
     private boolean m_bProtTcpIpClientEnable;
@@ -125,7 +125,7 @@ public class BaseValueData implements Parcelable {
         m_fPosX = 20;
         m_fPosY = 20;
         m_fPosZ = 0;
-        m_bLandscape = false;
+        m_bVertical = false;
 
         // Protocol Tcp Ip Client
         m_bProtTcpIpClientEnable = false;
@@ -165,7 +165,7 @@ public class BaseValueData implements Parcelable {
         m_fPosX = fPosX;
         m_fPosY = fPosY;
         m_fPosZ = fPosZ;
-        m_bLandscape = bLandscape;
+        m_bVertical = bLandscape;
     }
 
     public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType) {
@@ -220,7 +220,7 @@ public class BaseValueData implements Parcelable {
 
     public void setPosZ(float fPosZ) { this.m_fPosZ = fPosZ; }
 
-    public void setLandscape(boolean bLandScape) { this.m_bLandscape = bLandScape; }
+    public void setVertical(boolean bVertical) { this.m_bVertical = bVertical; }
 
     // Protocol
     public void setProtTcpIpClientEnable(boolean bTcpIpClientEnable) { this.m_bProtTcpIpClientEnable = bTcpIpClientEnable; }
@@ -305,7 +305,7 @@ public class BaseValueData implements Parcelable {
         return m_fPosZ;
     }
 
-    public boolean getLandscape() { return m_bLandscape; }
+    public boolean getVertical() { return m_bVertical; }
 
     // Protocol
     public boolean getProtTcpIpClientEnable() { return m_bProtTcpIpClientEnable; }
@@ -384,7 +384,7 @@ public class BaseValueData implements Parcelable {
         m_fPosX = in.readFloat();
         m_fPosY = in.readFloat();
         m_fPosZ = in.readFloat();
-        m_bLandscape = in.readByte() != 0;
+        m_bVertical = in.readByte() != 0;
 
         m_bProtTcpIpClientEnable = in.readByte() != 0;
         m_lProtTcpIpClientID = in.readLong();
@@ -427,7 +427,7 @@ public class BaseValueData implements Parcelable {
         dest.writeFloat(m_fPosX);
         dest.writeFloat(m_fPosY);
         dest.writeFloat(m_fPosZ);
-        dest.writeByte((byte) (m_bLandscape ? 1 : 0));
+        dest.writeByte((byte) (m_bVertical ? 1 : 0));
 
         dest.writeByte((byte) (m_bProtTcpIpClientEnable ? 1 : 0));
         dest.writeLong(m_lProtTcpIpClientID);

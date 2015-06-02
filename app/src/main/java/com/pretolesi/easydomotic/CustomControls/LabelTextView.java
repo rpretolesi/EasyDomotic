@@ -13,34 +13,38 @@ import android.widget.TextView;
  *
  */
 public class LabelTextView extends TextView {
-    private View m_vRefView = null;
-    private boolean m_bVertical = false;
 
-    public LabelTextView(Context context, View vRefView, boolean bVertical) {
+    RelativeLayout.LayoutParams m_rllp = null;
+
+    public LabelTextView(Context context) {
         super(context);
-        m_vRefView = vRefView;
-        m_bVertical = bVertical;
         setGravity(Gravity.CENTER);
         setTextColor(Color.GREEN);
-        if(m_vRefView != null) {
-            RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams) m_vRefView.getLayoutParams();
-            setLayoutParams(rllp);
-        }
+        setSingleLine();
+        m_rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        setLayoutParams(m_rllp);
     }
 
     @Override
-    protected void onLayout(boolean changed,  int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        if(m_vRefView != null){
-            if(m_bVertical){
-                setY(t - m_vRefView.getWidth());
-            } else {
-                setY(t - m_vRefView.getHeight());
-            }
-        }
-     }
+    protected void onLayout(boolean changed,  int l, int t, int r, int b) { super.onLayout(changed, l, t, r, b); }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+    }
+
+    public void setPosition(int l, int t, int r, int b, int h, int w, boolean bVertical){
+        if(m_rllp != null) {
+            m_rllp.leftMargin = l;
+            if(!bVertical){
+                m_rllp.topMargin = t - (h/2)-16;
+            } else {
+                m_rllp.topMargin = t - (w/2)-16;
+            }
+//            m_rllp.rightMargin = r;
+//            m_rllp.bottomMargin = b;
+            m_rllp.height = h;
+            m_rllp.width = w;
+        }
     }
 }

@@ -44,15 +44,17 @@ public class BaseValue extends TextView implements
 
     private boolean m_bEditMode;
     private NumericEditText m_edEditText;
+    private boolean m_bVertical;
 
     // Label for Switch
-    private LabelTextView m_LabelTextViev;
+    private LabelTextView m_LabelTextView;
 
     public BaseValue(Context context) {
         super(context);
-        m_LabelTextViev = null;
+        m_LabelTextView = null;
         m_bEditMode = false;
         m_dtDataType = DataType.SHORT;
+        m_bVertical = false;
 
         setGravity(Gravity.CENTER);
         setTextSize(20.0f);
@@ -66,18 +68,15 @@ public class BaseValue extends TextView implements
         // Label Text View
         ViewParent view = this.getParent();
         if(view != null && view instanceof RelativeLayout) {
-            m_LabelTextViev = new LabelTextView(getContext(), this, false);
-            if(getTag() != null && getTag() instanceof String){
-                m_LabelTextViev.setText((String)getTag());
-                ((RelativeLayout) view).addView(m_LabelTextViev);
-            }
+            m_LabelTextView = new LabelTextView(getContext());
+            ((RelativeLayout) view).addView(m_LabelTextView);
         }
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        m_LabelTextViev = null;
+        m_LabelTextView = null;
     }
 
     @Override
@@ -88,6 +87,21 @@ public class BaseValue extends TextView implements
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+        if(rllp != null) {
+            if(m_LabelTextView != null) {
+                m_LabelTextView.setPosition(rllp.leftMargin, rllp.topMargin, rllp.rightMargin, rllp.bottomMargin, canvas.getHeight(), canvas.getWidth(), getVertical());
+                if(getTag() != null && getTag() instanceof String){
+                    m_LabelTextView.setText((String) getTag());
+                }
+            }
+            if (m_edEditText != null) {
+                m_edEditText.setPosition(rllp.leftMargin, rllp.topMargin, rllp.rightMargin, rllp.bottomMargin, canvas.getHeight(), canvas.getWidth(), getVertical());
+//                if(getTag() != null && getTag() instanceof String){
+//                    m_edEditText.setText("");
+//                }
+            }
+        }
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -98,6 +112,8 @@ public class BaseValue extends TextView implements
         m_dtDataType = dtDataType;
     }
 
+    public void setVertical(boolean bVertical) { this.m_bVertical = bVertical; }
+
     protected boolean getEditMode(){
         return m_bEditMode;
     }
@@ -105,6 +121,8 @@ public class BaseValue extends TextView implements
     protected DataType getNumericDataType(){
         return m_dtDataType;
     }
+
+    public boolean getVertical() { return m_bVertical; }
 
     /*
      * Begin
@@ -237,7 +255,6 @@ public class BaseValue extends TextView implements
         final float dy = y - m_LastTouchY;
 
         BaseFragment.setViewPosition(this, (int) dx, (int) dy);
-//        BaseFragment.setViewPosition(m_LabelTextViev, (int) dx, (int) dy - 56);
 
         return true;
     }
@@ -258,46 +275,15 @@ public class BaseValue extends TextView implements
     protected void openInputField() {
         if(m_edEditText == null){
             // Create....
-            m_edEditText = new NumericEditText(getContext());
-            // Set Input Limit
-            m_edEditText.setGravity(Gravity.CENTER);
-            m_edEditText.setTextColor(Color.RED);
-            m_edEditText.setSingleLine();
-            if(m_dtDataType != null) {
-                switch (m_dtDataType) {
-                    case SHORT:
-                        m_edEditText.setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
-                        break;
-                    case INT:
-                        m_edEditText.setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
-                        break;
-                    case LONG:
-                        m_edEditText.setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
-                        break;
-                    case FLOAT:
-                        m_edEditText.setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
-                        break;
-                    case DOUBLE:
-                        m_edEditText.setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
-                        break;
-                }
-            }
-            // Visualizzo valore corrente
-            m_edEditText.setHint(this.getText());
-            // Creo i parametri per il layout
             ViewParent view = this.getParent();
-            if(view != null && view instanceof RelativeLayout){
-                RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
-                rllp.
-                m_edEditText.setLayoutParams(rllp);
+            if(view != null && view instanceof RelativeLayout) {
+                m_edEditText = new NumericEditText(getContext(), m_dtDataType, getText().toString());
                 ((RelativeLayout) view).addView(m_edEditText);
                 m_edEditText.requestFocus();
                 InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(imm != null){
                     imm.showSoftInput(m_edEditText, InputMethodManager.SHOW_IMPLICIT);
                 }
-                setVisibility(View.GONE);
-
                 // Set Listener
                 m_edEditText.setOnKeyListener(new OnKeyListener() {
                     @Override
@@ -331,6 +317,7 @@ public class BaseValue extends TextView implements
                         }
                     }
                 });
+                invalidate();
             }
         }
     }
@@ -349,8 +336,6 @@ public class BaseValue extends TextView implements
             }
         }
         m_edEditText = null;
-
-        setVisibility(VISIBLE);
     }
 
     protected void closeInputField(){

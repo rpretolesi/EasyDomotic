@@ -3,11 +3,14 @@ package com.pretolesi.easydomotic.CustomControls;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
@@ -20,69 +23,108 @@ import java.util.List;
  */
 public class NumericEditText extends EditText {
 
-    private static final String TAG = "EDEditText";
+    private static final String TAG = "NumericEditText";
 
-    private DataType m_dt;
+    RelativeLayout.LayoutParams m_rllp = null;
+
+    private DataType m_dtDataType;
     private short m_shMin, m_shMax;
     private int m_iMin, m_iMax;
     private long m_lMin, m_lMax;
     private float m_fMin, m_fMax;
     private double m_dblMin, m_dblMax;
 
-    // Default Constructor
     public NumericEditText(Context context) {
         super(context);
-        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        Init(DataType.SHORT, "");
     }
 
     public NumericEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        Init(DataType.SHORT, "");
     }
 
-    public NumericEditText(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public NumericEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        Init(DataType.SHORT, "");
+    }
+
+    public NumericEditText(Context context, DataType dtDataType, String strHint) {
+        super(context);
+        Init(dtDataType, strHint);
+    }
+
+    private void Init(DataType dtDataType, String strHint) {
+        setGravity(Gravity.CENTER);
+        setTextColor(Color.RED);
+        setSingleLine();
+        setHint(strHint);
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+        // Set Input Limit
+        if(dtDataType != null) {
+            m_dtDataType = dtDataType;
+        }
+        switch (m_dtDataType) {
+            case SHORT:
+                setInputLimit(Short.MIN_VALUE, Short.MAX_VALUE);
+                break;
+            case INT:
+                setInputLimit(Integer.MIN_VALUE, Integer.MAX_VALUE);
+                break;
+            case LONG:
+                setInputLimit(Long.MIN_VALUE, Long.MAX_VALUE);
+                break;
+            case FLOAT:
+                setInputLimit(-Float.MAX_VALUE, Float.MAX_VALUE);
+                break;
+            case DOUBLE:
+                setInputLimit(-Double.MAX_VALUE, Double.MAX_VALUE);
+                break;
+        }
+
+        m_rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        setLayoutParams(m_rllp);
     }
 
     public void setInputLimit(short shMin, short shMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        m_dt = DataType.SHORT;
+        m_dtDataType = DataType.SHORT;
         m_shMin = shMin;
         m_shMax = shMax;
     }
 
     public void setInputLimit(int iMin, int iMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        m_dt = DataType.INT;
+        m_dtDataType = DataType.INT;
         m_iMin = iMin;
         m_iMax = iMax;
     }
 
     public void setInputLimit(long lMin, long lMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        m_dt = DataType.LONG;
+        m_dtDataType = DataType.LONG;
         m_lMin = lMin;
         m_lMax = lMax;
     }
 
     public void setInputLimit(float fMin, float fMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        m_dt = DataType.FLOAT;
+        m_dtDataType = DataType.FLOAT;
         m_fMin = fMin;
         m_fMax = fMax;
     }
 
     public void setInputLimit(double dblMin, double dblMax) {
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        m_dt = DataType.DOUBLE;
+        m_dtDataType = DataType.DOUBLE;
         m_dblMin = dblMin;
         m_dblMax = dblMax;
     }
 
     public boolean validateInputLimit(){
-        if(m_dt != null) {
-            switch (m_dt) {
+        if(m_dtDataType != null) {
+            switch (m_dtDataType) {
                 case SHORT:
                     try {
                         short shValue = Short.parseShort(this.getText().toString());
@@ -229,4 +271,18 @@ public class NumericEditText extends EditText {
         return true;
     }
 
+    public void setPosition(int l, int t, int r, int b, int h, int w, boolean bVertical){
+        if(m_rllp != null) {
+            m_rllp.leftMargin = l;
+            if(!bVertical){
+                m_rllp.topMargin = t + (h);
+            } else {
+                m_rllp.topMargin = t + (w);
+            }
+//            m_rllp.rightMargin = r;
+//            m_rllp.bottomMargin = b;
+//            m_rllp.height = h;
+            m_rllp.width = w;
+        }
+    }
 }

@@ -28,14 +28,10 @@ public class NumericValue extends BaseValue implements
     private int m_iTIDWrite;
 
     public NumericValue(Context context) {
-        super(context);
-        this.m_bvd = null;
-        this.m_iMsgID = -1;
-        this.m_iTIDRead = -1;
-        this.m_iTIDWrite = -1;
+        this(context,  null, -1, false);
     }
 
-    public NumericValue(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public NumericValue(Context context,  BaseValueData bvd, int iMsgID, boolean bEditMode) {
         super(context);
         if(bvd != null) {
             this.m_bvd = bvd;
@@ -46,6 +42,7 @@ public class NumericValue extends BaseValue implements
 
             setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
             setEditMode(bEditMode);
+            setVertical(bvd.getVertical());
         }
     }
 
@@ -103,12 +100,12 @@ public class NumericValue extends BaseValue implements
         String strDefaultValue = "";
 
         if(m_bvd != null){
-             for(int iIndice = m_bvd.getValueMinNrCharToShow() + m_bvd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
-                 if(iIndice == m_bvd.getValueNrOfDecimal()){
-                     strDefaultValue = strDefaultValue + ".";
-                 }
-                 strDefaultValue = strDefaultValue + "#";
-             }
+            for(int iIndice = m_bvd.getValueMinNrCharToShow() + m_bvd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
+                if(iIndice == m_bvd.getValueNrOfDecimal()){
+                    strDefaultValue = strDefaultValue + ".";
+                }
+                strDefaultValue = strDefaultValue + "#";
+            }
             if(m_bvd.getValueUM() != null && !m_bvd.getValueUM().equals("")){
                 strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
             }
@@ -212,7 +209,7 @@ public class NumericValue extends BaseValue implements
                     }
                 } else {
                     setErrorInputField(true);
-                    }
+                }
             }
         }
     }

@@ -50,13 +50,14 @@ public class LightSwitch extends Switch implements
     private int m_iTIDON;
 
     private boolean m_bEditMode;
+    private boolean m_bVertical;
 
     // Label for Switch
-    private LabelTextView m_LabelTextViev;
+    private LabelTextView m_LabelTextView;
 
     public LightSwitch(Context context) {
         super(context);
-        m_LabelTextViev = null;
+        m_LabelTextView = null;
         this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDOFF = -1;
@@ -65,13 +66,14 @@ public class LightSwitch extends Switch implements
         this.m_iTIDON = -1;
         setNumericDataType(DataType.SHORT);
         setEditMode(false);
+        setVertical(false);
         setTextOff("0");
         setTextOn("1");
     }
 
     public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
         super(context);
-        m_LabelTextViev = null;
+        m_LabelTextView = null;
         if(bvd != null) {
             this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
@@ -82,6 +84,7 @@ public class LightSwitch extends Switch implements
             this.setTag(bvd.getTag());
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
+            setVertical(m_bvd.getVertical());
         }
         setTextOff("0");
         setTextOn("1");
@@ -95,6 +98,8 @@ public class LightSwitch extends Switch implements
         m_dtDataType = dtDataType;
     }
 
+    public void setVertical(boolean bVertical) { this.m_bVertical = bVertical; }
+
     protected boolean getEditMode(){
         return m_bEditMode;
     }
@@ -102,6 +107,8 @@ public class LightSwitch extends Switch implements
     protected NumericDataType.DataType getNumericDataType(){
         return m_dtDataType;
     }
+
+    public boolean getVertical() { return m_bVertical; }
 
     /*
      * End
@@ -113,11 +120,8 @@ public class LightSwitch extends Switch implements
         // Label Text View
         ViewParent view = this.getParent();
         if(view != null && view instanceof RelativeLayout) {
-            m_LabelTextViev = new LabelTextView(getContext(), this, false);
-            if(m_bvd != null){
-                m_LabelTextViev.setText((String)getTag());
-            }
-            ((RelativeLayout) view).addView(m_LabelTextViev);
+            m_LabelTextView = new LabelTextView(getContext());
+            ((RelativeLayout) view).addView(m_LabelTextView);
         }
 
         // Listener
@@ -129,12 +133,6 @@ public class LightSwitch extends Switch implements
         }
 
         setOnCheckedChangeListener(this);
-    }
-
-    @Override
-    protected void onLayout(boolean changed,  int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-//        m_LabelTextViev.setLayoutParam(l, t, getWidth(), getHeight());
     }
 
     @Override
@@ -152,12 +150,25 @@ public class LightSwitch extends Switch implements
         }
 
         // Delete
-        m_LabelTextViev = null;
+        m_LabelTextView = null;
     }
+
+    @Override
+    protected void onLayout(boolean changed,  int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b); }
 
     @Override
     protected void onDraw (Canvas canvas){
         super.onDraw(canvas);
+        RelativeLayout.LayoutParams rllp = (RelativeLayout.LayoutParams)this.getLayoutParams();
+        if(rllp != null) {
+            if(m_LabelTextView != null) {
+                m_LabelTextView.setPosition(rllp.leftMargin, rllp.topMargin, rllp.rightMargin, rllp.bottomMargin, canvas.getHeight(), canvas.getWidth(), getVertical());
+                if(getTag() != null && getTag() instanceof String){
+                    m_LabelTextView.setText((String) getTag());
+                }
+            }
+        }
     }
 
     @Override
@@ -191,7 +202,7 @@ public class LightSwitch extends Switch implements
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         setError(null);
                     } else {
-                        Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         setError("");
                     }
                 }

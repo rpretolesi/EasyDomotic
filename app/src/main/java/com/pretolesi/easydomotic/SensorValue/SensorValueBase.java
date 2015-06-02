@@ -2,10 +2,14 @@ package com.pretolesi.easydomotic.SensorValue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.RelativeLayout;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
@@ -99,6 +103,10 @@ public class SensorValueBase extends BaseValue implements
         // Create array for value
         m_SensorValueFiltered = null;
         m_SensorValueOut = null;
+    }
+    @Override
+    protected void onDraw (Canvas canvas){
+        super.onDraw(canvas);
     }
 
     @Override

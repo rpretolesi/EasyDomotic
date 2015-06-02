@@ -15,13 +15,13 @@ public class TciIpClientHelper {
     private static TciIpClientHelper m_Instance;
     private static List<TCPIPClient> m_ltic;
 
-    private TciIpClientHelper(List<TCPIPClientData> lticd)
+    private TciIpClientHelper(List<CommClientData> lticd)
     {
         if ((m_ltic == null))
         {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
-                for(TCPIPClientData ticd : lticd){
+                for(CommClientData ticd : lticd){
                     TCPIPClient tic = new TCPIPClient(m_context);
 //                    tic.execute(ticd);
                     tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
@@ -38,7 +38,7 @@ public class TciIpClientHelper {
      * @param context
      *            the application context
      */
-    public synchronized static TciIpClientHelper startInstance(Context context, List<TCPIPClientData> lticd)
+    public synchronized static TciIpClientHelper startInstance(Context context, List<CommClientData> lticd)
     {
         if (context != null && lticd != null && m_Instance == null)
         {
