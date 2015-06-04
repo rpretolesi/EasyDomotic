@@ -8,6 +8,9 @@ import android.os.Parcelable;
  */
 public class BaseValueCommClientData implements Parcelable {
 
+    public static final int TYPE_TCP_IP_CLIENT = 1;
+    public static final int TYPE_BLUETOOTH_CLIENT = 2;
+
     public static short NameMinChar = 1;
     public static short NameMaxChar = 128;
     public static String NameDefaultValue = "My Name";
@@ -41,6 +44,7 @@ public class BaseValueCommClientData implements Parcelable {
     public static String TailDefaulValue = "0";
 
     private long m_ID;
+    private int m_iType;
     private boolean m_bSaved;
     private boolean m_bEnable;
     private String m_strName;
@@ -52,7 +56,8 @@ public class BaseValueCommClientData implements Parcelable {
     private int m_iHead;
     private int m_iTail;
 
-    public BaseValueCommClientData() {
+    public BaseValueCommClientData(int iType) {
+        m_iType = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
@@ -66,7 +71,8 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public BaseValueCommClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
+    public BaseValueCommClientData(int iType, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
+        m_iType = iType;
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -80,21 +86,7 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public void update(BaseValueCommClientData lsd){
-        if(lsd != null){
-            this.m_ID = lsd.getID();
-            this.m_bSaved = lsd.getSaved();
-            this.m_bEnable = lsd.getEnable();
-            this.m_strName = lsd.getName();
-            this.m_strAddress = lsd.getAddress();
-            this.m_iPort = lsd.getPort();
-            this.m_iTimeout = lsd.getTimeout();
-            this.m_iCommSendDelayData = lsd.getCommSendDelayData();
-            this.m_lProtocolID = lsd.getProtocolID();
-            this.m_iHead = lsd.getHead();
-            this.m_iTail = lsd.getTail();
-        }
-    }
+    public void setType(int iType) { this.m_iType = iType; }
 
     public void setID(long id) {
         this.m_ID = id;
@@ -134,6 +126,8 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
+    public int getType() { return m_iType; }
+
     public long getID() { return m_ID; }
 
     public boolean getSaved() { return m_bSaved; }
@@ -169,6 +163,7 @@ public class BaseValueCommClientData implements Parcelable {
     }
 
     protected BaseValueCommClientData(Parcel in) {
+        m_iType = in.readInt();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_bEnable = in.readByte() != 0;
@@ -189,6 +184,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(m_iType);
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeByte((byte) (m_bEnable ? 1 : 0));

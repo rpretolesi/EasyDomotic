@@ -37,20 +37,23 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     private static final String TAG = "TCPIPClientPropAct";
 
+    protected static final String TYPE = "Type";
+    protected static final String BASE_VALUE_COMM_CLIENT_ID = "Base_Value_Comm_Client_ID";
     private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
 
-    private StringEditText m_id_stica_et_server_name;
-    private StringEditText m_id_stica_et_server_ip_address;
-    private NumericEditText m_id_stica_et_server_port;
-    private NumericEditText m_id_stica_et_timeout;
-    private NumericEditText m_id_stica_et_comm_send_data_delay;
-    private Spinner m_id_stica_spn_protocol;
-    private NumericEditText m_id_stica_et_protocol_field_1;
-    private NumericEditText m_id_stica_et_protocol_field_2;
+    protected StringEditText m_id_stica_et_server_name;
+    protected StringEditText m_id_stica_et_server_ip_address;
+    protected NumericEditText m_id_stica_et_server_port;
+    protected NumericEditText m_id_stica_et_timeout;
+    protected NumericEditText m_id_stica_et_comm_send_data_delay;
+    protected Spinner m_id_stica_spn_protocol;
+    protected NumericEditText m_id_stica_et_protocol_field_1;
+    protected NumericEditText m_id_stica_et_protocol_field_2;
 
-    private SimpleCursorAdapter m_SCAdapter;
-    private BaseValueCommClientData m_ticd;
-    private long m_lIDParameter;
+    protected SimpleCursorAdapter m_SCAdapter;
+    protected BaseValueCommClientData m_ticd;
+    protected int m_iTypeParameter;
+    protected long m_lIDParameter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         // or start a new one.
         Intent intent = getIntent();
         if(intent != null) {
+            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
             m_lIDParameter = intent.getLongExtra(TCP_IP_CLIENT_ID, -1);
         }
 
@@ -96,22 +100,33 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     public void setActionBar() {
         ActionBar actionBar = getActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
+        int iTypeParameter;
+//        if(m_bvdParameter != null){
+//            iTypeParameter = m_bvdParameter.getType();
+//        } else {
+            iTypeParameter = m_iTypeParameter;
+//        }
+        switch (iTypeParameter){
+            case BaseValueCommClientData.TYPE_TCP_IP_CLIENT:
+                actionBar.setTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
+                break;
+            case BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT:
+                actionBar.setTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
+                break;
+
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
     }
 
     @Override
@@ -170,7 +185,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
-        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -184,12 +199,12 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
             if(alticd != null && !alticd.isEmpty()){
                 m_ticd = alticd.get(0);
                 m_ticd.setSaved(false);
-                getValue();
+                getBaseValue();
             }
         }
     }
@@ -205,7 +220,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    if(setData(iDialogOriginID)){
+                    if(setBaseData(iDialogOriginID)){
                         if(SQLContract.TcpIpClientEntry.save(m_ticd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
@@ -223,7 +238,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.DELETE_CONFIRM_ID) {
                 if(bYes) {
                     // Delete
-                    deleteTCPIPClientData(iDialogOriginID);                }
+                    deleteBaseValueCommClientData(iDialogOriginID);                }
                 if(bNo) {
                     // No action...
                 }
@@ -234,7 +249,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
-                    if(setData(iDialogOriginID)){
+                    if(setBaseData(iDialogOriginID)){
                         if(SQLContract.TcpIpClientEntry.save(m_ticd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
@@ -280,7 +295,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         }
     }
 
-    private void getValue() {
+    private void getBaseValue() {
         if (m_ticd == null) {
             return;
         }
@@ -323,7 +338,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         if(m_id_stica_et_server_name != null) {
 
             if(!((m_ticd != null && (m_ticd.getID() > 0)) || (m_lIDParameter > 0))){
-                if(setData(iDialogOriginID)){
+                if(setBaseData(iDialogOriginID)){
                     if(SQLContract.TcpIpClientEntry.save(m_ticd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                 .show(getFragmentManager(), "");
@@ -344,10 +359,10 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         }
     }
 
-    private boolean setData(int iDialogOriginID){
+    private boolean setBaseData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueCommClientData();
+            m_ticd = new BaseValueCommClientData(m_iTypeParameter);
             m_ticd.setEnable(true);
         }
 
@@ -373,19 +388,37 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 getString(R.string.text_yndf_btn_no)
         ).show(getFragmentManager(), "");
     }
-    private void deleteTCPIPClientData(int iDialogOriginID) {
-        if(m_ticd != null) {
-            SQLContract.TcpIpClientEntry.delete(m_ticd.getID());
-            OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
-                    .show(getFragmentManager(), "");
+    private void deleteBaseValueCommClientData(int iDialogOriginID) {
+        long lID = -1;
+//        if(m_bvd != null && m_bvd.getID() > 0) {
+//            lID = m_bvd.getID();
+//        } else {
+            lID = m_lIDParameter;
+//        }
+        if(lID > 0){
+            if(SQLContract.BaseValueEntry.delete(lID)){
+                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+                return;
+            }
         }
+
+        OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_ERROR_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_error), getString(R.string.text_odf_message_ok_button))
+                .show(getFragmentManager(), "");
+
     }
 
-    public static Intent makeTCPIPClientPropActivity(Context context, long lID) {
+    public static Intent makeBaseValueCommClientPropActivityByRoomID(Context context, Class cls, long lID) {
         Intent intent = new Intent();
-        intent.setClass(context, BaseValueCommClientDataPropActivity.class);
-        intent.putExtra(BaseValueCommClientDataPropActivity.TCP_IP_CLIENT_ID, lID);
+        intent.setClass(context, cls);
+        intent.putExtra(BaseValueCommClientDataPropActivity.BASE_VALUE_COMM_CLIENT_ID, lID);
         return intent;
     }
 
+    public static Intent makeBaseValueCommClientPropActivityByRoomID(Context context, Class cls, int iType) {
+        Intent intent = new Intent();
+        intent.setClass(context, cls);
+        intent.putExtra(BaseValueCommClientDataPropActivity.TYPE, iType);
+        return intent;
+    }
 }

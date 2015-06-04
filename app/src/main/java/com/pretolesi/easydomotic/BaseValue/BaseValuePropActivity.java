@@ -194,7 +194,7 @@ public class BaseValuePropActivity extends Activity implements
         super.onPause();
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
     }
 
     @Override
@@ -277,7 +277,7 @@ public class BaseValuePropActivity extends Activity implements
             };
         }
 
-        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -320,10 +320,10 @@ public class BaseValuePropActivity extends Activity implements
             }
 
             // Terzo
-            getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
         }
 
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             m_TcpIpClientAdapter.swapCursor(cursor);
             getBaseValue();
         }
@@ -337,7 +337,7 @@ public class BaseValuePropActivity extends Activity implements
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(null);
         }
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             m_TcpIpClientAdapter.swapCursor(null);
         }
 

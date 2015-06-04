@@ -34,21 +34,6 @@ import java.util.ArrayList;
 public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPropActivity {
     private static final String TAG = "BluetoothClientDataPropActivity";
 
-    private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
-
-    private StringEditText m_id_stica_et_server_name;
-    private StringEditText m_id_stica_et_server_ip_address;
-    private NumericEditText m_id_stica_et_server_port;
-    private NumericEditText m_id_stica_et_timeout;
-    private NumericEditText m_id_stica_et_comm_send_data_delay;
-    private Spinner m_id_stica_spn_protocol;
-    private NumericEditText m_id_stica_et_protocol_field_1;
-    private NumericEditText m_id_stica_et_protocol_field_2;
-
-    private SimpleCursorAdapter m_SCAdapter;
-    private BaseValueCommClientData m_ticd;
-    private long m_lIDParameter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,10 +42,4 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         m_id_stica_et_protocol_field_2.setVisibility(View.INVISIBLE);
     }
 
-    public static Intent makeBluetoothClientDataPropActivity(Context context, long lID) {
-        Intent intent = new Intent();
-        intent.setClass(context, BaseValueCommClientDataPropActivity.class);
-        intent.putExtra(BaseValueCommClientDataPropActivity.TCP_IP_CLIENT_ID, lID);
-        return intent;
-    }
 }

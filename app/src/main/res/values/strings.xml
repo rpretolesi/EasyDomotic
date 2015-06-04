@@ -59,6 +59,10 @@
     <string name="settings_title_section_open_tcp_ip_client">Open TCP IP Client</string>
     <string name="settings_title_section_edit_tcp_ip_client">Edit TCP IP Client</string>
 
+    <string name="settings_title_section_new_bluetooth_client">New Bluetooth Client</string>
+    <string name="settings_title_section_open_bluetooth_client">Open Bluetooth Client</string>
+    <string name="settings_title_section_edit_bluetooth_client">Edit Bluetooth Client</string>
+
     <string name="settings_title_section_disp"> </string>
     <string name="settings_title_section_save">Save Room</string>
 
