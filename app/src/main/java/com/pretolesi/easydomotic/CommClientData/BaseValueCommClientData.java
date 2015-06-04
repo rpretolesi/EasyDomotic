@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.TcpIpClient;
+package com.pretolesi.easydomotic.CommClientData;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  *
  */
-public class CommClientData implements Parcelable {
+public class BaseValueCommClientData implements Parcelable {
 
     public static short NameMinChar = 1;
     public static short NameMaxChar = 128;
@@ -52,7 +52,7 @@ public class CommClientData implements Parcelable {
     private int m_iHead;
     private int m_iTail;
 
-    public CommClientData() {
+    public BaseValueCommClientData() {
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
@@ -66,7 +66,7 @@ public class CommClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public CommClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
+    public BaseValueCommClientData(long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -80,7 +80,7 @@ public class CommClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public void update(CommClientData lsd){
+    public void update(BaseValueCommClientData lsd){
         if(lsd != null){
             this.m_ID = lsd.getID();
             this.m_bSaved = lsd.getSaved();
@@ -168,7 +168,7 @@ public class CommClientData implements Parcelable {
         return m_iTail;
     }
 
-    protected CommClientData(Parcel in) {
+    protected BaseValueCommClientData(Parcel in) {
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_bEnable = in.readByte() != 0;
@@ -203,15 +203,15 @@ public class CommClientData implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Creator<CommClientData> CREATOR = new Creator<CommClientData>() {
+    public static final Creator<BaseValueCommClientData> CREATOR = new Creator<BaseValueCommClientData>() {
         @Override
-        public CommClientData createFromParcel(Parcel in) {
-            return new CommClientData(in);
+        public BaseValueCommClientData createFromParcel(Parcel in) {
+            return new BaseValueCommClientData(in);
         }
 
         @Override
-        public CommClientData[] newArray(int size) {
-            return new CommClientData[size];
+        public BaseValueCommClientData[] newArray(int size) {
+            return new BaseValueCommClientData[size];
         }
     };
 

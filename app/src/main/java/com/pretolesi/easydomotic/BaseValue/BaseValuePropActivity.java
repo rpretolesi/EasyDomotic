@@ -27,7 +27,7 @@ import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -133,7 +133,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, CommClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,

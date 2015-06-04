@@ -3,6 +3,8 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -15,13 +17,13 @@ public class TciIpClientHelper {
     private static TciIpClientHelper m_Instance;
     private static List<TCPIPClient> m_ltic;
 
-    private TciIpClientHelper(List<CommClientData> lticd)
+    private TciIpClientHelper(List<BaseValueCommClientData> lticd)
     {
         if ((m_ltic == null))
         {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
-                for(CommClientData ticd : lticd){
+                for(BaseValueCommClientData ticd : lticd){
                     TCPIPClient tic = new TCPIPClient(m_context);
 //                    tic.execute(ticd);
                     tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
@@ -38,7 +40,7 @@ public class TciIpClientHelper {
      * @param context
      *            the application context
      */
-    public synchronized static TciIpClientHelper startInstance(Context context, List<CommClientData> lticd)
+    public synchronized static TciIpClientHelper startInstance(Context context, List<BaseValueCommClientData> lticd)
     {
         if (context != null && lticd != null && m_Instance == null)
         {

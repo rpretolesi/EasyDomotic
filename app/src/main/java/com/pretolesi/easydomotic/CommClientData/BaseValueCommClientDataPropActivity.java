@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.TcpIpClient;
+package com.pretolesi.easydomotic.CommClientData;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -16,7 +16,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class TCPIPClientPropActivity extends Activity implements
+public class BaseValueCommClientDataPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
@@ -384,8 +383,8 @@ public class TCPIPClientPropActivity extends Activity implements
 
     public static Intent makeTCPIPClientPropActivity(Context context, long lID) {
         Intent intent = new Intent();
-        intent.setClass(context, TCPIPClientPropActivity.class);
-        intent.putExtra(TCPIPClientPropActivity.TCP_IP_CLIENT_ID, lID);
+        intent.setClass(context, BaseValueCommClientDataPropActivity.class);
+        intent.putExtra(BaseValueCommClientDataPropActivity.TCP_IP_CLIENT_ID, lID);
         return intent;
     }
 

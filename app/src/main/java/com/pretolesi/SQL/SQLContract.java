@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
-import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 
 /**
  *
@@ -958,7 +958,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(CommClientData ticd)  {
+        public static boolean save(BaseValueCommClientData ticd)  {
 
             boolean bRes = true;
             try
@@ -998,7 +998,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromTCPIPClientData(CommClientData ticd)
+        public static Cursor loadFromTCPIPClientData(BaseValueCommClientData ticd)
         {
             try
             {
@@ -1286,13 +1286,13 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<CommClientData> get(Cursor cursor){
+        public static ArrayList<BaseValueCommClientData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                CommClientData ticd = null;
-                ArrayList<CommClientData> alticd = null;
+                BaseValueCommClientData ticd = null;
+                ArrayList<BaseValueCommClientData> alticd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
@@ -1309,7 +1309,7 @@ public class SQLContract
                             }
                         }
 
-                        ticd = new CommClientData(
+                        ticd = new BaseValueCommClientData(
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),

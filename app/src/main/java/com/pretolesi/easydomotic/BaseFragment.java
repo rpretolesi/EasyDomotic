@@ -26,7 +26,7 @@ import com.pretolesi.easydomotic.NumericValue.NumericValue;
 import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.CommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -235,7 +235,7 @@ public class BaseFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // The list should now be shown.
         if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
-            ArrayList<CommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+            ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
 
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
