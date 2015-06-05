@@ -107,7 +107,9 @@ public class SettingsNavigationDrawerFragment extends Fragment {
                         getString(R.string.settings_title_section_add_raw_sensor_value),
                         getString(R.string.settings_title_section_add_calibr_sensor_value),
                         getString(R.string.settings_title_section_new_tcp_ip_client),
-                        getString(R.string.settings_title_section_open_tcp_ip_client)
+                        getString(R.string.settings_title_section_open_tcp_ip_client),
+                        getString(R.string.settings_title_section_new_bluetooth_client),
+                        getString(R.string.settings_title_section_open_bluetooth_client)
                 }));
         //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

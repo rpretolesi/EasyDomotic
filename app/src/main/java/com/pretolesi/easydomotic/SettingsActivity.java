@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.BluetoothClient.BluetoothClientDataPropActivity;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
@@ -190,6 +193,14 @@ public class SettingsActivity extends BaseActivity implements
                     .commit();
         }
 
+        if(position == 6){
+            // Show title when close activity
+            onSectionSetTitle(getString(R.string.app_name));
+            restoreActionBar();
+
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT);
+            startActivity(intent);
+        }
     }
 
     @Override
