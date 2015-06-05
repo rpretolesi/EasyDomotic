@@ -5,3 +5,6 @@ FATTO-Verificare bene Open e New del Tcp/Ip
 FATTO-Specificare che 0 nelle funzioni degli holding register = 40001 e sistemare questo anche nella simulazione su arduino
 FATTO-Capire perche' scrivendo un int 32 non scrive bene...
 FATTO-Verificare bene, ancora 1 volta, se utilizzare lo short quando c'e' lo short, e non l'int. ecc...
+
+Cambiare il nome del campo TCP IP Address a seconda se Bluetooth e TcpIp
+Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.

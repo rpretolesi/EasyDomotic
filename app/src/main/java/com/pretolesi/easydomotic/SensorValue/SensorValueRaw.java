@@ -1,17 +1,11 @@
 package com.pretolesi.easydomotic.SensorValue;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import com.pretolesi.easydomotic.BaseValue.BaseValue;
+
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 
 import java.util.List;
 

@@ -3,18 +3,14 @@ package com.pretolesi.easydomotic.LightSwitch;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
@@ -24,7 +20,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 
 /**
  *
@@ -126,7 +122,7 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.registerTcpIpClientWriteSwitchStatus(this);
             }
@@ -143,7 +139,7 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -178,7 +174,7 @@ public class LightSwitch extends Switch implements
 
     private void writeSwitchValue(boolean bValue){
         if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
 
                 Short sh;

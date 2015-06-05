@@ -10,7 +10,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 
 /**
  *
@@ -55,7 +55,7 @@ public class NumericValue extends BaseValue implements
         // Listener
         if(m_bvd != null){
             if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
-                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+                TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                 if(tic != null){
                     tic.registerTcpIpClientReadValueStatus(this);
                     tic.registerTcpIpClientWriteSwitchStatus(this);
@@ -77,7 +77,7 @@ public class NumericValue extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientReadValueStatus(this);
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
@@ -89,7 +89,7 @@ public class NumericValue extends BaseValue implements
 
     private synchronized void readValue(){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
             }
@@ -190,7 +190,7 @@ public class NumericValue extends BaseValue implements
     protected void OnWriteInputField(String strValue) {
         super.OnWriteInputField(strValue);
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if (tic != null) {
                 tic.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
             }

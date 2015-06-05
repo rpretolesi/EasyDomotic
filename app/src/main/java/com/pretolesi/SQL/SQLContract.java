@@ -794,56 +794,6 @@ public class SQLContract
             }
         }
 
-        public static boolean isTagPresent(String strTag, long lRoomID) {
-
-            try
-            {
-                m_LockCommandHolder.lock();
-
-                boolean bRes = false;
-
-                SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null) {
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection =
-                            {
-                                    _ID
-                            };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder = "";
-
-                    // Which row to get based on WHERE
-                    String whereClause = COLUMN_NAME_TAG + " = ? AND " + COLUMN_NAME_ROOM_ID + " = ?" ;
-
-                    String[] whereArgs = { String.valueOf(strTag), String.valueOf(lRoomID) };
-
-                    Cursor cursor = db.query(
-                            TABLE_NAME,  // The table to query
-                            projection,                               // The columns to return
-                            whereClause,                                      // The columns for the WHERE clause
-                            whereArgs,                                      // The values for the WHERE clause
-                            null,                                     // don't group the rows
-                            null,                                     // don't filter by row groups
-                            sortOrder                                 // The sort order
-                    );
-                    if ((cursor != null) && (cursor.getCount() > 0)) {
-                        bRes = true;
-                        // Chiudo il cursore
-                        cursor.close();
-                    }
-                }
-
-                return bRes;
-            }
-            finally
-            {
-                m_LockCommandHolder.unlock();
-            }
-        }
-
         public static ArrayList<BaseValueData> get(Cursor cursor){
             try
             {
@@ -927,6 +877,7 @@ public class SQLContract
     /* Inner class that defines the table contents */
     public static abstract class TcpIpClientEntry implements BaseColumns {
         public static final String TABLE_NAME = "TCPIPClient";
+        public static final String COLUMN_NAME_TYPE = "Type";
         public static final String COLUMN_NAME_ENABLE = "Enable";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_ADDRESS = "Address";
@@ -944,6 +895,7 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_NAME_TYPE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
@@ -968,6 +920,7 @@ public class SQLContract
                 if(db != null && ticd != null) {
 
                     ContentValues values = new ContentValues();
+                    values.put(COLUMN_NAME_TYPE, ticd.getType());
                     values.put(COLUMN_NAME_ENABLE, Integer.valueOf(ticd.getEnable() ? 1 : 0));
                     values.put(COLUMN_NAME_NAME, ticd.getName());
                     values.put(COLUMN_NAME_ADDRESS, ticd.getAddress());
@@ -1061,6 +1014,7 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
+                                    COLUMN_NAME_TYPE,
                                     COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
@@ -1100,61 +1054,6 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(String strName)
-        {
-            try
-            {
-                m_LockCommandHolder.lock();
-
-                Cursor cursor = null;
-
-                SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null) {
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection =
-                            {
-                                    _ID,
-                                    COLUMN_NAME_ENABLE,
-                                    COLUMN_NAME_NAME,
-                                    COLUMN_NAME_ADDRESS,
-                                    COLUMN_NAME_PORT,
-                                    COLUMN_NAME_TIMEOUT,
-                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                                    COLUMN_NAME_PROTOCOL,
-                                    COLUMN_NAME_HEAD,
-                                    COLUMN_NAME_TAIL
-                            };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder = "";
-
-                    // Which row to get based on WHERE
-                    String whereClause = _ID + " = ? ";
-
-                    String[] wherenArgs = { String.valueOf(strName) };
-
-                    cursor = db.query(
-                            TABLE_NAME,                 // The table to query
-                            projection,                 // The columns to return
-                            whereClause,                  // The columns for the WHERE clause
-                            wherenArgs,              // The values for the WHERE clause
-                            null,                       // don't group the rows
-                            null,                       // don't filter by row groups
-                            sortOrder                   // The sort order
-                    );
-
-                }
-
-                return cursor;
-            }
-            finally
-            {
-                m_LockCommandHolder.unlock();
-            }
-        }
-
         public static Cursor load()
         {
             try
@@ -1171,6 +1070,7 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
+                                    COLUMN_NAME_TYPE,
                                     COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
@@ -1233,59 +1133,6 @@ public class SQLContract
             }
         }
 
-        public static long isAlreadyStored(String strName) {
-
-            try
-            {
-                m_LockCommandHolder.lock();
-
-                long lID = -1;
-
-                SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null) {
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection =
-                            {
-                                    _ID
-                            };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder = "";
-
-                    // Which row to get based on WHERE
-                    String whereClause = COLUMN_NAME_NAME + " = ? ";
-
-                    String[] whereArgs = { String.valueOf(strName) };
-
-                    Cursor cursor = db.query(
-                            TABLE_NAME,  // The table to query
-                            projection,                               // The columns to return
-                            whereClause,                                      // The columns for the WHERE clause
-                            whereArgs,                                      // The values for the WHERE clause
-                            null,                                     // don't group the rows
-                            null,                                     // don't filter by row groups
-                            sortOrder                                 // The sort order
-                    );
-                    if ((cursor != null) && (cursor.getCount() > 0)) {
-                        cursor.moveToFirst();
-
-                        lID = cursor.getLong(cursor.getColumnIndex(_ID));
-
-                        // Chiudo il cursore
-                        cursor.close();
-                    }
-                }
-
-                return lID;
-            }
-            finally
-            {
-                m_LockCommandHolder.unlock();
-            }
-        }
-
         public static ArrayList<BaseValueCommClientData> get(Cursor cursor){
             try
             {
@@ -1310,6 +1157,7 @@ public class SQLContract
                         }
 
                         ticd = new BaseValueCommClientData(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),

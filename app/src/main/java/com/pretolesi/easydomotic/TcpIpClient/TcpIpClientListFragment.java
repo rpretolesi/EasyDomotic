@@ -138,14 +138,14 @@ public class TcpIpClientListFragment extends ListFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
         // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
         // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
@@ -211,7 +211,7 @@ public class TcpIpClientListFragment extends ListFragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         // Log.d(TAG, this.toString() + ": " + "onCreateLoader()");
-        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
@@ -227,7 +227,7 @@ public class TcpIpClientListFragment extends ListFragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             mAdapter.swapCursor(cursor);
 
             // The list should now be shown.
@@ -246,7 +246,7 @@ public class TcpIpClientListFragment extends ListFragment implements
         // This is called when the last Cursor provided to onLoadFinished()
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             mAdapter.swapCursor(null);
         }
 

@@ -11,23 +11,25 @@ import java.util.Vector;
 /**
  *
  */
-public class TciIpClientHelper {
+public class CommClientHelper {
 
     private static Context m_context;
-    private static TciIpClientHelper m_Instance;
+    private static CommClientHelper m_Instance;
     private static List<TCPIPClient> m_ltic;
 
-    private TciIpClientHelper(List<BaseValueCommClientData> lticd)
+    private CommClientHelper(List<BaseValueCommClientData> lticd)
     {
         if ((m_ltic == null))
         {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
                 for(BaseValueCommClientData ticd : lticd){
-                    TCPIPClient tic = new TCPIPClient(m_context);
-//                    tic.execute(ticd);
-                    tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
-                            m_ltic.add(tic);
+                    if(ticd.getType() == BaseValueCommClientData.TYPE_TCP_IP_CLIENT){
+                        TCPIPClient tic = new TCPIPClient(m_context);
+    //                    tic.execute(ticd);
+                        tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
+                                m_ltic.add(tic);
+                    }
                 }
             }
         }
@@ -40,12 +42,12 @@ public class TciIpClientHelper {
      * @param context
      *            the application context
      */
-    public synchronized static TciIpClientHelper startInstance(Context context, List<BaseValueCommClientData> lticd)
+    public synchronized static CommClientHelper startInstance(Context context, List<BaseValueCommClientData> lticd)
     {
         if (context != null && lticd != null && m_Instance == null)
         {
             m_context = context;
-            m_Instance = new TciIpClientHelper(lticd);
+            m_Instance = new CommClientHelper(lticd);
         }
         return m_Instance;
     }
@@ -67,7 +69,7 @@ public class TciIpClientHelper {
         }
     }
 
-    public synchronized static TciIpClientHelper getInstance()
+    public synchronized static CommClientHelper getInstance()
     {
         return m_Instance;
     }

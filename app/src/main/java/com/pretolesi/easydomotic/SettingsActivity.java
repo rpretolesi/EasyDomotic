@@ -182,7 +182,7 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, -1);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
             startActivity(intent);
         }
         if(position == 7){
@@ -193,7 +193,7 @@ public class SettingsActivity extends BaseActivity implements
                     .commit();
         }
 
-        if(position == 6){
+        if(position == 8){
             // Show title when close activity
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
@@ -270,7 +270,7 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = TCPIPClientPropActivity.makeTCPIPClientPropActivity(this, id);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
             startActivity(intent);
         }
     }

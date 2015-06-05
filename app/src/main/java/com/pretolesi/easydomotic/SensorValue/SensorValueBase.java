@@ -3,23 +3,16 @@ package com.pretolesi.easydomotic.SensorValue;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.widget.RelativeLayout;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData.SensorTypeCalibr;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-
-import java.util.List;
 
 /**
  *
@@ -73,7 +66,7 @@ public class SensorValueBase extends BaseValue implements
         // Listener
         if(m_bvd != null){
             if(!getEditMode()) {
-                TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+                TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
                 if(tic != null){
                     tic.registerTcpIpClientWriteSwitchStatus(this);
                 }
@@ -94,7 +87,7 @@ public class SensorValueBase extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if(tic != null){
                 tic.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -208,7 +201,7 @@ public class SensorValueBase extends BaseValue implements
 
     protected void WriteInputField(String strValue){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            TCPIPClient tic = TciIpClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
+            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
             if (tic != null) {
                 tic.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
             }

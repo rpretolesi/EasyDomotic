@@ -27,7 +27,7 @@ import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
-import com.pretolesi.easydomotic.TcpIpClient.TciIpClientHelper;
+import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 
@@ -134,7 +134,7 @@ public class BaseFragment extends Fragment implements
         super.onResume();
 
         // Start the Server
-        getLoaderManager().initLoader(Loaders.TCP_IP_CLIENT_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
 
         // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
@@ -155,8 +155,8 @@ public class BaseFragment extends Fragment implements
 
         // Unregister Listener For Tcp Ip Server
         // Listener
-        if(TciIpClientHelper.getInstance() != null) {
-            for(TCPIPClient tic : TciIpClientHelper.getTciIpClient()){
+        if(CommClientHelper.getInstance() != null) {
+            for(TCPIPClient tic : CommClientHelper.getTciIpClient()){
                 if(tic != null){
                     tic.unregisterTcpIpClientStatus(this);
 
@@ -164,9 +164,9 @@ public class BaseFragment extends Fragment implements
             }
         }
 
-        TciIpClientHelper.stopInstance();
+        CommClientHelper.stopInstance();
 
-        getLoaderManager().destroyLoader(Loaders.TCP_IP_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
 
@@ -201,7 +201,7 @@ public class BaseFragment extends Fragment implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
 
-        if(id == Loaders.TCP_IP_CLIENT_LOADER_ID){
+        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
@@ -234,17 +234,17 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // The list should now be shown.
-        if(loader.getId() == Loaders.TCP_IP_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
 
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
-                TciIpClientHelper.startInstance(getActivity(), alticd);
+                CommClientHelper.startInstance(getActivity(), alticd);
 
                 // Register Listener For Tcp Ip Server
                 // Listener
-                if(TciIpClientHelper.getTciIpClient() != null) {
-                    for(TCPIPClient tic : TciIpClientHelper.getTciIpClient()){
+                if(CommClientHelper.getTciIpClient() != null) {
+                    for(TCPIPClient tic : CommClientHelper.getTciIpClient()){
                         if(tic != null){
                             tic.registerTcpIpClientStatus(this);
                         }
@@ -323,7 +323,7 @@ public class BaseFragment extends Fragment implements
                 HorizontalScrollView.LayoutParams hsvp = new HorizontalScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 m_llStatusTcpIpServer.setLayoutParams(hsvp);
                 m_osvStatusTcpIpServer.addView(m_llStatusTcpIpServer);
-                TciIpClientHelper tich = TciIpClientHelper.getInstance();
+                CommClientHelper tich = CommClientHelper.getInstance();
 
                 // Get configured Servers
                 TextView tv;
@@ -333,7 +333,7 @@ public class BaseFragment extends Fragment implements
                 llp.setLayoutDirection(LinearLayout.HORIZONTAL);
                 llp.weight = (float) 1.0;
                 if (tich != null) {
-                    for (TCPIPClient tic : TciIpClientHelper.getTciIpClient()) {
+                    for (TCPIPClient tic : CommClientHelper.getTciIpClient()) {
                         if (tic != null) {
                             tv = new TextView(getActivity());
                             iID = (int)tic.getID();

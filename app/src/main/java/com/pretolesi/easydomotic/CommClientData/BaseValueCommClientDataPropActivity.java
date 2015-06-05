@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
@@ -43,11 +44,14 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     protected StringEditText m_id_stica_et_server_name;
     protected StringEditText m_id_stica_et_server_ip_address;
+    protected TextView m_id_stica_tv_server_port;
     protected NumericEditText m_id_stica_et_server_port;
     protected NumericEditText m_id_stica_et_timeout;
     protected NumericEditText m_id_stica_et_comm_send_data_delay;
     protected Spinner m_id_stica_spn_protocol;
+    protected TextView m_id_stica_tv_protocol_field_1;
     protected NumericEditText m_id_stica_et_protocol_field_1;
+    protected TextView m_id_stica_tv_protocol_field_2;
     protected NumericEditText m_id_stica_et_protocol_field_2;
 
     protected SimpleCursorAdapter m_SCAdapter;
@@ -66,6 +70,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_server_ip_address = (StringEditText)findViewById(R.id.id_stica_et_server_ip_address);
         m_id_stica_et_server_ip_address.setInputLimit(BaseValueCommClientData.AddressMinChar, BaseValueCommClientData.AddressMaxChar);
         m_id_stica_et_server_ip_address.setText(BaseValueCommClientData.AddressDefaultValue);
+        m_id_stica_tv_server_port = (TextView)findViewById(R.id.id_stica_tv_server_port);
         m_id_stica_et_server_port = (NumericEditText)findViewById(R.id.id_stica_et_server_port);
         m_id_stica_et_server_port.setInputLimit(BaseValueCommClientData.PortMinValue, BaseValueCommClientData.PortMaxValue);
         m_id_stica_et_server_port.setText(BaseValueCommClientData.PortDefaultValue);
@@ -77,9 +82,11 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_comm_send_data_delay.setText(BaseValueCommClientData.CommSendDelayDataDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
         m_id_stica_spn_protocol.setSelection(BaseValueCommClientData.ProtocolDefaulValue);
+        m_id_stica_tv_protocol_field_1 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_1);
         m_id_stica_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_1);
         m_id_stica_et_protocol_field_1.setInputLimit(BaseValueCommClientData.HeadMinValue, BaseValueCommClientData.HeadMaxValue);
         m_id_stica_et_protocol_field_1.setText(BaseValueCommClientData.HeadDefaulValue);
+        m_id_stica_tv_protocol_field_2 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_2);
         m_id_stica_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_2);
         m_id_stica_et_protocol_field_2.setInputLimit(BaseValueCommClientData.TailMinValue, BaseValueCommClientData.TailMaxValue);
         m_id_stica_et_protocol_field_2.setText(BaseValueCommClientData.TailDefaulValue);

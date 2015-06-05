@@ -37,9 +37,12 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        m_id_stica_et_server_port.setVisibility(View.INVISIBLE);
-        m_id_stica_et_protocol_field_1.setVisibility(View.INVISIBLE);
-        m_id_stica_et_protocol_field_2.setVisibility(View.INVISIBLE);
+        m_id_stica_tv_server_port.setVisibility(View.GONE);
+        m_id_stica_et_server_port.setVisibility(View.GONE);
+        m_id_stica_tv_protocol_field_1.setVisibility(View.GONE);
+        m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
+        m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);
+        m_id_stica_et_protocol_field_2.setVisibility(View.GONE);
     }
 
 }
