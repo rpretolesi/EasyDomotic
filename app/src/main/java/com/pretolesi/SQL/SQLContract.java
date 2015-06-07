@@ -36,7 +36,7 @@ public class SQLContract
     }
     public enum SettingID
     {
-        DEFAULT(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15);
+        DEFAULT(R.string.text_tv_server_address, 1, "192.168.1.1", 7 ,15);
 //        TCP_IP_CLIENT_ADDRESS(R.string.text_stica_tv_server_ip_address, 1, "192.168.1.1", 7 ,15),
 //        TCP_IP_CLIENT_PORT(R.string.text_stica_tv_server_port, 2, "502", 1 ,65535),
 //        TCP_IP_CLIENT_TIMEOUT(R.string.text_stica_tv_timeout, 3, "30000", 1 ,60000),
@@ -1033,6 +1033,62 @@ public class SQLContract
                     String whereClause = _ID + " = ? ";
 
                     String[] wherenArgs = { String.valueOf(lID) };
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor loadByType(int iType)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TYPE,
+                                    COLUMN_NAME_ENABLE,
+                                    COLUMN_NAME_NAME,
+                                    COLUMN_NAME_ADDRESS,
+                                    COLUMN_NAME_PORT,
+                                    COLUMN_NAME_TIMEOUT,
+                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_HEAD,
+                                    COLUMN_NAME_TAIL
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(iType) };
 
                     cursor = db.query(
                             TABLE_NAME,                 // The table to query

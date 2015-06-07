@@ -21,7 +21,7 @@ import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity;
 import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientListFragment;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientListFragment;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -37,7 +37,7 @@ public class SettingsActivity extends BaseActivity implements
         SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
         RoomListFragment.ListRoomFragmentCallbacks,
-        TcpIpClientListFragment.ListTcpIpClientFragmentCallbacks {
+        BaseValueCommClientListFragment.BaseValueCommClientFragmentCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -189,7 +189,7 @@ public class SettingsActivity extends BaseActivity implements
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, TcpIpClientListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
 
@@ -264,12 +264,12 @@ public class SettingsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id) {
+    public void onBaseValueCommClientFragmentCallbacksListener(int sectionNumber, int position, long id, int iType) {
         if(position == 7){
             // Show title when close activity
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
-
+finire qui e vedere se usare il type per discriminare anche la class che si deve istanziare e se serve nel listener, se non serve, toglierlo.
             Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
             startActivity(intent);
         }

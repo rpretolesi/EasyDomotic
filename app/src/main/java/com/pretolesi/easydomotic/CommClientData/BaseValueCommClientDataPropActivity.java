@@ -42,8 +42,10 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     protected static final String BASE_VALUE_COMM_CLIENT_ID = "Base_Value_Comm_Client_ID";
     private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
 
-    protected StringEditText m_id_stica_et_server_name;
-    protected StringEditText m_id_stica_et_server_ip_address;
+    protected TextView m_id_tv_server_name;
+    protected StringEditText m_id_et_server_name;
+    protected TextView m_id_tv_server_address;
+    protected StringEditText m_id_et_server_address;
     protected TextView m_id_stica_tv_server_port;
     protected NumericEditText m_id_stica_et_server_port;
     protected NumericEditText m_id_stica_et_timeout;
@@ -64,12 +66,14 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_comm_client_activity);
 
-        m_id_stica_et_server_name = (StringEditText)findViewById(R.id.id_stica_et_server_name);
-        m_id_stica_et_server_name.setInputLimit(BaseValueCommClientData.NameMinChar, BaseValueCommClientData.NameMaxChar);
-        m_id_stica_et_server_name.setText(BaseValueCommClientData.NameDefaultValue);
-        m_id_stica_et_server_ip_address = (StringEditText)findViewById(R.id.id_stica_et_server_ip_address);
-        m_id_stica_et_server_ip_address.setInputLimit(BaseValueCommClientData.AddressMinChar, BaseValueCommClientData.AddressMaxChar);
-        m_id_stica_et_server_ip_address.setText(BaseValueCommClientData.AddressDefaultValue);
+        m_id_tv_server_name = (TextView)findViewById(R.id.id_tv_server_name);
+        m_id_et_server_name = (StringEditText)findViewById(R.id.id_stica_et_server_name);
+        m_id_et_server_name.setInputLimit(BaseValueCommClientData.NameMinChar, BaseValueCommClientData.NameMaxChar);
+        m_id_et_server_name.setText(BaseValueCommClientData.NameDefaultValue);
+        m_id_tv_server_address = (TextView)findViewById(R.id.id_tv_server_address);
+        m_id_et_server_address = (StringEditText)findViewById(R.id.id_et_server_address);
+        m_id_et_server_address.setInputLimit(BaseValueCommClientData.AddressMinChar, BaseValueCommClientData.AddressMaxChar);
+        m_id_et_server_address.setText(BaseValueCommClientData.AddressDefaultValue);
         m_id_stica_tv_server_port = (TextView)findViewById(R.id.id_stica_tv_server_port);
         m_id_stica_et_server_port = (NumericEditText)findViewById(R.id.id_stica_et_server_port);
         m_id_stica_et_server_port.setInputLimit(BaseValueCommClientData.PortMinValue, BaseValueCommClientData.PortMaxValue);
@@ -307,11 +311,11 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             return;
         }
 
-        if(m_id_stica_et_server_name != null) {
-            m_id_stica_et_server_name.setText(m_ticd.getName());
+        if(m_id_et_server_name != null) {
+            m_id_et_server_name.setText(m_ticd.getName());
         }
-        if(m_id_stica_et_server_ip_address != null) {
-            m_id_stica_et_server_ip_address.setText(m_ticd.getAddress());
+        if(m_id_et_server_address != null) {
+            m_id_et_server_address.setText(m_ticd.getAddress());
         }
         if(m_id_stica_et_server_port != null) {
             m_id_stica_et_server_port.setText(Integer.toString(m_ticd.getPort()));
@@ -342,7 +346,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         if(!NumericEditText.validateInputData(findViewById(android.R.id.content))){ return; }
         if(!StringEditText.validateInputData(findViewById(android.R.id.content))){ return;  }
 
-        if(m_id_stica_et_server_name != null) {
+        if(m_id_et_server_name != null) {
 
             if(!((m_ticd != null && (m_ticd.getID() > 0)) || (m_lIDParameter > 0))){
                 if(setBaseData(iDialogOriginID)){
@@ -373,8 +377,8 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             m_ticd.setEnable(true);
         }
 
-        m_ticd.setName(m_id_stica_et_server_name.getText().toString());
-        m_ticd.setAddress(m_id_stica_et_server_ip_address.getText().toString());
+        m_ticd.setName(m_id_et_server_name.getText().toString());
+        m_ticd.setAddress(m_id_et_server_address.getText().toString());
         m_ticd.setPort(Integer.parseInt(m_id_stica_et_server_port.getText().toString()));
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
         m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));

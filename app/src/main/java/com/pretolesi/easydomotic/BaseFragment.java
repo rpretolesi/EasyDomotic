@@ -49,6 +49,7 @@ public class BaseFragment extends Fragment implements
      */
     public static final String ARG_SECTION_NUMBER = "section_number";
     public static final String POSITION = "position";
+    public static final String COMM_CLIENT_TYPE = "comm_client_type";
     protected static final String ROOM_ID = "id";
     protected static final String EDIT_MODE = "edit_mode";
 

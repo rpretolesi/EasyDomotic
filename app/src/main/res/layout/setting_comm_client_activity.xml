@@ -13,39 +13,39 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/id_stica_tv_server_name"
+            android:id="@+id/id_tv_server_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_stica_tv_server_name" />
+            android:text="@string/text_tv_server_name" />
 
         <com.pretolesi.easydomotic.CustomControls.StringEditText
             android:id="@+id/id_stica_et_server_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_stica_tv_server_name"
+            android:layout_below="@id/id_tv_server_name"
             android:layout_alignParentStart="true"
-            android:hint="@string/hint_stica_et_server_name" />
+            android:hint="@string/hint_et_server_name" />
 
         <TextView
-            android:id="@+id/id_stica_tv_server_ip_address"
+            android:id="@+id/id_tv_server_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/id_stica_et_server_name"
-            android:text="@string/text_stica_tv_server_ip_address" />
+            android:text="@string/text_tv_server_address" />
 
         <com.pretolesi.easydomotic.CustomControls.StringEditText
-            android:id="@+id/id_stica_et_server_ip_address"
+            android:id="@+id/id_et_server_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_stica_tv_server_ip_address"
+            android:layout_below="@id/id_tv_server_address"
             android:layout_alignParentStart="true"
-            android:hint="@string/hint_stica_et_server_ip_address" />
+            android:hint="@string/hint_et_server_address" />
 
         <TextView
             android:id="@+id/id_stica_tv_server_port"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/id_stica_et_server_ip_address"
+            android:layout_below="@id/id_et_server_address"
             android:text="@string/text_stica_tv_server_port" />
 
         <com.pretolesi.easydomotic.CustomControls.NumericEditText

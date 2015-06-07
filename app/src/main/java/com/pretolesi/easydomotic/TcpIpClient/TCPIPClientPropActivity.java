@@ -41,6 +41,10 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        m_id_tv_server_name.setText(R.string.text_tv_server_ip_name);
+        m_id_tv_server_address.setText(R.string.text_tv_server_ip_address);
+        m_id_et_server_address.setText(R.string.text_et_server_ip_address);
+        m_id_et_server_address.setHint(R.string.hint_et_server_ip_address);
         m_id_stica_tv_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);

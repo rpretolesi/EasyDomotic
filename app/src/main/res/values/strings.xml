@@ -207,10 +207,18 @@
     <string name="text_edad_btn_ok">OK</string>
 
     <!-- setting_tcp_ip_client_activity string -->
-    <string name="text_stica_tv_server_name">TCP IP Server Name</string>
-    <string name="hint_stica_et_server_name">Server Name</string>
-    <string name="text_stica_tv_server_ip_address">TCP IP Server Address</string>
-    <string name="hint_stica_et_server_ip_address">192.168.1.1</string>
+    <string name="text_tv_server_name">Server Name</string>
+    <string name="hint_et_server_name">Server Name</string>
+    <string name="text_tv_server_ip_name">TCP IP Server Name</string>
+    <string name="text_tv_server_bt_name">Bluetooth Server Name</string>
+    <string name="text_tv_server_address">Server Address</string>
+    <string name="hint_et_server_address">address</string>
+    <string name="text_tv_server_ip_address">TCP IP Server Address</string>
+    <string name="text_et_server_ip_address">192.168.1.1</string>
+    <string name="hint_et_server_ip_address">xxx.xxx.xxx.xxx</string>
+    <string name="text_tv_server_bt_address">Bluetooth Server Address</string>
+    <string name="text_et_server_bt_address">xx.xx.xx.xx.xx.xx.xx.xx</string>
+    <string name="hint_et_server_bt_address">xx.xx.xx.xx.xx.xx.xx.xx</string>
     <string name="text_stica_tv_server_port">TCP IP Server Port</string>
     <string name="hint_stica_et_server_port">502</string>
     <string name="text_stica_tv_timeout">Timeout</string>

@@ -1,41 +1,33 @@
-package com.pretolesi.easydomotic.TcpIpClient;
+package com.pretolesi.easydomotic.CommClientData;
 
 import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
  *
  */
-public class TcpIpClientListFragment extends ListFragment implements
+public class BaseValueCommClientListFragment extends ListFragment implements
 //        SearchView.OnQueryTextListener,
 //        SearchView.OnCloseListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "ListRoomFragment";
-    private ListTcpIpClientFragmentCallbacks mCallbacks;
+    private static final String TAG = "BaseValueCommClientListFragment";
+    private BaseValueCommClientFragmentCallbacks mCallbacks;
     private SimpleCursorAdapter mAdapter;
     // The SearchView for doing filtering.
 //    SearchView mSearchView;
@@ -47,16 +39,17 @@ public class TcpIpClientListFragment extends ListFragment implements
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static TcpIpClientListFragment newInstance(int sectionNumber, int position) {
-        TcpIpClientListFragment fragment = new TcpIpClientListFragment();
+    public static BaseValueCommClientListFragment newInstance(int sectionNumber, int position, int iCommClientType) {
+        BaseValueCommClientListFragment fragment = new BaseValueCommClientListFragment();
         Bundle args = new Bundle();
         args.putInt(BaseFragment.ARG_SECTION_NUMBER, sectionNumber);
         args.putInt(BaseFragment.POSITION, position);
+        args.putInt(BaseFragment.COMM_CLIENT_TYPE, iCommClientType);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public TcpIpClientListFragment() {
+    public BaseValueCommClientListFragment() {
     }
 
     @Override
@@ -129,9 +122,9 @@ public class TcpIpClientListFragment extends ListFragment implements
         ((SettingsActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
 //        ((SettingsActivity) activity).restoreActionBar();
         try {
-            mCallbacks = (ListTcpIpClientFragmentCallbacks) activity;
+            mCallbacks = (BaseValueCommClientFragmentCallbacks) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement ListTcpIpClientFragmentCallbacks.");
+            throw new ClassCastException("Activity must implement BaseValueCommClientFragmentCallbacks.");
         }
     }
 
@@ -169,7 +162,7 @@ public class TcpIpClientListFragment extends ListFragment implements
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mCallbacks.onListTcpIpClientFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id);
+        mCallbacks.onBaseValueCommClientFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id, getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE));
         getActivity().getFragmentManager().beginTransaction().remove(this).commit();
     }
 /*
@@ -215,7 +208,7 @@ public class TcpIpClientListFragment extends ListFragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load();
+                    return SQLContract.TcpIpClientEntry.loadByType(getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE));
                 }
             };
         }
@@ -256,10 +249,10 @@ public class TcpIpClientListFragment extends ListFragment implements
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface ListTcpIpClientFragmentCallbacks {
+    public interface BaseValueCommClientFragmentCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onListTcpIpClientFragmentCallbacksListener(int sectionNumber, int position, long id);
+        void onBaseValueCommClientFragmentCallbacksListener(int sectionNumber, int position, long id, int iType);
     }
 }
