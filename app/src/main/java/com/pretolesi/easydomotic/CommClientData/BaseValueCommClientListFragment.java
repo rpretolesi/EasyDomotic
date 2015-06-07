@@ -16,6 +16,7 @@ import android.widget.SimpleCursorAdapter;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
+import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
@@ -62,7 +63,15 @@ public class BaseValueCommClientListFragment extends ListFragment implements
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        setEmptyText("No Tcp Ip Server");
+        switch (getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE)){
+            case BaseValueCommClientData.TYPE_TCP_IP_CLIENT:
+                setEmptyText("No Tcp Ip Server");
+                break;
+            case BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT:
+                setEmptyText("No Bluetooth Server");
+                break;
+
+        }
 
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);

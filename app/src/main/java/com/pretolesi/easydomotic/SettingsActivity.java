@@ -182,14 +182,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByType(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
             startActivity(intent);
         }
         if(position == 7){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TYPE_TCP_IP_CLIENT),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
 
@@ -198,8 +198,15 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByType(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT);
             startActivity(intent);
+        }
+        if(position == 9){
+            // Costruisco il frame...
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT),getString(R.string.settings_title_section_open_room))
+                    .commit();
         }
     }
 
@@ -265,12 +272,15 @@ public class SettingsActivity extends BaseActivity implements
 
     @Override
     public void onBaseValueCommClientFragmentCallbacksListener(int sectionNumber, int position, long id, int iType) {
+        // Show title when close activity
+        onSectionSetTitle(getString(R.string.app_name));
+        restoreActionBar();
         if(position == 7){
-            // Show title when close activity
-            onSectionSetTitle(getString(R.string.app_name));
-            restoreActionBar();
-finire qui e vedere se usare il type per discriminare anche la class che si deve istanziare e se serve nel listener, se non serve, toglierlo.
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByRoomID(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndType(this, TCPIPClientPropActivity.class, id, iType);
+            startActivity(intent);
+        }
+        if(position == 9){
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndType(this, BluetoothClientDataPropActivity.class, id, iType);
             startActivity(intent);
         }
     }

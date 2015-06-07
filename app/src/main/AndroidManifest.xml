@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -66,6 +68,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
             android:name=".BluetoothClient.BluetoothClientDataPropActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName = ".BluetoothClient.BluetoothClientConfiguration"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/android:Theme.Holo"
+            android:name=".BluetoothClient.BluetoothClientConfiguration"
             android:label="@string/app_name" >
         </activity>
 

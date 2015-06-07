@@ -40,7 +40,6 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     protected static final String TYPE = "Type";
     protected static final String BASE_VALUE_COMM_CLIENT_ID = "Base_Value_Comm_Client_ID";
-    private static final String TCP_IP_CLIENT_ID = "TcpIpClientID";
 
     protected TextView m_id_tv_server_name;
     protected StringEditText m_id_et_server_name;
@@ -100,7 +99,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         Intent intent = getIntent();
         if(intent != null) {
             m_iTypeParameter = intent.getIntExtra(TYPE, -1);
-            m_lIDParameter = intent.getLongExtra(TCP_IP_CLIENT_ID, -1);
+            m_lIDParameter = intent.getLongExtra(BASE_VALUE_COMM_CLIENT_ID, -1);
         }
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
@@ -419,16 +418,17 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     }
 
-    public static Intent makeBaseValueCommClientPropActivityByRoomID(Context context, Class cls, long lID) {
+    public static Intent makeBaseValueCommClientPropActivityByType(Context context, Class cls, int iType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValueCommClientDataPropActivity.BASE_VALUE_COMM_CLIENT_ID, lID);
+        intent.putExtra(BaseValueCommClientDataPropActivity.TYPE, iType);
         return intent;
     }
 
-    public static Intent makeBaseValueCommClientPropActivityByRoomID(Context context, Class cls, int iType) {
+    public static Intent makeBaseValueCommClientPropActivityByIDAndType(Context context, Class cls, long lID, int iType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
+        intent.putExtra(BaseValueCommClientDataPropActivity.BASE_VALUE_COMM_CLIENT_ID, lID);
         intent.putExtra(BaseValueCommClientDataPropActivity.TYPE, iType);
         return intent;
     }

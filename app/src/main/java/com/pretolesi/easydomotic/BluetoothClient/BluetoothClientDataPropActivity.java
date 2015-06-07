@@ -1,5 +1,7 @@
 package com.pretolesi.easydomotic.BluetoothClient;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
@@ -25,6 +27,18 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);
         m_id_stica_et_protocol_field_2.setVisibility(View.GONE);
+        // Set Listener
+        m_id_et_server_address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Intent intent = new Intent();
+                    intent.setClass(getBaseContext(), BluetoothClientConfiguration.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
 }

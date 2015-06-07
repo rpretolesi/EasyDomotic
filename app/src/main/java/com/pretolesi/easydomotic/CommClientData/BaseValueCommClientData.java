@@ -15,9 +15,9 @@ public class BaseValueCommClientData implements Parcelable {
     public static short NameMaxChar = 128;
     public static String NameDefaultValue = "My Name";
 
-    public static short AddressMinChar = 7;
-    public static short AddressMaxChar = 15;
-    public static String AddressDefaultValue = "192.168.1.1";
+    public static short AddressMinChar = 1;
+    public static short AddressMaxChar = 50;
+    public static String AddressDefaultValue = "";
 
     public static int PortMinValue = 1;
     public static int PortMaxValue = 65535;
