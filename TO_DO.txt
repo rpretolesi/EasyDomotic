@@ -8,3 +8,4 @@ FATTO-Verificare bene, ancora 1 volta, se utilizzare lo short quando c'e' lo sho
 
 FATTO-Cambiare il nome del campo TCP IP Address a seconda se Bluetooth e TcpIp
 Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.
+Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
