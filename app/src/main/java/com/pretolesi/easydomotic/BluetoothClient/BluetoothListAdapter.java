@@ -1,10 +1,12 @@
 package com.pretolesi.easydomotic.BluetoothClient;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.pretolesi.easydomotic.CustomControls.ViewHolder;
@@ -37,7 +39,7 @@ public class BluetoothListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public BluetoothClientData getItem(int position) {
         if(m_bcd != null){
             return m_bcd.get(position);
         }
@@ -60,11 +62,19 @@ public class BluetoothListAdapter extends BaseAdapter {
 
         TextView id_tv_name = ViewHolder.get(convertView, R.id.id_tv_name);
         TextView id_tv_address = ViewHolder.get(convertView, R.id.id_tv_address);
+        TextView id_tv_paired = ViewHolder.get(convertView, R.id.id_tv_paired);
 
         if (m_bcd != null)
         {
             id_tv_name.setText(m_bcd.get(position).getName());
             id_tv_address.setText(m_bcd.get(position).getAddress());
+            if(m_bcd.get(position).getPaired()){
+                id_tv_paired.setText(R.string.text_bt_device_paired);
+                id_tv_paired.setTextColor(Color.GREEN);
+            } else {
+                id_tv_paired.setText(R.string.text_bt_device_unpaired);
+                id_tv_paired.setTextColor(Color.YELLOW);
+            }
         }
 
         return convertView;

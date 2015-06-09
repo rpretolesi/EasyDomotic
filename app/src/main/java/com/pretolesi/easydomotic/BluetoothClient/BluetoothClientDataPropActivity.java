@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
 import com.pretolesi.easydomotic.R;
 
@@ -13,6 +15,11 @@ import com.pretolesi.easydomotic.R;
  */
 public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPropActivity {
     private static final String TAG = "BluetoothClientDataPropActivity";
+    private static final int ACTIVITY_RESULT_BT_ADDRESS = 1;
+
+    public static final String BT_NAME = "bt_name";
+    public static final String BT_ADDRESS = "bt_address";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +38,32 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         m_id_et_server_address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                vedere come fare
+/*
                 if (hasFocus) {
                     Intent intent = new Intent();
                     intent.setClass(getBaseContext(), BluetoothClientConfiguration.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, ACTIVITY_RESULT_BT_ADDRESS);
                 }
+*/
             }
         });
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTIVITY_RESULT_BT_ADDRESS) {
+            if(resultCode == RESULT_OK){
+                // Ok
+                m_id_et_server_name.setText(data.getStringExtra(BT_NAME));
+                m_id_et_server_address.setText(data.getStringExtra(BT_ADDRESS));
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
 }

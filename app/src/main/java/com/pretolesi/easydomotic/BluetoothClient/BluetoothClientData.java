@@ -7,16 +7,18 @@ public class BluetoothClientData {
 
     private  String m_strName;
     private  String m_strAddress;
+    private  boolean m_bPaired;
 
     public BluetoothClientData() {
     }
 
-    public BluetoothClientData(String strName, String strAddress)
+    public BluetoothClientData(String strName, String strAddress, boolean bPaired)
     {
         super();
 
         this.m_strName = strName;
         this.m_strAddress = strAddress;
+        this.m_bPaired = bPaired;
     }
 
     public String getName() {
@@ -33,6 +35,14 @@ public class BluetoothClientData {
 
     public void setAddress(String strAddress) {
         this.m_strAddress = strAddress;
+    }
+
+    public boolean getPaired() {
+        return m_bPaired;
+    }
+
+    public void setPaired(boolean bPaired) {
+        this.m_bPaired = bPaired;
     }
 
 }

@@ -7,9 +7,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.pretolesi.easydomotic.R;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +27,7 @@ public class BluetoothClientConfiguration extends ListActivity {
     private static final String TAG = "BluetoothClientConfiguration";
 
     private static final int REQUEST_ENABLE_BT = 1;
+
     //private android.widget.SimpleCursorAdapter m_Adapter;
     private BluetoothListAdapter m_blAdapter;
     private BluetoothAdapter m_BluetoothAdapter;
@@ -30,24 +37,23 @@ public class BluetoothClientConfiguration extends ListActivity {
         public void onReceive(Context context, Intent intent) {
             if(context != null && intent != null) {
                 String action = intent.getAction();
-                if(action != null) {
+                if(action != null && m_blAdapter != null) {
                     // When discovery finds a device
                     if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                         // Get the BluetoothDevice object from the Intent
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         if(device != null) {
-                            if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                                 // Add the name and address to an array adapter to show in a ListView
-                                if (m_blAdapter != null) {
-
-                                    m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress()));
-                                }
+                                m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress(), true));
+                            } else {
+                                m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress(), false));
                             }
-                            }
+                        }
                     }
                     if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                         setProgressBarIndeterminateVisibility(false);
-                        setTitle(" Discovering completed");
+                        setTitle(R.string.text_bt_devices_discovering_completed);
                     }
                 }
             }
@@ -81,6 +87,7 @@ public class BluetoothClientConfiguration extends ListActivity {
         List<BluetoothClientData> albcd = new ArrayList<>();
         m_blAdapter = new BluetoothListAdapter(this, albcd);
         setListAdapter(m_blAdapter);
+
 
 /*
 //        setContentView(R.layout.bluetooth_client_configuration_list_activity);
@@ -149,6 +156,22 @@ public class BluetoothClientConfiguration extends ListActivity {
         }
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent intent = getIntent();
+        if(intent != null) {
+            if(m_blAdapter != null) {
+                intent.putExtra(BluetoothClientDataPropActivity.BT_NAME, m_blAdapter.getItem(position).getName());
+                intent.putExtra(BluetoothClientDataPropActivity.BT_ADDRESS, m_blAdapter.getItem(position).getAddress());
+                setResult(RESULT_OK, intent);
+            } else {
+                setResult(RESULT_CANCELED, intent);
+            }
+            finish();
+        }
+    }
+
     private void getBluetoothDevice(){
         if(m_BluetoothAdapter != null && m_blAdapter != null){
             Set<BluetoothDevice> pairedDevices = m_BluetoothAdapter.getBondedDevices();
@@ -159,7 +182,7 @@ public class BluetoothClientConfiguration extends ListActivity {
                     for (BluetoothDevice device : pairedDevices) {
                             if(device != null){
                             // Add the name and address to an array adapter to show in a ListView
-                                m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress()));
+                                m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress(), true));
                         }
                     }
                 }
@@ -172,7 +195,7 @@ public class BluetoothClientConfiguration extends ListActivity {
 
                 // Progress bar
                 setProgressBarIndeterminateVisibility(true);
-                setTitle("Scanning");
+                setTitle(R.string.text_bt_devices_discovering);
             }
         }
     }

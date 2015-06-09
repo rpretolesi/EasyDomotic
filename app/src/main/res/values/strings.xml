@@ -229,6 +229,11 @@
     <string name="text_stica_tv_protocol_field_1">HEAD WORD(2 byte long)</string>
     <string name="text_stica_tv_protocol_field_2">TAIL WORD(2 byte long)</string>
 
+    <!-- General string -->
+    <string name="text_bt_device_paired">Paired</string>
+    <string name="text_bt_device_unpaired">Unpaired</string>
+    <string name="text_bt_devices_discovering">Devices discovering</string>
+    <string name="text_bt_devices_discovering_completed">Devices discovering completed</string>
 
     <!-- General string -->
     <string name="ok">OK</string>
