@@ -9,38 +9,47 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
- * Created by ricca_000 on 07/06/2015.
+ *
  */
 public class BluetoothClientConfiguration extends ListActivity {
     private static final String TAG = "BluetoothClientConfiguration";
 
     private static final int REQUEST_ENABLE_BT = 1;
     //private android.widget.SimpleCursorAdapter m_Adapter;
-    private ArrayAdapter<String> m_ArrayAdapter;
+    private BluetoothListAdapter m_blAdapter;
     private BluetoothAdapter m_BluetoothAdapter;
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver m_Receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    // Add the name and address to an array adapter to show in a ListView
-                    m_ArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+            if(context != null && intent != null) {
+                String action = intent.getAction();
+                if(action != null) {
+                    // When discovery finds a device
+                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                        // Get the BluetoothDevice object from the Intent
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if(device != null) {
+                            if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                                // Add the name and address to an array adapter to show in a ListView
+                                if (m_blAdapter != null) {
+
+                                    m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress()));
+                                }
+                            }
+                            }
+                    }
+                    if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                        setProgressBarIndeterminateVisibility(false);
+                        setTitle(" Discovering completed");
+                    }
                 }
-            }
-            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
-                setTitle(" Discovering completed");
             }
         }
     };
@@ -52,15 +61,27 @@ public class BluetoothClientConfiguration extends ListActivity {
         // Progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+        // Get the Bluetooth reference
         m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        IntentFilter filter;
-        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(m_Receiver, filter);
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(m_Receiver, filter);
+        if (m_BluetoothAdapter == null) {
+            // Device does not support Bluetooth
+            Toast.makeText(this,"Device does not support Bluetooth", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         // Register the BroadcastReceiver
-        m_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        if(m_Receiver != null) {
+            IntentFilter filter;
+            filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(m_Receiver, filter);
+            filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            registerReceiver(m_Receiver, filter);
+        }
+        // Initialize the adapter
+        List<BluetoothClientData> albcd = new ArrayList<>();
+        m_blAdapter = new BluetoothListAdapter(this, albcd);
+        setListAdapter(m_blAdapter);
+
 /*
 //        setContentView(R.layout.bluetooth_client_configuration_list_activity);
         // Query for all people contacts using the Contacts.People convenience class.
@@ -81,19 +102,11 @@ public class BluetoothClientConfiguration extends ListActivity {
 
         // Bind to our new adapter.
 */
-        setListAdapter(m_ArrayAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Check if Bluetooth stack is present
-        m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (m_BluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Toast.makeText(this,"Device does not support Bluetooth", Toast.LENGTH_LONG).show();
-            finish();
-        }
 
         if (m_BluetoothAdapter != null) {
             if (!m_BluetoothAdapter.isEnabled()) {
@@ -120,8 +133,8 @@ public class BluetoothClientConfiguration extends ListActivity {
     protected void onPause() {
         super.onPause();
 
-        if(m_ArrayAdapter != null) {
-            m_ArrayAdapter.clear();
+        if(m_blAdapter != null) {
+            m_blAdapter.clear();
         }
         if (m_BluetoothAdapter.isDiscovering()) {
             m_BluetoothAdapter.cancelDiscovery();
@@ -137,25 +150,31 @@ public class BluetoothClientConfiguration extends ListActivity {
     }
 
     private void getBluetoothDevice(){
-        Set<BluetoothDevice> pairedDevices = m_BluetoothAdapter.getBondedDevices();
-        // If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                // Add the name and address to an array adapter to show in a ListView
-                m_ArrayAdapter.add(device.getName() + "\n" + device.getAddress() + "\n Paired");
+        if(m_BluetoothAdapter != null && m_blAdapter != null){
+            Set<BluetoothDevice> pairedDevices = m_BluetoothAdapter.getBondedDevices();
+            if(pairedDevices != null){
+                // If there are paired devices
+                if (pairedDevices.size() > 0) {
+                    // Loop through paired devices
+                    for (BluetoothDevice device : pairedDevices) {
+                            if(device != null){
+                            // Add the name and address to an array adapter to show in a ListView
+                                m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress()));
+                        }
+                    }
+                }
+                // Enable Discovering
+                if (m_BluetoothAdapter.isDiscovering()) {
+                    m_BluetoothAdapter.cancelDiscovery();
+                }
+                // Request discover from BluetoothAdapter
+                m_BluetoothAdapter.startDiscovery();
+
+                // Progress bar
+                setProgressBarIndeterminateVisibility(true);
+                setTitle("Scanning");
             }
         }
-        // Enable Discovering
-        if (m_BluetoothAdapter.isDiscovering()) {
-            m_BluetoothAdapter.cancelDiscovery();
-        }
-        // Request discover from BluetoothAdapter
-        m_BluetoothAdapter.startDiscovery();
-
-        // Progress bar
-        setProgressBarIndeterminateVisibility(true);
-        setTitle("Scanning");
     }
 }
 

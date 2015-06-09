@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -81,7 +82,9 @@ public class BaseValueCommClientListFragment extends ListFragment implements
                 null,
                 new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
-
+        ArrayAdapter ad = new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_2);
+        ad.add("");
+        ad.clear();
         setListAdapter(mAdapter);
 
         // Start out with a progress indicator.
