@@ -120,8 +120,8 @@ void loop() {
       // Get MBAP
       if (client.available() >= 6 && m_bModbusMBAP == false) {
         // Parse message in order to get MBAP Header
-        Serial.println("Begin. ");
-        Serial.print("MBAP Start: ");
+        Serial.println(" ");
+        Serial.println("MBAP Start: ");
         for(int index_0 = 0; index_0 < 6; index_0++) {
           m_byteReadMBAP[index_0] = client.read();
           Serial.print(m_byteReadMBAP[index_0]);
@@ -152,14 +152,16 @@ void loop() {
         }
         
         if (client.available() >= m_uiModbusMBAPLength && m_bModbusMBAP == true) {
-          Serial.print("MBM Start: ");
+          Serial.println("MBM Start: ");
           for(int index_0 = 0; index_0 < m_uiModbusMBAPLength; index_0++) {
             m_byteReadMBMsg[index_0] = client.read();
             Serial.print(m_byteReadMBMsg[index_0]);
             Serial.print(" ");
           }
           Serial.println(" ");
-  
+          Serial.println("MBM End: ");
+
+          Serial.println("Data Start: ");
           // Messaggio Completo, estraggo i dati:
           byte byteModbusUnitIdentifier = m_byteReadMBMsg[0];
           Serial.print("Unit Identifier: ");
@@ -182,7 +184,6 @@ void loop() {
           boolean bFunctionCodeOk = false;
           boolean bRegisterAndByteCountOk = false;
           boolean bAddressOk = false;
-          boolean bValueOk = false;
           
           // Function
           if(byteModbusFunctionCode == 0x10 || byteModbusFunctionCode == 0x03){
@@ -200,57 +201,77 @@ void loop() {
             Serial.print("Byte Count: ");
             Serial.println(byteByteCount);
           
-            if(byteByteCount == (shortQuantityOfRegisters * 2)){
+            if(byteByteCount == (2 * shortQuantityOfRegisters)){
               bRegisterAndByteCountOk = true;
             }
           
-            if(bRegisterAndByteCountOk == true){
+            if(bRegisterAndByteCountOk == true) {
               unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
               Serial.print("Address: ");
               Serial.println(ushortModbusAddress);
   
-              if(ushortModbusAddress + shortQuantityOfRegisters < 10) {
+              if(ushortModbusAddress + shortQuantityOfRegisters < 20) {
                 bAddressOk = true;
                 
                 // Copy data to union
-                memcpy(m_union_share_mem.temp_bytearray, &m_byteReadMBMsg[7], byteByteCount);
+                memcpy(&m_union_share_mem.temp_bytearray[ushortModbusAddress], &m_byteReadMBMsg[7], byteByteCount);
                 
                 // Print data read
                 Serial.print("Short: ");
-                Serial.print(m_union_share_mem.temp_short[ushortModbusAddress]);
+                union {
+                  short sh;
+                  byte shByteTemp[2];
+                } ush;
+                memcpy(ush.shByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 2], 2);
+                reverseByteArray(ush.shByteTemp, 0, 1);                
+                Serial.print(ush.sh);
+                
                 Serial.print(", Long: ");
-                Serial.print(m_union_share_mem.temp_long[ushortModbusAddress]);
+                union {
+                  long l;
+                  byte lByteTemp[4];
+                } ul;
+                memcpy(ul.lByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 4], 4);
+                reverseByteArray(ul.lByteTemp, 0, 3);                
+                Serial.print(ul.l);
+                
                 Serial.print(", Float: ");
-                Serial.print(m_union_share_mem.temp_float[ushortModbusAddress]);
+                union {
+                  float f;
+                  byte fByteTemp[4];
+                } uf;
+                memcpy(uf.fByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 4], 4);
+                reverseByteArray(uf.fByteTemp, 0, 3);                
+                Serial.print(uf.f);
+                
+                Serial.println(" ");
               
                 // You can use here the values!!!!
 
 
                 // Answer
-                if(bAddressOk == true){
-                  if(bValueOk == true) {
-                    // Tutto Ok, costruisco la risposta, 2° parte
-                    short shortMBAPMsgLength = 6;
-                    m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
-                    m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
-                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-                    m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-                    m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                    m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
-                    m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                    m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
-                    m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
-                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-                    m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
-                    m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
-                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
-                  }            
+                if(bAddressOk == true) {
+                  // Tutto Ok, costruisco la risposta, 2° parte
+                  short shortMBAPMsgLength = 6;
+                  m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+                  m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                  m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                  m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                  m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+                  m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                  m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
+                  m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
                 }
               }
             }
           }
           
-          if(byteModbusFunctionCode == 0x03){
+          if(byteModbusFunctionCode == 0x03) {
             short shortMBAPMsgLength = 0;
             unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
             Serial.print("Starting Address: ");
@@ -260,24 +281,49 @@ void loop() {
             Serial.print("Quantity of Register: ");
             Serial.println(shortQuantityOfRegisters);
             if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
-              if(ushortModbusAddress + shortQuantityOfRegisters < 10) {
-
-                if(ushortModbusAddress == 0) {  
-                if(shortQuantityOfRegisters == 1){
-                  shOutValue = shInValue;
-                  shortMBAPMsgLength = 5;
-                  // Tutto Ok, costruisco la risposta, 3° parte
-                  Serial.print("shOutValue: ");
-                  Serial.println(shOutValue);
-                  setShortToBytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
-                  m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+              if(ushortModbusAddress + shortQuantityOfRegisters < 20) {
                   bAddressOk = true;
-                  bValueOk = true;
-                }
-              }   
-//Da qui in poi....
-
+                  
+                  shortMBAPMsgLength = 3 + (2 * shortQuantityOfRegisters);
+                  
+                  // Get data from union
+                  memcpy(&m_byteToWriteMBAPMsg[9], &m_union_share_mem.temp_bytearray[ushortModbusAddress], (2 * shortQuantityOfRegisters));
+                 
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + (2 * shortQuantityOfRegisters);
+              }
+            }  
+              
+            if(bAddressOk == true) {                      
+              // Tutto Ok, costruisco la risposta, 2° parte
+              m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = (byte)(2 * shortQuantityOfRegisters); // Byte Count (2 x uiQuantityOfRegister)
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            }
+          }   
         }
+        
+        // Risposta completa, la invio
+        Serial.println("Nr of bytes to write: ");
+        Serial.println(m_uiNrByteToWrite);
+        
+        Serial.println("Answer Start: ");
+        for(int index_0 = 0; index_0 < m_uiNrByteToWrite; index_0++) {
+          client.write(m_byteToWriteMBAPMsg[index_0]);
+          Serial.print(m_byteToWriteMBAPMsg[index_0]);
+          Serial.print(" ");
+        }
+        Serial.println(" ");
+        Serial.println("Answer End. ");
+
+        // Operazione Terminata
+        initValue();
+        
       }
     }
     else
@@ -437,5 +483,58 @@ float getFloatFromBytes(byte* bytearrayVal){
   u.temp_bytearray[0] = bytearrayVal[3];
   
   return u.temp_float;
+}
+
+/* Function to reverse arr[] from start to end*/
+void reverseByteArray(byte Array[], int iStart, int iEnd)
+{
+  byte temp;
+  while(iStart < iEnd)
+  {
+    temp = Array[iStart];   
+    Array[iStart] = Array[iEnd];
+    Array[iEnd] = temp;
+    iStart++;
+    iEnd--;
+  }   
+}
+
+void reverseShortArray(short Array[], int iStart, int iEnd)
+{
+  short temp;
+  while(iStart < iEnd)
+  {
+    temp = Array[iStart];   
+    Array[iStart] = Array[iEnd];
+    Array[iEnd] = temp;
+    iStart++;
+    iEnd--;
+  }   
+}
+
+void reverseLongArray(long Array[], int iStart, int iEnd)
+{
+  long temp;
+  while(iStart < iEnd)
+  {
+    temp = Array[iStart];   
+    Array[iStart] = Array[iEnd];
+    Array[iEnd] = temp;
+    iStart++;
+    iEnd--;
+  }   
+}
+
+void reverseFloatArray(float Array[], int iStart, int iEnd)
+{
+  float temp;
+  while(iStart < iEnd)
+  {
+    temp = Array[iStart];   
+    Array[iStart] = Array[iEnd];
+    Array[iEnd] = temp;
+    iStart++;
+    iEnd--;
+  }   
 }
 

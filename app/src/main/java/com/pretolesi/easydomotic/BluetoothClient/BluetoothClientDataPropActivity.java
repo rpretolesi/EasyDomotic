@@ -38,17 +38,16 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         m_id_et_server_address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                vedere come fare
-/*
+
                 if (hasFocus) {
                     Intent intent = new Intent();
                     intent.setClass(getBaseContext(), BluetoothClientConfiguration.class);
                     startActivityForResult(intent, ACTIVITY_RESULT_BT_ADDRESS);
                 }
-*/
+
             }
         });
-
+provare a cambiare l'indirizze per vedere se il codice su arduino e' ok.
     }
 
     @Override
