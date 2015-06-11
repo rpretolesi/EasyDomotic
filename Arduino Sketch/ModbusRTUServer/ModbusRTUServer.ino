@@ -32,16 +32,13 @@ unsigned int m_uiModbusMBAPLength = 0;
 byte m_byteToWriteMBAPMsg[260] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
-// Valori condivisi
-short shBoolValue = 0; // 2 bytes
-
-short shInValue = 0; // 2 bytes
-long lInValue = 0; // 4 bytes
-float fInValue = 0.0;
-
-short shOutValue = 0; // 2 bytes
-long lOutValue = 0; // 4 bytes
-float fOutValue = 0.0;
+// Create union of shared memory space
+union {
+  short temp_short[20];
+  long temp_long[10];
+  float temp_float[10];
+  byte temp_bytearray[40];
+} m_union_share_mem;
 
 void setup() 
 {
@@ -94,6 +91,7 @@ void setup()
 }
 
 void loop() {
+    
   // put your main code here, to run repeatedly:
   WiFiClient client = m_server.available();   
   if(client != NULL) 
@@ -102,7 +100,8 @@ void loop() {
     {
       m_bOneShotClientDisconnected_1 = false;
       m_bOneShotClientDisconnected_2 = false;
-      if(m_bOneShotClientConnected == false){
+
+      if(m_bOneShotClientConnected == false) {
         m_bOneShotClientConnected = true;
 
         // clear input buffer:
@@ -150,6 +149,134 @@ void loop() {
           client.flush();
         } else {
           m_bModbusMBAP = true;
+        }
+        
+        if (client.available() >= m_uiModbusMBAPLength && m_bModbusMBAP == true) {
+          Serial.print("MBM Start: ");
+          for(int index_0 = 0; index_0 < m_uiModbusMBAPLength; index_0++) {
+            m_byteReadMBMsg[index_0] = client.read();
+            Serial.print(m_byteReadMBMsg[index_0]);
+            Serial.print(" ");
+          }
+          Serial.println(" ");
+  
+          // Messaggio Completo, estraggo i dati:
+          byte byteModbusUnitIdentifier = m_byteReadMBMsg[0];
+          Serial.print("Unit Identifier: ");
+          Serial.println(byteModbusUnitIdentifier);
+          
+          byte byteModbusFunctionCode = m_byteReadMBMsg[1];
+          Serial.print("Function Code: ");
+          Serial.println(byteModbusFunctionCode);
+  
+          // Tutto Ok, costruisco la risposta, 1° parte
+          // Intestazione
+          m_byteToWriteMBAPMsg[0] = m_byteReadMBAP[0]; // Transaction Identifier
+          m_byteToWriteMBAPMsg[1] = m_byteReadMBAP[1]; // Transaction Identifier
+          m_uiNrByteToWrite = 2;
+          m_byteToWriteMBAPMsg[2] = m_byteReadMBAP[2]; // Protocol Identifier
+          m_byteToWriteMBAPMsg[3] = m_byteReadMBAP[3]; // Protocol Identifier
+          m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+  
+          // Begin....
+          boolean bFunctionCodeOk = false;
+          boolean bRegisterAndByteCountOk = false;
+          boolean bAddressOk = false;
+          boolean bValueOk = false;
+          
+          // Function
+          if(byteModbusFunctionCode == 0x10 || byteModbusFunctionCode == 0x03){
+            bFunctionCodeOk = true;
+          }   
+          
+          // Address
+          // Write Multiple Register
+          if(byteModbusFunctionCode == 0x10){
+            // Check Data
+            short shortQuantityOfRegisters = getShortFromBytes(&m_byteReadMBMsg[4]);
+            byte byteByteCount = m_byteReadMBMsg[6];
+            Serial.print("Quantity of Register: ");
+            Serial.println(shortQuantityOfRegisters);
+            Serial.print("Byte Count: ");
+            Serial.println(byteByteCount);
+          
+            if(byteByteCount == (shortQuantityOfRegisters * 2)){
+              bRegisterAndByteCountOk = true;
+            }
+          
+            if(bRegisterAndByteCountOk == true){
+              unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
+              Serial.print("Address: ");
+              Serial.println(ushortModbusAddress);
+  
+              if(ushortModbusAddress + shortQuantityOfRegisters < 10) {
+                bAddressOk = true;
+                
+                // Copy data to union
+                memcpy(m_union_share_mem.temp_bytearray, &m_byteReadMBMsg[7], byteByteCount);
+                
+                // Print data read
+                Serial.print("Short: ");
+                Serial.print(m_union_share_mem.temp_short[ushortModbusAddress]);
+                Serial.print(", Long: ");
+                Serial.print(m_union_share_mem.temp_long[ushortModbusAddress]);
+                Serial.print(", Float: ");
+                Serial.print(m_union_share_mem.temp_float[ushortModbusAddress]);
+              
+                // You can use here the values!!!!
+
+
+                // Answer
+                if(bAddressOk == true){
+                  if(bValueOk == true) {
+                    // Tutto Ok, costruisco la risposta, 2° parte
+                    short shortMBAPMsgLength = 6;
+                    m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+                    m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
+                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                    m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                    m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                    m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+                    m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                    m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+                    m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                    m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
+                    m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
+                    m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+                  }            
+                }
+              }
+            }
+          }
+          
+          if(byteModbusFunctionCode == 0x03){
+            short shortMBAPMsgLength = 0;
+            unsigned short ushortModbusAddress = getShortFromBytes(&m_byteReadMBMsg[2]);
+            Serial.print("Starting Address: ");
+            Serial.println(ushortModbusAddress);
+            // Quantity of Registers
+            short shortQuantityOfRegisters = getShortFromBytes(&m_byteReadMBMsg[4]);
+            Serial.print("Quantity of Register: ");
+            Serial.println(shortQuantityOfRegisters);
+            if(shortQuantityOfRegisters >= 1 && shortQuantityOfRegisters <= 125){
+              if(ushortModbusAddress + shortQuantityOfRegisters < 10) {
+
+                if(ushortModbusAddress == 0) {  
+                if(shortQuantityOfRegisters == 1){
+                  shOutValue = shInValue;
+                  shortMBAPMsgLength = 5;
+                  // Tutto Ok, costruisco la risposta, 3° parte
+                  Serial.print("shOutValue: ");
+                  Serial.println(shOutValue);
+                  setShortToBytes(shOutValue, &m_byteToWriteMBAPMsg[9]);                
+                  m_uiNrByteToWrite = m_uiNrByteToWrite + 2;            
+                  bAddressOk = true;
+                  bValueOk = true;
+                }
+              }   
+//Da qui in poi....
+
         }
       }
     }
@@ -222,15 +349,6 @@ void printWifiStatus() {
   Serial.print(rssi);
   Serial.println(" dBm");
 }
-
-// Create union of shared memory space
-union {
-  short temp_short[20];
-  long temp_long[10];
-  float temp_float[10];
-  byte temp_bytearray[40];
-} m_union_share_mem;
-  
 
 // Short
 void setShortToBytes(short shortVal, byte* bytearrayVal){
