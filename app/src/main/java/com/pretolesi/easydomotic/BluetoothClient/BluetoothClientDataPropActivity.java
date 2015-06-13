@@ -47,7 +47,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
 
             }
         });
-provare a cambiare l'indirizze per vedere se il codice su arduino e' ok.
+//provare a cambiare l'indirizze per vedere se il codice su arduino e' ok.
     }
 
     @Override

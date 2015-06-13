@@ -222,7 +222,7 @@ void loop() {
                   short sh;
                   byte shByteTemp[2];
                 } ush;
-                memcpy(ush.shByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 2], 2);
+                memcpy(ush.shByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 2);
                 reverseByteArray(ush.shByteTemp, 0, 1);                
                 Serial.print(ush.sh);
                 
@@ -231,16 +231,17 @@ void loop() {
                   long l;
                   byte lByteTemp[4];
                 } ul;
-                memcpy(ul.lByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 4], 4);
+                memcpy(ul.lByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 4);
                 reverseByteArray(ul.lByteTemp, 0, 3);                
                 Serial.print(ul.l);
-                
+
+               
                 Serial.print(", Float: ");
                 union {
                   float f;
                   byte fByteTemp[4];
                 } uf;
-                memcpy(uf.fByteTemp, &m_union_share_mem.temp_short[ushortModbusAddress * 4], 4);
+                memcpy(uf.fByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 4);
                 reverseByteArray(uf.fByteTemp, 0, 3);                
                 Serial.print(uf.f);
                 
@@ -306,6 +307,53 @@ void loop() {
               m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
             }
           }   
+          
+          if(bFunctionCodeOk == true) {
+            if(bAddressOk == true) {         
+/*              
+              if(bValueOk == true) {
+              } else {
+                // Exception
+                // Bad Value
+                unsigned int iMBAPMsgLength = 3;
+                m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+                m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              }
+*/              
+            } else {
+              // Exception
+              // Bad Address
+              unsigned int iMBAPMsgLength = 3;
+              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              m_byteToWriteMBAPMsg[8] = 0x02; // Exception code
+              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            }
+          } else {
+            // Bad Function code
+            unsigned int iMBAPMsgLength = 3;
+            m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+            m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+            m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[8] = 0x01; // Exception code
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+          }
         }
         
         // Risposta completa, la invio

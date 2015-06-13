@@ -273,16 +273,16 @@ public class NumericEditText extends EditText {
 
     public void setPosition(int l, int t, int r, int b, int h, int w, boolean bVertical){
         if(m_rllp != null) {
-            m_rllp.leftMargin = l;
+            m_rllp.leftMargin = l - ((getWidth() - w)/2);
             if(!bVertical){
-                m_rllp.topMargin = t + (h);
+                m_rllp.topMargin = t + (h/2);
             } else {
-                m_rllp.topMargin = t + (w);
+                m_rllp.topMargin = t + (w/2);
             }
 //            m_rllp.rightMargin = r;
 //            m_rllp.bottomMargin = b;
 //            m_rllp.height = h;
-            m_rllp.width = w;
+//            m_rllp.width = w;
         }
     }
 }

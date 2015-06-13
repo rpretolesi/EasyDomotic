@@ -182,7 +182,7 @@ public class SensorValueBase extends BaseValue implements
                 this.getContext().startActivity(intent);
             } else {
                 if(m_bvd.getSensorEnableSimulation()){
-                    openInputField();
+                    openInputField(getDefaultValue());
                 }
             }
         }

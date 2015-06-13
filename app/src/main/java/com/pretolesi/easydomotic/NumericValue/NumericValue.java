@@ -115,6 +115,27 @@ public class NumericValue extends BaseValue implements
 
         return strDefaultValue;
     }
+
+    private String getEmptyValue(){
+        String strDefaultValue = "";
+
+        if(m_bvd != null){
+            for(int iIndice = m_bvd.getValueMinNrCharToShow() + m_bvd.getValueNrOfDecimal(); iIndice > 0; iIndice--){
+                if(iIndice == m_bvd.getValueNrOfDecimal()){
+                    strDefaultValue = strDefaultValue + " ";
+                }
+                strDefaultValue = strDefaultValue + " ";
+            }
+            if(m_bvd.getValueUM() != null && !m_bvd.getValueUM().equals("")){
+                strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
+            }
+        } else {
+            strDefaultValue = BaseValueData.ValueDefaulValue;
+        }
+
+        return strDefaultValue;
+    }
+
     private String getErrorValue(int iErrorCode){
         return "Error Code: " + iErrorCode;
     }
@@ -226,7 +247,7 @@ public class NumericValue extends BaseValue implements
                 this.getContext().startActivity(intent);
             } else {
                 if(!m_bvd.getValueReadOnly()){
-                    openInputField();
+                    openInputField(getEmptyValue());
                 }
             }
         }

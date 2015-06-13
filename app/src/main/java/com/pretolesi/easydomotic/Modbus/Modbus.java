@@ -188,7 +188,7 @@ public class Modbus {
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }
             int iLength = bb.getShort(); // Length
-            if(iLength < 5 || iLength > 254){
+            if(iLength < 3 || iLength > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
             return new ModbusMBAP(iTID, iPID, iLength);
@@ -211,7 +211,7 @@ public class Modbus {
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }
             iLength = bb.getShort(); // Length
-            if(iLength < 5 || iLength > 254){
+            if(iLength < 3 || iLength > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
         } else {

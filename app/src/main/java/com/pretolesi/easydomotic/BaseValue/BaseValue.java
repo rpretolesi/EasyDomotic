@@ -272,12 +272,13 @@ public class BaseValue extends TextView implements
     protected void onTouchActionUp(boolean bEditMode) {
     }
 
-    protected void openInputField() {
+    protected void openInputField(String strHint) {
         if(m_edEditText == null){
             // Create....
             ViewParent view = this.getParent();
             if(view != null && view instanceof RelativeLayout) {
-                m_edEditText = new NumericEditText(getContext(), m_dtDataType, getText().toString());
+//                m_edEditText = new NumericEditText(getContext(), m_dtDataType, getText().toString());
+                m_edEditText = new NumericEditText(getContext(), m_dtDataType, strHint);
                 ((RelativeLayout) view).addView(m_edEditText);
                 m_edEditText.requestFocus();
                 InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
