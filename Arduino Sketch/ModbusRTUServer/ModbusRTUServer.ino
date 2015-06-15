@@ -25,12 +25,20 @@ boolean m_bOneShotClientDisconnected_1 = false;
 boolean m_bOneShotClientDisconnected_2 = false;
 
 byte m_byteReadMBAP[6] = {0};
-byte m_byteReadMBMsg[260] = {0};
+byte m_byteReadMBMsg[64] = {0};
 boolean m_bModbusMBAP = false;
 unsigned int m_uiModbusMBAPLength = 0;
 
-byte m_byteToWriteMBAPMsg[260] = {0};
+byte m_byteToWriteMBAPMsg[64] = {0};
 unsigned int m_uiNrByteToWrite = 0;
+
+// Bluetooth Communication
+//#include <SoftwareSerial.h>
+
+//#define  BT_RX 5            // PIN to receive from bluetooth
+//#define  BT_TX 3            // PIN TO transmit to bluetooth
+
+//SoftwareSerial btSerial(BT_RX, BT_TX);
 
 // Create union of shared memory space
 union {
@@ -40,21 +48,23 @@ union {
   byte temp_bytearray[40];
 } m_union_share_mem;
 
-void setup() 
-{
+void setup() {
   // Deselect SD Card
   pinMode(4, OUTPUT);     
   digitalWrite(4, 1);
 
   // Set as Output mode
-  pinMode(3, OUTPUT);     
-  pinMode(5, OUTPUT);     
-  pinMode(6, OUTPUT);     
-  pinMode(9, OUTPUT);     
-
+ // pinMode(3, OUTPUT);     
+ // pinMode(5, INPUT);     
+ // pinMode(6, OUTPUT);     
+ // pinMode(9, OUTPUT);     
+  
+  // Initialize Bluetooth SoftwareSerial port for selected data speed
+ // btSerial.begin(57600);
 
    //Initialize serial and wait for port to open:
   Serial.begin(57600);
+  Serial.println("Setup");
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
@@ -91,13 +101,17 @@ void setup()
 }
 
 void loop() {
-    
+  // Bluetooth
+/*  
+  if (btSerial.available() > 0){
+     Serial.write(btSerial.read());
+  }
+*/  
+  
   // put your main code here, to run repeatedly:
   WiFiClient client = m_server.available();   
-  if(client != NULL) 
-  {
-    if(client.connected())
-    {
+  if(client != NULL) {
+    if(client.connected()) {
       m_bOneShotClientDisconnected_1 = false;
       m_bOneShotClientDisconnected_2 = false;
 

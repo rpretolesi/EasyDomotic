@@ -51,6 +51,11 @@ public class BluetoothClientConfiguration extends ListActivity {
                             }
                         }
                     }
+
+                    if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                        setProgressBarIndeterminateVisibility(true);
+                        setTitle(R.string.text_bt_devices_discovering);
+                    }
                     if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                         setProgressBarIndeterminateVisibility(false);
                         setTitle(R.string.text_bt_devices_discovering_completed);
@@ -79,6 +84,8 @@ public class BluetoothClientConfiguration extends ListActivity {
         if(m_Receiver != null) {
             IntentFilter filter;
             filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(m_Receiver, filter);
+            filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             registerReceiver(m_Receiver, filter);
             filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
             registerReceiver(m_Receiver, filter);
@@ -174,6 +181,7 @@ public class BluetoothClientConfiguration extends ListActivity {
 
     private void getBluetoothDevice(){
         if(m_BluetoothAdapter != null && m_blAdapter != null){
+/*
             Set<BluetoothDevice> pairedDevices = m_BluetoothAdapter.getBondedDevices();
             if(pairedDevices != null){
                 // If there are paired devices
@@ -186,17 +194,15 @@ public class BluetoothClientConfiguration extends ListActivity {
                         }
                     }
                 }
-                // Enable Discovering
-                if (m_BluetoothAdapter.isDiscovering()) {
-                    m_BluetoothAdapter.cancelDiscovery();
-                }
-                // Request discover from BluetoothAdapter
-                m_BluetoothAdapter.startDiscovery();
-
-                // Progress bar
-                setProgressBarIndeterminateVisibility(true);
-                setTitle(R.string.text_bt_devices_discovering);
             }
+*/
+            // Enable Discovering
+            if (m_BluetoothAdapter.isDiscovering()) {
+                m_BluetoothAdapter.cancelDiscovery();
+            }
+            // Request discover from BluetoothAdapter
+            m_BluetoothAdapter.startDiscovery();
+
         }
     }
 }

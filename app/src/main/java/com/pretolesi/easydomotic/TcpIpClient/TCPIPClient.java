@@ -302,6 +302,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                             // Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                             return true;
                                         }
+
                                     } catch (ModbusProtocolOutOfRangeException ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
@@ -346,6 +347,7 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
                                     // Log.d(TAG, this.toString() + "receive() DATA->" + "Exception ex: " + ex.getMessage());
                                 }
                             }
+
                         } catch (ModbusProtocolOutOfRangeException ex) {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
