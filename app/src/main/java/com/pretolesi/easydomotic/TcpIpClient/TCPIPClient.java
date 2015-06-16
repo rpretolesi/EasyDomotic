@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
@@ -38,57 +39,11 @@ import java.util.Vector;
  */
 
 //sistemare tutte le variabili che non servono e lasciare solo quelle che servono, a partire dallo switch!!!!
-public class TCPIPClient extends AsyncTask<Object, Object, Void> {
+public class TCPIPClient extends BaseCommClient {
     private static final String TAG = "TCPIPClient";
 
-    // Listener e Callback
-    // Client
-    private List<TcpIpClientStatusListener> m_vTcpIpClientStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerTcpIpClientStatus(TcpIpClientStatusListener listener) {
-        if(m_vTcpIpClientStatusListener != null && !m_vTcpIpClientStatusListener.contains(listener)){
-            m_vTcpIpClientStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterTcpIpClientStatus(TcpIpClientStatusListener listener) {
-        if(m_vTcpIpClientStatusListener != null && m_vTcpIpClientStatusListener.contains(listener)){
-            m_vTcpIpClientStatusListener.remove(listener);
-        }
-    }
-
-    // Write
-    private List<TcpIpClientWriteStatusListener> m_vTcpIpClientWriteStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerTcpIpClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
-        if(m_vTcpIpClientWriteStatusListener != null && !m_vTcpIpClientWriteStatusListener.contains(listener)){
-            m_vTcpIpClientWriteStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterTcpIpClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
-        if(m_vTcpIpClientWriteStatusListener != null && m_vTcpIpClientWriteStatusListener.contains(listener)){
-            m_vTcpIpClientWriteStatusListener.remove(listener);
-        }
-    }
-
-    // Read
-    private List<TcpIpClientReadValueStatusListener> m_vTcpIpClientReadValueStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerTcpIpClientReadValueStatus(TcpIpClientReadValueStatusListener listener) {
-        if(m_vTcpIpClientReadValueStatusListener != null && !m_vTcpIpClientReadValueStatusListener.contains(listener)){
-            m_vTcpIpClientReadValueStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterTcpIpClientReadValueStatus(TcpIpClientReadValueStatusListener listener) {
-        if(m_vTcpIpClientReadValueStatusListener != null && m_vTcpIpClientReadValueStatusListener.contains(listener)){
-            m_vTcpIpClientReadValueStatusListener.remove(listener);
-        }
-    }
-
     //
-    private Context m_context = null;
-
     private Vector<TcpIpMsg> m_vtim = null;
-    private BaseValueCommClientData m_ticd = null;
 
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
@@ -102,20 +57,6 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
         m_vTcpIpClientReadValueStatusListener = new Vector<>();
         m_context = context;
         m_vtim = new Vector<>();
-    }
-
-    public synchronized long getID() {
-        if (m_ticd != null) {
-            return m_ticd.getID();
-        }
-        return 0;
-    }
-
-    public synchronized String getName() {
-        if (m_ticd != null) {
-            return m_ticd.getName();
-        }
-        return "";
     }
 
     private boolean startConnection() {
@@ -1065,28 +1006,5 @@ public class TCPIPClient extends AsyncTask<Object, Object, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-    }
-
-
-    /**
-     * Callbacks interface.
-     */
-    public static interface TcpIpClientStatusListener {
-        /**
-         * Callbacks
-         */
-        void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
-    }
-    public static interface TcpIpClientWriteStatusListener {
-        /**
-         * Callbacks
-         */
-        void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws);
-    }
-    public static interface TcpIpClientReadValueStatusListener {
-        /**
-         * Callbacks
-         */
-        void onReadValueStatusCallback(TcpIpClientReadStatus ticrs);
     }
 }

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.NumericValue.NumericValue;
@@ -157,9 +158,9 @@ public class BaseFragment extends Fragment implements
         // Unregister Listener For Tcp Ip Server
         // Listener
         if(CommClientHelper.getInstance() != null) {
-            for(TCPIPClient tic : CommClientHelper.getTciIpClient()){
-                if(tic != null){
-                    tic.unregisterTcpIpClientStatus(this);
+            for(BaseCommClient bcc : CommClientHelper.getBaseCommClient()){
+                if(bcc != null){
+                    bcc.unregisterTcpIpClientStatus(this);
 
                 }
             }
@@ -244,10 +245,10 @@ public class BaseFragment extends Fragment implements
 
                 // Register Listener For Tcp Ip Server
                 // Listener
-                if(CommClientHelper.getTciIpClient() != null) {
-                    for(TCPIPClient tic : CommClientHelper.getTciIpClient()){
-                        if(tic != null){
-                            tic.registerTcpIpClientStatus(this);
+                if(CommClientHelper.getBaseCommClient() != null) {
+                    for(BaseCommClient bcc : CommClientHelper.getBaseCommClient()){
+                        if(bcc != null){
+                            bcc.registerTcpIpClientStatus(this);
                         }
                     }
                 }
@@ -334,10 +335,10 @@ public class BaseFragment extends Fragment implements
                 llp.setLayoutDirection(LinearLayout.HORIZONTAL);
                 llp.weight = (float) 1.0;
                 if (tich != null) {
-                    for (TCPIPClient tic : CommClientHelper.getTciIpClient()) {
-                        if (tic != null) {
+                    for (BaseCommClient bcc : CommClientHelper.getBaseCommClient()) {
+                        if (bcc != null) {
                             tv = new TextView(getActivity());
-                            iID = (int)tic.getID();
+                            iID = (int)bcc.getID();
                             tv.setId(iID);
                             if(iID > iMaxID){
                                 iMaxID = iID;

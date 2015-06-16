@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.BluetoothClient;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
@@ -41,54 +42,9 @@ import java.util.Vector;
  *
  */
 
-public class BluetoothClient extends AsyncTask<Object, Object, Void> {
-    private static final String TAG = "TCPIPClient";
-
-    // Listener e Callback
-    // Client
-    private List<TcpIpClientStatusListener> m_vClientStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerClientStatus(TcpIpClientStatusListener listener) {
-        if(m_vClientStatusListener != null && !m_vClientStatusListener.contains(listener)){
-            m_vClientStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterClientStatus(TcpIpClientStatusListener listener) {
-        if(m_vClientStatusListener != null && m_vClientStatusListener.contains(listener)){
-            m_vClientStatusListener.remove(listener);
-        }
-    }
-
-    // Write
-    private List<TcpIpClientWriteStatusListener> m_vClientWriteStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
-        if(m_vClientWriteStatusListener != null && !m_vClientWriteStatusListener.contains(listener)){
-            m_vClientWriteStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterClientWriteSwitchStatus(TcpIpClientWriteStatusListener listener) {
-        if(m_vClientWriteStatusListener != null && m_vClientWriteStatusListener.contains(listener)){
-            m_vClientWriteStatusListener.remove(listener);
-        }
-    }
-
-    // Read
-    private List<TcpIpClientReadValueStatusListener> m_vClientReadValueStatusListener = null;
-    // Imposto il listener
-    public synchronized void registerTcpIpClientReadValueStatus(TcpIpClientReadValueStatusListener listener) {
-        if(m_vClientReadValueStatusListener != null && !m_vClientReadValueStatusListener.contains(listener)){
-            m_vClientReadValueStatusListener.add(listener);
-        }
-    }
-    public synchronized void unregisterClientReadValueStatus(TcpIpClientReadValueStatusListener listener) {
-        if(m_vClientReadValueStatusListener != null && m_vClientReadValueStatusListener.contains(listener)){
-            m_vClientReadValueStatusListener.remove(listener);
-        }
-    }
-
-    //
-    private Context m_context = null;
+public class BluetoothClient extends BaseCommClient {
+    private static final String TAG = "BluetoothClient";
+/*
 
     private Vector<TcpIpMsg> m_vtim = null;
     private BaseValueCommClientData m_ticd = null;
@@ -98,15 +54,17 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
     private DataOutputStream m_dataOutputStream = null;
     private DataInputStream m_dataInputStream = null;
     private int iProgressCounter;;
-
+*/
     public BluetoothClient(Context context){
+/*
         m_vClientStatusListener = new Vector<>();
         m_vClientWriteStatusListener = new Vector<>();
         m_vClientReadValueStatusListener = new Vector<>();
         m_context = context;
         m_vtim = new Vector<>();
+*/
     }
-
+/*
     public synchronized long getID() {
         if (m_ticd != null) {
             return m_ticd.getID();
@@ -443,10 +401,11 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
 
         // Log.d(TAG, this.toString() + "stopConnection() return");
     }
-
+*/
     /*
      * Writing/Reading Function
      */
+/*
     private void writeShort(Context context, int iTID, int iUID, int iAddress, int iValue){
         if(m_ticd != null) {
             if(m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
@@ -968,7 +927,7 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
             }
         }
     }
-
+*/
     @Override
     protected void onPreExecute() {
 
@@ -977,7 +936,7 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
     @Override
     protected Void doInBackground(Object... obj) {
         // Log.d(TAG, this.toString() + "doInBackground() enter");
-
+/*
         m_ticd = (BaseValueCommClientData) obj[0];
 
         try {
@@ -1030,7 +989,7 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
 
         // Closing...
         stopConnection();
-
+*/
         // Log.d(TAG, this.toString() + "doInBackground() return");
         return null;
     }
@@ -1038,6 +997,7 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
     @Override
     protected void onProgressUpdate(Object... obj) {
         super.onProgressUpdate(obj);
+/*
         // Aggiorno
         if(obj != null){
             if(obj[0] instanceof TcpIpClientStatus){
@@ -1062,32 +1022,11 @@ public class BluetoothClient extends AsyncTask<Object, Object, Void> {
                 }
             }
         }
+*/
     }
 
     @Override
     protected void onPostExecute(Void result) {
     }
 
-
-    /**
-     * Callbacks interface.
-     */
-    public static interface TcpIpClientStatusListener {
-        /**
-         * Callbacks
-         */
-        void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
-    }
-    public static interface TcpIpClientWriteStatusListener {
-        /**
-         * Callbacks
-         */
-        void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws);
-    }
-    public static interface TcpIpClientReadValueStatusListener {
-        /**
-         * Callbacks
-         */
-        void onReadValueStatusCallback(TcpIpClientReadStatus ticrs);
-    }
 }

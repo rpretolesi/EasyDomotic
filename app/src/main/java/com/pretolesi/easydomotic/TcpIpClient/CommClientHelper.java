@@ -3,6 +3,8 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.BluetoothClient.BluetoothClient;
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public class CommClientHelper {
 
     private static Context m_context;
     private static CommClientHelper m_Instance;
-    private static List<TCPIPClient> m_ltic;
+    private static List<BaseCommClient> m_ltic;
 
     private CommClientHelper(List<BaseValueCommClientData> lticd)
     {
@@ -29,6 +31,11 @@ public class CommClientHelper {
     //                    tic.execute(ticd);
                         tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
                                 m_ltic.add(tic);
+                    }
+                    if(ticd.getType() == BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT){
+                        BluetoothClient btc = new BluetoothClient(m_context);
+                        btc.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
+                                m_ltic.add(btc);
                     }
                 }
             }
@@ -58,8 +65,8 @@ public class CommClientHelper {
         {
             // Initialize if not already done
             if(m_ltic != null && !m_ltic.isEmpty()) {
-                 for(TCPIPClient tic : m_ltic){
-                     tic.cancel(true);
+                 for(BaseCommClient bcc : m_ltic){
+                     bcc.cancel(true);
                 }
                 m_ltic.clear();
             }
@@ -74,21 +81,21 @@ public class CommClientHelper {
         return m_Instance;
     }
 
-    public synchronized static List<TCPIPClient> getTciIpClient()
+    public synchronized static List<BaseCommClient> getBaseCommClient()
     {
         // Initialize if not already done
         return m_ltic;
     }
 
-    public synchronized static TCPIPClient getTciIpClient(long lID)
+    public synchronized static BaseCommClient getBaseCommClient(long lID)
     {
         if (m_Instance != null)
         {
             // Initialize if not already done
             if(m_ltic != null && !m_ltic.isEmpty()) {
-                for(TCPIPClient tic : m_ltic){
-                    if(tic.getID() == lID){
-                        return tic;
+                for(BaseCommClient bcc : m_ltic){
+                    if(bcc.getID() == lID){
+                        return bcc;
                     }
                 }
             }
