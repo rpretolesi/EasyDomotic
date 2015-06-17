@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
@@ -174,16 +175,16 @@ public class LightSwitch extends Switch implements
 
     private void writeSwitchValue(boolean bValue){
         if(m_bvd != null){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
 
                 Short sh;
                 if(bValue) {
                     sh = (short)m_bvd.getWriteValueON();
-                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
+                    bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                  } else {
                     sh = (short)m_bvd.getWriteValueOFF();
-                    tic.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
+                    bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                 }
             }
         }
