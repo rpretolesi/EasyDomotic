@@ -114,6 +114,7 @@ void loop() {
   WiFiClient client = NULL;//m_server.available();
   if (client != NULL) {
     if (client.connected()) {
+      
       m_bOneShotClientDisconnected_1 = false;
       m_bOneShotClientDisconnected_2 = false;
 
@@ -325,24 +326,24 @@ void loop() {
           }
 
           if (bFunctionCodeOk == true) {
-            if (bAddressOk == true) {
+            if (bAddressOk == true) {            
               /*
-                            if(bValueOk == true) {
-                            } else {
-                              // Exception
-                              // Bad Value
-                              unsigned int iMBAPMsgLength = 3;
-                              m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
-                              m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
-                              m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-                              m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-                              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                              m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
-                              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                              m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
-                              m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-                            }
-              */
+              if(bValueOk == true) {
+              } else {
+                // Exception
+                // Bad Value
+                unsigned int iMBAPMsgLength = 3;
+                m_byteToWriteMBAPMsg[4] = (iMBAPMsgLength >> 8) & 0xFF; // Lenght
+                m_byteToWriteMBAPMsg[5] = iMBAPMsgLength & 0xFF; // Lenght
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+                m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[7] = (byte)(m_byteReadMBMsg[1] + 0x80); // Error code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+                m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
+                m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+              }
+              */          
             } else {
               // Exception
               // Bad Address
@@ -388,7 +389,7 @@ void loop() {
         // Operazione Terminata
         initValue();
 
-      }
+      }      
     }
     else
     {
@@ -402,7 +403,7 @@ void loop() {
 
         initValue();
       }
-    }
+    }     
   }
   else
   {
@@ -416,7 +417,7 @@ void loop() {
 
       initValue();
     }
-  }
+  } 
 }
 
 void initValue() {
@@ -428,7 +429,7 @@ void initValue() {
     m_byteReadMBAP[index_0] = 0;
   }
 
-  for (int index_0 = 0; index_0 < 260; index_0++) {
+  for (int index_0 = 0; index_0 < 32; index_0++) {
     m_byteReadMBMsg[index_0] = 0;
     m_byteToWriteMBAPMsg[index_0] = 0;
   }

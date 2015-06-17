@@ -123,9 +123,9 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.registerTcpIpClientWriteSwitchStatus(this);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.registerTcpIpClientWriteSwitchStatus(this);
             }
         }
 
@@ -140,9 +140,9 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.unregisterTcpIpClientWriteSwitchStatus(this);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
 

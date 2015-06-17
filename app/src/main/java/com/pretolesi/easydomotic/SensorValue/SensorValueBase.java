@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
@@ -66,9 +67,9 @@ public class SensorValueBase extends BaseValue implements
         // Listener
         if(m_bvd != null){
             if(!getEditMode()) {
-                TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-                if(tic != null){
-                    tic.registerTcpIpClientWriteSwitchStatus(this);
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+                if(bcc != null){
+                    bcc.registerTcpIpClientWriteSwitchStatus(this);
                 }
                 if(!m_bvd.getSensorEnableSimulation()) {
                     setTimer(m_bvd.getValueUpdateMillis());
@@ -87,9 +88,9 @@ public class SensorValueBase extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.unregisterTcpIpClientWriteSwitchStatus(this);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
 
@@ -201,9 +202,9 @@ public class SensorValueBase extends BaseValue implements
 
     protected void WriteInputField(String strValue){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if (tic != null) {
-                tic.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if (bcc != null) {
+                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
             }
         }
     }

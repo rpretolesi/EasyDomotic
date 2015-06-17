@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.CommClientData;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -72,6 +73,17 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
             return m_ticd.getName();
         }
         return "";
+    }
+
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
+        return false;
+    }
+
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
+        return false;
+    }
+
+    public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
     }
 
     @Override

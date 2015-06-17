@@ -587,6 +587,7 @@ public class TCPIPClient extends BaseCommClient {
         }
     }
 
+    @Override
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
         if(dtDataType != null){
             switch (dtDataType) {
@@ -655,6 +656,7 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 
+    @Override
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
         if(objValue == null) {
             return false;
@@ -882,6 +884,7 @@ public class TCPIPClient extends BaseCommClient {
         }
     }
 
+    @Override
     public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
         if(dtDataType != null){
             switch (dtDataType) {

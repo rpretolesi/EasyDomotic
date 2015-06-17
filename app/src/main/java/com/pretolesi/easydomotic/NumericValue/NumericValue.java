@@ -6,6 +6,7 @@ import android.support.v4.view.GestureDetectorCompat;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValue;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
@@ -55,10 +56,10 @@ public class NumericValue extends BaseValue implements
         // Listener
         if(m_bvd != null){
             if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
-                TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-                if(tic != null){
-                    tic.registerTcpIpClientReadValueStatus(this);
-                    tic.registerTcpIpClientWriteSwitchStatus(this);
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+                if(bcc != null){
+                    bcc.registerTcpIpClientReadValueStatus(this);
+                    bcc.registerTcpIpClientWriteSwitchStatus(this);
                 }
                 setTimer(m_bvd.getValueUpdateMillis());
             }
@@ -77,21 +78,21 @@ public class NumericValue extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.unregisterTcpIpClientReadValueStatus(this);
-                tic.unregisterTcpIpClientWriteSwitchStatus(this);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.unregisterTcpIpClientReadValueStatus(this);
+                bcc.unregisterTcpIpClientWriteSwitchStatus(this);
             }
         }
 
         // Log.d(TAG, this.toString() + ": " + "onDetachedFromWindow()");
     }
 
-    private synchronized void readValue(){
+     private synchronized void readValue(){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if(tic != null){
-                tic.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
             }
         }
     }
@@ -211,9 +212,9 @@ public class NumericValue extends BaseValue implements
     protected void OnWriteInputField(String strValue) {
         super.OnWriteInputField(strValue);
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            TCPIPClient tic = CommClientHelper.getTciIpClient(m_bvd.getProtTcpIpClientID());
-            if (tic != null) {
-                tic.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if (bcc != null) {
+                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
             }
         }
     }
