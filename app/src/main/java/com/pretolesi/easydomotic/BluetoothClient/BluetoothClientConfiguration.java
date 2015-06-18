@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.BluetoothClient;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +17,11 @@ import android.widget.Toast;
 
 import com.pretolesi.easydomotic.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  *
@@ -43,12 +46,15 @@ public class BluetoothClientConfiguration extends ListActivity {
                         // Get the BluetoothDevice object from the Intent
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         if(device != null) {
+                            m_blAdapter.add(device);
+/*
                             if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                                 // Add the name and address to an array adapter to show in a ListView
                                 m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress(), true));
                             } else {
                                 m_blAdapter.add(new BluetoothClientData(device.getName(),device.getAddress(), false));
                             }
+*/
                         }
                     }
 
@@ -91,8 +97,8 @@ public class BluetoothClientConfiguration extends ListActivity {
             registerReceiver(m_Receiver, filter);
         }
         // Initialize the adapter
-        List<BluetoothClientData> albcd = new ArrayList<>();
-        m_blAdapter = new BluetoothListAdapter(this, albcd);
+        List<BluetoothDevice> albtd = new ArrayList<>();
+        m_blAdapter = new BluetoothListAdapter(this, albtd);
         setListAdapter(m_blAdapter);
 
 
@@ -166,6 +172,10 @@ public class BluetoothClientConfiguration extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        // If not paired, i try to pair
+        ConnectThread ct = new ConnectThread(m_blAdapter.getItem(position));
+        ct.run();
+/*
         Intent intent = getIntent();
         if(intent != null) {
             if(m_blAdapter != null) {
@@ -177,6 +187,7 @@ public class BluetoothClientConfiguration extends ListActivity {
             }
             finish();
         }
+*/
     }
 
     private void getBluetoothDevice(){
@@ -203,6 +214,54 @@ public class BluetoothClientConfiguration extends ListActivity {
             // Request discover from BluetoothAdapter
             m_BluetoothAdapter.startDiscovery();
 
+        }
+    }
+
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final BluetoothDevice mmDevice;
+
+        public ConnectThread(BluetoothDevice device) {
+            // Use a temporary object that is later assigned to mmSocket,
+            // because mmSocket is final
+            BluetoothSocket tmp = null;
+            mmDevice = device;
+
+            // Get a BluetoothSocket to connect with the given BluetoothDevice
+            try {
+                // MY_UUID is the app's UUID string, also used by the server code
+                tmp = device.createRfcommSocketToServiceRecord(UUID.randomUUID());
+            } catch (IOException e) { }
+            mmSocket = tmp;
+        }
+
+        public void run() {
+            // Cancel discovery because it will slow down the connection
+//            mBluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Connect the device through the socket. This will block
+                // until it succeeds or throws an exception
+                mmSocket.connect();
+                mmSocket.close();
+
+            } catch (IOException connectException) {
+                // Unable to connect; close the socket and get out
+                try {
+                    mmSocket.close();
+                } catch (IOException closeException) { }
+                return;
+            }
+
+            // Do work to manage the connection (in a separate thread)
+//            manageConnectedSocket(mmSocket);
+        }
+
+        /** Will cancel an in-progress connection, and close the socket */
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) { }
         }
     }
 }

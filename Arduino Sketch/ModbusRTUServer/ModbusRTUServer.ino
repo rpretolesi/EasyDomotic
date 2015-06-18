@@ -33,12 +33,12 @@ byte m_byteToWriteMBAPMsg[32] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
 // Bluetooth Communication
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
-//#define  BT_RX 5            // PIN to receive from bluetooth
-//#define  BT_TX 3            // PIN TO transmit to bluetooth
+#define  BT_RX 5            // PIN TO receive from bluetooth
+#define  BT_TX 3            // PIN TO transmit to bluetooth
 
-//SoftwareSerial btSerial(BT_RX, BT_TX);
+SoftwareSerial btSerial(BT_RX, BT_TX);
 
 // Create union of shared memory space
 union {
@@ -54,13 +54,13 @@ void setup() {
   digitalWrite(4, 1);
 
   // Set as Output mode
-  // pinMode(3, OUTPUT);
-  // pinMode(5, INPUT);
+  pinMode(3, OUTPUT);
+  pinMode(5, INPUT);
   // pinMode(6, OUTPUT);
   // pinMode(9, OUTPUT);
 
   // Initialize Bluetooth SoftwareSerial port for selected data speed
-  // btSerial.begin(57600);
+  btSerial.begin(57600);
 
   //Initialize serial and wait for port to open:
   Serial.begin(57600);
@@ -103,13 +103,13 @@ void setup() {
 
 void loop() {
   // Bluetooth
-  /*
-    if (btSerial.available() > 0){
-       Serial.write(btSerial.read());
-    }
-  */
-  Serial.println("Begin Loop...");
-
+  
+  if (btSerial.available() > 0){
+     Serial.println("Bletooth data...");
+     Serial.write(btSerial.read());
+  }
+//  btSerial.write("mmmmm");
+  
   // put your main code here, to run repeatedly:
   WiFiClient client = NULL;//m_server.available();
   if (client != NULL) {

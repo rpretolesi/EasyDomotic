@@ -52,7 +52,7 @@ public class BluetoothClient extends BaseCommClient {
     @Override
     protected boolean startConnection() {
         super.startConnection();
-
+/*
         if (m_ticd != null) {
             // Callbacks on UI
             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.CONNECTING, ""));
@@ -94,7 +94,7 @@ public class BluetoothClient extends BaseCommClient {
         }
 
         // Log.d(TAG, this.toString() + "startConnection() return false");
-
+*/
         return false;
     }
 
