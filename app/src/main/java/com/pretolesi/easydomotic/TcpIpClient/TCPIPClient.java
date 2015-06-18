@@ -42,24 +42,18 @@ import java.util.Vector;
 public class TCPIPClient extends BaseCommClient {
     private static final String TAG = "TCPIPClient";
 
-    //
-    private Vector<TcpIpMsg> m_vtim = null;
-
     private Socket m_clientSocket = null;
     private SocketAddress m_socketAddress = null;
-    private DataOutputStream m_dataOutputStream = null;
-    private DataInputStream m_dataInputStream = null;
     private int iProgressCounter;;
 
-    public TCPIPClient (Context context){
-        m_vTcpIpClientStatusListener = new Vector<>();
-        m_vTcpIpClientWriteStatusListener = new Vector<>();
-        m_vTcpIpClientReadValueStatusListener = new Vector<>();
-        m_context = context;
-        m_vtim = new Vector<>();
+    public TCPIPClient(Context context) {
+        super(context);
     }
 
-    private boolean startConnection() {
+    @Override
+    protected boolean startConnection() {
+        super.startConnection();
+
         if (m_ticd != null) {
             // Callbacks on UI
             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.CONNECTING, ""));
@@ -105,7 +99,8 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 
-    private boolean isConnected() {
+    @Override
+    protected boolean isConnected() {
         for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
             TcpIpMsg tim = iterator.next();
             if (tim != null) {
@@ -138,7 +133,10 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 
-    private boolean send() {
+    @Override
+    protected  boolean send() {
+        super.send();
+
         if (m_dataOutputStream != null && m_ticd != null && m_vtim != null) {
             if (!m_vtim.isEmpty()) {
                 try {
@@ -177,7 +175,10 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 
-    private boolean receive() {
+    @Override
+    protected boolean receive() {
+        super.receive();
+
         if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
 
             // In case of timeout, i put the message in queue again
@@ -336,7 +337,9 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 
-    private void stopConnection() {
+    @Override
+    protected void stopConnection() {
+        super.stopConnection();
 
         // Log.d(TAG, this.toString() + "stopConnection() enter");
 
@@ -911,7 +914,7 @@ public class TCPIPClient extends BaseCommClient {
             }
         }
     }
-
+/*
     @Override
     protected void onPreExecute() {
 
@@ -919,9 +922,7 @@ public class TCPIPClient extends BaseCommClient {
 
     @Override
     protected Void doInBackground(Object... obj) {
-        // Log.d(TAG, this.toString() + "doInBackground() enter");
-
-        m_ticd = (BaseValueCommClientData) obj[0];
+        super.doInBackground(obj);
 
         try {
             while (!isCancelled() && m_ticd != null) {
@@ -1010,4 +1011,5 @@ public class TCPIPClient extends BaseCommClient {
     @Override
     protected void onPostExecute(Void result) {
     }
+*/
 }
