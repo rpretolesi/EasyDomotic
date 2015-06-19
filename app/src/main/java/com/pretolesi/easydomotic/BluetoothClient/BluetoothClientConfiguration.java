@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -101,7 +102,6 @@ public class BluetoothClientConfiguration extends ListActivity {
         m_blAdapter = new BluetoothListAdapter(this, albtd);
         setListAdapter(m_blAdapter);
 
-
 /*
 //        setContentView(R.layout.bluetooth_client_configuration_list_activity);
         // Query for all people contacts using the Contacts.People convenience class.
@@ -172,9 +172,23 @@ public class BluetoothClientConfiguration extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        // If not paired, i try to pair
-        PairingThread pt = new PairingThread(m_blAdapter.getItem(position));
-        pt.run();
+        if(m_blAdapter.getItem(position).getBondState() == BluetoothDevice.BOND_BONDED){
+            Intent intent = getIntent();
+            if(intent != null) {
+                if(m_blAdapter != null) {
+                    intent.putExtra(BluetoothClientDataPropActivity.BT_NAME, m_blAdapter.getItem(position).getName());
+                    intent.putExtra(BluetoothClientDataPropActivity.BT_ADDRESS, m_blAdapter.getItem(position).getAddress());
+                    setResult(RESULT_OK, intent);
+                } else {
+                    setResult(RESULT_CANCELED, intent);
+                }
+                finish();
+            }
+        } else {
+            // If not paired, i try to pair
+            PairingThread pt = new PairingThread(m_blAdapter.getItem(position));
+            pt.run();
+        }
 /*
         Intent intent = getIntent();
         if(intent != null) {

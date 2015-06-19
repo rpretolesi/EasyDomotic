@@ -79,34 +79,48 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
 
-    protected synchronized long getID() {
+    public synchronized long getID() {
         if (m_ticd != null) {
             return m_ticd.getID();
         }
         return 0;
     }
 
-    protected synchronized String getName() {
+    public synchronized String getName() {
         if (m_ticd != null) {
             return m_ticd.getName();
         }
         return "";
     }
 
-    protected synchronized String getAddress() {
+    public synchronized String getAddress() {
         if (m_ticd != null) {
             return m_ticd.getAddress();
         }
         return "";
     }
 
-    protected synchronized void setAllMsgAsUnsent(){
+    protected void setAllMsgAsUnsent(){
         if(m_vtim != null) {
             for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
                 TcpIpMsg tim = iterator.next();
                 if (tim != null) {
-                    tim.setMsgAsSent(false);
                     tim.setMsgTimeMSNow();
+                    tim.setMsgAsSent(false);
+                 }
+            }
+        }
+    }
+
+    protected void checkTimeoutAndSetAllMsgAsUnsent(){
+        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+            TcpIpMsg tim = iterator.next();
+            if (tim != null) {
+                if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
+                    tim.setMsgTimeMSNow();
+                    tim.setMsgAsSent(false);
+                    publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
+                    publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
                 }
             }
         }

@@ -91,6 +91,7 @@ public class TCPIPClient extends BaseCommClient {
 
     @Override
     protected boolean isConnected() {
+/*
         for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
             TcpIpMsg tim = iterator.next();
             if (tim != null) {
@@ -102,6 +103,8 @@ public class TCPIPClient extends BaseCommClient {
                 }
             }
         }
+*/
+        checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
             iProgressCounter = iProgressCounter + 1;

@@ -119,7 +119,7 @@ public class BluetoothClient extends BaseCommClient {
                 m_btSocket.close();
             } catch (IOException ex_2) {
             }
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "Cannot establish a connection with:") + getName() + ", " + getAddress() + ", " + ex_1.getMessage() + ".");
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "Cannot establish a connection with:" + getName() + ", " + getAddress() + ", " + ex_1.getMessage() + "."));
             return false;
         }
 
@@ -132,4 +132,41 @@ public class BluetoothClient extends BaseCommClient {
         return true;
     }
 
+    @Override
+    protected boolean isConnected() {
+/*
+        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+            TcpIpMsg tim = iterator.next();
+            if (tim != null) {
+                if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
+                    tim.setMsgTimeMSNow();
+                    tim.setMsgAsSent(false);
+                    publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
+                    publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
+                }
+            }
+        }
+*/
+        checkTimeoutAndSetAllMsgAsUnsent();
+
+        //TODO
+        if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
+            iProgressCounter = iProgressCounter + 1;
+            if(iProgressCounter > 16) {
+                iProgressCounter = 1;
+            }
+            String strProgress = "";
+            for(int index = 0; index < iProgressCounter; index++){
+                strProgress = strProgress + "-";
+            }
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, strProgress ));
+            return true;
+        }
+
+        // Callbacks on UI
+        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
+        iProgressCounter = 0;
+        return false;
+    }
 }
