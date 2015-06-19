@@ -11,6 +11,7 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -78,18 +79,37 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
 
-    public synchronized long getID() {
+    protected synchronized long getID() {
         if (m_ticd != null) {
             return m_ticd.getID();
         }
         return 0;
     }
 
-    public synchronized String getName() {
+    protected synchronized String getName() {
         if (m_ticd != null) {
             return m_ticd.getName();
         }
         return "";
+    }
+
+    protected synchronized String getAddress() {
+        if (m_ticd != null) {
+            return m_ticd.getAddress();
+        }
+        return "";
+    }
+
+    protected synchronized void setAllMsgAsUnsent(){
+        if(m_vtim != null) {
+            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+                TcpIpMsg tim = iterator.next();
+                if (tim != null) {
+                    tim.setMsgAsSent(false);
+                    tim.setMsgTimeMSNow();
+                }
+            }
+        }
     }
 
     protected boolean startConnection() {

@@ -70,17 +70,7 @@ public class TCPIPClient extends BaseCommClient {
                     iProgressCounter = 0;
 
                     // Restore the operations not completed
-                    if(m_vtim != null) {
-                        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-                            TcpIpMsg tim = iterator.next();
-                            if (tim != null) {
-                                tim.setMsgAsSent(false);
-                                tim.setMsgTimeMSNow();
-                                // Remove the current element from the iterator and the list.
-                                // iterator.remove();
-                            }
-                        }
-                    }
+                    setAllMsgAsUnsent();
 
                     // Callbacks on UI
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, "" ));

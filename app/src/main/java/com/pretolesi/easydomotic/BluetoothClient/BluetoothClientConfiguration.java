@@ -173,8 +173,8 @@ public class BluetoothClientConfiguration extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         // If not paired, i try to pair
-        ConnectThread ct = new ConnectThread(m_blAdapter.getItem(position));
-        ct.run();
+        PairingThread pt = new PairingThread(m_blAdapter.getItem(position));
+        pt.run();
 /*
         Intent intent = getIntent();
         if(intent != null) {
@@ -217,52 +217,57 @@ public class BluetoothClientConfiguration extends ListActivity {
         }
     }
 
-    private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
+    private class PairingThread extends Thread {
+        private final BluetoothSocket m_btSocket;
+        private final BluetoothDevice m_btDevice;
 
-        public ConnectThread(BluetoothDevice device) {
+        public PairingThread(BluetoothDevice btd) {
             // Use a temporary object that is later assigned to mmSocket,
             // because mmSocket is final
-            BluetoothSocket tmp = null;
-            mmDevice = device;
+            BluetoothSocket bts = null;
+            m_btDevice = btd;
 
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
                 // MY_UUID is the app's UUID string, also used by the server code
-                tmp = device.createRfcommSocketToServiceRecord(UUID.randomUUID());
+                bts = m_btDevice.createRfcommSocketToServiceRecord(BluetoothClient.SSP_UUID);
             } catch (IOException e) { }
-            mmSocket = tmp;
+            m_btSocket = bts;
         }
 
         public void run() {
             // Cancel discovery because it will slow down the connection
-//            mBluetoothAdapter.cancelDiscovery();
+            if (m_BluetoothAdapter.isDiscovering()) {
+                m_BluetoothAdapter.cancelDiscovery();
+            }
 
             try {
                 // Connect the device through the socket. This will block
                 // until it succeeds or throws an exception
-                mmSocket.connect();
-                mmSocket.close();
+                m_btSocket.connect();
+                try {
+                    m_btSocket.close();
+                } catch (IOException closeException) { }
+//                return;
 
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
                 try {
-                    mmSocket.close();
+                    m_btSocket.close();
                 } catch (IOException closeException) { }
-                return;
+//                return;
             }
 
             // Do work to manage the connection (in a separate thread)
 //            manageConnectedSocket(mmSocket);
         }
 
-        /** Will cancel an in-progress connection, and close the socket */
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) { }
-        }
+//        /** Will cancel an in-progress connection, and close the socket */
+//        public void cancel() {
+//            try {
+//                mmSocket.close();
+//            } catch (IOException e) { }
+//        }
     }
 }
 
