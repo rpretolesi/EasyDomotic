@@ -2,6 +2,7 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
@@ -13,15 +14,16 @@ import java.nio.ByteBuffer;
  */
 public class Modbus {
 
-    public static synchronized TcpIpMsg writeShort(Context context, int iTID, int iUID, int iAddress, int iValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeShort(Context context, int iTID, int iUID, int iAddress, int iValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         TcpIpMsg tim = null;
         int[] iaValue = new int[1];
         iaValue[0] = iValue;
-        if(iTID != 0){
+        if(p == Protocol.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 1);
-        } else {
-            tim = writeMultipleRegistersOnSerial(context, iUID, iAddress, iaValue, 1);
+        }
+        if(p == Protocol.MODBUS_ON_SERIAL){
+            tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 1);
         }
 
         return tim;
@@ -127,11 +129,18 @@ public class Modbus {
         return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
-    private static synchronized TcpIpMsg writeMultipleRegistersOnSerial(Context context, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters) throws ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusValueOutOfRangeException {
+    private static synchronized TcpIpMsg writeMultipleRegistersOnSerial(Context context, int iTID, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusValueOutOfRangeException {
+        short shTID;
         byte byteUID;
         short shAddress;
         short shNrOfRegisters;
         byte byteByteCount;
+
+        if(iTID >= 0 && iTID <= 65535){
+            shTID = (short) iTID;
+        } else {
+            throw new ModbusTransIdOutOfRangeException(context.getString(R.string.ModbusTransIdOutOfRangeException));
+        }
 
         if(iUID >= 0 && iUID <= 255){
             byteUID = (byte) iUID;
@@ -168,9 +177,9 @@ public class Modbus {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
         }
 
-        bb.putShort(getCRC(bb.array(), bb.array().length));
+        bb.putShort(getCRC(bb.array(), bb.array().length - 2));
 
-        return new TcpIpMsg(0, byteUID, bb.array());
+        return new TcpIpMsg(iTID, byteUID, bb.array());
     }
 
     public static synchronized TcpIpMsg readShort(Context context, int iTID, int iUID, int iAddress) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
@@ -347,4 +356,5 @@ public class Modbus {
         // Note, this number has low and high bytes swapped, so use it accordingly (or swap bytes)
         return (short)crc;
     }
+
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
@@ -148,15 +149,13 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                     TcpIpMsg tim = m_vtim.firstElement();
 
                     if (tim != null && !tim.getMsgSent()) {
-                        if (m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
-                            int iIndex = m_vtim.lastIndexOf(tim);
-                            if(iIndex != -1) {
-                                tim.setMsgTimeMSNow();
-                                tim.setMsgAsSent(true);
-                                m_vtim.setElementAt(tim,iIndex);
-                            }
-                            m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
+                        int iIndex = m_vtim.lastIndexOf(tim);
+                        if(iIndex != -1) {
+                            tim.setMsgTimeMSNow();
+                            tim.setMsgAsSent(true);
+                            m_vtim.setElementAt(tim,iIndex);
                         }
+                        m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
                     }
 
                     return true;
@@ -216,9 +215,15 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
      */
     protected void writeShort(Context context, int iTID, int iUID, int iAddress, int iValue){
         if(m_ticd != null) {
-            if(m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP.getID()) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL.getID())) {
                 try {
-                    TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue);
+                    TcpIpMsg tim = null;
+                    if(m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP.getID()){
+                        tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, Protocol.MODBUS_ON_TCP_IP);
+                    }
+                    if(m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL.getID()) {
+                        tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, Protocol.MODBUS_ON_SERIAL);
+                    }
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.SHORT);
                         if(!m_vtim.contains(tim)){
@@ -442,6 +447,70 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
+        if(dtDataType != null){
+            switch (dtDataType) {
+                case SHORT:
+                    short shValue;
+                    try {
+                        shValue = Short.parseShort(strValue);
+                        writeShort(context, iTID, iUID, iAddress, shValue);
+
+                        return true;
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case INT:
+                    int iValue;
+                    try {
+                        iValue = Integer.parseInt(strValue);
+                        writeInteger(context, iTID, iUID, iAddress, iValue);
+
+                        return true;
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case LONG:
+                    long lValue;
+                    try {
+                        lValue = Long.parseLong(strValue);
+                        writeLong(context, iTID, iUID, iAddress, lValue);
+
+                        return true;
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case FLOAT:
+                    float fValue;
+                    try {
+                        fValue = Float.parseFloat(strValue);
+                        writeFloat(context, iTID, iUID, iAddress, fValue);
+
+                        return true;
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+                case DOUBLE:
+                    double dblValue;
+                    try {
+                        dblValue = Double.parseDouble(strValue);
+                        writeDouble(context, iTID, iUID, iAddress, dblValue);
+
+                        return true;
+
+                    } catch (Exception ignore) {
+                    }
+                    break;
+
+            }
+        }
         return false;
     }
 

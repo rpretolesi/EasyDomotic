@@ -192,7 +192,13 @@ public class BluetoothClient extends BaseCommClient {
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
     }
 
+    @Override
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
-        return super.writeValue(context, 0, iUID, iAddress, objValue);
+        return super.writeValue(context, iTID, iUID, iAddress, objValue);
+    }
+
+    @Override
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
+        return super.writeValue(context, iTID, iUID, iAddress, dtDataType, strValue);
     }
 }

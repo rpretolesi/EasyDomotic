@@ -120,7 +120,7 @@ public class TCPIPClient extends BaseCommClient {
         }
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
+        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, ""));
         iProgressCounter = 0;
         return false;
     }
@@ -350,74 +350,15 @@ public class TCPIPClient extends BaseCommClient {
     }
 
     @Override
-    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
-        if(dtDataType != null){
-            switch (dtDataType) {
-                case SHORT:
-                    short shValue;
-                    try {
-                        shValue = Short.parseShort(strValue);
-                        writeShort(context, iTID, iUID, iAddress, shValue);
-
-                        return true;
-
-                    } catch (Exception ignore) {
-                    }
-                    break;
-
-                case INT:
-                    int iValue;
-                    try {
-                        iValue = Integer.parseInt(strValue);
-                        writeInteger(context, iTID, iUID, iAddress, iValue);
-
-                        return true;
-
-                    } catch (Exception ignore) {
-                    }
-                    break;
-
-                case LONG:
-                    long lValue;
-                    try {
-                        lValue = Long.parseLong(strValue);
-                        writeLong(context, iTID, iUID, iAddress, lValue);
-
-                        return true;
-
-                    } catch (Exception ignore) {
-                    }
-                    break;
-
-                case FLOAT:
-                    float fValue;
-                    try {
-                        fValue = Float.parseFloat(strValue);
-                        writeFloat(context, iTID, iUID, iAddress, fValue);
-
-                        return true;
-
-                    } catch (Exception ignore) {
-                    }
-                    break;
-
-                case DOUBLE:
-                    double dblValue;
-                    try {
-                        dblValue = Double.parseDouble(strValue);
-                        writeDouble(context, iTID, iUID, iAddress, dblValue);
-
-                        return true;
-
-                    } catch (Exception ignore) {
-                    }
-                    break;
-
-            }
-        }
-        return false;
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
+        return super.writeValue(context, iTID, iUID, iAddress, objValue);
     }
 
+    @Override
+    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
+        return super.writeValue(context, iTID, iUID, iAddress, dtDataType, strValue);
+    }
+/*
     @Override
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
         if(objValue == null) {
@@ -445,7 +386,7 @@ public class TCPIPClient extends BaseCommClient {
         }
         return false;
     }
-
+*/
     public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){
         Object obj = null;
 

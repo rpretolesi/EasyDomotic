@@ -39,9 +39,17 @@ unsigned int m_uiNrByteToWrite = 0;
 #define  BT_TX 3            // PIN TO transmit to bluetooth
 
 SoftwareSerial m_btSerial(BT_RX, BT_TX);
-unsigned long m_ulbtRecDataTime;
-boolean m_bDataAvailable;
-boolean m_bDataNotAvailable;
+byte m_bytebtReadData[32] = {0};
+unsigned int m_uibtReadDataLength = 0;
+unsigned long m_ulbtRecDataTime = 0;
+boolean m_bbtDataAvailable = false;
+boolean m_bbtDataNotAvailable = false;
+boolean m_bbtDataCompleted = false;
+// Create union of shared memory space
+union {
+  short temp_short;
+  byte temp_bytearray[2];
+} m_u_CRC;
 
 // Create union of shared memory space
 union {
@@ -61,9 +69,6 @@ void setup() {
   pinMode(5, INPUT);
   // pinMode(6, OUTPUT);
   // pinMode(9, OUTPUT);
-
-  // Initialize Bluetooth SoftwareSerial port for selected data speed
-  m_btSerial.begin(9600);
 
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
@@ -99,39 +104,51 @@ void setup() {
   m_server.begin();
   // you're connected now, so printout the status:
   printWifiStatus();
+  
+  // Initialize Bluetooth SoftwareSerial port for selected data speed
+  m_btSerial.begin(9600);
 
   Serial.println("End Setup");
 
 }
 
 void loop() {
+
   // Bluetooth
-  
   if (m_btSerial.available() > 0){
     // After 4 ms i suppose that all data are received
-    m_bDataNotAvailable = false;
-    if(m_bDataAvailable == false){
-      m_bDataAvailable = true;
-      m_ulbtRecDataTime = micros();      
+    m_bbtDataNotAvailable = false;
+    if(m_bbtDataAvailable == false){
+      m_bbtDataAvailable = true;
+      m_uibtReadDataLength = 0;
+      m_ulbtRecDataTime = micros();    
+      Serial.println("Data available.");
     }
-    Serial.println("Data available.");
     if(m_ulbtRecDataTime + 4000 <= micros()){
       Serial.println("Bletooth data...");
       while(m_btSerial.available()){
-        Serial.print(m_btSerial.read());  
+        m_bytebtReadData[m_uibtReadDataLength] = m_btSerial.read();
+        Serial.print(m_bytebtReadData[m_uibtReadDataLength]);  
         Serial.print(" ");  
+        m_uibtReadDataLength = m_uibtReadDataLength + 1;
       }
       Serial.println("");
+      m_bbtDataCompleted = true;
+      m_u_CRC.temp_short = getCRC(m_bytebtReadData, m_uibtReadDataLength - 2);
+      if((m_bytebtReadData[m_uibtReadDataLength - 2] == m_u_CRC.temp_bytearray[1]) && (m_bytebtReadData[m_uibtReadDataLength - 1] == m_u_CRC.temp_bytearray[0])){
+        // Data completed successfully
+        Serial.println("CRC Ok!");
+      }
     }
   } else {
-    m_bDataAvailable = false;
-    if(m_bDataNotAvailable == false){
-      m_bDataNotAvailable = true;
+    m_bbtDataAvailable = false;
+    if(m_bbtDataNotAvailable == false){
+      m_bbtDataNotAvailable = true;
+      m_uibtReadDataLength = 0;
       Serial.println("Data NOT available.");
       Serial.println("");
     }
   }
-//  btSerial.write("mmmmm");
   
   // put your main code here, to run repeatedly:
   WiFiClient client = NULL;//m_server.available();
@@ -628,4 +645,25 @@ void reverseFloatArray(float Array[], int iStart, int iEnd)
   }
 }
 
+// Modbus CRC
+// Compute the MODBUS RTU CRC
+unsigned short getCRC(byte buf[], int len)
+{
+  unsigned short crc = 0xFFFF;
+ 
+  for (int pos = 0; pos < len; pos++) {
+    crc ^= (unsigned short)buf[pos];          // XOR byte into least sig. byte of crc
+ 
+    for (int i = 8; i != 0; i--) {    // Loop over each bit
+      if ((crc & 0x0001) != 0) {      // If the LSB is set
+        crc >>= 1;                    // Shift right and XOR 0xA001
+        crc ^= 0xA001;
+      }
+      else                            // Else LSB is not set
+        crc >>= 1;                    // Just shift right
+    }
+  }
+  // Note, this number has low and high bytes swapped, so use it accordingly (or swap bytes)
+  return crc;  
+}
 
