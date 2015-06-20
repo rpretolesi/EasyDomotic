@@ -159,7 +159,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                         }
                     }
 
-                    // Log.d(TAG, this.toString() + "send() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsSend));
                     return true;
                 } catch (EmptyStackException ESex) {
                     // Log.d(TAG, this.toString() + "send() return true");

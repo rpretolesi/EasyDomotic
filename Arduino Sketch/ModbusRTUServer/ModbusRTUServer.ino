@@ -38,7 +38,10 @@ unsigned int m_uiNrByteToWrite = 0;
 #define  BT_RX 5            // PIN TO receive from bluetooth
 #define  BT_TX 3            // PIN TO transmit to bluetooth
 
-SoftwareSerial btSerial(BT_RX, BT_TX);
+SoftwareSerial m_btSerial(BT_RX, BT_TX);
+unsigned long m_ulbtRecDataTime;
+boolean m_bDataAvailable;
+boolean m_bDataNotAvailable;
 
 // Create union of shared memory space
 union {
@@ -60,10 +63,10 @@ void setup() {
   // pinMode(9, OUTPUT);
 
   // Initialize Bluetooth SoftwareSerial port for selected data speed
-  btSerial.begin(57600);
+  m_btSerial.begin(9600);
 
   //Initialize serial and wait for port to open:
-  Serial.begin(57600);
+  Serial.begin(9600);
   Serial.println("Begin Setup");
 
   // check for the presence of the shield:
@@ -104,9 +107,29 @@ void setup() {
 void loop() {
   // Bluetooth
   
-  if (btSerial.available() > 0){
-     Serial.println("Bletooth data...");
-     Serial.println(btSerial.read());
+  if (m_btSerial.available() > 0){
+    // After 4 ms i suppose that all data are received
+    m_bDataNotAvailable = false;
+    if(m_bDataAvailable == false){
+      m_bDataAvailable = true;
+      m_ulbtRecDataTime = micros();      
+    }
+    Serial.println("Data available.");
+    if(m_ulbtRecDataTime + 4000 <= micros()){
+      Serial.println("Bletooth data...");
+      while(m_btSerial.available()){
+        Serial.print(m_btSerial.read());  
+        Serial.print(" ");  
+      }
+      Serial.println("");
+    }
+  } else {
+    m_bDataAvailable = false;
+    if(m_bDataNotAvailable == false){
+      m_bDataNotAvailable = true;
+      Serial.println("Data NOT available.");
+      Serial.println("");
+    }
   }
 //  btSerial.write("mmmmm");
   
