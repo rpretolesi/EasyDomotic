@@ -106,7 +106,7 @@ void loop() {
   
   if (btSerial.available() > 0){
      Serial.println("Bletooth data...");
-     Serial.write(btSerial.read());
+     Serial.println(btSerial.read());
   }
 //  btSerial.write("mmmmm");
   

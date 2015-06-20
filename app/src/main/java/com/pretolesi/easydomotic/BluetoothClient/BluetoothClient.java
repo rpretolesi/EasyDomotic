@@ -113,12 +113,18 @@ public class BluetoothClient extends BaseCommClient {
             // until it succeeds or throws an exception
             m_btSocket.connect();
 
+            m_dataOutputStream = new DataOutputStream(m_btSocket.getOutputStream());
+            m_dataInputStream = new DataInputStream(m_btSocket.getInputStream());
+
+            iProgressCounter = 0;
+
         } catch (IOException ex_1) {
             // Unable to connect; close the socket and get out
             try {
                 m_btSocket.close();
             } catch (IOException ex_2) {
             }
+            m_btSocket = null;
             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "Cannot establish a connection with:" + getName() + ", " + getAddress() + ", " + ex_1.getMessage() + "."));
             return false;
         }
@@ -149,8 +155,7 @@ public class BluetoothClient extends BaseCommClient {
 */
         checkTimeoutAndSetAllMsgAsUnsent();
 
-        //TODO
-        if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
+        if(m_btSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_btSocket.isConnected()){
             iProgressCounter = iProgressCounter + 1;
             if(iProgressCounter > 16) {
                 iProgressCounter = 1;
@@ -168,5 +173,22 @@ public class BluetoothClient extends BaseCommClient {
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
         iProgressCounter = 0;
         return false;
+    }
+
+    @Override
+    protected void stopConnection() {
+        super.stopConnection();
+
+        // Chiudo il socket
+        if (m_btSocket != null) {
+            try {
+                m_btSocket.close();
+            } catch (IOException ioex_1) {
+            }
+        }
+        m_btSocket = null;
+
+        // Callbacks on UI
+        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
     }
 }
