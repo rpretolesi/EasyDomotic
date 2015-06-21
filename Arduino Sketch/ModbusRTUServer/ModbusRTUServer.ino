@@ -502,6 +502,120 @@ void printWifiStatus() {
 
 }
 
+// Process MODBUS PDU
+
+void processModbusPDU(byte byteModbusPDU[], int ilenght){
+
+  boolean bFunctionCodeOk = false;
+  boolean bRegisterAndByteCountOk = false;
+  boolean bAddressOk = false;
+  byte byteModbusFunctionCode = byteModbusPDU[0];
+  Serial.print("Function Code: ");
+  Serial.println(byteModbusFunctionCode);
+
+  // Function
+  if (byteModbusFunctionCode == 0x10 || byteModbusFunctionCode == 0x03) {
+    bFunctionCodeOk = true;
+  }
+
+  if(bFunctionCodeOk == true) {
+
+    // Address
+    // Write Multiple Register
+    if (byteModbusFunctionCode == 0x10) {
+      // Check Data
+      short shortQuantityOfRegisters = getShortFromBytes(&byteModbusPDU[3]);
+      byte byteByteCount = byteModbusPDU[5];
+      Serial.print("Quantity of Register: ");
+      Serial.println(shortQuantityOfRegisters);
+      Serial.print("Byte Count: ");
+      Serial.println(byteByteCount);
+  
+      if (byteByteCount == (2 * shortQuantityOfRegisters)) {
+        bRegisterAndByteCountOk = true;
+      }
+  
+      if (bRegisterAndByteCountOk == true) {
+        unsigned short ushortModbusAddress = getShortFromBytes(&byteModbusPDU[1]);
+        Serial.print("Address: ");
+        Serial.println(ushortModbusAddress);
+  
+        if (ushortModbusAddress + shortQuantityOfRegisters < 20) {
+          bAddressOk = true;
+  
+          // Copy data to union
+          memcpy(&m_union_share_mem.temp_bytearray[ushortModbusAddress], &byteModbusPDU[6], byteByteCount);
+  
+          // Print data read
+          Serial.print("Short: ");
+          union {
+            short sh;
+            byte shByteTemp[2];
+          } ush;
+          memcpy(ush.shByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 2);
+          reverseByteArray(ush.shByteTemp, 0, 1);
+          Serial.print(ush.sh);
+  
+          Serial.print(", Long: ");
+          union {
+            long l;
+            byte lByteTemp[4];
+          } ul;
+          memcpy(ul.lByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 4);
+          reverseByteArray(ul.lByteTemp, 0, 3);
+          Serial.print(ul.l);
+   
+          Serial.print(", Float: ");
+          union {
+            float f;
+            byte fByteTemp[4];
+          } uf;
+          memcpy(uf.fByteTemp, &m_union_share_mem.temp_bytearray[ushortModbusAddress], 4);
+          reverseByteArray(uf.fByteTemp, 0, 3);
+          Serial.print(uf.f);
+  
+          Serial.println(" ");
+  
+          // You can use here the values!!!!
+  
+  finire qui...
+  
+          // Answer
+          if (bAddressOk == true) {
+            // Tutto Ok, costruisco la risposta, 2Â° parte
+            short shortMBAPMsgLength = 6;
+            m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
+            m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+            m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
+            m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
+            m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+            m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
+            m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
+            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
+          }
+        }
+      }
+    }  
+  }  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+finire qui...
+}
+
 // Short
 void setShortToBytes(short shortVal, byte* bytearrayVal) {
   // Create union of shared memory space
