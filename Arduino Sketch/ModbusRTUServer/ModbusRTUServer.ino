@@ -152,7 +152,22 @@ void loop() {
         m_uibtWriteDataLength = 1;
         memcpy(&m_bytebtWriteData[1], &m_bytebtPDUWriteData[0], m_uibtPDUWriteDataLength);
         m_uibtWriteDataLength = m_uibtWriteDataLength + m_uibtPDUWriteDataLength;
-        finire qui aggiungendo il crc
+        
+        m_u_CRC.temp_short = getCRC(m_bytebtWriteData, m_uibtWriteDataLength);
+  
+        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[1];
+        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
+        
+        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[0];
+        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
+        Serial.println("Answer Start: ");
+        for (int index_0 = 0; index_0 < m_uibtWriteDataLength; index_0++) {
+          m_btSerial.write(m_bytebtWriteData[index_0]);
+          Serial.print(m_bytebtWriteData[index_0]);
+          Serial.print(" ");
+        }
+        Serial.println(" ");
+        Serial.println("Answer End. ");        
       }
     }
   } else {

@@ -124,7 +124,7 @@ public class TCPIPClient extends BaseCommClient {
         iProgressCounter = 0;
         return false;
     }
-
+/*
     @Override
     protected  boolean send() {
         super.send();
@@ -166,7 +166,7 @@ public class TCPIPClient extends BaseCommClient {
         // Log.d(TAG, this.toString() + "send() return false");
         return false;
     }
-
+*/
     @Override
     protected boolean receive() {
         super.receive();
