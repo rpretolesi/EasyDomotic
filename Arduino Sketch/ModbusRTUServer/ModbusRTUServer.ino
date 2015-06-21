@@ -32,6 +32,9 @@ unsigned int m_uiModbusMBAPLength = 0;
 byte m_byteToWriteMBAPMsg[32] = {0};
 unsigned int m_uiNrByteToWrite = 0;
 
+// Modbus PDU for answer
+byte m_byteOutModbusPDU[32] = {0};
+
 // Bluetooth Communication
 #include <SoftwareSerial.h>
 
@@ -41,6 +44,11 @@ unsigned int m_uiNrByteToWrite = 0;
 SoftwareSerial m_btSerial(BT_RX, BT_TX);
 byte m_bytebtReadData[32] = {0};
 unsigned int m_uibtReadDataLength = 0;
+byte m_bytebtWriteData[32] = {0};
+unsigned int m_uibtWriteDataLength = 0;
+byte m_bytebtPDUWriteData[32] = {0};
+unsigned int m_uibtPDUWriteDataLength = 0;
+
 unsigned long m_ulbtRecDataTime = 0;
 boolean m_bbtDataAvailable = false;
 boolean m_bbtDataNotAvailable = false;
@@ -138,6 +146,13 @@ void loop() {
       if((m_bytebtReadData[m_uibtReadDataLength - 2] == m_u_CRC.temp_bytearray[1]) && (m_bytebtReadData[m_uibtReadDataLength - 1] == m_u_CRC.temp_bytearray[0])){
         // Data completed successfully
         Serial.println("CRC Ok!");
+        processModbusPDU(&m_bytebtReadData[1], m_uibtReadDataLength - 3, &m_bytebtPDUWriteData[0], &m_uibtPDUWriteDataLength);
+        // Prepare answer
+        m_bytebtWriteData[0] = m_bytebtReadData[0];
+        m_uibtWriteDataLength = 1;
+        memcpy(&m_bytebtWriteData[1], &m_bytebtPDUWriteData[0], m_uibtPDUWriteDataLength);
+        m_uibtWriteDataLength = m_uibtWriteDataLength + m_uibtPDUWriteDataLength;
+        finire qui aggiungendo il crc
       }
     }
   } else {
@@ -503,13 +518,12 @@ void printWifiStatus() {
 }
 
 // Process MODBUS PDU
-
-void processModbusPDU(byte byteModbusPDU[], int ilenght){
+void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusPDU[], unsigned int *iOutlenght){
 
   boolean bFunctionCodeOk = false;
   boolean bRegisterAndByteCountOk = false;
   boolean bAddressOk = false;
-  byte byteModbusFunctionCode = byteModbusPDU[0];
+  byte byteModbusFunctionCode = byteInModbusPDU[0];
   Serial.print("Function Code: ");
   Serial.println(byteModbusFunctionCode);
 
@@ -524,8 +538,8 @@ void processModbusPDU(byte byteModbusPDU[], int ilenght){
     // Write Multiple Register
     if (byteModbusFunctionCode == 0x10) {
       // Check Data
-      short shortQuantityOfRegisters = getShortFromBytes(&byteModbusPDU[3]);
-      byte byteByteCount = byteModbusPDU[5];
+      short shortQuantityOfRegisters = getShortFromBytes(&byteInModbusPDU[3]);
+      byte byteByteCount = byteInModbusPDU[5];
       Serial.print("Quantity of Register: ");
       Serial.println(shortQuantityOfRegisters);
       Serial.print("Byte Count: ");
@@ -536,7 +550,7 @@ void processModbusPDU(byte byteModbusPDU[], int ilenght){
       }
   
       if (bRegisterAndByteCountOk == true) {
-        unsigned short ushortModbusAddress = getShortFromBytes(&byteModbusPDU[1]);
+        unsigned short ushortModbusAddress = getShortFromBytes(&byteInModbusPDU[1]);
         Serial.print("Address: ");
         Serial.println(ushortModbusAddress);
   
@@ -544,7 +558,7 @@ void processModbusPDU(byte byteModbusPDU[], int ilenght){
           bAddressOk = true;
   
           // Copy data to union
-          memcpy(&m_union_share_mem.temp_bytearray[ushortModbusAddress], &byteModbusPDU[6], byteByteCount);
+          memcpy(&m_union_share_mem.temp_bytearray[ushortModbusAddress], &byteInModbusPDU[6], byteByteCount);
   
           // Print data read
           Serial.print("Short: ");
@@ -577,43 +591,19 @@ void processModbusPDU(byte byteModbusPDU[], int ilenght){
           Serial.println(" ");
   
           // You can use here the values!!!!
-  
-  finire qui...
-  
-          // Answer
-          if (bAddressOk == true) {
-            // Tutto Ok, costruisco la risposta, 2Â° parte
-            short shortMBAPMsgLength = 6;
-            m_byteToWriteMBAPMsg[4] = (shortMBAPMsgLength >> 8) & 0xFF; // Lenght
-            m_byteToWriteMBAPMsg[5] = shortMBAPMsgLength & 0xFF; // Lenght
-            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-            m_byteToWriteMBAPMsg[6] = m_byteReadMBMsg[0]; // Unit Identifier
-            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-            m_byteToWriteMBAPMsg[7] = m_byteReadMBMsg[1]; // Function code
-            m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
-            m_byteToWriteMBAPMsg[8] = m_byteReadMBMsg[2]; // Address
-            m_byteToWriteMBAPMsg[9] = m_byteReadMBMsg[3]; // Address
-            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-            m_byteToWriteMBAPMsg[10] = m_byteReadMBMsg[4]; // Quantity of registers
-            m_byteToWriteMBAPMsg[11] = m_byteReadMBMsg[5]; // Quantity of registers
-            m_uiNrByteToWrite = m_uiNrByteToWrite + 2;
-          }
+ 
+         // Prepare answer
+         byteOutModbusPDU[0] = byteInModbusPDU[0];
+         byteOutModbusPDU[1] = byteInModbusPDU[1];
+         byteOutModbusPDU[2] = byteInModbusPDU[2];
+         byteOutModbusPDU[3] = byteInModbusPDU[3];
+         byteOutModbusPDU[4] = byteInModbusPDU[4];
+         *iOutlenght = 5;
+         
         }
       }
     }  
   }  
-  
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-finire qui...
 }
 
 // Short

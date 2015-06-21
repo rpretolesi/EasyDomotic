@@ -159,11 +159,12 @@ public class Modbus {
             throw new ModbusQuantityOfRegistersOutOfRange(context.getString(R.string.ModbusValueArrayLengthOutOfRangeException));
         }
 
-        ByteBuffer bb = ByteBuffer.allocate(6 + byteByteCount + 2);
+        ByteBuffer bb = ByteBuffer.allocate(7 + byteByteCount + 2);
         bb.put(byteUID);
         bb.put((byte) 0x10);
         bb.putShort(shAddress);
         bb.putShort(shNrOfRegisters);
+        bb.put(byteByteCount);
 
         if(iaValue != null && iaValue.length > 0){
             for (int iValue : iaValue) {
