@@ -85,6 +85,8 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected BaseValueCommClientData m_ticd = null;
     protected Vector<TcpIpMsg> m_vtim = null;
 
+    protected byte[] m_byteInputMSG = null;
+
     protected DataOutputStream m_dataOutputStream = null;
     protected DataInputStream m_dataInputStream = null;
 
@@ -95,6 +97,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         m_vTcpIpClientWriteStatusListener = new Vector<>();
         m_vTcpIpClientReadValueStatusListener = new Vector<>();
         m_context = context;
+        m_byteInputMSG = new byte[256];
         m_vtim = new Vector<>();
     }
 
@@ -187,7 +190,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     protected boolean receive() {
-
         return false;
     }
 
@@ -622,19 +624,19 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     /**
      * Callbacks interface.
      */
-    public static interface TcpIpClientStatusListener {
+    public interface TcpIpClientStatusListener {
         /**
          * Callbacks
          */
         void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
     }
-    public static interface TcpIpClientWriteStatusListener {
+    public interface TcpIpClientWriteStatusListener {
         /**
          * Callbacks
          */
         void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws);
     }
-    public static interface TcpIpClientReadValueStatusListener {
+    public interface TcpIpClientReadValueStatusListener {
         /**
          * Callbacks
          */

@@ -4,14 +4,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
+import com.pretolesi.easydomotic.CustomDataStream.ReadDataInputStream;
 import com.pretolesi.easydomotic.Modbus.Modbus;
-import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusLengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAP;
@@ -19,10 +16,6 @@ import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusProtocolOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
-import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -32,26 +25,21 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.util.EmptyStackException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Vector;
 
 /**
  *
  */
 
-public class BluetoothClient extends BaseCommClient {
+public class BluetoothClient extends BaseCommClient implements ReadDataInputStream.ReadDataInputStreamListener {
     private static final String TAG = "BluetoothClient";
 
     public static final UUID SSP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private ReadDataInputStream m_rdis;
     private BluetoothAdapter m_BluetoothAdapter;
     private BluetoothDevice m_btDevice;
     private BluetoothSocket m_btSocket;
@@ -118,6 +106,11 @@ public class BluetoothClient extends BaseCommClient {
 
             iProgressCounter = 0;
 
+            // Start Read
+            m_rdis = new ReadDataInputStream(m_dataInputStream);
+            m_rdis.registerReadDataInputStream(this);
+            m_rdis.start();
+
         } catch (IOException ex_1) {
             // Unable to connect; close the socket and get out
             try {
@@ -176,6 +169,11 @@ public class BluetoothClient extends BaseCommClient {
     }
 
     @Override
+    public void onReadDataInputStreamCallback() {
+
+    }
+
+    @Override
     protected boolean receive() {
         super.receive();
 
@@ -186,6 +184,9 @@ public class BluetoothClient extends BaseCommClient {
             return false;
         }
         if (m_vtim == null) {
+            return false;
+        }
+        if (m_byteInputMSG == null) {
             return false;
         }
 
@@ -203,12 +204,11 @@ public class BluetoothClient extends BaseCommClient {
         if(tim == null) {
             return true;
         }
-fire qui
-        if (m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
-            // MBAP
-            byte[] byteMBAP = new byte[6];
-            try {
-                m_dataInputStream.readFully(byteMBAP, 0, 6);
+
+        // Dopo aver letto il primo byte, presuppongo che in 4 ms( o cmq un certo tempo) non ci sia nient'altro da leggere...
+        try {
+            m_btSocket.close();da verificare...
+            m_dataInputStream.readFully(byteMBAP, 0, 6);
                 // Rest of message
                 int iLength;
                 try {
@@ -337,9 +337,6 @@ fire qui
                 // Log.d(TAG, this.toString() + "receive() MBAP->" + "Exception ex: " + ex.getMessage());
             }
 
-        } else {
-            return true;
-        }
 
         return false;
     }
@@ -370,4 +367,5 @@ fire qui
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
         return super.writeValue(context, iTID, iUID, iAddress, dtDataType, strValue);
     }
+
 }
