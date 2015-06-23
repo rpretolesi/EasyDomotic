@@ -2,10 +2,9 @@ package com.pretolesi.easydomotic.CustomDataStream;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -25,14 +24,17 @@ public class ReadDataInputStream extends Thread {
 
     private DataInputStream m_dis;
     private byte[] m_byteData;
+    private short m_shDataSize;
     private short m_shDataLenght;
 
 
-    public ReadDataInputStream(DataInputStream dis, short shBufferSize) {
+    public ReadDataInputStream(DataInputStream dis, short shDatarSize) {
+        m_vReadDataInputStreamListener = new Vector<>();
         m_LockCommandHolder = new ReentrantLock();
         m_dis = dis;
-        if(shBufferSize > 0) {
-            m_byteData = new byte[shBufferSize];
+        if(shDatarSize > 0) {
+            m_byteData = new byte[shDatarSize];
+            m_shDataSize = shDatarSize;
         }
         m_shDataLenght = 0;
     }
@@ -53,29 +55,37 @@ public class ReadDataInputStream extends Thread {
                 bReadOk = true;
 
                 m_LockCommandHolder.lock();
+migliorare questo, evitando la lettura e mettendo un tempo di attesa per non sovraccaricare la cpu
 
-
-                m_byteData[m_shDataLenght] = byteData;
-                m_shDataLenght = (short)(m_shDataLenght + 1);
-
+                        quello che non si riesce a fare metterlo nel TO DO e toglierlo dal codice
+                if(m_shDataLenght < m_shDataSize) {
+                    m_byteData[m_shDataLenght] = byteData;
+                    m_shDataLenght = (short) (m_shDataLenght + 1);
+                }
             } catch (IOException ex) {
                 bReadOk = false;
             }
             finally
             {
-                m_LockCommandHolder.unlock();
+                if(m_LockCommandHolder.isLocked()){
+                    m_LockCommandHolder.unlock();
+                }
             }
             if(bReadOk) {
                 if (m_vReadDataInputStreamListener != null) {
                     for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                        rdisl.onReadDataInputStreamCallback();
+                        if(rdisl != null) {
+                            rdisl.onReadDataInputStreamCallback();
+                        }
                     }
                 }
             } else {
                 if(!isInterrupted()) {
                     if (m_vReadDataInputStreamListener != null) {
                         for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                            rdisl.onCloseReadDataInputStreamCallback();
+                            if(rdisl != null) {
+                                rdisl.onCloseReadDataInputStreamCallback();
+                            }
                         }
                     }
                 }

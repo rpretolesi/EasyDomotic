@@ -15,6 +15,7 @@
     <string name="ModbusValueOutOfRangeException">Value is out of range.</string>
     <string name="ModbusMBAPLengthException">MBAP length Out Of Range.</string>
     <string name="ModbusPDULengthException">PDU length Out Of Range.</string>
+    <string name="ModbusCRCException">CRC Error.</string>
     <!-- ModbusIOException String    -->
     <string name="ModbusWriteSingleRegisterException">Write Single Register Exception.</string>
 

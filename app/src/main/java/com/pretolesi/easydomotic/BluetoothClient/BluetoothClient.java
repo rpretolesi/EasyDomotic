@@ -10,6 +10,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomDataStream.ReadDataInputStream;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
@@ -22,6 +23,7 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -164,6 +166,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
     @Override
     public void onCloseReadDataInputStreamCallback() {
+
         m_bRestartConnection = true;
     }
 
@@ -206,15 +209,16 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // No Data to read
         // Ora attendo un certo tempo dalla ricezione dei primi dati per assicurarmi che tutti il messaggio sia completo
         // Imposto un tempo di 4 ms
-        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + 4 <= System.currentTimeMillis())) {
+        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + 10000 >= System.currentTimeMillis())) {
             return true;
         }
-
+verificare che tempo mettere qui, tenendo conto del delay e del timeout(che nel socket non uso nei socket buetooth.)
+        vedere se possibile istanziare solo il server che si usa in quella pagina
         try {
             byte[] bytePDU = m_rdis.getData();
             m_bDataInputStreamReady = false;
 
-            ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length);
+            ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length, true);
             if (mpdu == null) {
                 return false;
             }
@@ -256,6 +260,9 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             return true;
 
         } catch (ModbusPDULengthOutOfRangeException ex) {
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+        } catch (ModbusCRCException ex) {
             // Callbacks on UI
             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
         } catch (ModbusUnitIdOutOfRangeException ex) {

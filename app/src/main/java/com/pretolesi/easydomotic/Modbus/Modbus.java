@@ -109,7 +109,7 @@ public class Modbus {
         bb.putShort((short) 0);
         bb.putShort((short) (7 + byteByteCount));
         bb.put(byteUID);
-        bb.put((byte)0x10);
+        bb.put((byte) 0x10);
         bb.putShort(shAddress);
         bb.putShort(shNrOfRegisters);
         bb.put(byteByteCount);
@@ -259,7 +259,7 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized ModbusPDU getPDU(Context context, byte[] bytePDUValue, short shPDULenght) throws ModbusPDULengthOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusByteCountOutOfRangeException {
+    public static synchronized ModbusPDU getPDU(Context context, byte[] bytePDUValue, short shPDULenght, boolean bCheckCRC) throws ModbusPDULengthOutOfRangeException, ModbusCRCException, ModbusUnitIdOutOfRangeException, ModbusByteCountOutOfRangeException {
         // Max total message length 260 byte
         ModbusPDU mpdu = null;
 
@@ -271,6 +271,14 @@ public class Modbus {
             throw new ModbusPDULengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
         }
 
+        if(bCheckCRC) {
+            // Controllo CRC
+            ByteBuffer bbCRC = ByteBuffer.allocate(2);
+            bbCRC.putShort(getCRC(bytePDUValue, shPDULenght - 2));
+            if ((bytePDUValue[shPDULenght - 1] != bbCRC.get(1)) || (bytePDUValue[shPDULenght - 2] != bbCRC.get(0))) {
+                throw new ModbusCRCException(context.getString(R.string.ModbusCRCException));
+            }
+        }
         ByteBuffer bb = ByteBuffer.wrap(bytePDUValue);
          // Unit Identifier
         short shUI = bb.get();

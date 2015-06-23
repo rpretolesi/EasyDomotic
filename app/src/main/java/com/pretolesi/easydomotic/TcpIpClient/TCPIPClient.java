@@ -6,6 +6,7 @@ import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusProtocolOutOfRangeException;
@@ -118,49 +119,7 @@ public class TCPIPClient extends BaseCommClient {
         m_iProgressCounter = 0;
         return false;
     }
-/*
-    @Override
-    protected  boolean send() {
-        super.send();
 
-        if (m_dataOutputStream != null && m_ticd != null && m_vtim != null) {
-            if (!m_vtim.isEmpty()) {
-                try {
-                    TcpIpMsg tim = m_vtim.firstElement();
-
-                    if (tim != null && !tim.getMsgSent()) {
-                        if (m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
-                            int iIndex = m_vtim.lastIndexOf(tim);
-                            if(iIndex != -1) {
-                                tim.setMsgTimeMSNow();
-                                tim.setMsgAsSent(true);
-                                m_vtim.setElementAt(tim,iIndex);
-                            }
-                            m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
-                        }
-                    }
-
-                    // Log.d(TAG, this.toString() + "send() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsSend));
-                    return true;
-                } catch (EmptyStackException ESex) {
-                    // Log.d(TAG, this.toString() + "send() return true");
-                    return true;
-                } catch (Exception ex) {
-                    // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                    // Close
-                    stopConnection();
-                    // Log.d(TAG, this.toString() + "send()->" + "Exception ex: " + ex.getMessage());
-                }
-            } else {
-                return true;
-            }
-        }
-
-        // Log.d(TAG, this.toString() + "send() return false");
-        return false;
-    }
-*/
     @Override
     protected boolean receive() {
         super.receive();
@@ -194,7 +153,7 @@ public class TCPIPClient extends BaseCommClient {
                                 try {
                                     m_dataInputStream.readFully(byteDATA, 0, shLength);
                                     try {
-                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteDATA, shLength);
+                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteDATA, shLength, false);
                                         if (mpdu != null) {
 
                                             // Tutto Ok, rimuovo l'elemento
@@ -231,6 +190,9 @@ public class TCPIPClient extends BaseCommClient {
                                             return true;
                                         }
                                     } catch (ModbusPDULengthOutOfRangeException ex) {
+                                        // Callbacks on UI
+                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                    } catch (ModbusCRCException ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                                     } catch (ModbusUnitIdOutOfRangeException ex) {

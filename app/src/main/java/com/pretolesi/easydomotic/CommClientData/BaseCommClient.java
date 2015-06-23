@@ -117,7 +117,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         return "";
     }
 
-    vedere se e' il caso di accedere a m_vtim solo con funzioni.
     protected TcpIpMsg getMsgToSent(){
         boolean bNoMsgSent = true;
 
@@ -643,21 +642,27 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
             if(obj[0] instanceof TcpIpClientStatus){
                 if(m_vTcpIpClientStatusListener != null) {
                     for (TcpIpClientStatusListener ticl : m_vTcpIpClientStatusListener) {
-                        ticl.onTcpIpClientStatusCallback((TcpIpClientStatus) obj[0]);
+                        if(ticl != null) {
+                            ticl.onTcpIpClientStatusCallback((TcpIpClientStatus) obj[0]);
+                        }
                     }
                 }
             }
             if(obj[0] instanceof TcpIpClientWriteStatus){
                 if(m_vTcpIpClientWriteStatusListener != null) {
                     for (TcpIpClientWriteStatusListener ticwsl : m_vTcpIpClientWriteStatusListener) {
-                        ticwsl.onWriteValueStatusCallback((TcpIpClientWriteStatus) obj[0]);
+                        if(ticwsl != null) {
+                            ticwsl.onWriteValueStatusCallback((TcpIpClientWriteStatus) obj[0]);
+                        }
                     }
                 }
             }
             if(obj[0] instanceof TcpIpClientReadStatus){
                 if(m_vTcpIpClientReadValueStatusListener != null) {
                     for (TcpIpClientReadValueStatusListener ticrvsl : m_vTcpIpClientReadValueStatusListener) {
-                        ticrvsl.onReadValueStatusCallback((TcpIpClientReadStatus) obj[0]);
+                        if(ticrvsl != null) {
+                            ticrvsl.onReadValueStatusCallback((TcpIpClientReadStatus) obj[0]);
+                        }
                     }
                 }
             }

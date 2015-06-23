@@ -81,7 +81,7 @@ void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   Serial.println("Begin Setup");
-
+/*
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -112,7 +112,7 @@ void setup() {
   m_server.begin();
   // you're connected now, so printout the status:
   printWifiStatus();
-  
+  */
   // Initialize Bluetooth SoftwareSerial port for selected data speed
   m_btSerial.begin(9600);
 
@@ -179,7 +179,7 @@ void loop() {
       Serial.println("");
     }
   }
-  
+/*
   // put your main code here, to run repeatedly:
   WiFiClient client = NULL;//m_server.available();
   if (client != NULL) {
@@ -396,7 +396,8 @@ void loop() {
           }
 
           if (bFunctionCodeOk == true) {
-            if (bAddressOk == true) {            
+            if (bAddressOk == true) {  
+*/              
               /*
               if(bValueOk == true) {
               } else {
@@ -413,7 +414,8 @@ void loop() {
                 m_byteToWriteMBAPMsg[8] = 0x03; // Exception code
                 m_uiNrByteToWrite = m_uiNrByteToWrite + 1;
               }
-              */          
+              */     
+/*              
             } else {
               // Exception
               // Bad Address
@@ -488,6 +490,7 @@ void loop() {
       initValue();
     }
   } 
+*/  
 }
 
 void initValue() {
