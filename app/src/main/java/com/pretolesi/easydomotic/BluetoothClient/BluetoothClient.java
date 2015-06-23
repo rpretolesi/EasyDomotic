@@ -104,7 +104,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             m_dataInputStream = new DataInputStream(m_btSocket.getInputStream());
             m_bDataInputStreamReady = false;
 
-            iProgressCounter = 0;
+            m_iProgressCounter = 0;
 
             // Start Read
             m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
@@ -137,12 +137,12 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_btSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_btSocket.isConnected()){
-            iProgressCounter = iProgressCounter + 1;
-            if(iProgressCounter > 16) {
-                iProgressCounter = 1;
+            m_iProgressCounter = m_iProgressCounter + 1;
+            if(m_iProgressCounter > 16) {
+                m_iProgressCounter = 1;
             }
             String strProgress = "";
-            for(int index = 0; index < iProgressCounter; index++){
+            for(int index = 0; index < m_iProgressCounter; index++){
                 strProgress = strProgress + "-";
             }
             // Callbacks on UI
@@ -152,7 +152,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
-        iProgressCounter = 0;
+        m_iProgressCounter = 0;
         return false;
     }
 
@@ -160,6 +160,11 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     public void onReadDataInputStreamCallback() {
         m_bDataInputStreamReady = true;
         m_lDataInputStreamReadyTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onCloseReadDataInputStreamCallback() {
+        m_bRestartConnection = true;
     }
 
     @Override
@@ -277,8 +282,18 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
                 m_btSocket.close();
             } catch (IOException ioex_1) {
             }
+            m_btSocket = null;
         }
-        m_btSocket = null;
+
+        // Attendo che il Thread di lettura si arresti
+        if (m_rdis != null) {
+            m_rdis.interrupt();
+            try {
+                m_rdis.join();
+            } catch (InterruptedException e) {
+            }
+            m_rdis = null;
+        }
 
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));

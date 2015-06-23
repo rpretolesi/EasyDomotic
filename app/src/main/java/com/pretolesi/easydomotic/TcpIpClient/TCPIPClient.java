@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
-import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
@@ -61,7 +60,7 @@ public class TCPIPClient extends BaseCommClient {
                     m_clientSocket.connect(m_socketAddress);
                     m_dataOutputStream = new DataOutputStream(m_clientSocket.getOutputStream());
                     m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
-                    iProgressCounter = 0;
+                    m_iProgressCounter = 0;
 
                     // Restore the operations not completed
                     setAllMsgAsUnsent();
@@ -101,12 +100,12 @@ public class TCPIPClient extends BaseCommClient {
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
-            iProgressCounter = iProgressCounter + 1;
-            if(iProgressCounter > 16) {
-                iProgressCounter = 1;
+            m_iProgressCounter = m_iProgressCounter + 1;
+            if(m_iProgressCounter > 16) {
+                m_iProgressCounter = 1;
             }
             String strProgress = "";
-            for(int index = 0; index < iProgressCounter; index++){
+            for(int index = 0; index < m_iProgressCounter; index++){
                 strProgress = strProgress + "-";
             }
            // Callbacks on UI
@@ -116,7 +115,7 @@ public class TCPIPClient extends BaseCommClient {
 
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, ""));
-        iProgressCounter = 0;
+        m_iProgressCounter = 0;
         return false;
     }
 /*

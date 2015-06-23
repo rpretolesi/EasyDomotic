@@ -45,24 +45,39 @@ public class ReadDataInputStream extends Thread {
         }
 
         while(!isInterrupted()){
+            boolean bReadOk;
+
             try {
                 byte byteData = m_dis.readByte();
 
+                bReadOk = true;
+
                 m_LockCommandHolder.lock();
+
 
                 m_byteData[m_shDataLenght] = byteData;
                 m_shDataLenght = (short)(m_shDataLenght + 1);
 
             } catch (IOException ex) {
-
+                bReadOk = false;
             }
             finally
             {
                 m_LockCommandHolder.unlock();
             }
-            if(m_vReadDataInputStreamListener != null) {
-                for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                    rdisl.onReadDataInputStreamCallback();
+            if(bReadOk) {
+                if (m_vReadDataInputStreamListener != null) {
+                    for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
+                        rdisl.onReadDataInputStreamCallback();
+                    }
+                }
+            } else {
+                if(!isInterrupted()) {
+                    if (m_vReadDataInputStreamListener != null) {
+                        for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
+                            rdisl.onCloseReadDataInputStreamCallback();
+                        }
+                    }
                 }
             }
         }
@@ -92,5 +107,6 @@ public class ReadDataInputStream extends Thread {
          * Callbacks
          */
         void onReadDataInputStreamCallback();
+        void onCloseReadDataInputStreamCallback();
     }
 }

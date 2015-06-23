@@ -82,7 +82,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected DataOutputStream m_dataOutputStream = null;
     protected DataInputStream m_dataInputStream = null;
 
-    protected int iProgressCounter;;
+    protected int m_iProgressCounter = 0;
+
+    protected boolean m_bRestartConnection = false;
 
     public BaseCommClient (Context context){
         m_vTcpIpClientStatusListener = new Vector<>();
@@ -115,6 +117,41 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         return "";
     }
 
+    vedere se e' il caso di accedere a m_vtim solo con funzioni.
+    protected TcpIpMsg getMsgToSent(){
+        boolean bNoMsgSent = true;
+
+        if(m_vtim == null) {
+            return null;
+        }
+
+        if(m_vtim.isEmpty()){
+            return null;
+        }
+
+        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+            TcpIpMsg tim = iterator.next();
+            if (tim != null && tim.getMsgSent()) {
+                bNoMsgSent = false;
+            }
+        }
+        TcpIpMsg tim = null;
+
+        if(bNoMsgSent) {
+            tim = m_vtim.firstElement();
+            if (tim != null && !tim.getMsgSent()) {
+                int iIndex = m_vtim.lastIndexOf(tim);
+                if (iIndex != -1) {
+                    tim.setMsgTimeMSNow();
+                    tim.setMsgAsSent(true);
+                    m_vtim.setElementAt(tim, iIndex);
+                }
+            }
+        }
+
+        return tim;
+    }
+
     protected void setAllMsgAsUnsent(){
         if(m_vtim != null) {
             for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
@@ -145,34 +182,21 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected boolean send() {
 
-        if (m_dataOutputStream != null && m_ticd != null && m_vtim != null) {
-            if (!m_vtim.isEmpty()) {
-                try {
-                    TcpIpMsg tim = m_vtim.firstElement();
-
-                    if (tim != null && !tim.getMsgSent()) {
-                        int iIndex = m_vtim.lastIndexOf(tim);
-                        if(iIndex != -1) {
-                            tim.setMsgTimeMSNow();
-                            tim.setMsgAsSent(true);
-                            m_vtim.setElementAt(tim,iIndex);
-                        }
-                        m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
-                    }
-
-                    return true;
-                } catch (EmptyStackException ESex) {
-                    // Log.d(TAG, this.toString() + "send() return true");
-                    return true;
-                } catch (Exception ex) {
-                    // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                    // Close
-                    stopConnection();
-                    // Log.d(TAG, this.toString() + "send()->" + "Exception ex: " + ex.getMessage());
+        if (m_dataOutputStream != null) {
+            try {
+                TcpIpMsg tim = getMsgToSent();
+                if(tim != null){
+                    m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
                 }
-            } else {
                 return true;
+
+            } catch (EmptyStackException ex) {
+                return true;
+            } catch (Exception ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                // Close
+                stopConnection();
             }
         }
 
@@ -557,7 +581,10 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         try {
             while (!isCancelled() && m_ticd != null) {
                 try {
-                    if (!isConnected()) {
+                    if (!isConnected() || m_bRestartConnection) {
+                        // Reset bit
+                        m_bRestartConnection = false;
+
                         // Stop communication with Server
                         stopConnection();
                         // attendo per non sovraccaricare CPU
