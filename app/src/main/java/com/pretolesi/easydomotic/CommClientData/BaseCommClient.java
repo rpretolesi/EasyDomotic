@@ -149,9 +149,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    protected boolean startConnection() {
-        return false;
-    }
+    protected boolean startConnection() { return false; }
 
     protected boolean send() {
 

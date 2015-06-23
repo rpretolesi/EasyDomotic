@@ -40,6 +40,9 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     public static final UUID SSP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private ReadDataInputStream m_rdis;
+    protected boolean m_bDataInputStreamReady;
+    protected long m_lDataInputStreamReadyTime;
+
     private BluetoothAdapter m_BluetoothAdapter;
     private BluetoothDevice m_btDevice;
     private BluetoothSocket m_btSocket;
@@ -103,11 +106,12 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
             m_dataOutputStream = new DataOutputStream(m_btSocket.getOutputStream());
             m_dataInputStream = new DataInputStream(m_btSocket.getInputStream());
+            m_bDataInputStreamReady = false;
 
             iProgressCounter = 0;
 
             // Start Read
-            m_rdis = new ReadDataInputStream(m_dataInputStream);
+            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
             m_rdis.registerReadDataInputStream(this);
             m_rdis.start();
 
@@ -133,19 +137,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
     @Override
     protected boolean isConnected() {
-/*
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-            TcpIpMsg tim = iterator.next();
-            if (tim != null) {
-                if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
-                    tim.setMsgTimeMSNow();
-                    tim.setMsgAsSent(false);
-                    publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
-                    publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
-                }
-            }
-        }
-*/
+
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_btSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_btSocket.isConnected()){
@@ -170,7 +162,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
     @Override
     public void onReadDataInputStreamCallback() {
-
+        m_bDataInputStreamReady = true;
+        m_lDataInputStreamReadyTime = System.currentTimeMillis();
     }
 
     @Override
@@ -201,9 +194,18 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         }
 
         // No message sent, nothing to receive
-        if(tim == null) {
+        if(tim == null ) {
             return true;
         }
+
+        if(m_bDataInputStreamReady == true){
+            // Ora attendo un certo tempo dalla ricezione dei primi dati per assicurarmi che tutti il messaggio sia completo
+            // Imposto un tempo di 4 ms
+            if(m_lDataInputStreamReadyTime + 4 <= System.currentTimeMillis()){
+
+            }
+        }
+
 
         // Dopo aver letto il primo byte, presuppongo che in 4 ms( o cmq un certo tempo) non ci sia nient'altro da leggere...
         try {
@@ -244,8 +246,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
                                     if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                         // Check Return code
-                                        if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getByteValue() != null) {
-                                            publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getByteValue())));
+                                        if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                                            publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getPDUValue())));
                                         } else {
                                             publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
                                         }

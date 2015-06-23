@@ -259,75 +259,60 @@ public class Modbus {
         throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
     }
 
-    public static synchronized ModbusPDU getPDU(Context context, byte[] byteMBA, byte[] byteDATA) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException, ModbusByteCountOutOfRangeException {
+    public static synchronized ModbusPDU getPDU(Context context, byte[] bytePDUValue, short shPDULenght) throws ModbusProtocolOutOfRangeException, ModbusLengthOutOfRangeException, ModbusMBAPLengthException, ModbusPDULengthException, ModbusByteCountOutOfRangeException {
         // Max total message length 260 byte
         ModbusPDU mpdu = null;
 
-        int iTID = 0; // Transaction Identifier
-        int iLength = 0;
-        if(byteMBA != null && byteMBA.length == 6){
-            ByteBuffer bb = ByteBuffer.wrap(byteMBA);
-            iTID = bb.getShort(); // Transaction Identifier
-            int iPI = bb.getShort(); // Protocol Identifier, must be 0
-            if(iPI != 0){
-                throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
-            }
-            iLength = bb.getShort(); // Length
-            if(iLength < 3 || iLength > 254){
-                throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
-            }
-        } else {
-            throw new ModbusMBAPLengthException(context.getString(R.string.ModbusMBAPLengthException));
-        }
+        aggiungere controllo su indirizzo di ricezione
 
-        if(byteDATA != null && byteDATA.length == iLength){
-            ByteBuffer bb = ByteBuffer.wrap(byteDATA);
-            if(byteDATA.length < 3 || byteDATA.length > 254){
+        if(bytePDUValue != null && bytePDUValue.length == shPDULenght){
+            ByteBuffer bb = ByteBuffer.wrap(bytePDUValue);
+            if(bytePDUValue.length < 3 || bytePDUValue.length > 254){
                 throw new ModbusLengthOutOfRangeException(context.getString(R.string.ModbusLengthOutOfRangeException));
             }
              // Unit Identifier
-            int iUI = bb.get();
+            short shUI = bb.get();
             // Function Code
-            int iFEC = bb.get() & 0xFF;
-            int iExceptionCode = 0;
-            switch(iFEC) {
+            short shFEC = (short)(bb.get() & 0xFF);
+            short shExceptionCode = 0;
+            switch(shFEC) {
                 case 0x10:
-                    int iAddress = bb.getShort();
-                    int iQuantityOfRegisters = bb.getShort();
+                    short shAddress = bb.getShort();
+                    short shQuantityOfRegisters = bb.getShort();
 
-                    mpdu = new ModbusPDU(iUI, iFEC, 0, 0, null);
+                    mpdu = new ModbusPDU(shUI, shFEC, 0, null, (short)0);
 
                     break;
 
                 case 0x90:
-                    iExceptionCode = bb.get();
+                    shExceptionCode = bb.get();
 
-                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);
+                    mpdu = new ModbusPDU(shUI, shFEC, shExceptionCode, 0, null);
 
                     break;
 
                 case 0x03:
-                    int iByteCount = bb.get() & 0xFF;
-                    if(iByteCount < 1 || iLength > 125){
+                    short shByteCount = bb.get() & 0xFF;
+                    if(shByteCount < 1 || shPDULenght > 125){
                         throw new ModbusByteCountOutOfRangeException(context.getString(R.string.ModbusByteCountOutOfRangeException));
                     }
-                    byte[] byteBuffer = new byte[iByteCount];
-                    for(int iIndice = 0; iIndice < iByteCount; iIndice++){
+                    byte[] byteBuffer = new byte[shByteCount];
+                    for(short shIndice = 0; shIndice < shByteCount; shIndice++){
                         try{
-                            byteBuffer[iIndice] = bb.get();
+                            byteBuffer[shIndice] = bb.get();
                         } catch(BufferUnderflowException ex) {
                             throw new ModbusByteCountOutOfRangeException(context.getString(R.string.ModbusByteCountOutOfRangeException));
                         }
                     }
 
-                    mpdu = new ModbusPDU(iUI, iFEC, 0, iByteCount, byteBuffer);
+                    mpdu = new ModbusPDU(shUI, shFEC, 0, shByteCount, byteBuffer);
 
                     break;
 
                 case 0x83:
-                    iExceptionCode = bb.get();
+                    shExceptionCode = bb.get();
 
-                    mpdu = new ModbusPDU(iUI, iFEC, iExceptionCode, 0, null);
+                    mpdu = new ModbusPDU(shUI, shFEC, shExceptionCode, 0, null);
 
                     break;
             }

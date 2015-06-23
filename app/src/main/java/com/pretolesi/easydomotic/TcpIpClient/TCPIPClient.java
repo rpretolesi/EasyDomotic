@@ -1,7 +1,6 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
@@ -29,10 +28,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.util.EmptyStackException;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 /**
  *
@@ -225,8 +221,8 @@ public class TCPIPClient extends BaseCommClient {
 
                                             if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                                 // Check Return code
-                                                if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getByteValue() != null) {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getByteValue())));
+                                                if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getPDUValue())));
                                                 } else {
                                                     publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
                                                 }

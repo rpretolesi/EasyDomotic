@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.CustomDataStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,15 +24,17 @@ public class ReadDataInputStream extends Thread {
     private static ReentrantLock m_LockCommandHolder;
 
     private DataInputStream m_dis;
-    private List<Byte> m_abq;
+    private byte[] m_byteData;
+    private short m_shDataLenght;
 
 
     public ReadDataInputStream(DataInputStream dis, short shBufferSize) {
         m_LockCommandHolder = new ReentrantLock();
         m_dis = dis;
         if(shBufferSize > 0) {
-            m_abq = new ArrayList<>(shBufferSize);
+            m_byteData = new byte[shBufferSize];
         }
+        m_shDataLenght = 0;
     }
 
     @Override
@@ -43,16 +46,13 @@ public class ReadDataInputStream extends Thread {
 
         while(!isInterrupted()){
             try {
-                byte b = m_dis.readByte();
+                byte byteData = m_dis.readByte();
 
                 m_LockCommandHolder.lock();
 
-                m_abq.add(b);
-                if(m_vReadDataInputStreamListener != null) {
-                    for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                        rdisl.onReadDataInputStreamCallback();
-                    }
-                }
+                m_byteData[m_shDataLenght] = byteData;
+                m_shDataLenght = (short)(m_shDataLenght + 1);
+
             } catch (IOException ex) {
 
             }
@@ -60,17 +60,30 @@ public class ReadDataInputStream extends Thread {
             {
                 m_LockCommandHolder.unlock();
             }
-
+            if(m_vReadDataInputStreamListener != null) {
+                for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
+                    rdisl.onReadDataInputStreamCallback();
+                }
+            }
         }
     }
 
     public byte[] getData(){
+        byte[] byteData = null;
+
         m_LockCommandHolder.lock();
 
-        Byte byteData[];
-        byteData = m_abq.toArray();
-        m_abq.clear();
-        m_LockCommandHolder.unlock();
+        try{
+            byteData = Arrays.copyOf(m_byteData, m_shDataLenght);
+        } catch (NegativeArraySizeException ex){
+
+        }
+        finally {
+            m_shDataLenght = 0;
+
+            m_LockCommandHolder.unlock();
+        }
+
         return byteData;
     }
 

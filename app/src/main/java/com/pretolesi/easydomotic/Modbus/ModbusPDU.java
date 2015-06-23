@@ -4,34 +4,34 @@ package com.pretolesi.easydomotic.Modbus;
  *
  */
 public class ModbusPDU {
-    private int m_iUID;
-    private int m_iFEC;
-    private int m_iExC;
-    private int m_iByteCount;
-    private byte[] m_aByteValue;
+    private short m_shUID;
+    private short m_shFEC;
+    private short m_shExC;
+    private byte[] m_aPDUValue;
+    private short m_shPDULenght;
 
-    public ModbusPDU(int iUID, int iFEC, int iExC, int iByteCount, byte[] aByteValue) {
-        m_iUID = iUID;
-        m_iFEC = iFEC;
-        m_iExC = iExC;
-        m_iByteCount = iByteCount;
-        m_aByteValue = aByteValue;
+    public ModbusPDU(short shUID, short shFEC, short shExC,  byte[] aPDUValue, short shPDULenght) {
+        m_shUID = shUID;
+        m_shFEC = shFEC;
+        m_shExC = shExC;
+        m_aPDUValue = aPDUValue;
+        m_shPDULenght = shPDULenght;
     }
 
-    public int getUID() { return m_iUID; }
+    public short getUID() { return m_shUID; }
 
-    public int getFEC(){
-        return m_iFEC;
+    public short getFEC(){
+        return m_shFEC;
     }
 
-    public int getExC(){
-        return m_iExC;
+    public short getExC(){
+        return m_shExC;
     }
 
-    public int getByteCount(){ return m_iByteCount; }
+    public short getPDULenght(){ return m_shPDULenght; }
 
-    public byte[] getByteValue(){
-        return m_aByteValue;
+    public byte[] getPDUValue(){
+        return m_aPDUValue;
     }
 
 }
