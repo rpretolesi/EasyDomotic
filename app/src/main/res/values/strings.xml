@@ -9,6 +9,7 @@
     <string name="ModbusLengthOutOfRangeException">Length is out of range.</string>
     <string name="ModbusByteCountOutOfRangeException">Byte Count is out of range.</string>
     <string name="ModbusUnitIdOutOfRangeException">Unit Identifier is out of range.</string>
+    <string name="ModbusUnitIdNotMatchingException">Unit Identifier received doesn\'t match with the expected one.</string>
     <string name="ModbusAddressOutOfRangeException">Address is out of range.</string>
     <string name="ModbusValueArrayLengthOutOfRangeException">Value Array Length is out of range.</string>
     <string name="ModbusValueOutOfRangeException">Value is out of range.</string>

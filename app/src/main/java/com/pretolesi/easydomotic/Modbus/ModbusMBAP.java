@@ -4,24 +4,24 @@ package com.pretolesi.easydomotic.Modbus;
  * Created by ricca_000 on 26/04/2015.
  */
 public class ModbusMBAP {
-    private int m_iTID;
-    private int m_iPID;
-    private int m_iLength;
+    private short m_shTID;
+    private short m_shPID;
+    private short m_shLength;
 
-    public ModbusMBAP(int iTID, int iPID, int iLength) {
-        m_iTID = iTID;
-        m_iPID = iPID;
-        m_iLength = iLength;
+    public ModbusMBAP(short shTID, short shPID, short shLength) {
+        m_shTID = shTID;
+        m_shPID = shPID;
+        m_shLength = shLength;
     }
 
-    public int getTID(){
-        return m_iTID;
+    public short getTID(){
+        return m_shTID;
     }
 
-    public int getPID(){
-        return m_iPID;
+    public short getPID(){
+        return m_shPID;
     }
 
-    public int getLength(){ return m_iLength; }
+    public short getLength(){ return m_shLength; }
 
 }

@@ -7,9 +7,8 @@ import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusLengthOutOfRangeException;
+import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
-import com.pretolesi.easydomotic.Modbus.ModbusPDULengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusProtocolOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
 import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
@@ -187,16 +186,16 @@ public class TCPIPClient extends BaseCommClient {
                     try {
                         m_dataInputStream.readFully(byteMBAP, 0, 6);
                         // Rest of message
-                        int iLength;
+                        short shLength;
                         try {
                             ModbusMBAP mmbap = Modbus.getMBAP(m_context, byteMBAP);
                             if (mmbap != null) {
-                                iLength = mmbap.getLength();
-                                byte[] byteDATA = new byte[iLength];
+                                shLength = mmbap.getLength();
+                                byte[] byteDATA = new byte[shLength];
                                 try {
-                                    m_dataInputStream.readFully(byteDATA, 0, iLength);
+                                    m_dataInputStream.readFully(byteDATA, 0, shLength);
                                     try {
-                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteMBAP, byteDATA);
+                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteDATA, shLength);
                                         if (mpdu != null) {
 
                                             // Tutto Ok, rimuovo l'elemento
@@ -232,49 +231,32 @@ public class TCPIPClient extends BaseCommClient {
                                             // Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                             return true;
                                         }
-
-                                    } catch (ModbusProtocolOutOfRangeException ex) {
+                                    } catch (ModbusPDULengthOutOfRangeException ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "ModbusProtocolOutOfRangeException ex: " + ex.getMessage());
-                                    } catch (ModbusMBAPLengthException ex) {
+                                    } catch (ModbusUnitIdOutOfRangeException ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "ModbusMBAPLengthException ex: " + ex.getMessage());
-                                    } catch (ModbusLengthOutOfRangeException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "ModbusLengthOutOfRangeException ex: " + ex.getMessage());
-                                    } catch (ModbusPDULengthException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "ModbusPDULengthException ex: " + ex.getMessage());
                                     } catch (ModbusByteCountOutOfRangeException ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "ModbusByteCountOutOfRangeException ex: " + ex.getMessage());
                                     } catch (Exception ex) {
                                         // Callbacks on UI
                                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                        // Log.d(TAG, this.toString() + "receive()->" + "Exception ex: " + ex.getMessage());
-                                    }
+                                   }
 
                                 } catch (SocketTimeoutException ex) {
                                     // Callbacks on UI
                                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
-                                    // Log.d(TAG, this.toString() + "receive() DATA->" + "SocketTimeoutException ex: " + ex.getMessage());
                                 } catch (EOFException ex) {
                                     // Callbacks on UI
                                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    // Log.d(TAG, this.toString() + "receive() DATA->" + "EOFException ex: " + ex.getMessage());
                                 } catch (IOException ex) {
                                     // Callbacks on UI
                                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    // Log.d(TAG, this.toString() + "receive() DATA->" + "IOException ex: " + ex.getMessage());
                                 } catch (Exception ex) {
                                     // Callbacks on UI
                                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    // Log.d(TAG, this.toString() + "receive() DATA->" + "Exception ex: " + ex.getMessage());
                                 }
                             }
 
@@ -286,10 +268,9 @@ public class TCPIPClient extends BaseCommClient {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                             // Log.d(TAG, this.toString() + "receive()->" + "ModbusMBAPLengthException ex: " + ex.getMessage());
-                        } catch (ModbusLengthOutOfRangeException ex) {
+                        } catch (ModbusPDULengthOutOfRangeException ex) {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                            // Log.d(TAG, this.toString() + "receive()->" + "ModbusLengthOutOfRangeException ex: " + ex.getMessage());
                         } catch (Exception ex) {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
@@ -383,35 +364,6 @@ public class TCPIPClient extends BaseCommClient {
         return false;
     }
 */
-    public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){
-        Object obj = null;
-
-        if(dtDataType != null && aByteValue != null){
-            switch (dtDataType) {
-                case SHORT:
-                    obj = NumericDataType.getShort(aByteValue);
-                    break;
-
-                case INT:
-                    obj = NumericDataType.getInt(aByteValue);
-                    break;
-
-                case LONG:
-                    obj = NumericDataType.getLong(aByteValue);
-                    break;
-
-                case FLOAT:
-                    obj = NumericDataType.getFloat(aByteValue);
-                    break;
-
-                case DOUBLE:
-                    obj = NumericDataType.getDouble(aByteValue);
-                    break;
-
-            }
-        }
-        return obj;
-    }
 
     private void readShort(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {

@@ -3,17 +3,11 @@ package com.pretolesi.easydomotic.CommClientData;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusLengthOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusMBAP;
-import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
-import com.pretolesi.easydomotic.Modbus.ModbusPDU;
-import com.pretolesi.easydomotic.Modbus.ModbusPDULengthException;
-import com.pretolesi.easydomotic.Modbus.ModbusProtocolOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
 import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
@@ -25,9 +19,7 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
@@ -525,6 +517,36 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
+    }
+
+    public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){
+        Object obj = null;
+
+        if(dtDataType != null && aByteValue != null){
+            switch (dtDataType) {
+                case SHORT:
+                    obj = NumericDataType.getShort(aByteValue);
+                    break;
+
+                case INT:
+                    obj = NumericDataType.getInt(aByteValue);
+                    break;
+
+                case LONG:
+                    obj = NumericDataType.getLong(aByteValue);
+                    break;
+
+                case FLOAT:
+                    obj = NumericDataType.getFloat(aByteValue);
+                    break;
+
+                case DOUBLE:
+                    obj = NumericDataType.getDouble(aByteValue);
+                    break;
+
+            }
+        }
+        return obj;
     }
 
     @Override
