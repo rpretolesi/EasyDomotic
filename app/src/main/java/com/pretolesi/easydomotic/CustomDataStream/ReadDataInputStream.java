@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -20,22 +23,19 @@ public class ReadDataInputStream extends Thread {
             m_vReadDataInputStreamListener.add(listener);
         }
     }
-    private static ReentrantLock m_LockCommandHolder;
 
     private DataInputStream m_dis;
-    private byte[] m_byteData;
-    private short m_shDataSize;
+    private byte m_byteData[];
     private short m_shDataLenght;
+    private final ReentrantLock m_Lock = new ReentrantLock();
+    private final Condition m_notFull  = m_Lock.newCondition();
+    private final Condition m_notEmpty = m_Lock.newCondition();
 
 
-    public ReadDataInputStream(DataInputStream dis, short shDatarSize) {
+    public ReadDataInputStream(DataInputStream dis, short shDataSize) {
         m_vReadDataInputStreamListener = new Vector<>();
-        m_LockCommandHolder = new ReentrantLock();
         m_dis = dis;
-        if(shDatarSize > 0) {
-            m_byteData = new byte[shDatarSize];
-            m_shDataSize = shDatarSize;
-        }
+        m_byteData = new byte[shDataSize];;
         m_shDataLenght = 0;
     }
 
@@ -48,29 +48,33 @@ public class ReadDataInputStream extends Thread {
 
         while(!isInterrupted()){
             boolean bReadOk;
+            bReadOk = false;
 
             try {
-                byte byteData = m_dis.readByte();
+                // wait in case of too data
+                while (m_shDataLenght == m_byteData.length)
+                        m_notFull.await();
 
+                // Get data
+                byte byteData = m_dis.readByte();
                 bReadOk = true;
 
-                m_LockCommandHolder.lock();
-migliorare questo, evitando la lettura e mettendo un tempo di attesa per non sovraccaricare la cpu
+                // Lock
+                m_Lock.lock();
 
-                        quello che non si riesce a fare metterlo nel TO DO e toglierlo dal codice
-                if(m_shDataLenght < m_shDataSize) {
-                    m_byteData[m_shDataLenght] = byteData;
-                    m_shDataLenght = (short) (m_shDataLenght + 1);
-                }
+                // Put data on buffer
+                m_byteData[m_shDataLenght] = byteData;
+                m_shDataLenght = (short)(m_shDataLenght + 1);
+
+            } catch (InterruptedException ex) {
             } catch (IOException ex) {
-                bReadOk = false;
             }
-            finally
-            {
-                if(m_LockCommandHolder.isLocked()){
-                    m_LockCommandHolder.unlock();
+            finally {
+                if(m_Lock.isLocked()){
+                    m_Lock.unlock();
                 }
             }
+
             if(bReadOk) {
                 if (m_vReadDataInputStreamListener != null) {
                     for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
@@ -94,19 +98,27 @@ migliorare questo, evitando la lettura e mettendo un tempo di attesa per non sov
     }
 
     public byte[] getData(){
+        if(m_byteData == null){
+            return null;
+        }
+
+        // Lock
+        m_Lock.lock();
+
         byte[] byteData = null;
 
-        m_LockCommandHolder.lock();
-
         try{
-            byteData = Arrays.copyOf(m_byteData, m_shDataLenght);
+            byteData = Arrays.copyOf(m_byteData,m_shDataLenght);
+            m_shDataLenght = 0;
+            m_notFull.signal();
+            vedere se mettere qui il return
         } catch (NegativeArraySizeException ex){
 
         }
         finally {
-            m_shDataLenght = 0;
-
-            m_LockCommandHolder.unlock();
+            if(m_Lock.isLocked()){
+                m_Lock.unlock();
+            }
         }
 
         return byteData;
