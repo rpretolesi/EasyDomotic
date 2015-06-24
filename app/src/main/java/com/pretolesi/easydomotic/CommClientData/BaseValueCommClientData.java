@@ -29,7 +29,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     public static int CommSendDelayDataMinValue = 1;
     public static int CommSendDelayDataMaxValue = 60000;
-    public static String CommSendDelayDataDefaultValue = "4";
+    public static String CommSendDelayDataDefaultValue = "50";
 
     public static int ProtocolMinValue = 0;
     public static int ProtocolMaxValue = 3;

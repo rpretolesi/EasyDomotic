@@ -209,11 +209,10 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // No Data to read
         // Ora attendo un certo tempo dalla ricezione dei primi dati per assicurarmi che tutti il messaggio sia completo
         // Imposto un tempo di 4 ms
-        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + 10000 >= System.currentTimeMillis())) {
+        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + m_ticd.getCommSendDelayData() >= System.currentTimeMillis())) {
             return true;
         }
-verificare che tempo mettere qui, tenendo conto del delay e del timeout(che nel socket non uso nei socket buetooth.)
-        vedere se possibile istanziare solo il server che si usa in quella pagina
+
         try {
             byte[] bytePDU = m_rdis.getData();
             m_bDataInputStreamReady = false;

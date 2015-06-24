@@ -621,11 +621,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                         }
                     }
                 } catch (Exception ex) {
-                    // Log.d(TAG, this.toString() + "doInBackground()->" + "Exception ex: " + ex.getMessage());
                 }
             }
         } catch (Exception ex) {
-            // Log.d(TAG, this.toString() + "doInBackground()->" + "Exception ex: " + ex.getMessage());
         }
 
         // Closing...

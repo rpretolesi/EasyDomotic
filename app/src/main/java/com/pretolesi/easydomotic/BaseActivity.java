@@ -90,6 +90,12 @@ public class BaseActivity extends Activity {
             case 8:
                 mTitle = getString(R.string.settings_title_section_open_tcp_ip_client);
                 break;
+            case 9:
+                mTitle = getString(R.string.settings_title_section_new_bluetooth_client);
+                break;
+            case 10:
+                mTitle = getString(R.string.settings_title_section_open_bluetooth_client);
+                break;
         }
 
     }

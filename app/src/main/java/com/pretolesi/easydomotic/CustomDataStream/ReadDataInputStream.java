@@ -2,6 +2,7 @@ package com.pretolesi.easydomotic.CustomDataStream;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -29,7 +30,7 @@ public class ReadDataInputStream extends Thread {
     private short m_shDataLenght;
     private final ReentrantLock m_Lock = new ReentrantLock();
     private final Condition m_notFull  = m_Lock.newCondition();
-    private final Condition m_notEmpty = m_Lock.newCondition();
+//    private final Condition m_notEmpty = m_Lock.newCondition();
 
 
     public ReadDataInputStream(DataInputStream dis, short shDataSize) {
@@ -104,14 +105,17 @@ public class ReadDataInputStream extends Thread {
 
         // Lock
         m_Lock.lock();
-
         byte[] byteData = null;
 
         try{
+            if(m_shDataLenght == 0){
+                return null;
+            }
             byteData = Arrays.copyOf(m_byteData,m_shDataLenght);
             m_shDataLenght = 0;
             m_notFull.signal();
-            vedere se mettere qui il return
+            return byteData;
+
         } catch (NegativeArraySizeException ex){
 
         }
@@ -120,8 +124,7 @@ public class ReadDataInputStream extends Thread {
                 m_Lock.unlock();
             }
         }
-
-        return byteData;
+        return null;
     }
 
     public interface ReadDataInputStreamListener {
