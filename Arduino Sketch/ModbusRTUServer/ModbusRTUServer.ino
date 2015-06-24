@@ -144,22 +144,24 @@ void loop() {
       m_bbtDataCompleted = true;
       m_u_CRC.temp_short = getCRC(m_bytebtReadData, m_uibtReadDataLength - 2);
       if((m_bytebtReadData[m_uibtReadDataLength - 2] == m_u_CRC.temp_bytearray[1]) && (m_bytebtReadData[m_uibtReadDataLength - 1] == m_u_CRC.temp_bytearray[0])){
+
         // Data completed successfully
         Serial.println("CRC Ok!");
         processModbusPDU(&m_bytebtReadData[1], m_uibtReadDataLength - 3, &m_bytebtPDUWriteData[0], &m_uibtPDUWriteDataLength);
+
         // Prepare answer
-        m_bytebtWriteData[0] = m_bytebtReadData[0];
+        m_bytebtWriteData[0] = m_bytebtReadData[0]; // Address
         m_uibtWriteDataLength = 1;
-        memcpy(&m_bytebtWriteData[1], &m_bytebtPDUWriteData[0], m_uibtPDUWriteDataLength);
+        
+        memcpy(&m_bytebtWriteData[1], &m_bytebtPDUWriteData[0], m_uibtPDUWriteDataLength); // PDU
         m_uibtWriteDataLength = m_uibtWriteDataLength + m_uibtPDUWriteDataLength;
         
-        m_u_CRC.temp_short = getCRC(m_bytebtWriteData, m_uibtWriteDataLength);
-  
-        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[1];
+        m_u_CRC.temp_short = getCRC(m_bytebtWriteData, m_uibtWriteDataLength); // CRC
+        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[1]; // CRC
+        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
+        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[0]; // CRC
         m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
         
-        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[0];
-        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
         Serial.println("Answer Start: ");
         for (int index_0 = 0; index_0 < m_uibtWriteDataLength; index_0++) {
           m_btSerial.write(m_bytebtWriteData[index_0]);
@@ -620,7 +622,30 @@ void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusP
          
         }
       }
-    }  
+    }
+    // Write Multiple Register
+    if (byteModbusFunctionCode == 0x03) {
+      unsigned short ushortModbusAddress = getShortFromBytes(&byteInModbusPDU[1]);
+      Serial.print("Address: ");
+      Serial.println(ushortModbusAddress);
+      short shortQuantityOfRegisters = getShortFromBytes(&byteInModbusPDU[3]);
+      Serial.print("Quantity of Register: ");
+      Serial.println(shortQuantityOfRegisters);
+      byte byteByteCount = shortQuantityOfRegisters * 2;
+      Serial.print("Byte Count: ");
+      Serial.println(byteByteCount);
+
+      // Prepare answer
+      byteOutModbusPDU[0] = byteInModbusPDU[0]; // Function Code
+      *iOutlenght = 1;
+      byteOutModbusPDU[1] = byteByteCount; // Byte Count
+      *iOutlenght = *iOutlenght + 1;
+
+      // Copy data to union
+      memcpy(&byteInModbusPDU[2], &m_union_share_mem.temp_bytearray[ushortModbusAddress], byteByteCount);
+      *iOutlenght = *iOutlenght + byteByteCount;
+
+    }    
   }  
 }
 

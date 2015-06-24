@@ -29,6 +29,8 @@ public class Modbus {
         return tim;
     }
 
+    finire anche gli altri write e fare il read.
+
     public static synchronized TcpIpMsg writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         ByteBuffer bb = ByteBuffer.allocate(4);
@@ -339,7 +341,8 @@ public class Modbus {
         int crc = 0xFFFF;
 
         for (int pos = 0; pos < len; pos++) {
-            crc ^= (int)buf[pos];          // XOR byte into least sig. byte of crc
+//            crc ^= (int)buf[pos];          // XOR byte into least sig. byte of crc
+            crc ^= (int)(0x00ff & buf[pos]);  // FIX HERE -- XOR byte into least sig. byte of crc
 
             for (int i = 8; i != 0; i--) {    // Loop over each bit
                 if ((crc & 0x0001) != 0) {      // If the LSB is set

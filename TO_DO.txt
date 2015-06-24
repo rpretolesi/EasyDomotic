@@ -10,3 +10,5 @@ FATTO-Cambiare il nome del campo TCP IP Address a seconda se Bluetooth e TcpIp
 Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.
 Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
 Vedere se possibile istanziare solo il server che si usa in quella pagina
+Scegliere il protocollo in base al tipo e non all'istanza del tipo di comunicazione
+Verificare se il wait su overbuffer funziona nel thread secondario di ricezione
