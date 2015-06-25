@@ -154,7 +154,16 @@ public class BaseValueCommClientData implements Parcelable {
 
     public int getCommSendDelayData() { return m_iCommSendDelayData; }
 
-    public long getProtocolID() { return m_lProtocolID; }
+//    public long getProtocolID() { return m_lProtocolID; }
+    public Protocol getProtocolID() {
+        if (m_lProtocolID == Protocol.MODBUS_ON_TCP_IP.getID()) {
+            return Protocol.MODBUS_ON_TCP_IP;
+        }
+        if (m_lProtocolID == Protocol.MODBUS_ON_SERIAL.getID()) {
+            return Protocol.MODBUS_ON_SERIAL;
+        }
+        return null;
+    }
 
     public int getHead() { return m_iHead; }
 
