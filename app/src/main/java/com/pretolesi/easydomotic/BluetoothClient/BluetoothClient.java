@@ -183,9 +183,6 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         if (m_vtim == null) {
             return false;
         }
-        if (m_byteInputMSG == null) {
-            return false;
-        }
 
         if(m_rdis == null ) {
             return false;

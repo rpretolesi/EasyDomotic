@@ -642,7 +642,7 @@ void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusP
       *iOutlenght = *iOutlenght + 1;
 
       // Copy data to union
-      memcpy(&byteInModbusPDU[2], &m_union_share_mem.temp_bytearray[ushortModbusAddress], byteByteCount);
+      memcpy(&byteOutModbusPDU[2], &m_union_share_mem.temp_bytearray[ushortModbusAddress], byteByteCount);
       *iOutlenght = *iOutlenght + byteByteCount;
 
     }    

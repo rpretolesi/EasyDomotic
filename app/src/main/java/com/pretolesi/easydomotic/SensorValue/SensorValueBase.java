@@ -72,7 +72,7 @@ public class SensorValueBase extends BaseValue implements
                     bcc.registerTcpIpClientWriteSwitchStatus(this);
                 }
                 if(!m_bvd.getSensorEnableSimulation()) {
-                    setTimer(m_bvd.getValueUpdateMillis());
+                    setTimer(m_bvd.getSensorWriteUpdateTimeMillis());
                 }
             }
         }

@@ -47,7 +47,6 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
 
             }
         });
-//provare a cambiare l'indirizze per vedere se il codice su arduino e' ok.
     }
 
     @Override
@@ -59,6 +58,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
                 // Ok
                 m_id_et_server_name.setText(data.getStringExtra(BT_NAME));
                 m_id_et_server_address.setText(data.getStringExtra(BT_ADDRESS));
+                trovare una soluzione a questo problema.
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result

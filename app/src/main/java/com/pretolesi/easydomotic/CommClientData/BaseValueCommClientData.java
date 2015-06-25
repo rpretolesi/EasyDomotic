@@ -57,7 +57,7 @@ public class BaseValueCommClientData implements Parcelable {
     private int m_iTail;
 
     public BaseValueCommClientData(int iType) {
-        m_iType = iType;
+        this.m_iType = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
@@ -72,7 +72,7 @@ public class BaseValueCommClientData implements Parcelable {
     }
 
     public BaseValueCommClientData(int iType, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, long lProtocolID, int iHead, int iTail) {
-        m_iType = iType;
+        this.m_iType = iType;
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -114,8 +114,17 @@ public class BaseValueCommClientData implements Parcelable {
 
     public void setCommSendDelayData(int iCommSendDelayData) { this.m_iCommSendDelayData = iCommSendDelayData; }
 
+    public void setProtocol(Protocol p) {
+        if (p == Protocol.MODBUS_ON_TCP_IP) {
+            m_lProtocolID = Protocol.MODBUS_ON_TCP_IP.getID();
+        }
+        if (p == Protocol.MODBUS_ON_SERIAL) {
+            m_lProtocolID = Protocol.MODBUS_ON_SERIAL.getID();
+        }
+    }
+
     public void setProtocolID(long lProtocolID) {
-        this.m_lProtocolID = lProtocolID;
+        m_lProtocolID = lProtocolID;
     }
 
     public void setHead(int iHead) {
@@ -154,8 +163,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     public int getCommSendDelayData() { return m_iCommSendDelayData; }
 
-//    public long getProtocolID() { return m_lProtocolID; }
-    public Protocol getProtocolID() {
+    public Protocol getProtocol() {
         if (m_lProtocolID == Protocol.MODBUS_ON_TCP_IP.getID()) {
             return Protocol.MODBUS_ON_TCP_IP;
         }
@@ -164,6 +172,8 @@ public class BaseValueCommClientData implements Parcelable {
         }
         return null;
     }
+
+    public long getProtocolID() { return m_lProtocolID; }
 
     public int getHead() { return m_iHead; }
 

@@ -147,7 +147,7 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
             m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_bvd.getSensorSampleTimeMillis()));
         }
         if (m_id_et_sensor_write_update_millis != null) {
-            m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_bvd.getSensorSampleTimeMillis()));
+            m_id_et_sensor_write_update_millis.setText(Integer.toString(m_bvd.getSensorWriteUpdateTimeMillis()));
         }
     }
 

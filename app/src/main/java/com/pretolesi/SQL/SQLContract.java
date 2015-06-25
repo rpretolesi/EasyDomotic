@@ -963,6 +963,7 @@ public class SQLContract
 
                     String[] columns = new String[] {
                             _ID,
+                            COLUMN_NAME_TYPE,
                             COLUMN_NAME_ENABLE,
                             COLUMN_NAME_NAME,
                             COLUMN_NAME_ADDRESS,
@@ -979,11 +980,12 @@ public class SQLContract
                     cursor = new MatrixCursor(columns);
                     cursor.addRow(new Object[] {
                             ticd.getID(),
+                            ticd.getType(),
                             ticd.getEnable(),
                             ticd.getPort(),
                             ticd.getTimeout(),
                             ticd.getCommSendDelayData(),
-                            ticd.getProtocolID(),
+                            ticd.getProtocol(),
 
                             0   // Origin
                     });
@@ -1086,7 +1088,7 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String whereClause = _ID + " = ? ";
+                    String whereClause = COLUMN_NAME_TYPE + " = ? ";
 
                     String[] wherenArgs = { String.valueOf(iType) };
 

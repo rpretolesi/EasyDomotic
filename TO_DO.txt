@@ -12,3 +12,4 @@ Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche'
 Vedere se possibile istanziare solo il server che si usa in quella pagina
 Scegliere il protocollo in base al tipo e non all'istanza del tipo di comunicazione
 Verificare se il wait su overbuffer funziona nel thread secondario di ricezione
+Pensare a come fare per dividere i protocolli in ricezione...

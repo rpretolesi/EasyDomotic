@@ -77,7 +77,10 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected BaseValueCommClientData m_ticd = null;
     protected Vector<TcpIpMsg> m_vtim = null;
 
-    protected byte[] m_byteInputMSG = null;
+    // MBAP
+    protected byte[] m_byteMBAP = null;
+    // PDU
+    protected byte[] m_bytePDU = null;
 
     protected DataOutputStream m_dataOutputStream = null;
     protected DataInputStream m_dataInputStream = null;
@@ -91,7 +94,8 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         m_vTcpIpClientWriteStatusListener = new Vector<>();
         m_vTcpIpClientReadValueStatusListener = new Vector<>();
         m_context = context;
-        m_byteInputMSG = new byte[256];
+        m_byteMBAP = new byte[6];
+        m_bytePDU = new byte[256];
         m_vtim = new Vector<>();
     }
 
@@ -242,9 +246,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     // Writing
     protected void writeShort(Context context, int iTID, int iUID, int iAddress, int iValue){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, m_ticd.getProtocolID());
+                    TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.SHORT);
                         if(!m_vtim.contains(tim)){
@@ -282,9 +286,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue, m_ticd.getProtocolID());
+                    TcpIpMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.INT);
                         if(!m_vtim.contains(tim)){
@@ -322,9 +326,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void writeLong(Context context, int iTID, int iUID, int iAddress, long lValue){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue, m_ticd.getProtocolID());
+                    TcpIpMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.LONG);
                         if(!m_vtim.contains(tim)){
@@ -362,9 +366,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue, m_ticd.getProtocolID());
+                    TcpIpMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.FLOAT);
                         if(!m_vtim.contains(tim)){
@@ -402,9 +406,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue, m_ticd.getProtocolID());
+                    TcpIpMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.DOUBLE);
                         if(!m_vtim.contains(tim)){
@@ -538,9 +542,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     // Reading
     private void readShort(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readShort(context, iTID, iUID, iAddress);
+                    TcpIpMsg tim = Modbus.readShort(context, iTID, iUID, iAddress, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.SHORT);
                         if(!m_vtim.contains(tim)){
@@ -572,9 +576,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     private void readInt(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
-            if((m_ticd.getProtocolID() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocolID() == Protocol.MODBUS_ON_SERIAL)) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readInt(context, iTID, iUID, iAddress);
+                    TcpIpMsg tim = Modbus.readInt(context, iTID, iUID, iAddress, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.INT);
                         if(!m_vtim.contains(tim)){
@@ -606,9 +610,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     private void readLong(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
-            if(m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readLong(context, iTID, iUID, iAddress);
+                    TcpIpMsg tim = Modbus.readLong(context, iTID, iUID, iAddress, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.LONG);
                         if(!m_vtim.contains(tim)){
@@ -640,9 +644,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     private void readFloat(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
-            if(m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress);
+                    TcpIpMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.FLOAT);
                         if(!m_vtim.contains(tim)){
@@ -674,9 +678,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     private void readDouble(Context context, int iTID, int iUID, int iAddress){
         if(m_ticd != null) {
-            if(m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
+            if((m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) || (m_ticd.getProtocol() == Protocol.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress);
+                    TcpIpMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress, m_ticd.getProtocol());
                     if (m_vtim != null && tim != null) {
                         tim.setDataType(DataType.DOUBLE);
                         if(!m_vtim.contains(tim)){
@@ -706,7 +710,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    @Override
     public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
         if(dtDataType != null){
             switch (dtDataType) {
@@ -732,9 +735,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
             }
         }
-    }
-
-    public synchronized void readValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType){
     }
 
     public synchronized Object getValue(DataType dtDataType, byte[] aByteValue){

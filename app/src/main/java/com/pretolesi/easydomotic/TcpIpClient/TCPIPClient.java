@@ -3,17 +3,13 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
-import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAPLengthException;
 import com.pretolesi.easydomotic.Modbus.ModbusProtocolOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
-import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
-import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusMBAP;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
@@ -27,6 +23,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -138,22 +135,21 @@ public class TCPIPClient extends BaseCommClient {
             }
 
             if (bMsgSent){
-                if (m_ticd.getProtocolID() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP.getID()) {
-                    // MBAP
-                    byte[] byteMBAP = new byte[6];
+                if (m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) {
                     try {
-                        m_dataInputStream.readFully(byteMBAP, 0, 6);
+                        Arrays.fill(m_byteMBAP, (byte) 0);
+                        m_dataInputStream.readFully(m_byteMBAP, 0, m_byteMBAP.length);
                         // Rest of message
                         short shLength;
                         try {
-                            ModbusMBAP mmbap = Modbus.getMBAP(m_context, byteMBAP);
+                            ModbusMBAP mmbap = Modbus.getMBAP(m_context, m_byteMBAP);
                             if (mmbap != null) {
                                 shLength = mmbap.getLength();
-                                byte[] byteDATA = new byte[shLength];
                                 try {
-                                    m_dataInputStream.readFully(byteDATA, 0, shLength);
+                                    Arrays.fill(m_bytePDU, (byte) 0);
+                                    m_dataInputStream.readFully(m_bytePDU, 0, shLength);
                                     try {
-                                        ModbusPDU mpdu = Modbus.getPDU(m_context, byteDATA, shLength, false);
+                                        ModbusPDU mpdu = Modbus.getPDU(m_context, m_bytePDU, shLength, false);
                                         if (mpdu != null) {
 
                                             // Tutto Ok, rimuovo l'elemento
