@@ -94,7 +94,7 @@ public class CommClientHelper {
             // Initialize if not already done
             if(m_ltic != null && !m_ltic.isEmpty()) {
                 for(BaseCommClient bcc : m_ltic){
-                    if(bcc.getID() == lID){
+                    if(bcc != null && bcc.getID() == lID){
                         return bcc;
                     }
                 }
