@@ -884,6 +884,7 @@ public class SQLContract
         public static final String COLUMN_NAME_PORT = "Port";
         public static final String COLUMN_NAME_TIMEOUT = "Timeout";
         public static final String COLUMN_NAME_COMM_SEND_DATA_DELAY = "CommSendDataDelay";
+        public static final String COLUMN_NAME_COMM_RECEIVE_WAIT_DATA = "CommReceiveWaitData";
         public static final String COLUMN_NAME_PROTOCOL = "Protocol";
         public static final String COLUMN_NAME_HEAD = "Head";
         public static final String COLUMN_NAME_TAIL = "Tail";
@@ -902,6 +903,7 @@ public class SQLContract
                         COLUMN_NAME_PORT + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TIMEOUT + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_COMM_SEND_DATA_DELAY + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_COMM_RECEIVE_WAIT_DATA + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROTOCOL + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_HEAD + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TAIL + INT_TYPE +
@@ -927,6 +929,7 @@ public class SQLContract
                     values.put(COLUMN_NAME_PORT, ticd.getPort());
                     values.put(COLUMN_NAME_TIMEOUT, ticd.getTimeout());
                     values.put(COLUMN_NAME_COMM_SEND_DATA_DELAY, ticd.getCommSendDelayData());
+                    values.put(COLUMN_NAME_COMM_RECEIVE_WAIT_DATA, ticd.getCommReceiveWaitData());
                     values.put(COLUMN_NAME_PROTOCOL, ticd.getProtocolID());
                     values.put(COLUMN_NAME_HEAD, ticd.getHead());
                     values.put(COLUMN_NAME_TAIL, ticd.getTail());
@@ -970,6 +973,7 @@ public class SQLContract
                             COLUMN_NAME_PORT,
                             COLUMN_NAME_TIMEOUT,
                             COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                            COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
                             COLUMN_NAME_PROTOCOL,
                             COLUMN_NAME_HEAD,
                             COLUMN_NAME_TAIL,
@@ -985,6 +989,7 @@ public class SQLContract
                             ticd.getPort(),
                             ticd.getTimeout(),
                             ticd.getCommSendDelayData(),
+                            ticd.getCommReceiveWaitData(),
                             ticd.getProtocol(),
 
                             0   // Origin
@@ -1023,6 +1028,7 @@ public class SQLContract
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
                                     COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
                                     COLUMN_NAME_PROTOCOL,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
@@ -1079,6 +1085,7 @@ public class SQLContract
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
                                     COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
                                     COLUMN_NAME_PROTOCOL,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
@@ -1135,6 +1142,7 @@ public class SQLContract
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
                                     COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
                                     COLUMN_NAME_PROTOCOL,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
@@ -1224,6 +1232,7 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PORT)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TIMEOUT)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_SEND_DATA_DELAY)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_RECEIVE_WAIT_DATA)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROTOCOL)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_HEAD)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TAIL))

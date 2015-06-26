@@ -2,6 +2,8 @@ package com.pretolesi.easydomotic.BluetoothClient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 
@@ -20,6 +22,8 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
     public static final String BT_NAME = "bt_name";
     public static final String BT_ADDRESS = "bt_address";
 
+    private String m_server_name;
+    private String m_server_address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,9 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
 
             }
         });
+
+        m_server_name = "";
+        m_server_address = "";
     }
 
     @Override
@@ -56,13 +63,20 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         if (requestCode == ACTIVITY_RESULT_BT_ADDRESS) {
             if(resultCode == RESULT_OK){
                 // Ok
-                m_id_et_server_name.setText(data.getStringExtra(BT_NAME));
-                m_id_et_server_address.setText(data.getStringExtra(BT_ADDRESS));
-                trovare una soluzione a questo problema.
+                m_server_name = data.getStringExtra(BT_NAME);
+                m_server_address = data.getStringExtra(BT_ADDRESS);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result
             }
+        }
+    }
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        super.onLoadFinished(loader, cursor);
+        if(!m_server_name.equals("") && !m_server_address.equals("") ){
+            m_id_et_server_name.setText(m_server_name);
+            m_id_et_server_address.setText(m_server_address);
         }
     }
 }

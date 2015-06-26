@@ -206,7 +206,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // No Data to read
         // Ora attendo un certo tempo dalla ricezione dei primi dati per assicurarmi che tutti il messaggio sia completo
         // Imposto un tempo di 4 ms
-        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + m_ticd.getCommSendDelayData() >= System.currentTimeMillis())) {
+        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + m_ticd.getCommReceiveWaitData() >= System.currentTimeMillis())) {
             return true;
         }
 

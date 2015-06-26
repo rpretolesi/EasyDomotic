@@ -49,6 +49,8 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     protected NumericEditText m_id_stica_et_server_port;
     protected NumericEditText m_id_stica_et_timeout;
     protected NumericEditText m_id_stica_et_comm_send_data_delay;
+    protected TextView m_id_stica_tv_comm_receive_wait_data;
+    protected NumericEditText m_id_stica_et_comm_receive_wait_data;
     protected Spinner m_id_stica_spn_protocol;
     protected TextView m_id_stica_tv_protocol_field_1;
     protected NumericEditText m_id_stica_et_protocol_field_1;
@@ -83,6 +85,10 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
         m_id_stica_et_comm_send_data_delay.setInputLimit(BaseValueCommClientData.CommSendDelayDataMinValue, BaseValueCommClientData.CommSendDelayDataMaxValue);
         m_id_stica_et_comm_send_data_delay.setText(BaseValueCommClientData.CommSendDelayDataDefaultValue);
+        m_id_stica_tv_comm_receive_wait_data = (TextView)findViewById(R.id.id_stica_tv_comm_receive_wait_data);
+        m_id_stica_et_comm_receive_wait_data = (NumericEditText)findViewById(R.id.id_stica_et_comm_receive_wait_data);
+        m_id_stica_et_comm_receive_wait_data.setInputLimit(BaseValueCommClientData.CommReceiveWaitDataMinValue, BaseValueCommClientData.CommReceiveWaitDataMaxValue);
+        m_id_stica_et_comm_receive_wait_data.setText(BaseValueCommClientData.CommReceiveWaitDataDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
         m_id_stica_spn_protocol.setSelection(BaseValueCommClientData.ProtocolDefaulValue);
         m_id_stica_tv_protocol_field_1 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_1);
@@ -325,6 +331,9 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         if(m_id_stica_et_comm_send_data_delay != null) {
             m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getCommSendDelayData()));
         }
+        if(m_id_stica_et_comm_receive_wait_data != null) {
+            m_id_stica_et_comm_receive_wait_data.setText(Integer.toString(m_ticd.getCommReceiveWaitData()));
+        }
         if(m_id_stica_spn_protocol != null) {
             long lItem = -1;
             try{
@@ -381,6 +390,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_ticd.setPort(Integer.parseInt(m_id_stica_et_server_port.getText().toString()));
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
         m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
+        m_ticd.setCommReceiveWaitData(Integer.parseInt(m_id_stica_et_comm_receive_wait_data.getText().toString()));
         m_ticd.setProtocolID(m_id_stica_spn_protocol.getSelectedItemId());
         m_ticd.setHead(Integer.parseInt(m_id_stica_et_protocol_field_1.getText().toString()));
         m_ticd.setTail(Integer.parseInt(m_id_stica_et_protocol_field_2.getText().toString()));
