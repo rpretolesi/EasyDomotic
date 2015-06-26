@@ -120,147 +120,135 @@ public class TCPIPClient extends BaseCommClient {
     @Override
     protected boolean receive() {
         super.receive();
+        if (m_dataInputStream == null){
+            return false;
+        }
+        if (m_ticd == null){
+            return false;
+        }
 
-        if (m_dataInputStream != null && m_ticd != null && m_vtim != null) {
+        // Check for sent message
+        TcpIpMsg tim = getMsgSent();
 
-            // In case of timeout, i put the message in queue again
-            boolean bMsgSent = false;
-            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-                TcpIpMsg tim = iterator.next();
-                if (tim != null) {
-                    if(tim.getMsgSent()) {
-                        bMsgSent = true;
-                    }
-                }
-            }
+        // No message sent, nothing to receive
+        if(tim == null) {
+            return true;
+        }
 
-            if (bMsgSent){
-                if (m_ticd.getProtocol() == Protocol.MODBUS_ON_TCP_IP) {
+        try {
+            Arrays.fill(m_byteMBAP, (byte) 0);
+            m_dataInputStream.readFully(m_byteMBAP, 0, m_byteMBAP.length);
+            // Rest of message
+            short shLength;
+            try {
+                ModbusMBAP mmbap = Modbus.getMBAP(m_context, m_byteMBAP);
+                if (mmbap != null) {
+                    shLength = mmbap.getLength();
                     try {
-                        Arrays.fill(m_byteMBAP, (byte) 0);
-                        m_dataInputStream.readFully(m_byteMBAP, 0, m_byteMBAP.length);
-                        // Rest of message
-                        short shLength;
+                        Arrays.fill(m_bytePDU, (byte) 0);
+                        m_dataInputStream.readFully(m_bytePDU, 0, shLength);
                         try {
-                            ModbusMBAP mmbap = Modbus.getMBAP(m_context, m_byteMBAP);
-                            if (mmbap != null) {
-                                shLength = mmbap.getLength();
-                                try {
-                                    Arrays.fill(m_bytePDU, (byte) 0);
-                                    m_dataInputStream.readFully(m_bytePDU, 0, shLength);
-                                    try {
-                                        ModbusPDU mpdu = Modbus.getPDU(m_context, m_bytePDU, shLength, false);
-                                        if (mpdu != null) {
+                            ModbusPDU mpdu = Modbus.getPDU(m_context, m_bytePDU, shLength, false);
+                            if (mpdu != null) {
 
-                                            // Tutto Ok, rimuovo l'elemento
-                                            DataType dtDataType = null;
-                                            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext(); ) {
-                                                TcpIpMsg tim = iterator.next();
-                                                if (tim != null && tim.getTID() == mmbap.getTID() && tim.getUID() == mpdu.getUID()) {
-                                                    dtDataType = tim.getDataType();
-                                                    iterator.remove();
-                                                }
-                                            }
-
-                                            if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
-
-                                                // Check Return code
-                                                if (mpdu.getExC() == 0) {
-                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
-                                                } else {
-                                                    publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
-                                                }
-                                            }
-
-                                            if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
-                                                // Check Return code
-                                                if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getPDUValue())));
-                                                } else {
-                                                    publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
-                                                }
-                                            }
-
-                                            // m_timeMillisecondsGet = System.currentTimeMillis();
-                                            // Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
-                                            return true;
-                                        }
-                                    } catch (ModbusPDULengthOutOfRangeException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    } catch (ModbusCRCException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    } catch (ModbusUnitIdOutOfRangeException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    } catch (ModbusByteCountOutOfRangeException ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                    } catch (Exception ex) {
-                                        // Callbacks on UI
-                                        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                   }
-
-                                } catch (SocketTimeoutException ex) {
-                                    // Callbacks on UI
-                                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
-                                } catch (EOFException ex) {
-                                    // Callbacks on UI
-                                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                } catch (IOException ex) {
-                                    // Callbacks on UI
-                                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                                } catch (Exception ex) {
-                                    // Callbacks on UI
-                                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                // Tutto Ok, rimuovo l'elemento
+                                TcpIpMsg timRemoved = removeMsg((short)mmbap.getTID(), mpdu.getUID());
+                                DataType dtDataType = null;
+                                if(timRemoved != null){
+                                    dtDataType = timRemoved.getDataType();
                                 }
-                            }
 
-                        } catch (ModbusProtocolOutOfRangeException ex) {
-                            // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                            // Log.d(TAG, this.toString() + "receive()->" + "ModbusProtocolOutOfRangeException ex: " + ex.getMessage());
-                        } catch (ModbusMBAPLengthException ex) {
-                            // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                            // Log.d(TAG, this.toString() + "receive()->" + "ModbusMBAPLengthException ex: " + ex.getMessage());
+                                if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
+
+                                    // Check Return code
+                                    if (mpdu.getExC() == 0) {
+                                        publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                                    } else {
+                                        publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                                    }
+                                }
+
+                                if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
+                                    // Check Return code
+                                    if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                                        publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getPDUValue())));
+                                    } else {
+                                        publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
+                                    }
+                                }
+
+                                // m_timeMillisecondsGet = System.currentTimeMillis();
+                                // Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
+                                return true;
+                            }
                         } catch (ModbusPDULengthOutOfRangeException ex) {
+                            // Callbacks on UI
+                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                        } catch (ModbusCRCException ex) {
+                            // Callbacks on UI
+                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                        } catch (ModbusUnitIdOutOfRangeException ex) {
+                            // Callbacks on UI
+                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                        } catch (ModbusByteCountOutOfRangeException ex) {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                         } catch (Exception ex) {
                             // Callbacks on UI
                             publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                            // Log.d(TAG, this.toString() + "receive() ->" + "Exception ex: " + ex.getMessage());
-                        }
+                       }
 
                     } catch (SocketTimeoutException ex) {
                         // Callbacks on UI
                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
-                        // Log.d(TAG, this.toString() + "receive() MBAP->" + "SocketTimeoutException ex: " + ex.getMessage());
                     } catch (EOFException ex) {
                         // Callbacks on UI
                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                        // Log.d(TAG, this.toString() + "receive() MBAP->" + "EOFException ex: " + ex.getMessage());
                     } catch (IOException ex) {
                         // Callbacks on UI
                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                        // Log.d(TAG, this.toString() + "receive() MBAP->" + "IOException ex: " + ex.getMessage());
                     } catch (Exception ex) {
                         // Callbacks on UI
                         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                        // Log.d(TAG, this.toString() + "receive() MBAP->" + "Exception ex: " + ex.getMessage());
                     }
-
-                } else {
-                    return true;
                 }
-            } else {
-                return true;
 
+            } catch (ModbusProtocolOutOfRangeException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                // Log.d(TAG, this.toString() + "receive()->" + "ModbusProtocolOutOfRangeException ex: " + ex.getMessage());
+            } catch (ModbusMBAPLengthException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                // Log.d(TAG, this.toString() + "receive()->" + "ModbusMBAPLengthException ex: " + ex.getMessage());
+            } catch (ModbusPDULengthOutOfRangeException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            } catch (Exception ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                // Log.d(TAG, this.toString() + "receive() ->" + "Exception ex: " + ex.getMessage());
             }
+
+        } catch (SocketTimeoutException ex) {
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
+            // Log.d(TAG, this.toString() + "receive() MBAP->" + "SocketTimeoutException ex: " + ex.getMessage());
+        } catch (EOFException ex) {
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            // Log.d(TAG, this.toString() + "receive() MBAP->" + "EOFException ex: " + ex.getMessage());
+        } catch (IOException ex) {
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            // Log.d(TAG, this.toString() + "receive() MBAP->" + "IOException ex: " + ex.getMessage());
+        } catch (Exception ex) {
+            // Callbacks on UI
+            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            // Log.d(TAG, this.toString() + "receive() MBAP->" + "Exception ex: " + ex.getMessage());
         }
-        return false;
+
+     return false;
     }
 
     @Override

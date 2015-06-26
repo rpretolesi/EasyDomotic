@@ -13,13 +13,24 @@ public class TcpIpMsg {
     private boolean m_bMsgSent;
     private long m_lSentTimeMS;
 
-    public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData){
+    public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData, DataType dt){
         m_lTID = lTID;
         m_lUID = lUID;
-        m_dtDataType = null;
+        m_dtDataType = dt;
         m_byteMsgData = byteMsgData;
         m_bMsgSent = false;
         m_lSentTimeMS = System.currentTimeMillis();
+    }
+
+    public TcpIpMsg(TcpIpMsg tim){
+        if(tim != null) {
+            m_lTID = tim.getTID();
+            m_lUID = tim.getUID();
+            m_dtDataType = tim.getDataType();
+            m_byteMsgData = tim.getMsgData();
+            m_bMsgSent = tim.getMsgSent();
+            m_lSentTimeMS = tim.getSentTimeMS();
+        }
     }
 
     public long getTID(){

@@ -68,7 +68,9 @@ public class ReadDataInputStream extends Thread {
                 m_shDataLenght = (short)(m_shDataLenght + 1);
 
             } catch (InterruptedException ex) {
+                int a = 0;
             } catch (IOException ex) {
+                int a = 0;
             }
             finally {
                 if(m_Lock.isLocked()){

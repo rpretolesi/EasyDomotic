@@ -180,23 +180,12 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         if (m_ticd == null){
             return false;
         }
-        if (m_vtim == null) {
-            return false;
-        }
-
         if(m_rdis == null ) {
             return false;
         }
 
-        TcpIpMsg tim = null;
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-            TcpIpMsg tim_temp = iterator.next();
-            if (tim_temp != null) {
-                if(tim_temp.getMsgSent()) {
-                    tim = tim_temp;
-                }
-            }
-        }
+        // Check for sent message
+        TcpIpMsg tim = getMsgSent();
 
         // No message sent, nothing to receive
         if(tim == null) {
@@ -226,13 +215,10 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             }
 
             // Tutto Ok, rimuovo l'elemento
+            TcpIpMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
             DataType dtDataType = null;
-            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext(); ) {
-                TcpIpMsg tim_temp = iterator.next();
-                if (tim_temp != null && tim_temp.getUID() == mpdu.getUID()) {
-                    dtDataType = tim_temp.getDataType();
-                    iterator.remove();
-                }
+            if(timRemoved != null){
+                dtDataType = timRemoved.getDataType();
             }
 
             if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
