@@ -3,7 +3,6 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
@@ -24,7 +23,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  *
@@ -161,19 +159,19 @@ public class TCPIPClient extends BaseCommClient {
                                 if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
 
                                     // Check Return code
-                                    if (mpdu.getExC() == 0) {
+                                    if (mpdu.getExCID() == 0) {
                                         publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
                                     } else {
-                                        publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                                        publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), ""));
                                     }
                                 }
 
                                 if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                     // Check Return code
-                                    if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                                    if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
                                         publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "",  getValue(dtDataType, mpdu.getPDUValue())));
                                     } else {
-                                        publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
+                                        publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), "", null));
                                     }
                                 }
 

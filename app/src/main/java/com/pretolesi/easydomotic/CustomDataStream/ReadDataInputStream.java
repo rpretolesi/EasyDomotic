@@ -42,6 +42,8 @@ public class ReadDataInputStream extends Thread {
 
     @Override
     public void run() {
+        byte byteData = -111;
+
         //Code
         if(m_dis == null){
             return;
@@ -57,7 +59,7 @@ public class ReadDataInputStream extends Thread {
                         m_notFull.await();
 
                 // Get data
-                byte byteData = m_dis.readByte();
+                byteData = m_dis.readByte();
                 bReadOk = true;
 
                 // Lock
@@ -68,9 +70,20 @@ public class ReadDataInputStream extends Thread {
                 m_shDataLenght = (short)(m_shDataLenght + 1);
 
             } catch (InterruptedException ex) {
+                byte byteData1;
                 int a = 0;
+                a = 1;
+                byteData1 = byteData;
             } catch (IOException ex) {
+                byte byteData1;
                 int a = 0;
+                a = 1;
+                byteData1 = byteData;
+            } catch (Exception ex) {
+                byte byteData1;
+                int a = 0;
+                a = 1;
+                byteData1 = byteData;
             }
             finally {
                 if(m_Lock.isLocked()){

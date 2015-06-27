@@ -59,7 +59,8 @@ public class BaseValue extends TextView implements
         setGravity(Gravity.CENTER);
         setTextSize(20.0f);
         setTextColor(Color.BLUE);
-
+        setFocusable(true);
+        setFocusableInTouchMode(true);
     }
 
     @Override
@@ -345,13 +346,9 @@ public class BaseValue extends TextView implements
         }
     }
 
-    protected void setErrorInputField(boolean bError){
+    protected void setErrorInputField(String strError){
         if (m_edEditText != null) {
-            if(bError){
-                m_edEditText.setError("");
-            } else {
-                m_edEditText.setError(null);
-            }
+            m_edEditText.setError(strError);
         }
     }
 

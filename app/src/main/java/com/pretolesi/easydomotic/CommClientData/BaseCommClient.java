@@ -12,6 +12,7 @@ import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
 import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
+import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -198,15 +199,15 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     protected void checkTimeoutAndSetAllMsgAsUnsent(){
-        if(m_vtim != null) {
+        if(m_vtim != null && m_context != null) {
             for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
                 TcpIpMsg tim = iterator.next();
                 if (tim != null) {
-                    if (tim.getMsgSent() && System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
+                    if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
                         tim.setMsgTimeMSNow();
                         tim.setMsgAsSent(false);
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
-                        publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
+                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, m_context.getString(R.string.TimeoutException)));
+                        publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, m_context.getString(R.string.TimeoutException), null));
                     }
                 }
             }

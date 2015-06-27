@@ -17,7 +17,14 @@
     <string name="ModbusPDULengthException">PDU length Out Of Range.</string>
     <string name="ModbusCRCException">CRC Error.</string>
     <!-- ModbusIOException String    -->
-    <string name="ModbusWriteSingleRegisterException">Write Single Register Exception.</string>
+    <string name="ModbusIllegalFunctionException">Illegal Function Exception.</string>
+    <string name="ModbusIllegalDataAddressException">Illegal Data Address Exception.</string>
+    <string name="ModbusIllegalDataValueException">Illegal Data Value Exception.</string>
+    <string name="ModbusServerDeviceFailureException">Server Device Failure Exception.</string>
+    <string name="ModbusUnknowException">Unknow Exception.</string>
+
+    <!-- Common Exception String    -->
+    <string name="TimeoutException">Timeout.</string>
 
     <!-- TcpIpClientStatus. -->
     <string name="tics_idle">Idle</string>

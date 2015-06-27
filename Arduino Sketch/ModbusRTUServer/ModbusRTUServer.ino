@@ -620,6 +620,13 @@ void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusP
          byteOutModbusPDU[4] = byteInModbusPDU[4];
          *iOutlenght = 5;
          
+        } else {
+          // Address out of range
+          // Prepare answer
+          byteOutModbusPDU[0] = byteInModbusPDU[0] + 0x80;
+          byteOutModbusPDU[1] = 0x02;
+          *iOutlenght = 2;
+          
         }
       }
     }

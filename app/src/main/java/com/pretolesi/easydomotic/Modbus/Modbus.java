@@ -387,20 +387,21 @@ public class Modbus {
 
         // Function Code
         short shFEC = (short)(bb.get() & 0xFF);
-        short shExceptionCode = 0;
+        byte byteExceptionCode = 0;
+
         switch(shFEC) {
             case 0x10:
                 short shAddress = bb.getShort();
                 short shQuantityOfRegisters = bb.getShort();
 
-                mpdu = new ModbusPDU(shUI, shFEC, (short)0, null, (short)0);
+                mpdu = new ModbusPDU(shUI, shFEC, (short)0, "", null, (short)0);
 
                 break;
 
             case 0x90:
-                shExceptionCode = bb.get();
+                byteExceptionCode = bb.get();
 
-                mpdu = new ModbusPDU(shUI, shFEC, shExceptionCode, null, (short)0);
+                mpdu = new ModbusPDU(shUI, shFEC, byteExceptionCode, getExceptionCodeDescription(context, byteExceptionCode), null, (short)0);
 
                 break;
 
@@ -418,19 +419,46 @@ public class Modbus {
                     }
                 }
 
-                mpdu = new ModbusPDU(shUI, shFEC, (short)0, byteBuffer, shByteCount);
+                mpdu = new ModbusPDU(shUI, shFEC, (short)0, "", byteBuffer, shByteCount);
 
                 break;
 
             case 0x83:
-                shExceptionCode = bb.get();
+                byteExceptionCode = bb.get();
 
-                mpdu = new ModbusPDU(shUI, shFEC, shExceptionCode, null, (short)0);
+                mpdu = new ModbusPDU(shUI, shFEC, byteExceptionCode, getExceptionCodeDescription(context, byteExceptionCode), null, (short)0);
 
                 break;
         }
 
         return mpdu;
+    }
+
+    private static String getExceptionCodeDescription(Context context, byte byteExC ){
+        String strDescription = "";
+        switch(byteExC) {
+            case 0x01:
+                strDescription = context.getString(R.string.ModbusIllegalFunctionException);
+                break;
+
+            case 0x02:
+                strDescription = context.getString(R.string.ModbusIllegalDataAddressException);
+                break;
+
+            case 0x03:
+                strDescription = context.getString(R.string.ModbusIllegalDataValueException);
+                break;
+
+            case 0x04:
+                strDescription = context.getString(R.string.ModbusServerDeviceFailureException);
+                break;
+
+            default:
+                strDescription = context.getString(R.string.ModbusUnknowException);
+
+        }
+
+        return strDescription;
     }
 
     private static short getCRC(byte[] buf, int len)

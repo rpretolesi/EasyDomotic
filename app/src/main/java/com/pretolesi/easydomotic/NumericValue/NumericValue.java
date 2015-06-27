@@ -226,11 +226,11 @@ public class NumericValue extends BaseValue implements
                 if(ticws.getTID() == m_iTIDWrite) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         // Write Ok, i can close the Input
-                        setErrorInputField(false);
+                        setErrorInputField("");
                         closeInputField();
                     }
                 } else {
-                    setErrorInputField(true);
+                    setErrorInputField(ticws.getErrorMessage());
                 }
             }
         }

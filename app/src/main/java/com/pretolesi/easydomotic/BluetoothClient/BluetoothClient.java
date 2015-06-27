@@ -23,8 +23,6 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -223,19 +221,19 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
             if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
                 // Check Return code
-                if (mpdu.getExC() == 0) {
+                if (mpdu.getExCID() == 0) {
                     publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
                 } else {
-                    publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExC(), ""));
+                    publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr()));
                 }
             }
 
             if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                 // Check Return code
-                if (mpdu.getExC() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
                     publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
                 } else {
-                    publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExC(), "", null));
+                    publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr(), null));
                 }
             }
 

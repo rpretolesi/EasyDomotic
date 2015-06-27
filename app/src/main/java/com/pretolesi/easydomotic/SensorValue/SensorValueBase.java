@@ -151,9 +151,10 @@ public class SensorValueBase extends BaseValue implements
                     } else {
                         if(m_bvd.getSensorEnableSimulation()){
                             // Write Ok, i can close the Input
-                            setErrorInputField(true);
+                            setErrorInputField(ticws.getErrorMessage());
                         } else {
-                            setError("");
+                            requestFocus();
+                            setError(ticws.getErrorMessage());
                         }
                     }
                 }

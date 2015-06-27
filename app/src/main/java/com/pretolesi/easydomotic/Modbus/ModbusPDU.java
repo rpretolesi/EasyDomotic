@@ -6,14 +6,16 @@ package com.pretolesi.easydomotic.Modbus;
 public class ModbusPDU {
     private short m_shUID;
     private short m_shFEC;
-    private short m_shExC;
+    private short m_shExCID;
+    private String m_strExCDescr;
     private byte[] m_aPDUValue;
     private short m_shPDULenght;
 
-    public ModbusPDU(short shUID, short shFEC, short shExC,  byte[] aPDUValue, short shPDULenght) {
+    public ModbusPDU(short shUID, short shFEC, short shExCID, String strExCDescr, byte[] aPDUValue, short shPDULenght) {
         m_shUID = shUID;
         m_shFEC = shFEC;
-        m_shExC = shExC;
+        m_shExCID = shExCID;
+        m_strExCDescr = strExCDescr;
         m_aPDUValue = aPDUValue;
         m_shPDULenght = shPDULenght;
     }
@@ -24,8 +26,12 @@ public class ModbusPDU {
         return m_shFEC;
     }
 
-    public short getExC(){
-        return m_shExC;
+    public short getExCID(){
+        return m_shExCID;
+    }
+
+    public String getExCDescr(){
+        return m_strExCDescr;
     }
 
     public short getPDULenght(){ return m_shPDULenght; }
