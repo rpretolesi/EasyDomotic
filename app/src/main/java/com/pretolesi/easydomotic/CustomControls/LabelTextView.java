@@ -37,9 +37,9 @@ public class LabelTextView extends TextView {
         if(m_rllp != null) {
             m_rllp.leftMargin = l;
             if(!bVertical){
-                m_rllp.topMargin = t - (h/2)-16;
+                m_rllp.topMargin = t - (h/2)-20;
             } else {
-                m_rllp.topMargin = t - (w/2)-16;
+                m_rllp.topMargin = t - (w/2)-20;
             }
 //            m_rllp.rightMargin = r;
 //            m_rllp.bottomMargin = b;

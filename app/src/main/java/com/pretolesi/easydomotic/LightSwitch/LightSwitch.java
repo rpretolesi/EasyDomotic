@@ -85,6 +85,8 @@ public class LightSwitch extends Switch implements
         }
         setTextOff("0");
         setTextOn("1");
+        setFocusable(true);
+        setFocusableInTouchMode(true);
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -200,7 +202,8 @@ public class LightSwitch extends Switch implements
                         setError(null);
                     } else {
 //                        Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                        setError("");
+                        requestFocus();
+                        setError(ticws.getErrorMessage());
                     }
                 }
             }

@@ -348,6 +348,7 @@ public class BaseValue extends TextView implements
 
     protected void setErrorInputField(String strError){
         if (m_edEditText != null) {
+            m_edEditText.requestFocus();
             m_edEditText.setError(strError);
         }
     }

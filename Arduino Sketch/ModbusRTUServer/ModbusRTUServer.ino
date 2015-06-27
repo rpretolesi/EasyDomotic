@@ -132,7 +132,8 @@ void loop() {
       m_ulbtRecDataTime = micros();    
       Serial.println("Data available.");
     }
-    if(m_ulbtRecDataTime + 4000 <= micros()){
+    // After 10 millis all data should be received
+    if(m_ulbtRecDataTime + 10000 <= micros()){
       Serial.println("Bletooth data...");
       while(m_btSerial.available()){
         m_bytebtReadData[m_uibtReadDataLength] = m_btSerial.read();

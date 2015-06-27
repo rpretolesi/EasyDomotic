@@ -151,7 +151,7 @@ public class NumericValue extends BaseValue implements
             if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     Object obj = null;
-                    String strValue = "";
+                    String strValue = getDefaultValue();
                     if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
                         if (ticrs.getValue() != null) {
                             if(ticrs.getValue() instanceof Short){
@@ -191,15 +191,19 @@ public class NumericValue extends BaseValue implements
                                 this.setError(null);
                             }
                         } else {
-                            strValue = getErrorValue(ticrs.getErrorCode());
-                            this.setError("");
+                            this.requestFocus();
+                            this.setError(ticrs.getErrorMessage());
                         }
                     } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                        strValue = getTimeoutValue();
-                        this.setError("");
+                        this.requestFocus();
+                        this.setError(ticrs.getErrorMessage());
+//                        strValue = getTimeoutValue();
+//                        this.setError("");
                     } else {
-                        strValue = getErrorValue(ticrs.getErrorCode());
-                        this.setError("");
+                        this.requestFocus();
+                        this.setError(ticrs.getErrorMessage());
+//                        strValue = getErrorValue(ticrs.getErrorCode());
+//                        this.setError("");
                     }
 
                     setText(strValue);
@@ -217,6 +221,8 @@ public class NumericValue extends BaseValue implements
                 bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
             }
         }
+        // Read the value written...
+        readValue();
     }
 
     @Override

@@ -10,10 +10,11 @@ FATTO-Cambiare il nome del campo TCP IP Address a seconda se Bluetooth e TcpIp
 Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.
 Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
 Vedere se possibile istanziare solo il server che si usa in quella pagina
-Scegliere il protocollo in base al tipo e non all'istanza del tipo di comunicazione
 Verificare se il wait su overbuffer funziona nel thread secondario di ricezione
 Pensare a come fare per dividere i protocolli in ricezione...
 Verificare bene cosa succede quando si va in timeout...
 Verificare gestione errori lato Arduino.
-Finire di fare i setError su tutti i controlli.
-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
+FATTO-Finire di fare i setError su tutti i controlli.
+FATTO-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
+Vedere come ripulire i buffer di ricezione sia su Arduino sia su Android, su errore
+Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
