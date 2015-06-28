@@ -1,13 +1,12 @@
 FATTO-Mettere nel title bar il nome della stanza.
 FATTO-Vedere se e' possibile impostare il dato del typo di dato anche se non ho protocolli
-Verificare che se selezione un protocollo errato(knx) non si inizializza il tcp-ip
 FATTO-Verificare bene Open e New del Tcp/Ip
 FATTO-Specificare che 0 nelle funzioni degli holding register = 40001 e sistemare questo anche nella simulazione su arduino
 FATTO-Capire perche' scrivendo un int 32 non scrive bene...
 FATTO-Verificare bene, ancora 1 volta, se utilizzare lo short quando c'e' lo short, e non l'int. ecc...
 
 FATTO-Cambiare il nome del campo TCP IP Address a seconda se Bluetooth e TcpIp
-Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.
+FATTO-Fare la lista dei Server, o come unica list con a fianco il tipo, oppure con 2 list separate.
 Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
 Vedere se possibile istanziare solo il server che si usa in quella pagina
 Verificare se il wait su overbuffer funziona nel thread secondario di ricezione

@@ -244,8 +244,9 @@ public class BaseValueCommClientData implements Parcelable {
     };
 
     public static enum Protocol {
-        MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP"),
-        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial");
+        MODBUS_RTU(0, "Modbus RTU");
+//        MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP"),
+//        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial");
 
         private int m_iProtocolID;
         private String m_strProtocolName;
