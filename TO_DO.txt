@@ -17,3 +17,4 @@ FATTO-Finire di fare i setError su tutti i controlli.
 FATTO-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
 Vedere come ripulire i buffer di ricezione sia su Arduino sia su Android, su errore
 Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
+Fare lo stato del pulsante sul ritorno dello stato.
