@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomDataStream.ReadDataInputStream;
 import com.pretolesi.easydomotic.Modbus.Modbus;
@@ -197,63 +198,66 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             return true;
         }
 
-        try {
-            byte[] bytePDU = m_rdis.getData();
-            m_bDataInputStreamReady = false;
+        // Modbus
+        if((m_ticd.getProtocol() == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL)) {
+            try {
+                byte[] bytePDU = m_rdis.getData();
+                m_bDataInputStreamReady = false;
 
-            ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length, true);
-            if (mpdu == null) {
-                return false;
-            }
-
-            // Controllo l'indirizzo
-            if(tim.getUID() != mpdu.getUID()){
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, m_context.getString(R.string.ModbusUnitIdNotMatchingException)));
-                return false;
-            }
-
-            // Tutto Ok, rimuovo l'elemento
-            TcpIpMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
-            DataType dtDataType = null;
-            if(timRemoved != null){
-                dtDataType = timRemoved.getDataType();
-            }
-
-            if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
-                // Check Return code
-                if (mpdu.getExCID() == 0) {
-                    publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
-                } else {
-                    publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr()));
+                ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length, true);
+                if (mpdu == null) {
+                    return false;
                 }
-            }
 
-            if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
-                // Check Return code
-                if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
-                    publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
-                } else {
-                    publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr(), null));
+                // Controllo l'indirizzo
+                if(tim.getUID() != mpdu.getUID()){
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, m_context.getString(R.string.ModbusUnitIdNotMatchingException)));
+                    return false;
                 }
+
+                // Tutto Ok, rimuovo l'elemento
+                TcpIpMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
+                DataType dtDataType = null;
+                if(timRemoved != null){
+                    dtDataType = timRemoved.getDataType();
+                }
+
+                if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
+                    // Check Return code
+                    if (mpdu.getExCID() == 0) {
+                        publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                    } else {
+                        publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr()));
+                    }
+                }
+
+                if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
+                    // Check Return code
+                    if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
+                        publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
+                    } else {
+                        publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr(), null));
+                    }
+                }
+
+                return true;
+
+            } catch (ModbusPDULengthOutOfRangeException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            } catch (ModbusCRCException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            } catch (ModbusUnitIdOutOfRangeException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            } catch (ModbusByteCountOutOfRangeException ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+            } catch (Exception ex) {
+                // Callbacks on UI
+                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
             }
-
-            return true;
-
-        } catch (ModbusPDULengthOutOfRangeException ex) {
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-        } catch (ModbusCRCException ex) {
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-        } catch (ModbusUnitIdOutOfRangeException ex) {
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-        } catch (ModbusByteCountOutOfRangeException ex) {
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-        } catch (Exception ex) {
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
         }
 
         return false;

@@ -248,7 +248,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     public enum Protocol {
         MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP", TraspProtocol.TCP_IP),
-        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial", TraspProtocol.BLUETOOTH);
+        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial or Bluetooth", TraspProtocol.BLUETOOTH);
 
         private int m_iProtocolID;
         private String m_strProtocolName;

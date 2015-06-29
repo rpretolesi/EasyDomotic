@@ -10,11 +10,12 @@ FATTO-Fare la lista dei Server, o come unica list con a fianco il tipo, oppure c
 Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
 Vedere se possibile istanziare solo il server che si usa in quella pagina
 Verificare se il wait su overbuffer funziona nel thread secondario di ricezione
-Pensare a come fare per dividere i protocolli in ricezione...
 Verificare bene cosa succede quando si va in timeout...
 Verificare gestione errori lato Arduino.
 FATTO-Finire di fare i setError su tutti i controlli.
 FATTO-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
 Vedere come ripulire i buffer di ricezione sia su Arduino sia su Android, su errore
-Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
+FATTO, anche se llegrmente in modo diverso!!! Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
 Fare lo stato del pulsante sul ritorno dello stato.
+Vedere perche' saltuariamente si perde il collegamento col Bluetooth.
+Inserire anche lo stato del segnale nel bluetooth.
