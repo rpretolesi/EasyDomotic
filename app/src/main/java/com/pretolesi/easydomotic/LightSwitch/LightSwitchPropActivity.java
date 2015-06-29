@@ -27,6 +27,9 @@ import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 public class LightSwitchPropActivity extends BaseValuePropActivity {
     private static final String TAG = "LightSwitchPropAct";
 
+    private NumericEditText m_id_et_update_millis;
+    private CheckBox m_id_cb_read_only;
+
     private NumericEditText m_id_et_write_value_off;
     private NumericEditText m_id_et_write_value_off_on;
     private NumericEditText m_id_et_write_value_on_off;
@@ -40,6 +43,11 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         // Base
         onBaseCreate();
 
+        m_id_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
+        m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
+        m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
+        m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
+
         m_id_et_write_value_off = (NumericEditText)findViewById(R.id.id_et_write_value_off);
         m_id_et_write_value_off.setText(BaseValueData.WriteValueOFFDefault);
         m_id_et_write_value_off_on = (NumericEditText)findViewById(R.id.id_et_write_value_off_on);
@@ -50,7 +58,6 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         m_id_et_write_value_on_off.setVisibility(View.INVISIBLE);
         m_id_et_write_value_on = (NumericEditText)findViewById(R.id.id_et_write_value_on);
         m_id_et_write_value_on.setText(BaseValueData.WriteValueONDefault);
-
     }
 
     @Override
@@ -63,6 +70,13 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         // Dati
         if (m_bvd == null) {
             return ;
+        }
+
+        if (m_id_et_update_millis != null) {
+            m_id_et_update_millis.setText(Integer.toString(m_bvd.getValueUpdateMillis()));
+        }
+        if (m_id_cb_read_only != null) {
+            m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
         }
 
         if (m_id_et_write_value_off != null) {
@@ -89,6 +103,13 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         }
 
         try {
+
+            if (m_id_et_update_millis != null) {
+                m_bvd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
+            }
+            if (m_id_cb_read_only != null) {
+                m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+            }
 
             if (m_id_et_write_value_off != null) {
                 m_bvd.setWriteValueOFF(Integer.parseInt(m_id_et_write_value_off.getText().toString()));

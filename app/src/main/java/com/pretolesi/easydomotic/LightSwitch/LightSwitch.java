@@ -19,6 +19,7 @@ import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
@@ -30,6 +31,7 @@ public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         ToggleButton.OnCheckedChangeListener,
+        TCPIPClient.TcpIpClientReadValueStatusListener,
         TCPIPClient.TcpIpClientWriteStatusListener {
 
     private static final String TAG = "LightSwitch";
@@ -41,6 +43,7 @@ public class LightSwitch extends Switch implements
 
     private BaseValueData m_bvd;
     private int m_iMsgID;
+    private int m_iTIDRead;
     private int m_iTIDOFF;
     private int m_iTIDOFFON;
     private int m_iTIDONOFF;
@@ -57,6 +60,7 @@ public class LightSwitch extends Switch implements
         m_LabelTextView = null;
         this.m_bvd = null;
         this.m_iMsgID = -1;
+        this.m_iTIDRead = -1;
         this.m_iTIDOFF = -1;
         this.m_iTIDOFFON = -1;
         this.m_iTIDONOFF = -1;
@@ -74,10 +78,11 @@ public class LightSwitch extends Switch implements
         if(bvd != null) {
             this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
-            this.m_iTIDOFF = m_iMsgID + 1;
-            this.m_iTIDOFFON = m_iMsgID + 2;
-            this.m_iTIDONOFF = m_iMsgID + 3;
-            this.m_iTIDON = m_iMsgID + 4;
+            this.m_iTIDRead = m_iMsgID + 1;
+            this.m_iTIDOFF = m_iMsgID + 2;
+            this.m_iTIDOFFON = m_iMsgID + 3;
+            this.m_iTIDONOFF = m_iMsgID + 4;
+            this.m_iTIDON = m_iMsgID + 5;
             this.setTag(bvd.getTag());
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
@@ -127,6 +132,7 @@ public class LightSwitch extends Switch implements
         if(m_bvd != null){
             BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
             if(bcc != null){
+                bcc.registerTcpIpClientReadValueStatus(this);
                 bcc.registerTcpIpClientWriteSwitchStatus(this);
             }
         }
@@ -150,6 +156,15 @@ public class LightSwitch extends Switch implements
 
         // Delete
         m_LabelTextView = null;
+    }
+
+    private synchronized void readValue(){
+        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(bcc != null){
+                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+            }
+        }
     }
 
     @Override
@@ -187,6 +202,74 @@ public class LightSwitch extends Switch implements
                  } else {
                     sh = (short)m_bvd.getWriteValueOFF();
                     bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
+        if(ticrs != null && m_bvd != null){
+            if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
+                if(ticrs.getTID() == m_iTIDRead) {
+finire qui...
+                    Object obj = null;
+                    String strValue = getDefaultValue();
+                    if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
+                        if (ticrs.getValue() != null) {
+                            if(ticrs.getValue() instanceof Short){
+                                Short sh = (Short)ticrs.getValue();
+                                strValue = String.format("%d %s", sh, m_bvd.getValueUM());
+                                this.setError(null);
+                            }
+                            if(ticrs.getValue() instanceof Integer){
+                                Integer i = (Integer)ticrs.getValue();
+                                strValue = String.format("%d %s", i, m_bvd.getValueUM());
+                                this.setError(null);
+                            }
+                            if(ticrs.getValue() instanceof Long){
+                                Long l = (Long)ticrs.getValue();
+                                strValue = String.format("%d %s", l, m_bvd.getValueUM());
+                                this.setError(null);
+                            }
+
+                            if(ticrs.getValue() instanceof Float){
+                                Float f = (Float)ticrs.getValue();
+                                if(m_bvd.getValueMinNrCharToShow() > 0){
+                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
+                                } else {
+                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
+                                }
+
+                                this.setError(null);
+                            }
+
+                            if(ticrs.getValue() instanceof Double){
+                                Double dbl = (Double)ticrs.getValue();
+                                if(m_bvd.getValueMinNrCharToShow() > 0){
+                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
+                                } else {
+                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
+                                }
+                                this.setError(null);
+                            }
+                        } else {
+                            this.requestFocus();
+                            this.setError(ticrs.getErrorMessage());
+                        }
+                    } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
+                        this.requestFocus();
+                        this.setError(ticrs.getErrorMessage());
+//                        strValue = getTimeoutValue();
+//                        this.setError("");
+                    } else {
+                        this.requestFocus();
+                        this.setError(ticrs.getErrorMessage());
+//                        strValue = getErrorValue(ticrs.getErrorCode());
+//                        this.setError("");
+                    }
+
+                    setText(strValue);
                 }
             }
         }
