@@ -1,13 +1,16 @@
 package com.pretolesi.easydomotic.BluetoothClient;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
 import com.pretolesi.easydomotic.R;
 
@@ -52,9 +55,15 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
             }
         });
 
+        m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.BLUETOOTH)));
+
+        setActionBarTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
+
         m_server_name = "";
         m_server_address = "";
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -78,5 +87,16 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
             m_id_et_server_name.setText(m_server_name);
             m_id_et_server_address.setText(m_server_address);
         }
+    }
+
+    @Override
+    protected boolean setBaseData(int iDialogOriginID){
+
+        if (m_ticd == null) {
+            m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID());
+            m_ticd.setEnable(true);
+        }
+
+        return super.setBaseData(iDialogOriginID);
     }
 }

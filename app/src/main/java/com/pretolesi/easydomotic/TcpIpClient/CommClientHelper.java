@@ -26,13 +26,13 @@ public class CommClientHelper {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
                 for(BaseValueCommClientData ticd : lticd){
-                    if(ticd.getType() == BaseValueCommClientData.TYPE_TCP_IP_CLIENT){
+                    if(ticd.getTranspProtocolID() == BaseValueCommClientData.TraspProtocol.TCP_IP.getID()){
                         TCPIPClient tic = new TCPIPClient(m_context);
     //                    tic.execute(ticd);
                         tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
                                 m_ltic.add(tic);
                     }
-                    if(ticd.getType() == BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT){
+                    if(ticd.getTranspProtocolID() == BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID()){
                         BluetoothClient btc = new BluetoothClient(m_context);
                         btc.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
                                 m_ltic.add(btc);

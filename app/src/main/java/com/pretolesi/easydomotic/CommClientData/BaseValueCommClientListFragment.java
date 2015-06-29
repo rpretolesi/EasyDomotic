@@ -10,14 +10,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.SettingsActivity;
 
 /**
@@ -41,12 +39,12 @@ public class BaseValueCommClientListFragment extends ListFragment implements
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static BaseValueCommClientListFragment newInstance(int sectionNumber, int position, int iCommClientType) {
+    public static BaseValueCommClientListFragment newInstance(int sectionNumber, int position, long lClientTranspProtocol) {
         BaseValueCommClientListFragment fragment = new BaseValueCommClientListFragment();
         Bundle args = new Bundle();
         args.putInt(BaseFragment.ARG_SECTION_NUMBER, sectionNumber);
         args.putInt(BaseFragment.POSITION, position);
-        args.putInt(BaseFragment.COMM_CLIENT_TYPE, iCommClientType);
+        args.putLong(BaseFragment.CLIENT_TRANSP_PROTOCOL, lClientTranspProtocol);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,8 +62,15 @@ public class BaseValueCommClientListFragment extends ListFragment implements
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        switch (getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE)){
-            case BaseValueCommClientData.TYPE_TCP_IP_CLIENT:
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueCommClientData.TraspProtocol.TCP_IP.getID()){
+            setEmptyText("No Tcp Ip Server");
+        }
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID()){
+            setEmptyText("No Bluetooth Server");
+        }
+/*
+        switch (getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL)){
+            case BaseValueCommClientData.TraspProtocol.TCP_IP.getID():
                 setEmptyText("No Tcp Ip Server");
                 break;
             case BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT:
@@ -73,7 +78,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
                 break;
 
         }
-
+*/
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);
         mAdapter = new SimpleCursorAdapter(
@@ -82,9 +87,6 @@ public class BaseValueCommClientListFragment extends ListFragment implements
                 null,
                 new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
-        ArrayAdapter ad = new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_2);
-        ad.add("");
-        ad.clear();
         setListAdapter(mAdapter);
 
         // Start out with a progress indicator.
@@ -174,7 +176,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mCallbacks.onBaseValueCommClientFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id, getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE));
+        mCallbacks.onBaseValueCommClientFragmentCallbacksListener(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER), getArguments().getInt(BaseFragment.POSITION), id, getArguments().getInt(BaseFragment.CLIENT_TRANSP_PROTOCOL));
         getActivity().getFragmentManager().beginTransaction().remove(this).commit();
     }
 /*
@@ -220,7 +222,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.loadByType(getArguments().getInt(BaseFragment.COMM_CLIENT_TYPE));
+                    return SQLContract.TcpIpClientEntry.loadByTranspProtocol(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL));
                 }
             };
         }

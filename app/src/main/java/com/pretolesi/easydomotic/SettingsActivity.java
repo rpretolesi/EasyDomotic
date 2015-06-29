@@ -182,14 +182,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByType(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TYPE_TCP_IP_CLIENT);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TraspProtocol.TCP_IP.getID());
             startActivity(intent);
         }
         if(position == 7){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TYPE_TCP_IP_CLIENT),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TraspProtocol.TCP_IP.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
 
@@ -198,14 +198,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByType(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID());
             startActivity(intent);
         }
         if(position == 9){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
     }
@@ -276,11 +276,11 @@ public class SettingsActivity extends BaseActivity implements
         onSectionSetTitle(getString(R.string.app_name));
         restoreActionBar();
         if(position == 7){
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndType(this, TCPIPClientPropActivity.class, id, iType);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, TCPIPClientPropActivity.class, id, iType);
             startActivity(intent);
         }
         if(position == 9){
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndType(this, BluetoothClientDataPropActivity.class, id, iType);
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, BluetoothClientDataPropActivity.class, id, iType);
             startActivity(intent);
         }
     }

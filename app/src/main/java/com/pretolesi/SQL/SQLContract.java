@@ -877,7 +877,7 @@ public class SQLContract
     /* Inner class that defines the table contents */
     public static abstract class TcpIpClientEntry implements BaseColumns {
         public static final String TABLE_NAME = "TCPIPClient";
-        public static final String COLUMN_NAME_TYPE = "Type";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL = "TransProtocol";
         public static final String COLUMN_NAME_ENABLE = "Enable";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_ADDRESS = "Address";
@@ -896,7 +896,7 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_TYPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
@@ -922,7 +922,7 @@ public class SQLContract
                 if(db != null && ticd != null) {
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_TYPE, ticd.getType());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL, ticd.getTranspProtocolID());
                     values.put(COLUMN_NAME_ENABLE, Integer.valueOf(ticd.getEnable() ? 1 : 0));
                     values.put(COLUMN_NAME_NAME, ticd.getName());
                     values.put(COLUMN_NAME_ADDRESS, ticd.getAddress());
@@ -966,7 +966,7 @@ public class SQLContract
 
                     String[] columns = new String[] {
                             _ID,
-                            COLUMN_NAME_TYPE,
+                            COLUMN_NAME_TRANSP_PROTOCOL,
                             COLUMN_NAME_ENABLE,
                             COLUMN_NAME_NAME,
                             COLUMN_NAME_ADDRESS,
@@ -984,7 +984,7 @@ public class SQLContract
                     cursor = new MatrixCursor(columns);
                     cursor.addRow(new Object[] {
                             ticd.getID(),
-                            ticd.getType(),
+                            ticd.getTranspProtocolID(),
                             ticd.getEnable(),
                             ticd.getPort(),
                             ticd.getTimeout(),
@@ -1021,7 +1021,7 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL,
                                     COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
@@ -1062,7 +1062,7 @@ public class SQLContract
             }
         }
 
-        public static Cursor loadByType(int iType)
+        public static Cursor loadByTranspProtocol(long lTranspProtocol)
         {
             try
             {
@@ -1078,7 +1078,7 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL,
                                     COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
@@ -1095,9 +1095,9 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String whereClause = COLUMN_NAME_TYPE + " = ? ";
+                    String whereClause = COLUMN_NAME_TRANSP_PROTOCOL + " = ? ";
 
-                    String[] wherenArgs = { String.valueOf(iType) };
+                    String[] wherenArgs = { String.valueOf(lTranspProtocol) };
 
                     cursor = db.query(
                             TABLE_NAME,                 // The table to query
@@ -1135,7 +1135,7 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL,
                                     COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
@@ -1223,7 +1223,7 @@ public class SQLContract
                         }
 
                         ticd = new BaseValueCommClientData(
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),

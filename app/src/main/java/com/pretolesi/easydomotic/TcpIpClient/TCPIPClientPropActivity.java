@@ -51,6 +51,22 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
         m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);
         m_id_stica_et_protocol_field_2.setVisibility(View.GONE);
+
+        m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.TCP_IP)));
+
+        setActionBarTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
+
     }
 
+    @Override
+    protected boolean setBaseData(int iDialogOriginID){
+
+        if (m_ticd == null) {
+            m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.TCP_IP.getID());
+            m_ticd.setEnable(true);
+        }
+
+        return super.setBaseData(iDialogOriginID);
+    }
 }

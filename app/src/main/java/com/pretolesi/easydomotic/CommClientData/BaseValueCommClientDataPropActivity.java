@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,7 +37,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     private static final String TAG = "TCPIPClientPropAct";
 
-    protected static final String TYPE = "Type";
+    protected static final String TRANSP_PROTOCOL = "transp_protocol";
     protected static final String BASE_VALUE_COMM_CLIENT_ID = "Base_Value_Comm_Client_ID";
 
     protected TextView m_id_tv_server_name;
@@ -57,9 +56,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     protected TextView m_id_stica_tv_protocol_field_2;
     protected NumericEditText m_id_stica_et_protocol_field_2;
 
-    protected SimpleCursorAdapter m_SCAdapter;
     protected BaseValueCommClientData m_ticd;
-    protected int m_iTypeParameter;
     protected long m_lIDParameter;
 
     @Override
@@ -104,21 +101,38 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         // or start a new one.
         Intent intent = getIntent();
         if(intent != null) {
-            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
+//            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
             m_lIDParameter = intent.getLongExtra(BASE_VALUE_COMM_CLIENT_ID, -1);
         }
 
+
+//        setActionBarTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
+/*
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.values()));
+//                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.SERIAL)));
 
         setActionBar();
+*/
     }
 
-    public void setActionBar() {
+    protected void setActionBarTitle(String strTitle) {
         ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(strTitle);
+        }
+    }
+
+/*
+    protected void setActionBar() {
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null){
+            actionBar.setTitle(strTitle);
+        }
+/*
         int iTypeParameter;
 //        if(m_bvdParameter != null){
-//            iTypeParameter = m_bvdParameter.getType();
+//            iTypeParameter = m_bvdParameter.getTranspProtocolID();
 //        } else {
             iTypeParameter = m_iTypeParameter;
 //        }
@@ -131,7 +145,8 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 break;
 
         }
-    }
+*/
+//    }
 
     @Override
     protected void onResume() {
@@ -378,11 +393,20 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         }
     }
 
-    private boolean setBaseData(int iDialogOriginID){
+    protected boolean setBaseData(int iDialogOriginID){
+/*
+        if (m_ticd == null) {
+            if(m_tp == null){
+                return false;
+            }
+            int iProtocolID = BaseValueCommClientData.Protocol.getID(m_tp);
+            m_ticd = new BaseValueCommClientData(iProtocolID);
+            m_ticd.setEnable(true);
+        }
+*/
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueCommClientData(m_iTypeParameter);
-            m_ticd.setEnable(true);
+            return false;
         }
 
         m_ticd.setName(m_id_et_server_name.getText().toString());
@@ -428,18 +452,18 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
     }
 
-    public static Intent makeBaseValueCommClientPropActivityByType(Context context, Class cls, int iType) {
+    public static Intent makeBaseValueCommClientPropActivityByTranspProtocol(Context context, Class cls, long lTranspProtocolType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValueCommClientDataPropActivity.TYPE, iType);
+        intent.putExtra(BaseValueCommClientDataPropActivity.TRANSP_PROTOCOL, lTranspProtocolType);
         return intent;
     }
 
-    public static Intent makeBaseValueCommClientPropActivityByIDAndType(Context context, Class cls, long lID, int iType) {
+    public static Intent makeBaseValueCommClientPropActivityByIDAndTranspProtocol(Context context, Class cls, long lID, long lTranspProtocolType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
         intent.putExtra(BaseValueCommClientDataPropActivity.BASE_VALUE_COMM_CLIENT_ID, lID);
-        intent.putExtra(BaseValueCommClientDataPropActivity.TYPE, iType);
+        intent.putExtra(BaseValueCommClientDataPropActivity.TRANSP_PROTOCOL, lTranspProtocolType);
         return intent;
     }
 }

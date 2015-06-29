@@ -3,13 +3,16 @@ package com.pretolesi.easydomotic.CommClientData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  */
 public class BaseValueCommClientData implements Parcelable {
 
-    public static final int TYPE_TCP_IP_CLIENT = 1;
-    public static final int TYPE_BLUETOOTH_CLIENT = 2;
+//    public static final int TYPE_TCP_IP_CLIENT = 1;
+//    public static final int TYPE_BLUETOOTH_CLIENT = 2;
 
     public static short NameMinChar = 1;
     public static short NameMaxChar = 128;
@@ -48,7 +51,7 @@ public class BaseValueCommClientData implements Parcelable {
     public static String TailDefaulValue = "0";
 
     private long m_ID;
-    private int m_iType;
+    private long m_lTransProtocolID;
     private boolean m_bSaved;
     private boolean m_bEnable;
     private String m_strName;
@@ -62,7 +65,7 @@ public class BaseValueCommClientData implements Parcelable {
     private int m_iTail;
 
     public BaseValueCommClientData(int iType) {
-        this.m_iType = iType;
+        this.m_lTransProtocolID = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_bEnable = false;
@@ -77,8 +80,8 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public BaseValueCommClientData(int iType, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, long lProtocolID, int iHead, int iTail) {
-        this.m_iType = iType;
+    public BaseValueCommClientData(long lTransProtocolID, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, long lProtocolID, int iHead, int iTail) {
+        this.m_lTransProtocolID = lTransProtocolID;
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -93,7 +96,7 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public void setType(int iType) { this.m_iType = iType; }
+    public void setTranspProtocolID(long lTransProtocolID) { this.m_lTransProtocolID = lTransProtocolID; }
 
     public void setID(long id) {
         this.m_ID = id;
@@ -144,7 +147,7 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public int getType() { return m_iType; }
+    public long getTranspProtocolID() { return m_lTransProtocolID; }
 
     public long getID() { return m_ID; }
 
@@ -193,7 +196,7 @@ public class BaseValueCommClientData implements Parcelable {
     }
 
     protected BaseValueCommClientData(Parcel in) {
-        m_iType = in.readInt();
+        m_lTransProtocolID = in.readLong();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_bEnable = in.readByte() != 0;
@@ -215,7 +218,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(m_iType);
+        dest.writeLong(m_lTransProtocolID);
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeByte((byte) (m_bEnable ? 1 : 0));
@@ -243,15 +246,49 @@ public class BaseValueCommClientData implements Parcelable {
         }
     };
 
-    public static enum Protocol {
-        MODBUS_RTU(0, "Modbus RTU");
-//        MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP"),
-//        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial");
+    public enum Protocol {
+        MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP", TraspProtocol.TCP_IP),
+        MODBUS_ON_SERIAL(1, "Modbus RTU ON Serial", TraspProtocol.BLUETOOTH);
+
+        private int m_iProtocolID;
+        private String m_strProtocolName;
+        private TraspProtocol m_tp;
+
+        Protocol(int IProtocolID, String strProtocolName, TraspProtocol tp) {
+
+            m_iProtocolID = IProtocolID;
+            m_strProtocolName = strProtocolName;
+            m_tp = tp;
+        }
+
+        public static List<Protocol> getValues(TraspProtocol tp) {
+            List<Protocol> al = new ArrayList<>(2);
+            for (Protocol p : Protocol.values()){
+                if (p != null && tp != null && p.m_tp == tp){
+                    al.add(p);
+                }
+            }
+            return al;
+        }
+
+        public int getID() {
+            return m_iProtocolID;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(m_iProtocolID) + "-" + m_strProtocolName;
+        }
+    }
+
+    public enum TraspProtocol {
+        TCP_IP(0, "TCP/IP"),
+        BLUETOOTH(1, "Bluetooth");
 
         private int m_iProtocolID;
         private String m_strProtocolName;
 
-        Protocol(int IProtocolID, String strProtocolName) {
+        TraspProtocol(int IProtocolID, String strProtocolName) {
 
             m_iProtocolID = IProtocolID;
             m_strProtocolName = strProtocolName;
