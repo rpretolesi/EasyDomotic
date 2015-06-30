@@ -70,8 +70,12 @@ public class SetNameAndOrientDialogFragment extends DialogFragment {
         m_et = (EditText)view.findViewById(R.id.id_et_name);
         m_rl = (RadioButton)view.findViewById(R.id.radioButtonLandscape);
         m_rp = (RadioButton)view.findViewById(R.id.radioButtonPortrait);
-        if(m_et != null && getArguments().getString(NAME) != null && !getArguments().getString(NAME).equals("")){
-            m_et.setText(getArguments().getString(NAME));
+        if(m_et != null){
+            if(getArguments().getString(NAME) != null && !getArguments().getString(NAME).equals("")){
+                m_et.setText(getArguments().getString(NAME));
+            } else {
+                m_et.setText("My Room");
+            }
         }
         if(getArguments().getBoolean(DEFAULT_ORIENTATION)){
             if (m_rl != null) {

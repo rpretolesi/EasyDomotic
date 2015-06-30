@@ -37,6 +37,7 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     private NumericEditText m_id_et_sensor_low_pass_filter_k;
     private NumericEditText m_id_et_sensor_sample_time_millis;
     private NumericEditText m_id_et_sensor_write_update_millis;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

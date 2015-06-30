@@ -69,7 +69,6 @@ public class BluetoothListAdapter extends BaseAdapter {
             id_tv_name.setText(m_btd.get(position).getName());
             id_tv_address.setText(m_btd.get(position).getAddress());
             if((m_btd.get(position).getBondState() == BluetoothDevice.BOND_BONDED)){
-
                 id_tv_paired.setText(R.string.text_bt_device_paired);
                 id_tv_paired.setTextColor(Color.GREEN);
             } else {
