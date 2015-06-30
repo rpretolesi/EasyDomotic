@@ -198,7 +198,10 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        writeSwitchValue(isChecked);
+        verificare qui...
+        if(buttonView.isPressed()) {
+            writeSwitchValue(isChecked);
+        }
     }
 
     private void writeSwitchValue(boolean bValue){

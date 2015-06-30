@@ -230,7 +230,7 @@
     <string name="hint_et_server_bt_address">xx.xx.xx.xx.xx.xx.xx.xx</string>
     <string name="text_stica_tv_server_port">TCP IP Server Port</string>
     <string name="hint_stica_et_server_port">502</string>
-    <string name="text_stica_tv_timeout">Timeout</string>
+    <string name="text_stica_tv_timeout">Timeout(ms)</string>
     <string name="hint_stica_et_timeout">3000</string>
     <string name="text_stica_tv_comm_send_data_delay">Send data delay(ms)</string>
     <string name="hint_stica_et_comm_send_data_delay">4</string>

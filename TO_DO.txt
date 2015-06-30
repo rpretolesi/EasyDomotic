@@ -19,3 +19,4 @@ FATTO, anche se llegrmente in modo diverso!!! Selezionare il protocollo in base 
 Fare lo stato del pulsante sul ritorno dello stato.
 Vedere perche' saltuariamente si perde il collegamento col Bluetooth.
 Inserire anche lo stato del segnale nel bluetooth.
+Resettare il tempo di timeout solo quando la connessione viene stabilita.

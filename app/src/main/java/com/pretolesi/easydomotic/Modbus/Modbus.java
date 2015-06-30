@@ -206,7 +206,13 @@ public class Modbus {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
         }
 
-        bb.putShort(getCRC(bb.array(), bb.array().length - 2));
+//        bb.putShort(getCRC(bb.array(), bb.array().length - 2));
+
+        ByteBuffer bbCRC = ByteBuffer.allocate(2);
+        bbCRC.putShort(getCRC(bb.array(), bb.array().length - 2));
+
+        bb.put(bbCRC.get(1));
+        bb.put(bbCRC.get(0));
 
         return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
     }
@@ -330,11 +336,17 @@ public class Modbus {
 
         ByteBuffer bb = ByteBuffer.allocate(8);
         bb.put(byteUID);
-        bb.put((byte)0x03);
+        bb.put((byte) 0x03);
         bb.putShort(shAddress);
         bb.putShort(shNrOfRegisters);
 
-        bb.putShort(getCRC(bb.array(), bb.array().length - 2));
+//        bb.putShort(getCRC(bb.array(), bb.array().length - 2));
+
+        ByteBuffer bbCRC = ByteBuffer.allocate(2);
+        bbCRC.putShort(getCRC(bb.array(), bb.array().length - 2));
+
+        bb.put(bbCRC.get(1));
+        bb.put(bbCRC.get(0));
 
         return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
     }
@@ -374,7 +386,7 @@ public class Modbus {
             // Controllo CRC
             ByteBuffer bbCRC = ByteBuffer.allocate(2);
             bbCRC.putShort(getCRC(bytePDUValue, shPDULenght - 2));
-            if ((bytePDUValue[shPDULenght - 1] != bbCRC.get(1)) || (bytePDUValue[shPDULenght - 2] != bbCRC.get(0))) {
+            if ((bytePDUValue[shPDULenght - 1] != bbCRC.get(0)) || (bytePDUValue[shPDULenght - 2] != bbCRC.get(1))) {
                 throw new ModbusCRCException(context.getString(R.string.ModbusCRCException));
             }
         }
