@@ -3,6 +3,7 @@ package com.pretolesi.easydomotic.LightSwitch;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
@@ -51,6 +52,9 @@ public class LightSwitch extends Switch implements
 
     private boolean m_bEditMode;
     private boolean m_bVertical;
+
+    private Handler m_TimerHandler;
+    private long m_lRepeatingTime;
 
     // Label for Switch
     private LabelTextView m_LabelTextView;
@@ -130,10 +134,13 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
-            if(bcc != null){
-                bcc.registerTcpIpClientReadValueStatus(this);
-                bcc.registerTcpIpClientWriteSwitchStatus(this);
+            if(!getEditMode()) {
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+                if(bcc != null){
+                    bcc.registerTcpIpClientReadValueStatus(this);
+                    bcc.registerTcpIpClientWriteSwitchStatus(this);
+                }
+                setTimer(m_bvd.getValueUpdateMillis());
             }
         }
 
@@ -145,6 +152,10 @@ public class LightSwitch extends Switch implements
         super.onDetachedFromWindow();
 
         setOnCheckedChangeListener(null);
+
+        if(!getEditMode()) {
+            resetTimer();
+        }
 
         // Listener
         if(m_bvd != null){
@@ -194,7 +205,6 @@ public class LightSwitch extends Switch implements
         if(m_bvd != null){
             BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
             if(bcc != null){
-
                 Short sh;
                 if(bValue) {
                     sh = (short)m_bvd.getWriteValueON();
@@ -203,6 +213,7 @@ public class LightSwitch extends Switch implements
                     sh = (short)m_bvd.getWriteValueOFF();
                     bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                 }
+                readValue();
             }
         }
     }
@@ -212,45 +223,35 @@ public class LightSwitch extends Switch implements
         if(ticrs != null && m_bvd != null){
             if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
                 if(ticrs.getTID() == m_iTIDRead) {
-finire qui...
-                    Object obj = null;
-                    String strValue = getDefaultValue();
+                    // Only Short
                     if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
                         if (ticrs.getValue() != null) {
                             if(ticrs.getValue() instanceof Short){
                                 Short sh = (Short)ticrs.getValue();
-                                strValue = String.format("%d %s", sh, m_bvd.getValueUM());
+                                if(sh == m_bvd.getWriteValueON()){
+                                    setChecked(true);
+                                }
+                                if(sh == m_bvd.getWriteValueOFF()){
+                                    setChecked(false);
+                                }
                                 this.setError(null);
                             }
                             if(ticrs.getValue() instanceof Integer){
                                 Integer i = (Integer)ticrs.getValue();
-                                strValue = String.format("%d %s", i, m_bvd.getValueUM());
                                 this.setError(null);
                             }
                             if(ticrs.getValue() instanceof Long){
                                 Long l = (Long)ticrs.getValue();
-                                strValue = String.format("%d %s", l, m_bvd.getValueUM());
                                 this.setError(null);
                             }
 
                             if(ticrs.getValue() instanceof Float){
                                 Float f = (Float)ticrs.getValue();
-                                if(m_bvd.getValueMinNrCharToShow() > 0){
-                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
-                                } else {
-                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
-                                }
-
                                 this.setError(null);
                             }
 
                             if(ticrs.getValue() instanceof Double){
                                 Double dbl = (Double)ticrs.getValue();
-                                if(m_bvd.getValueMinNrCharToShow() > 0){
-                                    strValue = String.format("% " + m_bvd.getValueMinNrCharToShow() + "." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
-                                } else {
-                                    strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
-                                }
                                 this.setError(null);
                             }
                         } else {
@@ -260,16 +261,10 @@ finire qui...
                     } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
                         this.requestFocus();
                         this.setError(ticrs.getErrorMessage());
-//                        strValue = getTimeoutValue();
-//                        this.setError("");
                     } else {
                         this.requestFocus();
                         this.setError(ticrs.getErrorMessage());
-//                        strValue = getErrorValue(ticrs.getErrorCode());
-//                        this.setError("");
                     }
-
-                    setText(strValue);
                 }
             }
         }
@@ -292,6 +287,41 @@ finire qui...
             }
         }
     }
+
+    /*
+     * Begin
+     * Timer variable and function
+     */
+    protected void setTimer(long lRepeatingTime) {
+        m_lRepeatingTime = lRepeatingTime;
+        m_TimerHandler = new Handler();
+        m_TimerHandler.postDelayed(m_TimerRunnable, lRepeatingTime);
+    }
+
+    protected void resetTimer() {
+        if(m_TimerHandler != null){
+            m_TimerHandler.removeCallbacks(m_TimerRunnable);
+        }
+    }
+
+    private Runnable m_TimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(m_TimerHandler != null) {
+                onTimer();
+
+                m_TimerHandler.postDelayed(m_TimerRunnable, m_lRepeatingTime);
+            }
+        }
+    };
+
+    protected void onTimer() {
+        readValue();
+    }
+    /*
+     * End
+     * Timer variable and function
+     */
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

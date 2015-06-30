@@ -176,7 +176,7 @@ public class BaseValueCommClientData implements Parcelable {
     public int getCommSendDelayData() { return m_iCommSendDelayData; }
 
     public int getCommReceiveWaitData() { return m_iCommReceiveWaitData; }
-
+verificare il protocollo passato
     public Protocol getProtocol() {
         if (m_lProtocolID == Protocol.MODBUS_ON_TCP_IP.getID()) {
             return Protocol.MODBUS_ON_TCP_IP;
