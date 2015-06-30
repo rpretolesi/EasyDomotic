@@ -8,6 +8,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
@@ -31,7 +32,8 @@ import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 public class LightSwitch extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-        ToggleButton.OnCheckedChangeListener,
+//        ToggleButton.OnCheckedChangeListener,
+        ToggleButton.OnClickListener,
         TCPIPClient.TcpIpClientReadValueStatusListener,
         TCPIPClient.TcpIpClientWriteStatusListener {
 
@@ -45,6 +47,8 @@ public class LightSwitch extends Switch implements
     private BaseValueData m_bvd;
     private int m_iMsgID;
     private int m_iTIDRead;
+    private int m_iTIDReadBeforeWrite;
+    private int m_iTIDReadAfterWrite;
     private int m_iTIDOFF;
     private int m_iTIDOFFON;
     private int m_iTIDONOFF;
@@ -65,6 +69,8 @@ public class LightSwitch extends Switch implements
         this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDRead = -1;
+        this.m_iTIDReadBeforeWrite = -1;
+        this.m_iTIDReadAfterWrite = -1;
         this.m_iTIDOFF = -1;
         this.m_iTIDOFFON = -1;
         this.m_iTIDONOFF = -1;
@@ -82,11 +88,13 @@ public class LightSwitch extends Switch implements
         if(bvd != null) {
             this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
-            this.m_iTIDRead = m_iMsgID + 1;
-            this.m_iTIDOFF = m_iMsgID + 2;
-            this.m_iTIDOFFON = m_iMsgID + 3;
-            this.m_iTIDONOFF = m_iMsgID + 4;
-            this.m_iTIDON = m_iMsgID + 5;
+            this.m_iTIDRead = -1;
+            this.m_iTIDReadBeforeWrite = m_iMsgID + 1;
+            this.m_iTIDReadAfterWrite = m_iMsgID + 2;
+            this.m_iTIDOFF = m_iMsgID + 3;
+            this.m_iTIDOFFON = m_iMsgID + 4;
+            this.m_iTIDONOFF = m_iMsgID + 5;
+            this.m_iTIDON = m_iMsgID + 6;
             this.setTag(bvd.getTag());
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
@@ -144,14 +152,16 @@ public class LightSwitch extends Switch implements
             }
         }
 
-        setOnCheckedChangeListener(this);
+//        setOnCheckedChangeListener(this);
+        setOnClickListener(this);
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        setOnCheckedChangeListener(null);
+//        setOnCheckedChangeListener(null);
+        setOnClickListener(null);
 
         if(!getEditMode()) {
             resetTimer();
@@ -169,11 +179,11 @@ public class LightSwitch extends Switch implements
         m_LabelTextView = null;
     }
 
-    private synchronized void readValue(){
+    private synchronized void readValue(int iTID){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
             BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
             if(bcc != null){
-                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+                bcc.readValue(getContext(), iTID, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
             }
         }
     }
@@ -195,13 +205,18 @@ public class LightSwitch extends Switch implements
             }
         }
     }
-
+/*
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        verificare qui...
         if(buttonView.isPressed()) {
             writeSwitchValue(isChecked);
         }
+    }
+*/
+    @Override
+    public void onClick(View v) {
+        writeSwitchValue(isChecked());
+        m_iTIDRead = m_iTIDReadAfterWrite;
     }
 
     private void writeSwitchValue(boolean bValue){
@@ -216,11 +231,11 @@ public class LightSwitch extends Switch implements
                     sh = (short)m_bvd.getWriteValueOFF();
                     bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                 }
-                readValue();
+                readValue(m_iTIDReadAfterWrite);
             }
         }
     }
-
+finire con m_iTIDRead
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null && m_bvd != null){
@@ -319,7 +334,8 @@ public class LightSwitch extends Switch implements
     };
 
     protected void onTimer() {
-        readValue();
+        readValue(m_iTIDReadBeforeWrite);
+        m_iTIDRead = m_iTIDReadBeforeWrite;
     }
     /*
      * End
@@ -328,6 +344,7 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        final int action = MotionEventCompat.getActionMasked(event);
 
         if(m_bEditMode){
             if(mDetector == null){
@@ -339,7 +356,6 @@ public class LightSwitch extends Switch implements
                 // listener.
                 mDetector.setOnDoubleTapListener(this);
             }
-            final int action = MotionEventCompat.getActionMasked(event);
 
             switch (action) {
 
@@ -363,6 +379,16 @@ public class LightSwitch extends Switch implements
 
             this.mDetector.onTouchEvent(event);
             return true;
+        } else {
+            if(action == MotionEvent.ACTION_MOVE){
+                return true;
+            }
+            if(action == MotionEvent.ACTION_DOWN){
+                m_iTIDRead = m_iTIDReadAfterWrite;
+            }
+//            if(action == MotionEvent.ACTION_UP){
+//                writeSwitchValue(isChecked());
+//             }
         }
 
         super.onTouchEvent(event);
@@ -434,4 +460,5 @@ public class LightSwitch extends Switch implements
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         return false;
     }
+
 }

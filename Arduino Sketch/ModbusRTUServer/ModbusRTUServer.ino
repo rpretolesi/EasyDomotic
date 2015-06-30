@@ -144,7 +144,7 @@ void loop() {
       Serial.println("");
       m_bbtDataCompleted = true;
       m_u_CRC.temp_short = getCRC(m_bytebtReadData, m_uibtReadDataLength - 2);
-      if((m_bytebtReadData[m_uibtReadDataLength - 2] == m_u_CRC.temp_bytearray[1]) && (m_bytebtReadData[m_uibtReadDataLength - 1] == m_u_CRC.temp_bytearray[0])){
+      if((m_bytebtReadData[m_uibtReadDataLength - 2] == m_u_CRC.temp_bytearray[0]) && (m_bytebtReadData[m_uibtReadDataLength - 1] == m_u_CRC.temp_bytearray[1])){
 
         // Data completed successfully
         Serial.println("CRC Ok!");
