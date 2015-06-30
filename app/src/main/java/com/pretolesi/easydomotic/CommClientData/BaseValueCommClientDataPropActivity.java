@@ -350,13 +350,20 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             m_id_stica_et_comm_receive_wait_data.setText(Integer.toString(m_ticd.getCommReceiveWaitData()));
         }
         if(m_id_stica_spn_protocol != null) {
-            long lItem = -1;
-            try{
-                lItem = m_ticd.getProtocolID();
-            } catch (Exception ignore) { }
-            m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
-            m_id_stica_spn_protocol.setSelection((int)lItem);
+            BaseValueCommClientData.Protocol p = m_ticd.getProtocol();
+            if(p != null){
+                for (int position = 0; position < m_id_stica_spn_protocol.getCount(); position++)
+                {
+                    Object obj = m_id_stica_spn_protocol.getItemAtPosition(position);
+                    if (obj != null && obj == p){
+                        m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
+                        m_id_stica_spn_protocol.setSelection(position);
+                        break;
+                    }
+                }
+            }
         }
+
         if(m_id_stica_et_protocol_field_1 != null) {
             m_id_stica_et_protocol_field_1.setText(Integer.toString(m_ticd.getHead()));
         }
@@ -415,7 +422,9 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
         m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
         m_ticd.setCommReceiveWaitData(Integer.parseInt(m_id_stica_et_comm_receive_wait_data.getText().toString()));
-        m_ticd.setProtocolID(m_id_stica_spn_protocol.getSelectedItemId());
+        if(m_id_stica_spn_protocol != null && m_id_stica_spn_protocol.getSelectedItem() instanceof BaseValueCommClientData.Protocol){
+            m_ticd.setProtocol((BaseValueCommClientData.Protocol)m_id_stica_spn_protocol.getSelectedItem());
+        }
         m_ticd.setHead(Integer.parseInt(m_id_stica_et_protocol_field_1.getText().toString()));
         m_ticd.setTail(Integer.parseInt(m_id_stica_et_protocol_field_2.getText().toString()));
 
