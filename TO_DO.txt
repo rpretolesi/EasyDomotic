@@ -20,3 +20,4 @@ Fare lo stato del pulsante sul ritorno dello stato.
 Vedere perche' saltuariamente si perde il collegamento col Bluetooth.
 Inserire anche lo stato del segnale nel bluetooth.
 Resettare il tempo di timeout solo quando la connessione viene stabilita.
+Mettere il messaggio di errore come textview aggiuntivo sotto al campo in errore.

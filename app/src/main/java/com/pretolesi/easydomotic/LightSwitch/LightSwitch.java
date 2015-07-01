@@ -45,7 +45,7 @@ public class LightSwitch extends Switch implements
 
     private BaseValueData m_bvd;
     private int m_iMsgID;
-    private volatile int m_iTIDReadReference;
+    private boolean m_iTIDReadClicked;
     private int m_iTIDRead;
     private int m_iTIDOFF;
     private int m_iTIDOFFON;
@@ -66,7 +66,7 @@ public class LightSwitch extends Switch implements
         m_LabelTextView = null;
         this.m_bvd = null;
         this.m_iMsgID = -1;
-        this.m_iTIDReadReference = -1;
+        this.m_iTIDReadClicked = false;
         this.m_iTIDRead = -1;
         this.m_iTIDOFF = -1;
         this.m_iTIDOFFON = -1;
@@ -85,7 +85,7 @@ public class LightSwitch extends Switch implements
         if(bvd != null) {
             this.m_bvd = bvd;
             this.m_iMsgID = iMsgID;
-            this.m_iTIDReadReference = -1;
+            this.m_iTIDReadClicked = false;
             this.m_iTIDRead = m_iMsgID + 1;
             this.m_iTIDOFF = m_iMsgID + 2;
             this.m_iTIDOFFON = m_iMsgID + 3;
@@ -95,11 +95,12 @@ public class LightSwitch extends Switch implements
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
             setVertical(m_bvd.getVertical());
+            if(bvd.getValueReadOnly()){
+                this.setClickable(false);
+            }
         }
         setTextOff("0");
         setTextOn("1");
-        setFocusable(true);
-        setFocusableInTouchMode(true);
     }
 
     protected void setEditMode(boolean bEditMode){
@@ -148,7 +149,6 @@ public class LightSwitch extends Switch implements
             }
         }
 
-//        setOnCheckedChangeListener(this);
         setOnClickListener(this);
     }
 
@@ -203,7 +203,7 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onClick(View v) {
-        m_iTIDReadReference = -1;
+        m_iTIDReadClicked = true;
         writeSwitchValue(isChecked());
     }
 
@@ -219,7 +219,6 @@ public class LightSwitch extends Switch implements
                     sh = (short)m_bvd.getWriteValueOFF();
                     bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
                 }
-//                readValue(m_iTIDReadAfterWrite);
             }
         }
     }
@@ -228,7 +227,7 @@ public class LightSwitch extends Switch implements
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null && m_bvd != null){
             if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
-                if(ticrs.getTID() == m_iTIDReadReference) {
+                if(ticrs.getTID() == m_iTIDRead && !m_iTIDReadClicked) {
                     // Only Short
                     if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
                         if (ticrs.getValue() != null) {
@@ -261,17 +260,15 @@ public class LightSwitch extends Switch implements
                                 this.setError(null);
                             }
                         } else {
-                            this.requestFocus();
                             this.setError(ticrs.getErrorMessage());
                         }
                     } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                        this.requestFocus();
                         this.setError(ticrs.getErrorMessage());
                     } else {
-                        this.requestFocus();
                         this.setError(ticrs.getErrorMessage());
                     }
                 }
+                m_iTIDReadClicked = false;
             }
         }
     }
@@ -283,11 +280,9 @@ public class LightSwitch extends Switch implements
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
                 if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
-                        setError(null);
+                        this.setError(null);
                     } else {
-//                        Toast.makeText(this.getContext(), "Server ID: " + ticws.getServerID() + ", TID: " + ticws.getTID() + ", Status: " + ticws.getStatus().toString() + ", Error Code: " + ticws.getErrorCode() + ", Error Message: " + ticws.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                        requestFocus();
-                        setError(ticws.getErrorMessage());
+                        this.setError(ticws.getErrorMessage());
                     }
                 }
             }
@@ -323,8 +318,7 @@ public class LightSwitch extends Switch implements
 
     protected void onTimer() {
         readValue();
-        m_iTIDReadReference = m_iTIDRead;
-    }
+     }
     /*
      * End
      * Timer variable and function
@@ -368,9 +362,7 @@ public class LightSwitch extends Switch implements
             this.mDetector.onTouchEvent(event);
             return true;
         } else {
-            if(action == MotionEvent.ACTION_DOWN){
- non va bene e mettere only read...               m_iTIDReadReference = -1;
-            }
+            // Disable Sliding
            if(action == MotionEvent.ACTION_MOVE){
                 return true;
             }
