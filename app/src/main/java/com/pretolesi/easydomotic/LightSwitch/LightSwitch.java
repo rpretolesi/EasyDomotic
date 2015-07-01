@@ -227,48 +227,50 @@ public class LightSwitch extends Switch implements
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null && m_bvd != null){
             if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
-                if(ticrs.getTID() == m_iTIDRead && !m_iTIDReadClicked) {
-                    // Only Short
-                    if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
-                        if (ticrs.getValue() != null) {
-                            if(ticrs.getValue() instanceof Short){
-                                Short sh = (Short)ticrs.getValue();
-                                if(sh == m_bvd.getWriteValueON()){
-                                    setChecked(true);
+                if(ticrs.getTID() == m_iTIDRead) {
+                    if(!m_iTIDReadClicked) {
+                        // Only Short
+                        if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
+                            if (ticrs.getValue() != null) {
+                                if(ticrs.getValue() instanceof Short){
+                                    Short sh = (Short)ticrs.getValue();
+                                    if(sh == m_bvd.getWriteValueON()){
+                                        setChecked(true);
+                                    }
+                                    if(sh == m_bvd.getWriteValueOFF()){
+                                        setChecked(false);
+                                    }
+                                    this.setError(null);
                                 }
-                                if(sh == m_bvd.getWriteValueOFF()){
-                                    setChecked(false);
+                                if(ticrs.getValue() instanceof Integer){
+                                    Integer i = (Integer)ticrs.getValue();
+                                    this.setError(null);
                                 }
-                                this.setError(null);
-                            }
-                            if(ticrs.getValue() instanceof Integer){
-                                Integer i = (Integer)ticrs.getValue();
-                                this.setError(null);
-                            }
-                            if(ticrs.getValue() instanceof Long){
-                                Long l = (Long)ticrs.getValue();
-                                this.setError(null);
-                            }
+                                if(ticrs.getValue() instanceof Long){
+                                    Long l = (Long)ticrs.getValue();
+                                    this.setError(null);
+                                }
 
-                            if(ticrs.getValue() instanceof Float){
-                                Float f = (Float)ticrs.getValue();
-                                this.setError(null);
-                            }
+                                if(ticrs.getValue() instanceof Float){
+                                    Float f = (Float)ticrs.getValue();
+                                    this.setError(null);
+                                }
 
-                            if(ticrs.getValue() instanceof Double){
-                                Double dbl = (Double)ticrs.getValue();
-                                this.setError(null);
+                                if(ticrs.getValue() instanceof Double){
+                                    Double dbl = (Double)ticrs.getValue();
+                                    this.setError(null);
+                                }
+                            } else {
+                                this.setError(ticrs.getErrorMessage());
                             }
+                        } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
+                            this.setError(ticrs.getErrorMessage());
                         } else {
                             this.setError(ticrs.getErrorMessage());
                         }
-                    } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                        this.setError(ticrs.getErrorMessage());
-                    } else {
-                        this.setError(ticrs.getErrorMessage());
                     }
+                    m_iTIDReadClicked = false;
                 }
-                m_iTIDReadClicked = false;
             }
         }
     }
@@ -362,8 +364,11 @@ public class LightSwitch extends Switch implements
             this.mDetector.onTouchEvent(event);
             return true;
         } else {
+//            if(action == MotionEvent.ACTION_DOWN){
+//                m_iTIDReadClicked = true;
+//            }
             // Disable Sliding
-           if(action == MotionEvent.ACTION_MOVE){
+            if(action == MotionEvent.ACTION_MOVE){
                 return true;
             }
         }

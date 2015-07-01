@@ -191,17 +191,14 @@ public class NumericValue extends BaseValue implements
                                 this.setError(null);
                             }
                         } else {
-                            this.requestFocus();
                             this.setError(ticrs.getErrorMessage());
                         }
                     } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                        this.requestFocus();
                         this.setError(ticrs.getErrorMessage());
 //                        strValue = getTimeoutValue();
 //                        this.setError("");
                     } else {
-                        this.requestFocus();
-                        this.setError(ticrs.getErrorMessage());
+                         this.setError(ticrs.getErrorMessage());
 //                        strValue = getErrorValue(ticrs.getErrorCode());
 //                        this.setError("");
                     }

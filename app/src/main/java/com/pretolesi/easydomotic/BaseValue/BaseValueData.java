@@ -49,7 +49,7 @@ public class BaseValueData implements Parcelable {
     public static short ValueUMMaxValue = 9;
     public static String ValueUMDefaulValue = "";
 
-    public static int ValueUpdateMillisMinValue = 100;
+    public static int ValueUpdateMillisMinValue = 10;
     public static int ValueUpdateMillisMaxValue = 65535;
     public static String ValueUpdateMillisDefaulValue = "1000";
 

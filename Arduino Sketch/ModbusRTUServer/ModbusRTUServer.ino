@@ -133,7 +133,7 @@ void loop() {
       Serial.println("Data available.");
     }
     // After 10 millis all data should be received
-    if(m_ulbtRecDataTime + 10000 <= micros()){
+    if(m_ulbtRecDataTime + 100000 <= micros()){
       Serial.println("Bletooth data...");
       while(m_btSerial.available()){
         m_bytebtReadData[m_uibtReadDataLength] = m_btSerial.read();
@@ -158,9 +158,9 @@ void loop() {
         m_uibtWriteDataLength = m_uibtWriteDataLength + m_uibtPDUWriteDataLength;
         
         m_u_CRC.temp_short = getCRC(m_bytebtWriteData, m_uibtWriteDataLength); // CRC
-        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[1]; // CRC
-        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
         m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[0]; // CRC
+        m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
+        m_bytebtWriteData[m_uibtWriteDataLength] = m_u_CRC.temp_bytearray[1]; // CRC
         m_uibtWriteDataLength = m_uibtWriteDataLength + 1;
         
         Serial.println("Answer Start: ");

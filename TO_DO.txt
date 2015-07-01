@@ -16,8 +16,10 @@ FATTO-Finire di fare i setError su tutti i controlli.
 FATTO-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
 Vedere come ripulire i buffer di ricezione sia su Arduino sia su Android, su errore
 FATTO, anche se llegrmente in modo diverso!!! Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
-Fare lo stato del pulsante sul ritorno dello stato.
+FATTO-Fare lo stato del pulsante sul ritorno dello stato.
 Vedere perche' saltuariamente si perde il collegamento col Bluetooth.
 Inserire anche lo stato del segnale nel bluetooth.
 Resettare il tempo di timeout solo quando la connessione viene stabilita.
 Mettere il messaggio di errore come textview aggiuntivo sotto al campo in errore.
+Verificare se Status.TIMEOUT risulti inutile in quanto c'e' gia' la descrizione.
+Verificare perche' da' OutOfLenght prima di CRC error(dovrebbe, in teoria, dare prima il CRC error!
