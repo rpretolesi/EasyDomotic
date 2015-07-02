@@ -25,6 +25,7 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by RPRETOLESI on 16/06/2015.
@@ -76,7 +77,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected Context m_context = null;
     protected BaseValueCommClientData m_ticd = null;
-    private Vector<TcpIpMsg> m_vtim = null;
+    private ConcurrentLinkedQueue<TcpIpMsg> m_clqim = null;
 
     // MBAP
     protected byte[] m_byteMBAP = null;
@@ -97,7 +98,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         m_context = context;
         m_byteMBAP = new byte[6];
         m_bytePDU = new byte[256];
-        m_vtim = new Vector<>();
+        m_clqim = new ConcurrentLinkedQueue<>();
     }
 
 
@@ -123,9 +124,9 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     protected void setMsgToSend(TcpIpMsg tim) {
-        if (m_vtim != null && tim != null) {
-            if (!m_vtim.contains(tim)) {
-                m_vtim.add(tim);
+        if (m_clqim != null && tim != null) {
+            if (!m_clqim.contains(tim)) {
+                m_clqim.add(tim);
             }
         }
     }
