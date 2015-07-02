@@ -39,6 +39,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     private ReadDataInputStream m_rdis;
     protected boolean m_bDataInputStreamReady;
     protected long m_lDataInputStreamReadyTime;
+    private int m_iNrOfError;
 
     private BluetoothAdapter m_BluetoothAdapter;
     private BluetoothDevice m_btDevice;
@@ -47,6 +48,10 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     public BluetoothClient(Context context){
         super(context);
     }
+
+    // Cancellare
+    private TcpIpMsg timRemoved_temp;
+    private byte[] bytePDU_temp;
 
     @Override
     protected boolean startConnection() {
@@ -104,6 +109,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             m_dataOutputStream = new DataOutputStream(m_btSocket.getOutputStream());
             m_dataInputStream = new DataInputStream(m_btSocket.getInputStream());
             m_bDataInputStreamReady = false;
+            m_iNrOfError = 0;
 
             m_iProgressCounter = 0;
 
@@ -201,7 +207,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // Modbus
         if((m_ticd.getProtocol() == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL)) {
             try {
-                byte[] bytePDU = m_rdis.getData();
+                byte[] bytePDU = m_rdis.getData(false);
+                bytePDU_temp = bytePDU;
                 m_bDataInputStreamReady = false;
 
                 ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length, true);
@@ -215,8 +222,13 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
                     return false;
                 }
 
+                // Svuoto il buffer di ricezione
+                m_iNrOfError = 0;
+                m_rdis.getData(true);
+
                 // Tutto Ok, rimuovo l'elemento
                 TcpIpMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
+                timRemoved_temp = timRemoved;
                 DataType dtDataType = null;
                 if(timRemoved != null){
                     dtDataType = timRemoved.getDataType();
@@ -260,6 +272,15 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             }
         }
 
+        // Se arrivo qua' c'e' stato un errore. Ritento per xx volte...
+        m_iNrOfError = m_iNrOfError + 1;
+        if(m_iNrOfError < 3){
+            return true;
+        }
+
+        // Svuoto il buffer di ricezione
+        m_iNrOfError = 0;
+        m_rdis.getData(true);
         return false;
     }
 

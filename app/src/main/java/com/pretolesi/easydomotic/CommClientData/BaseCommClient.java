@@ -764,19 +764,21 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
                         // Stop communication with Server
                         stopConnection();
+/*
                         // attendo per non sovraccaricare CPU
                         try {
                             Thread.sleep(3000, 0);
                         } catch (InterruptedException ignored) {
 
                         }
-
+*/
                         // Start communication with Server
-                        startConnection();
-                        // attendo per non sovraccaricare CPU
-                        try {
-                            Thread.sleep(3000, 0);
-                        } catch (InterruptedException ignored) {
+                        if(!startConnection()) {
+                            // attendo per non sovraccaricare CPU
+                            try {
+                                Thread.sleep(3000, 0);
+                            } catch (InterruptedException ignored) {
+                            }
                         }
                     } else {
                         if (!send()){

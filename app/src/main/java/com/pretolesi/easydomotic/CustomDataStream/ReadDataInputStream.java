@@ -113,7 +113,7 @@ public class ReadDataInputStream extends Thread {
         }
     }
 
-    public byte[] getData(){
+    public byte[] getData(boolean bDeleteData){
         if(m_byteData == null){
             return null;
         }
@@ -127,8 +127,10 @@ public class ReadDataInputStream extends Thread {
                 return null;
             }
             byteData = Arrays.copyOf(m_byteData,m_shDataLenght);
-            m_shDataLenght = 0;
-            m_notFull.signal();
+            if(bDeleteData){
+                m_shDataLenght = 0;
+                m_notFull.signal();
+            }
             return byteData;
 
         } catch (NegativeArraySizeException ex){
