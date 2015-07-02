@@ -133,7 +133,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected TcpIpMsg getMsgSent(){
         TcpIpMsg tim = null;
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
+        for (Iterator<TcpIpMsg> iterator = m_clqim.iterator(); iterator.hasNext();) {
             TcpIpMsg tim_temp = iterator.next();
             if (tim_temp != null) {
                 if(tim_temp.getMsgSent()) {
@@ -148,12 +148,11 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected TcpIpMsg getMsgToSend(){
         boolean bNoMsgSent = true;
 
-        if(m_vtim == null || m_vtim.isEmpty()) {
+        if(m_clqim == null || m_clqim.isEmpty()) {
             return null;
         }
 
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-            TcpIpMsg tim = iterator.next();
+        for (TcpIpMsg tim : m_clqim) {
             if (tim != null && tim.getMsgSent()) {
                 bNoMsgSent = false;
             }
@@ -161,13 +160,11 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         TcpIpMsg tim = null;
 
         if(bNoMsgSent) {
-            tim = m_vtim.firstElement();
-            if (tim != null && !tim.getMsgSent()) {
-                int iIndex = m_vtim.lastIndexOf(tim);
-                if (iIndex != -1) {
-                    tim.setMsgTimeMSNow();
-                    tim.setMsgAsSent(true);
-                    m_vtim.setElementAt(tim, iIndex);
+            tim = m_clqim.peek();
+            for (TcpIpMsg tim_temp : m_clqim) {
+                if (tim != null && tim_temp != null && tim.getTID() == tim_temp.getTID() && tim.getUID() == tim_temp.getUID()) {
+                    tim_temp.setMsgTimeMSNow();
+                    tim_temp.setMsgAsSent(true);
                 }
             }
         }
@@ -177,7 +174,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected TcpIpMsg removeMsg(short shTID, short shUID) {
         TcpIpMsg timRemoved = null;
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext(); ) {
+        for (Iterator<TcpIpMsg> iterator = m_clqim.iterator(); iterator.hasNext(); ) {
             TcpIpMsg tim = iterator.next();
             if (tim != null && tim.getTID() == shTID && tim.getUID() == shUID) {
                 timRemoved = new TcpIpMsg(tim);
@@ -188,21 +185,19 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     protected void setAllMsgAsUnsent(){
-        if(m_vtim != null) {
-            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-                TcpIpMsg tim = iterator.next();
+        if(m_clqim != null) {
+            for (TcpIpMsg tim : m_clqim) {
                 if (tim != null) {
                     tim.setMsgTimeMSNow();
                     tim.setMsgAsSent(false);
-                 }
+                }
             }
         }
     }
 
     protected void checkTimeoutAndSetAllMsgAsUnsent(){
-        if(m_vtim != null && m_context != null) {
-            for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-                TcpIpMsg tim = iterator.next();
+        if(m_clqim != null && m_context != null) {
+            for (TcpIpMsg tim : m_clqim) {
                 if (tim != null) {
                     if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
                         tim.setMsgTimeMSNow();
