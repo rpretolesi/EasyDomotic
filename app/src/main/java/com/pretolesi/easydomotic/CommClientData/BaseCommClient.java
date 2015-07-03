@@ -87,7 +87,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected DataOutputStream m_dataOutputStream = null;
     protected DataInputStream m_dataInputStream = null;
 
-    protected int m_iProgressCounter = 0;
+    private int m_iProgressCounter = 0;
 
     protected boolean m_bRestartConnection = false;
     private int m_iCommNrOfError;
@@ -212,15 +212,43 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     // Error
-    protected boolean getErrorAndCheck(){finire qui
+    protected boolean canErrorFireAndIncCount(){
         if(m_ticd == null){
             return false;
         }
         m_iCommNrOfError = m_iCommNrOfError + 1;
         if(m_iCommNrOfError <= m_ticd.getCommNrMaxOfErr()){
-            return false
+            return false;
         }
         return true;
+    }
+
+    protected boolean canErrorFire(){
+        if(m_ticd == null){
+            return false;
+        }
+        if(m_iCommNrOfError <= m_ticd.getCommNrMaxOfErr()){
+            return false;
+        }
+        return true;
+    }
+
+    protected void resetErrorCount(){
+        m_iCommNrOfError = 0;
+    }
+
+    // Progress
+    protected void setOnLineProgressStatusBar(){
+        m_iProgressCounter = m_iProgressCounter + 1;
+        if(m_iProgressCounter > 16) {
+            m_iProgressCounter = 1;
+        }
+        String strProgress = "";
+        for(int index = 0; index < m_iProgressCounter; index++){
+            strProgress = strProgress + "-";
+        }
+        // Callbacks on UI
+        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, strProgress ));
     }
 
     protected boolean startConnection() { return false; }
@@ -232,11 +260,12 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                 TcpIpMsg tim = getMsgToSend();
                 if(tim != null){
                     m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
+                    setOnLineProgressStatusBar();
                 }
                 return true;
 
-            } catch (EmptyStackException ex) {
-                return true;
+//            } catch (EmptyStackException ex) {
+//                return true;
             } catch (Exception ex) {
                 // Callbacks on UI
                 publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));

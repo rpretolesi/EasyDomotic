@@ -108,9 +108,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             m_dataOutputStream = new DataOutputStream(m_btSocket.getOutputStream());
             m_dataInputStream = new DataInputStream(m_btSocket.getInputStream());
             m_bDataInputStreamReady = false;
-            m_iNrOfError = 0;
-
-            m_iProgressCounter = 0;
+            resetErrorCount();
 
             // Start Read
             m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
@@ -143,22 +141,11 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_btSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_btSocket.isConnected()){
-            m_iProgressCounter = m_iProgressCounter + 1;
-            if(m_iProgressCounter > 16) {
-                m_iProgressCounter = 1;
-            }
-            String strProgress = "";
-            for(int index = 0; index < m_iProgressCounter; index++){
-                strProgress = strProgress + "-";
-            }
-            // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, strProgress ));
             return true;
         }
 
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
-        m_iProgressCounter = 0;
         return false;
     }
 
@@ -226,7 +213,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
                 }
 
                 // Svuoto il buffer di ricezione
-                m_iNrOfError = 0;
+                setOnLineProgressStatusBar();
+                resetErrorCount();
                 m_rdis.getData(true);
 
                 // Tutto Ok, rimuovo l'elemento
@@ -259,43 +247,39 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
             } catch (ModbusPDULengthOutOfRangeException ex) {
                 // Callbacks on UI
-                m_iNrOfError = m_iNrOfError + 1;
-                if(m_iNrOfError >= 3) {
+                if(canErrorFireAndIncCount()) {
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusCRCException ex) {
                 // Callbacks on UI
-                m_iNrOfError = m_iNrOfError + 1;
-                if(m_iNrOfError >= 3) {
+                 if(canErrorFireAndIncCount()) {
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusUnitIdOutOfRangeException ex) {
                 // Callbacks on UI
-                m_iNrOfError = m_iNrOfError + 1;
-                if(m_iNrOfError >= 3) {
+                if(canErrorFireAndIncCount()) {
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusByteCountOutOfRangeException ex) {
                 // Callbacks on UI
-                m_iNrOfError = m_iNrOfError + 1;
-                if(m_iNrOfError >= 3) {
+                if(canErrorFireAndIncCount()) {
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (Exception ex) {
                 // Callbacks on UI
-                // Error high, signal immediately
-                m_iNrOfError = 3;
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                if(canErrorFireAndIncCount()) {
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                }
             }
         }
 
         // Se arrivo qua' c'e' stato un errore. Ritento per xx volte...
-        if(m_iNrOfError < 3){
+        if(!canErrorFire()){
             return true;
         }
 
         // Svuoto il buffer di ricezione
-        m_iNrOfError = 0;
+        resetErrorCount();
         m_rdis.getData(true);
         return false;
     }

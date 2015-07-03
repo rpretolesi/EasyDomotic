@@ -57,7 +57,6 @@ public class TCPIPClient extends BaseCommClient {
                     m_clientSocket.connect(m_socketAddress);
                     m_dataOutputStream = new DataOutputStream(m_clientSocket.getOutputStream());
                     m_dataInputStream = new DataInputStream(m_clientSocket.getInputStream());
-                    m_iProgressCounter = 0;
 
                     // Restore the operations not completed
                     setAllMsgAsUnsent();
@@ -97,22 +96,11 @@ public class TCPIPClient extends BaseCommClient {
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
-            m_iProgressCounter = m_iProgressCounter + 1;
-            if(m_iProgressCounter > 16) {
-                m_iProgressCounter = 1;
-            }
-            String strProgress = "";
-            for(int index = 0; index < m_iProgressCounter; index++){
-                strProgress = strProgress + "-";
-            }
-           // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, strProgress ));
             return true;
         }
 
         // Callbacks on UI
         publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, ""));
-        m_iProgressCounter = 0;
         return false;
     }
 
@@ -151,6 +139,8 @@ public class TCPIPClient extends BaseCommClient {
                             try {
                                 ModbusPDU mpdu = Modbus.getPDU(m_context, m_bytePDU, shLength, false);
                                 if (mpdu != null) {
+
+                                    setOnLineProgressStatusBar();
 
                                     // Tutto Ok, rimuovo l'elemento
                                     TcpIpMsg timRemoved = removeMsg((short) mmbap.getTID(), mpdu.getUID());
