@@ -50,8 +50,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     }
 
     // Cancellare
-    private TcpIpMsg timRemoved_temp;
-    private byte[] bytePDU_temp;
+    private TcpIpMsg timRemoved_temp;// Debug
+    private byte[] bytePDU_temp;// Debug
 
     @Override
     protected boolean startConnection() {
@@ -208,12 +208,16 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         if((m_ticd.getProtocol() == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL)) {
             try {
                 byte[] bytePDU = m_rdis.getData(false);
-                bytePDU_temp = bytePDU;
+                bytePDU_temp = bytePDU;// Debug
                 m_bDataInputStreamReady = false;
+
+                if(bytePDU == null){
+                    return true;
+                }
 
                 ModbusPDU mpdu = Modbus.getPDU(m_context, bytePDU, (short)bytePDU.length, true);
                 if (mpdu == null) {
-                    return false;
+                    return true;
                 }
 
                 // Controllo l'indirizzo
@@ -256,24 +260,37 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
             } catch (ModbusPDULengthOutOfRangeException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                m_iNrOfError = m_iNrOfError + 1;
+                if(m_iNrOfError >= 3) {
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                }
             } catch (ModbusCRCException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                m_iNrOfError = m_iNrOfError + 1;
+                if(m_iNrOfError >= 3) {
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                }
             } catch (ModbusUnitIdOutOfRangeException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                m_iNrOfError = m_iNrOfError + 1;
+                if(m_iNrOfError >= 3) {
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                }
             } catch (ModbusByteCountOutOfRangeException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                m_iNrOfError = m_iNrOfError + 1;
+                if(m_iNrOfError >= 3) {
+                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                }
             } catch (Exception ex) {
                 // Callbacks on UI
+                // Error high, signal immediately
+                m_iNrOfError = 3;
                 publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
             }
         }
 
         // Se arrivo qua' c'e' stato un errore. Ritento per xx volte...
-        m_iNrOfError = m_iNrOfError + 1;
         if(m_iNrOfError < 3){
             return true;
         }

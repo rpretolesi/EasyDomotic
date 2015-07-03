@@ -22,4 +22,7 @@ Inserire anche lo stato del segnale nel bluetooth.
 Resettare il tempo di timeout solo quando la connessione viene stabilita.
 Mettere il messaggio di errore come textview aggiuntivo sotto al campo in errore.
 Verificare se Status.TIMEOUT risulti inutile in quanto c'e' gia' la descrizione.
-Verificare perche' da' OutOfLenght prima di CRC error(dovrebbe, in teoria, dare prima il CRC error!
+FATTO-Verificare perche' da' OutOfLenght prima di CRC error(dovrebbe, in teoria, dare prima il CRC error!
+Mettere la stessa List messa nei messaggi bluetooth, nelle altre liste.
+Fare modifica errori su tcp come su bluetooth.
+Fare avanzare la linea solo su invio/ricezione completa frame

@@ -114,12 +114,13 @@ public class ReadDataInputStream extends Thread {
     }
 
     public byte[] getData(boolean bDeleteData){
+        // Lock
+        m_Lock.lock();
+
         if(m_byteData == null){
             return null;
         }
 
-        // Lock
-        m_Lock.lock();
         byte[] byteData = null;
 
         try{
