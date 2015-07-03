@@ -38,6 +38,10 @@ public class BaseValueCommClientData implements Parcelable {
     public static int CommReceiveWaitDataMaxValue = 60000;
     public static String CommReceiveWaitDataDefaultValue = "100";
 
+    public static int CommNrMaxOfErrMinValue = 0;
+    public static int CommNrMaxOfErrMaxValue = 9;
+    public static String CommNrMaxOfErrDefaultValue = "3";
+
     public static int ProtocolMinValue = 0;
     public static int ProtocolMaxValue = 3;
     public static int ProtocolDefaulValue = -1;
@@ -60,6 +64,7 @@ public class BaseValueCommClientData implements Parcelable {
     private int m_iTimeout;
     private int m_iCommSendDelayData;
     private int m_iCommReceiveWaitData;
+    private int m_iCommNrMaxOfErr;
     private long m_lProtocolID;
     private int m_iHead;
     private int m_iTail;
@@ -75,12 +80,13 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTimeout = 0;
         this.m_iCommSendDelayData = 0;
         this.m_iCommReceiveWaitData = 0;
+        this.m_iCommNrMaxOfErr = 0;
         this.m_lProtocolID = -1;
         this.m_iHead = 0;
         this.m_iTail = 0;
     }
 
-    public BaseValueCommClientData(long lTransProtocolID, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, long lProtocolID, int iHead, int iTail) {
+    public BaseValueCommClientData(long lTransProtocolID, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lProtocolID, int iHead, int iTail) {
         this.m_lTransProtocolID = lTransProtocolID;
         this.m_ID = id;
         this.m_strName = strName;
@@ -91,6 +97,7 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTimeout = iTimeout;
         this.m_iCommSendDelayData = iCommSendDelayData;
         this.m_iCommReceiveWaitData = iCommReceiveWaitData;
+        this.m_iCommNrMaxOfErr = iCommNrMaxOfErr;
         this.m_lProtocolID = lProtocolID;
         this.m_iHead = iHead;
         this.m_iTail = iTail;
@@ -125,6 +132,8 @@ public class BaseValueCommClientData implements Parcelable {
     public void setCommSendDelayData(int iCommSendDelayData) { this.m_iCommSendDelayData = iCommSendDelayData; }
 
     public void setCommReceiveWaitData(int iCommReceiveWaitData) { this.m_iCommReceiveWaitData = iCommReceiveWaitData; }
+
+    public void setCommNrMaxOfErr(int iCommNrMaxOfErr) { this.m_iCommNrMaxOfErr = iCommNrMaxOfErr; }
 
     public void setProtocol(Protocol p) {
         if (p == Protocol.MODBUS_ON_TCP_IP) {
@@ -177,6 +186,8 @@ public class BaseValueCommClientData implements Parcelable {
 
     public int getCommReceiveWaitData() { return m_iCommReceiveWaitData; }
 
+    public int getCommNrMaxOfErr() { return m_iCommNrMaxOfErr; }
+
     public Protocol getProtocol() {
         if (m_lProtocolID == Protocol.MODBUS_ON_TCP_IP.getID()) {
             return Protocol.MODBUS_ON_TCP_IP;
@@ -206,6 +217,7 @@ public class BaseValueCommClientData implements Parcelable {
         m_iTimeout = in.readInt();
         m_iCommSendDelayData = in.readInt();
         m_iCommReceiveWaitData = in.readInt();
+        m_iCommNrMaxOfErr = in.readInt();
         m_lProtocolID = in.readLong();
         m_iHead = in.readInt();
         m_iTail = in.readInt();
@@ -228,6 +240,7 @@ public class BaseValueCommClientData implements Parcelable {
         dest.writeInt(m_iTimeout);
         dest.writeInt(m_iCommSendDelayData);
         dest.writeInt(m_iCommReceiveWaitData);
+        dest.writeInt(m_iCommNrMaxOfErr);
         dest.writeLong(m_lProtocolID);
         dest.writeInt(m_iHead);
         dest.writeInt(m_iTail);

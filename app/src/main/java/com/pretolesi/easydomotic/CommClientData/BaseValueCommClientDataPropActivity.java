@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -50,6 +49,8 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     protected NumericEditText m_id_stica_et_comm_send_data_delay;
     protected TextView m_id_stica_tv_comm_receive_wait_data;
     protected NumericEditText m_id_stica_et_comm_receive_wait_data;
+    protected TextView m_id_stica_tv_comm_nr_max_err;
+    protected NumericEditText m_id_stica_et_comm_nr_max_err;
     protected Spinner m_id_stica_spn_protocol;
     protected TextView m_id_stica_tv_protocol_field_1;
     protected NumericEditText m_id_stica_et_protocol_field_1;
@@ -86,6 +87,10 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_comm_receive_wait_data = (NumericEditText)findViewById(R.id.id_stica_et_comm_receive_wait_data);
         m_id_stica_et_comm_receive_wait_data.setInputLimit(BaseValueCommClientData.CommReceiveWaitDataMinValue, BaseValueCommClientData.CommReceiveWaitDataMaxValue);
         m_id_stica_et_comm_receive_wait_data.setText(BaseValueCommClientData.CommReceiveWaitDataDefaultValue);
+        m_id_stica_tv_comm_nr_max_err = (TextView)findViewById(R.id.id_stica_tv_comm_nr_max_err);
+        m_id_stica_et_comm_nr_max_err = (NumericEditText)findViewById(R.id.id_stica_et_comm_nr_max_err);
+        m_id_stica_et_comm_nr_max_err.setInputLimit(BaseValueCommClientData.CommNrMaxOfErrMinValue, BaseValueCommClientData.CommNrMaxOfErrMaxValue);
+        m_id_stica_et_comm_nr_max_err.setText(BaseValueCommClientData.CommNrMaxOfErrDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
         m_id_stica_spn_protocol.setSelection(BaseValueCommClientData.ProtocolDefaulValue);
         m_id_stica_tv_protocol_field_1 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_1);
@@ -349,6 +354,9 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         if(m_id_stica_et_comm_receive_wait_data != null) {
             m_id_stica_et_comm_receive_wait_data.setText(Integer.toString(m_ticd.getCommReceiveWaitData()));
         }
+        if(m_id_stica_et_comm_nr_max_err != null) {
+            m_id_stica_et_comm_nr_max_err.setText(Integer.toString(m_ticd.getCommNrMaxOfErr()));
+        }
         if(m_id_stica_spn_protocol != null) {
             BaseValueCommClientData.Protocol p = m_ticd.getProtocol();
             if(p != null){
@@ -422,6 +430,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
         m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
         m_ticd.setCommReceiveWaitData(Integer.parseInt(m_id_stica_et_comm_receive_wait_data.getText().toString()));
+        m_ticd.setCommNrMaxOfErr(Integer.parseInt(m_id_stica_et_comm_nr_max_err.getText().toString()));
         if(m_id_stica_spn_protocol != null && m_id_stica_spn_protocol.getSelectedItem() instanceof BaseValueCommClientData.Protocol){
             m_ticd.setProtocol((BaseValueCommClientData.Protocol)m_id_stica_spn_protocol.getSelectedItem());
         }

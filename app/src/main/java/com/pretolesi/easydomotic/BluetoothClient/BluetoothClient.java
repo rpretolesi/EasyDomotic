@@ -39,7 +39,6 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     private ReadDataInputStream m_rdis;
     protected boolean m_bDataInputStreamReady;
     protected long m_lDataInputStreamReadyTime;
-    private int m_iNrOfError;
 
     private BluetoothAdapter m_BluetoothAdapter;
     private BluetoothDevice m_btDevice;

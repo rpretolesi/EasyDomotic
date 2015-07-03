@@ -90,6 +90,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected int m_iProgressCounter = 0;
 
     protected boolean m_bRestartConnection = false;
+    private int m_iCommNrOfError;
 
     public BaseCommClient (Context context){
         m_vTcpIpClientStatusListener = new Vector<>();
@@ -208,6 +209,18 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                 }
             }
         }
+    }
+
+    // Error
+    protected boolean getErrorAndCheck(){finire qui
+        if(m_ticd == null){
+            return false;
+        }
+        m_iCommNrOfError = m_iCommNrOfError + 1;
+        if(m_iCommNrOfError <= m_ticd.getCommNrMaxOfErr()){
+            return false
+        }
+        return true;
     }
 
     protected boolean startConnection() { return false; }
