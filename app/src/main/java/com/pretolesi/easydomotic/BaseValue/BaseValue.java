@@ -353,4 +353,23 @@ public class BaseValue extends TextView implements
     protected void OnWriteInputField(String strValue) {
 
     }
+
+    // Helper
+    public String centerString(String strToCenter, int iMinNrOfCharToShow) {
+        if(strToCenter == null || strToCenter.isEmpty()){
+            return "";
+        }
+
+        if(iMinNrOfCharToShow < strToCenter.length()){
+            iMinNrOfCharToShow = strToCenter.length();
+        }
+
+        int padSize = iMinNrOfCharToShow - strToCenter.length();
+        int padStart = strToCenter.length() + padSize / 2;
+
+        strToCenter = String.format("%" + padStart + "s", strToCenter);
+        strToCenter = String.format("%-" + iMinNrOfCharToShow  + "s", strToCenter);
+
+        return strToCenter;
+    }
 }

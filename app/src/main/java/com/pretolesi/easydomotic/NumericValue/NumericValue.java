@@ -44,6 +44,7 @@ public class NumericValue extends BaseValue implements
             setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
             setEditMode(bEditMode);
             setVertical(bvd.getVertical());
+            setTextAlignment(TEXT_ALIGNMENT_CENTER);
         }
     }
 
@@ -157,16 +158,19 @@ public class NumericValue extends BaseValue implements
                             if(ticrs.getValue() instanceof Short){
                                 Short sh = (Short)ticrs.getValue();
                                 strValue = String.format("%d %s", sh, m_bvd.getValueUM());
+                                strValue = centerString(strValue, m_bvd.getValueMinNrCharToShow());
                                 this.setError(null);
                             }
                             if(ticrs.getValue() instanceof Integer){
                                 Integer i = (Integer)ticrs.getValue();
                                 strValue = String.format("%d %s", i, m_bvd.getValueUM());
+                                strValue = centerString(strValue, m_bvd.getValueMinNrCharToShow());
                                 this.setError(null);
                             }
                             if(ticrs.getValue() instanceof Long){
                                 Long l = (Long)ticrs.getValue();
                                 strValue = String.format("%d %s", l, m_bvd.getValueUM());
+                                strValue = centerString(strValue, m_bvd.getValueMinNrCharToShow());
                                 this.setError(null);
                             }
 
@@ -177,7 +181,7 @@ public class NumericValue extends BaseValue implements
                                 } else {
                                     strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", f, m_bvd.getValueUM());
                                 }
-
+                                strValue = centerString(strValue, m_bvd.getValueMinNrCharToShow());
                                 this.setError(null);
                             }
 
@@ -188,6 +192,7 @@ public class NumericValue extends BaseValue implements
                                 } else {
                                     strValue = String.format("%." + m_bvd.getValueNrOfDecimal() + "f %s", dbl, m_bvd.getValueUM());
                                 }
+                                strValue = centerString(strValue, m_bvd.getValueMinNrCharToShow());
                                 this.setError(null);
                             }
                         } else {
@@ -202,7 +207,6 @@ public class NumericValue extends BaseValue implements
 //                        strValue = getErrorValue(ticrs.getErrorCode());
 //                        this.setError("");
                     }
-
                     setText(strValue);
                 }
             }
