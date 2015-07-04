@@ -26,3 +26,6 @@ FATTO-Verificare perche' da' OutOfLenght prima di CRC error(dovrebbe, in teoria,
 Mettere la stessa List messa nei messaggi bluetooth, nelle altre liste.
 Fare modifica errori su tcp come su bluetooth.
 Fare avanzare la linea solo su invio/ricezione completa frame
+Aggiungere il write only nel LightSwitch
+Togliere la variabile EnableProtocol
+Quando nel sensor uso la simulazione, vedere se si puo' migliorare la visualizzazione
