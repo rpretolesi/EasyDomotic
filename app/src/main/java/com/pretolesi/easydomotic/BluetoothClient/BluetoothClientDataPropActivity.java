@@ -94,7 +94,6 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
 
         if (m_ticd == null) {
             m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID());
-            m_ticd.setEnable(true);
         }
 
         return super.setBaseData(iDialogOriginID);

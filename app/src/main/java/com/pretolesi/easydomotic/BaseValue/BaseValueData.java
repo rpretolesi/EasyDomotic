@@ -99,6 +99,7 @@ public class BaseValueData implements Parcelable {
     private String m_strValueUM;
     private int m_iValueUpdateMillis;
     private boolean m_bValueReadOnly;
+    private boolean m_bValueWriteOnly;
 
     // Switch
     private int m_iWriteValueOFF;
@@ -146,6 +147,7 @@ public class BaseValueData implements Parcelable {
         m_iWriteValueONOFF = 7;
         m_iWriteValueON = 4;
         m_bValueReadOnly = false;
+        m_bValueWriteOnly = false;
 
         // Sensor
         m_lSensorTypeID = -1;
@@ -176,13 +178,14 @@ public class BaseValueData implements Parcelable {
         this.m_iProtTcpIpClientValueDataType = iProtTcpIpClientValueDataType;
     }
 
-    public void setFormatValue(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, int iValueUpdateMillis, boolean bValueReadOnly) {
+    public void setFormatValue(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, int iValueUpdateMillis, boolean bValueReadOnly, boolean bValueWriteOnly) {
         // Format Value
         m_iValueMinNrCharToShow = iValueMinNrCharToShow;
         m_iValueNrOfDecimal = iValueNrOfDecimal;
         m_strValueUM = strValueUM;
         m_iValueUpdateMillis = iValueUpdateMillis;
         m_bValueReadOnly = bValueReadOnly;
+        m_bValueWriteOnly = bValueWriteOnly;
     }
 
     public void setSwitchValue(int iWriteValueOFF, int iWriteValueOFFON, int iWriteValueONOFF, int iWriteValueON) {
@@ -242,7 +245,9 @@ public class BaseValueData implements Parcelable {
 
     public void setValueUpdateMillis(int iValueUpdateMillis) { this.m_iValueUpdateMillis = iValueUpdateMillis; }
 
-    public void setValueValueReadOnly(boolean bValueReadOnly) { this.m_bValueReadOnly = bValueReadOnly; }
+    public void setValueReadOnly(boolean bValueReadOnly) { this.m_bValueReadOnly = bValueReadOnly; }
+
+    public void setValueWriteOnly(boolean bValueWriteOnly) { this.m_bValueWriteOnly = bValueWriteOnly; }
 
     // Switch
     public void setWriteValueOFF(int iWriteValueOFF) { this.m_iWriteValueOFF = iWriteValueOFF; }
@@ -337,6 +342,8 @@ public class BaseValueData implements Parcelable {
 
     public boolean getValueReadOnly() { return m_bValueReadOnly; }
 
+    public boolean getValueWriteOnly() { return m_bValueWriteOnly; }
+
     // Switch
     public int getWriteValueOFF() { return m_iWriteValueOFF; }
 
@@ -397,6 +404,7 @@ public class BaseValueData implements Parcelable {
         m_strValueUM = in.readString();
         m_iValueUpdateMillis = in.readInt();
         m_bValueReadOnly = in.readByte() != 0;
+        m_bValueWriteOnly = in.readByte() != 0;
 
         m_iWriteValueOFF = in.readInt();
         m_iWriteValueOFFON = in.readInt();
@@ -440,6 +448,7 @@ public class BaseValueData implements Parcelable {
         dest.writeString(m_strValueUM);
         dest.writeInt(m_iValueUpdateMillis);
         dest.writeByte((byte) (m_bValueReadOnly ? 1 : 0));
+        dest.writeByte((byte) (m_bValueWriteOnly ? 1 : 0));
 
         dest.writeInt(m_iWriteValueOFF);
         dest.writeInt(m_iWriteValueOFFON);

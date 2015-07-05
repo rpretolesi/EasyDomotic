@@ -64,7 +64,6 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
 
         if (m_ticd == null) {
             m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.TCP_IP.getID());
-            m_ticd.setEnable(true);
         }
 
         return super.setBaseData(iDialogOriginID);

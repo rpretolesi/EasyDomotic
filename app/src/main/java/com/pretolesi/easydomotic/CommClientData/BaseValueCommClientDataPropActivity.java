@@ -364,7 +364,6 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 {
                     Object obj = m_id_stica_spn_protocol.getItemAtPosition(position);
                     if (obj != null && obj instanceof BaseValueCommClientData.Protocol && obj == p){
-                        m_id_stica_spn_protocol.setEnabled(m_ticd.getEnable());
                         m_id_stica_spn_protocol.setSelection(position);
                         break;
                     }

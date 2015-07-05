@@ -57,7 +57,6 @@ public class BaseValueCommClientData implements Parcelable {
     private long m_ID;
     private long m_lTransProtocolID;
     private boolean m_bSaved;
-    private boolean m_bEnable;
     private String m_strName;
     private String m_strAddress;
     private int m_iPort;
@@ -73,7 +72,6 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_lTransProtocolID = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
-        this.m_bEnable = false;
         this.m_strName = null;
         this.m_strAddress = null;
         this.m_iPort = 0;
@@ -86,12 +84,11 @@ public class BaseValueCommClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public BaseValueCommClientData(long lTransProtocolID, long id, boolean bSaved, boolean bEnable, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lProtocolID, int iHead, int iTail) {
+    public BaseValueCommClientData(long lTransProtocolID, long id, boolean bSaved, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lProtocolID, int iHead, int iTail) {
         this.m_lTransProtocolID = lTransProtocolID;
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
-        this.m_bEnable = bEnable;
         this.m_strAddress = strAddress;
         this.m_iPort = iPort;
         this.m_iTimeout = iTimeout;
@@ -110,8 +107,6 @@ public class BaseValueCommClientData implements Parcelable {
     }
 
     public void setSaved(boolean bSaved) { this.m_bSaved = bSaved; }
-
-    public void setEnable(boolean bEnable) { this.m_bEnable = bEnable; }
 
     public void setName(String strName) {
         this.m_strName = strName;
@@ -162,10 +157,6 @@ public class BaseValueCommClientData implements Parcelable {
 
     public boolean getSaved() { return m_bSaved; }
 
-    public boolean getEnable() {
-        return m_bEnable;
-    }
-
     public String getName() {
         return m_strName;
     }
@@ -210,7 +201,6 @@ public class BaseValueCommClientData implements Parcelable {
         m_lTransProtocolID = in.readLong();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
-        m_bEnable = in.readByte() != 0;
         m_strName = in.readString();
         m_strAddress = in.readString();
         m_iPort = in.readInt();
@@ -233,7 +223,6 @@ public class BaseValueCommClientData implements Parcelable {
         dest.writeLong(m_lTransProtocolID);
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
-        dest.writeByte((byte) (m_bEnable ? 1 : 0));
         dest.writeString(m_strName);
         dest.writeString(m_strAddress);
         dest.writeInt(m_iPort);

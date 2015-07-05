@@ -173,6 +173,7 @@
     <string name="text_tv_nr_of_decimal">Nr of decimal</string>
     <string name="text_tv_um">Unit of measure</string>
     <string name="text_tv_read_only">Read only</string>
+    <string name="text_tv_write_only">Write only</string>
     <string name="text_tv_min_nr_char_to_show">Min nr of char to show</string>
     <string name="text_tv_update_millis">Update millis</string>
     <string name="text_tv_sensor_type">Sensor type</string>

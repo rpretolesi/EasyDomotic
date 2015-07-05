@@ -204,7 +204,7 @@ public class LightSwitch extends Switch implements
     @Override
     public void onClick(View v) {
         m_iTIDReadClicked = true;
-        writeSwitchValue(isChecked());
+        writeSwitchValue(((Switch) v).isChecked());
     }
 
     private void writeSwitchValue(boolean bValue){
@@ -319,7 +319,9 @@ public class LightSwitch extends Switch implements
     };
 
     protected void onTimer() {
-        readValue();
+        if(m_bvd != null && !m_bvd.getValueWriteOnly()) {
+            readValue();
+        }
      }
     /*
      * End
@@ -364,9 +366,11 @@ public class LightSwitch extends Switch implements
             this.mDetector.onTouchEvent(event);
             return true;
         } else {
-//            if(action == MotionEvent.ACTION_DOWN){
-//                m_iTIDReadClicked = true;
-//            }
+            if(m_bvd != null && m_bvd.getValueReadOnly()) {
+              if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP ){
+                   return true;
+                }
+            }
             // Disable Sliding
             if(action == MotionEvent.ACTION_MOVE){
                 return true;

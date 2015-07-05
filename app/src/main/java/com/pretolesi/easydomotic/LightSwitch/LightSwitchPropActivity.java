@@ -29,6 +29,7 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
 
     private NumericEditText m_id_et_update_millis;
     private CheckBox m_id_cb_read_only;
+    private CheckBox m_id_cb_write_only;
 
     private NumericEditText m_id_et_write_value_off;
     private NumericEditText m_id_et_write_value_off_on;
@@ -47,6 +48,7 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
         m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
         m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
+        m_id_cb_write_only = (CheckBox)findViewById(R.id.id_cb_write_only);
 
         m_id_et_write_value_off = (NumericEditText)findViewById(R.id.id_et_write_value_off);
         m_id_et_write_value_off.setText(BaseValueData.WriteValueOFFDefault);
@@ -58,6 +60,25 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         m_id_et_write_value_on_off.setVisibility(View.INVISIBLE);
         m_id_et_write_value_on = (NumericEditText)findViewById(R.id.id_et_write_value_on);
         m_id_et_write_value_on.setText(BaseValueData.WriteValueONDefault);
+
+        m_id_cb_read_only.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((CheckBox) v).isChecked()) {
+                    m_id_cb_write_only.setChecked(false);
+                }
+            }
+        });
+
+        m_id_cb_write_only.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(((CheckBox) v).isChecked()){
+                    m_id_cb_read_only.setChecked(false);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -77,6 +98,9 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
         }
         if (m_id_cb_read_only != null) {
             m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+        }
+        if (m_id_cb_write_only != null) {
+            m_id_cb_write_only.setChecked(m_bvd.getValueWriteOnly());
         }
 
         if (m_id_et_write_value_off != null) {
@@ -108,9 +132,11 @@ public class LightSwitchPropActivity extends BaseValuePropActivity {
                 m_bvd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
             }
             if (m_id_cb_read_only != null) {
-                m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+                m_bvd.setValueReadOnly(m_id_cb_read_only.isChecked());
             }
-
+            if (m_id_cb_write_only != null) {
+                m_bvd.setValueWriteOnly(m_id_cb_write_only.isChecked());
+            }
             if (m_id_et_write_value_off != null) {
                 m_bvd.setWriteValueOFF(Integer.parseInt(m_id_et_write_value_off.getText().toString()));
             }

@@ -6,6 +6,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
  *
  */
 public class TcpIpMsg {
+    aggiungere qui la priorita'.'
     private long m_lTID;
     private long m_lUID;
     private DataType m_dtDataType;

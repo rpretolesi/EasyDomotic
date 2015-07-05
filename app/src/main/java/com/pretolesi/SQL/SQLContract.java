@@ -310,6 +310,7 @@ public class SQLContract
         public static final String COLUMN_NAME_VALUE_UM = "ValueUM";
         public static final String COLUMN_NAME_VALUE_UPDATE_MILLIS = "ValueUpdateMillis";
         public static final String COLUMN_NAME_VALUE_READ_ONLY = "ValueReadOnly";
+        public static final String COLUMN_NAME_VALUE_WRITE_ONLY = "ValueWriteOnly";
 
         public static final String COLUMN_NAME_WRITE_VALUE_OFF = "WriteValueOFF";
         public static final String COLUMN_NAME_WRITE_VALUE_OFF_ON = "WriteValueOFFON";
@@ -350,6 +351,7 @@ public class SQLContract
                         COLUMN_NAME_VALUE_UM + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_VALUE_UPDATE_MILLIS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_VALUE_READ_ONLY + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_VALUE_WRITE_ONLY + INT_TYPE + COMMA_SEP +
 
                         COLUMN_NAME_WRITE_VALUE_OFF + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_WRITE_VALUE_OFF_ON + INT_TYPE + COMMA_SEP +
@@ -398,6 +400,7 @@ public class SQLContract
                     values.put(COLUMN_NAME_VALUE_UM, bve.getValueUM());
                     values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, bve.getValueUpdateMillis());
                     values.put(COLUMN_NAME_VALUE_READ_ONLY, Integer.valueOf(bve.getValueReadOnly() ? 1 : 0));
+                    values.put(COLUMN_NAME_VALUE_WRITE_ONLY, Integer.valueOf(bve.getValueWriteOnly() ? 1 : 0));
 
                     values.put(COLUMN_NAME_WRITE_VALUE_OFF, bve.getWriteValueOFF());
                     values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, bve.getWriteValueOFFON());
@@ -463,6 +466,7 @@ public class SQLContract
                             COLUMN_NAME_VALUE_UM,
                             COLUMN_NAME_VALUE_UPDATE_MILLIS,
                             COLUMN_NAME_VALUE_READ_ONLY,
+                            COLUMN_NAME_VALUE_WRITE_ONLY,
 
                             COLUMN_NAME_WRITE_VALUE_OFF,
                             COLUMN_NAME_WRITE_VALUE_OFF_ON,
@@ -502,6 +506,7 @@ public class SQLContract
                             bve.getValueUM(),
                             bve.getValueUpdateMillis(),
                             Integer.valueOf(bve.getValueReadOnly() ? 1 : 0),
+                            Integer.valueOf(bve.getValueWriteOnly() ? 1 : 0),
 
                             bve.getWriteValueOFF(),
                             bve.getWriteValueOFFON(),
@@ -564,6 +569,7 @@ public class SQLContract
                                     COLUMN_NAME_VALUE_UM,
                                     COLUMN_NAME_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_VALUE_READ_ONLY,
+                                    COLUMN_NAME_VALUE_WRITE_ONLY,
 
                                     COLUMN_NAME_WRITE_VALUE_OFF,
                                     COLUMN_NAME_WRITE_VALUE_OFF_ON,
@@ -643,6 +649,7 @@ public class SQLContract
                                     COLUMN_NAME_VALUE_UM,
                                     COLUMN_NAME_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_VALUE_READ_ONLY,
+                                    COLUMN_NAME_VALUE_WRITE_ONLY,
 
                                     COLUMN_NAME_WRITE_VALUE_OFF,
                                     COLUMN_NAME_WRITE_VALUE_OFF_ON,
@@ -722,6 +729,7 @@ public class SQLContract
                                     COLUMN_NAME_VALUE_UM,
                                     COLUMN_NAME_VALUE_UPDATE_MILLIS,
                                     COLUMN_NAME_VALUE_READ_ONLY,
+                                    COLUMN_NAME_VALUE_WRITE_ONLY,
 
                                     COLUMN_NAME_WRITE_VALUE_OFF,
                                     COLUMN_NAME_WRITE_VALUE_OFF_ON,
@@ -841,7 +849,8 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_NR_OF_DECIMAL)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_UPDATE_MILLIS)),
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_READ_ONLY)) == 0) ? false : true)
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_READ_ONLY)) == 0) ? false : true),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_WRITE_ONLY)) == 0) ? false : true)
                         );
 
                         bve.setSwitchValue(
@@ -878,7 +887,6 @@ public class SQLContract
     public static abstract class TcpIpClientEntry implements BaseColumns {
         public static final String TABLE_NAME = "TCPIPClient";
         public static final String COLUMN_NAME_TRANSP_PROTOCOL = "TransProtocol";
-        public static final String COLUMN_NAME_ENABLE = "Enable";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_ADDRESS = "Address";
         public static final String COLUMN_NAME_PORT = "Port";
@@ -898,7 +906,6 @@ public class SQLContract
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
                         COLUMN_NAME_TRANSP_PROTOCOL + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PORT + INT_TYPE + COMMA_SEP +
@@ -925,7 +932,6 @@ public class SQLContract
 
                     ContentValues values = new ContentValues();
                     values.put(COLUMN_NAME_TRANSP_PROTOCOL, ticd.getTranspProtocolID());
-                    values.put(COLUMN_NAME_ENABLE, Integer.valueOf(ticd.getEnable() ? 1 : 0));
                     values.put(COLUMN_NAME_NAME, ticd.getName());
                     values.put(COLUMN_NAME_ADDRESS, ticd.getAddress());
                     values.put(COLUMN_NAME_PORT, ticd.getPort());
@@ -970,7 +976,6 @@ public class SQLContract
                     String[] columns = new String[] {
                             _ID,
                             COLUMN_NAME_TRANSP_PROTOCOL,
-                            COLUMN_NAME_ENABLE,
                             COLUMN_NAME_NAME,
                             COLUMN_NAME_ADDRESS,
                             COLUMN_NAME_PORT,
@@ -989,7 +994,6 @@ public class SQLContract
                     cursor.addRow(new Object[] {
                             ticd.getID(),
                             ticd.getTranspProtocolID(),
-                            ticd.getEnable(),
                             ticd.getPort(),
                             ticd.getTimeout(),
                             ticd.getCommSendDelayData(),
@@ -1027,7 +1031,6 @@ public class SQLContract
                             {
                                     _ID,
                                     COLUMN_NAME_TRANSP_PROTOCOL,
-                                    COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
@@ -1085,7 +1088,6 @@ public class SQLContract
                             {
                                     _ID,
                                     COLUMN_NAME_TRANSP_PROTOCOL,
-                                    COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
@@ -1143,7 +1145,6 @@ public class SQLContract
                             {
                                     _ID,
                                     COLUMN_NAME_TRANSP_PROTOCOL,
-                                    COLUMN_NAME_ENABLE,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
@@ -1234,7 +1235,6 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ENABLE)) == 0) ? false : true),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_NAME)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ADDRESS)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PORT)),
