@@ -6,21 +6,22 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
  *
  */
 public class TcpIpMsg {
-    aggiungere qui la priorita'.'
     private long m_lTID;
     private long m_lUID;
     private DataType m_dtDataType;
     private byte[] m_byteMsgData;
     private boolean m_bMsgSent;
     private long m_lSentTimeMS;
+    private int m_iPriority;
 
-    public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData, DataType dt){
+    public TcpIpMsg(long lTID, long lUID, byte[] byteMsgData, DataType dt, int iPriority){
         m_lTID = lTID;
         m_lUID = lUID;
         m_dtDataType = dt;
         m_byteMsgData = byteMsgData;
         m_bMsgSent = false;
         m_lSentTimeMS = System.currentTimeMillis();
+        m_iPriority = iPriority;
     }
 
     public TcpIpMsg(TcpIpMsg tim){
@@ -31,6 +32,7 @@ public class TcpIpMsg {
             m_byteMsgData = tim.getMsgData();
             m_bMsgSent = tim.getMsgSent();
             m_lSentTimeMS = tim.getSentTimeMS();
+            m_iPriority = tim.getPriority();
         }
     }
 
@@ -56,6 +58,10 @@ public class TcpIpMsg {
         return m_lSentTimeMS;
     }
 
+    public int getPriority(){
+        return m_iPriority;
+    }
+
     public void setDataType(DataType dtDataType){
         m_dtDataType = dtDataType;
     }
@@ -63,6 +69,8 @@ public class TcpIpMsg {
     public void setMsgAsSent(boolean bMsgSent ){ m_bMsgSent = bMsgSent; }
 
     public void setMsgTimeMSNow(){ m_lSentTimeMS = System.currentTimeMillis(); }
+
+    public void setPriority(int iPriority){ m_iPriority = iPriority; }
 
     @Override
     public boolean equals(Object obj) {

@@ -154,7 +154,7 @@ public class Modbus {
             throw new ModbusValueOutOfRangeException(context.getString(R.string.ModbusValueOutOfRangeException));
         }
 
-        return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
+        return new TcpIpMsg(iTID, byteUID, bb.array(), dt, 1);
     }
 
     private static synchronized TcpIpMsg writeMultipleRegistersOnSerial(Context context, int iTID, int iUID, int iAddress, int[] iaValue, int iNrOfRegisters, DataType dt) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusValueOutOfRangeException {
@@ -214,7 +214,7 @@ public class Modbus {
         bb.put(bbCRC.get(1));
         bb.put(bbCRC.get(0));
 
-        return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
+        return new TcpIpMsg(iTID, byteUID, bb.array(), dt, 1);
     }
 
     public static synchronized TcpIpMsg readShort(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
@@ -306,7 +306,7 @@ public class Modbus {
         bb.putShort(shAddress);
         bb.putShort(shNrOfRegisters);
 
-        return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
+        return new TcpIpMsg(iTID, byteUID, bb.array(), dt, 0);
     }
 
     private static synchronized TcpIpMsg readHoldingRegistersOnSerial(Context context, int iTID, int iUID, int iStartingAddress, short shNrOfRegisters, DataType dt) throws ModbusTransIdOutOfRangeException, ModbusUnitIdOutOfRangeException, ModbusAddressOutOfRangeException,  ModbusQuantityOfRegistersOutOfRange {
@@ -348,7 +348,7 @@ public class Modbus {
         bb.put(bbCRC.get(1));
         bb.put(bbCRC.get(0));
 
-        return new TcpIpMsg(iTID, byteUID, bb.array(), dt);
+        return new TcpIpMsg(iTID, byteUID, bb.array(), dt, 0);
     }
 
     public static synchronized ModbusMBAP getMBAP(Context context, byte[] byteMBA) throws ModbusProtocolOutOfRangeException, ModbusPDULengthOutOfRangeException, ModbusMBAPLengthException {

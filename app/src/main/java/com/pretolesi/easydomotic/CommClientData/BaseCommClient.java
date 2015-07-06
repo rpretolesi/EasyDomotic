@@ -161,13 +161,18 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         TcpIpMsg tim = null;
 
         if(bNoMsgSent) {
+
             tim = m_clqim.peek();
+            verificare che per la modifica forse non e' necessario fare il loop-
+            Considerare anche la priorita'
             for (TcpIpMsg tim_temp : m_clqim) {
                 if (tim != null && tim_temp != null && tim.getTID() == tim_temp.getTID() && tim.getUID() == tim_temp.getUID()) {
                     tim_temp.setMsgTimeMSNow();
                     tim_temp.setMsgAsSent(true);
                 }
             }
+
+            //
         }
 
         return tim;
