@@ -162,6 +162,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
         if(bNoMsgSent) {
 
+
             tim = m_clqim.peek();
             verificare che per la modifica forse non e' necessario fare il loop-
             Considerare anche la priorita'
