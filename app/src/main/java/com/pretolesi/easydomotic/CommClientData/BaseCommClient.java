@@ -158,11 +158,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                 bNoMsgSent = false;
             }
         }
+
+        int iPriority = -1;
         TcpIpMsg tim = null;
 
         if(bNoMsgSent) {
+            for (TcpIpMsg tim_temp : m_clqim) {
+                if (tim_temp != null && tim_temp.getPriority() > iPriority) {
+                    iPriority = tim_temp.getPriority();
+                    tim = tim_temp;
+                    if(iPriority == 1){
+                        iPriority = 1;
+                    }
+                }
+            }
+            if(tim != null){
+                tim.setMsgTimeMSNow();
+                tim.setMsgAsSent(true);
+            }
 
-
+/*
             tim = m_clqim.peek();
             verificare che per la modifica forse non e' necessario fare il loop-
             Considerare anche la priorita'
@@ -173,7 +188,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                 }
             }
 
-            //
+*/
         }
 
         return tim;

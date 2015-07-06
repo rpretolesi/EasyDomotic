@@ -29,4 +29,4 @@ FATTO-Fare avanzare la linea solo su invio/ricezione completa frame
 FATTO-Aggiungere il write only nel LightSwitch finire...
 FATTO-Togliere la variabile EnableProtocol
 Quando nel sensor uso la simulazione, vedere se si puo' migliorare la visualizzazioneBMM00191
-Mettere le sritture in testa anziche' in coda.
+FATTO-Mettere le sritture in testa anziche' in coda.
