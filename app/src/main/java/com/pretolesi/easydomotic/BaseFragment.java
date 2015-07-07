@@ -60,6 +60,7 @@ public class BaseFragment extends Fragment implements
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<BaseValueData> m_albvd;
+    protected ArrayList<BaseValueCommClientData> m_alticd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
     protected LinearLayout m_llStatusTcpIpServer;
@@ -77,20 +78,11 @@ public class BaseFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-/*
-        // Show title and Action Bar
-        if (getArguments().getBoolean(EDIT_MODE, false)) {
-            ((BaseActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
-            ((BaseActivity) activity).restoreActionBar();
-        }
-*/
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Log.d(TAG, this.toString() + ": " + "onCreate()");
     }
 
     @Override
@@ -109,36 +101,30 @@ public class BaseFragment extends Fragment implements
             m_llStatusTcpIpServer = new LinearLayout(getActivity());
         }
 
-        // Log.d(TAG, this.toString() + ": " + "onCreateView()");
         return m_rl;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Log.d(TAG, this.toString() + ": " + "onActivityCreated()");
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        // Log.d(TAG, this.toString() + ": " + "onViewStateRestored()");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Log.d(TAG, this.toString() + ": " + "onStart()");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Start the Server
-        getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
-
-        // Log.d(TAG, this.toString() + ": " + "onResume()");
+        // Room
+        getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
     }
 
     @Override
@@ -169,10 +155,8 @@ public class BaseFragment extends Fragment implements
         CommClientHelper.stopInstance();
 
         getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
-
-        // Log.d(TAG, this.toString() + ": " + "onPause()");
+        getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
     }
 
     @Override
@@ -201,16 +185,6 @@ public class BaseFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
-
-        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
-            return new CursorLoader(getActivity()){
-                @Override
-                public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load();
-                }
-            };
-        }
 
         if(id == Loaders.ROOM_LOADER_ID){
             return new CursorLoader(getActivity()){
@@ -230,18 +204,43 @@ public class BaseFragment extends Fragment implements
             };
         }
 
+        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
+            return new CursorLoader(getActivity()){
+                @Override
+                public Cursor loadInBackground() {
+                    return SQLContract.TcpIpClientEntry.load(m_albvd);
+                }
+            };
+        }
+
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // The list should now be shown.
-        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
-            ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
 
+        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
+            ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
+            if(alrfd != null && !alrfd.isEmpty()) {
+                m_rfd = alrfd.get(0);
+
+                // Controls
+                getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
+            }
+        }
+
+        if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
+            m_albvd = SQLContract.BaseValueEntry.get(cursor);
+
+            // Controls
+            getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
+        }
+
+        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
-                CommClientHelper.startInstance(getActivity(), alticd);
+                m_alticd = SQLContract.TcpIpClientEntry.get(cursor);
+                CommClientHelper.startInstance(getActivity(), m_alticd);
 
                 // Register Listener For Tcp Ip Server
                 // Listener
@@ -254,26 +253,12 @@ public class BaseFragment extends Fragment implements
                 }
             }
 
+            // Data acquired completed.
             // Room
-            getLoaderManager().initLoader(Loaders.ROOM_LOADER_ID, null, this);
-        }
+            updateRoom();
+            // Controls
+            updateControls();
 
-        if(loader.getId() == Loaders.ROOM_LOADER_ID) {
-            ArrayList<RoomFragmentData> alrfd = SQLContract.RoomEntry.get(cursor);
-            if(alrfd != null && !alrfd.isEmpty()) {
-                m_rfd = alrfd.get(0);
-                if(m_rfd != null){
-                    updateRoom();
-
-                    // Room's elements
-                    getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
-                }
-            }
-        }
-
-        if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
-            m_albvd = SQLContract.BaseValueEntry.get(cursor);
-            update();
         }
 
     }
@@ -367,7 +352,7 @@ public class BaseFragment extends Fragment implements
     }
 
     // Helper function
-    private void update(){
+    private void updateControls(){
         // Define the switch
         if(m_rl != null && m_albvd != null){
             for(BaseValueData bvd : m_albvd){

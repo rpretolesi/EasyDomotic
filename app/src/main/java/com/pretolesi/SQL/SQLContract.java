@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -1224,6 +1225,75 @@ public class SQLContract
                             projection,                 // The columns to return
                             null,                       // The columns for the WHERE clause
                             null,                       // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                }
+
+                return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static Cursor load(List<BaseValueData> lbvd)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                Cursor cursor = null;
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null && lbvd != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    _ID,
+                                    COLUMN_NAME_TRANSP_PROTOCOL,
+                                    COLUMN_NAME_NAME,
+                                    COLUMN_NAME_ADDRESS,
+                                    COLUMN_NAME_PORT,
+                                    COLUMN_NAME_TIMEOUT,
+                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
+                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
+                                    COLUMN_NAME_COMM_NR_MAX_OF_ERR,
+                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_HEAD,
+                                    COLUMN_NAME_TAIL
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = "";
+                    String[] whereArgs = new String[lbvd.size()];
+                    int iWhereArgs = 0;
+                    for (Iterator<BaseValueData> iterator = lbvd.iterator(); iterator.hasNext();) {
+                        BaseValueData bvd = iterator.next();
+                        if(bvd == null){
+                            return null;
+                        }
+                        whereClause = whereClause + _ID + " = ? ";
+                        if (iterator.hasNext()) {
+                            whereClause = whereClause + " OR ";
+                        }controllare qui!!!!
+                        whereArgs[iWhereArgs] = String.valueOf(bvd.getProtTcpIpClientID());
+                        iWhereArgs = iWhereArgs + 1;
+                    }
+
+                    cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                // The columns for the WHERE clause
+                            whereArgs,                  // The values for the WHERE clause
                             null,                       // don't group the rows
                             null,                       // don't filter by row groups
                             sortOrder                   // The sort order
