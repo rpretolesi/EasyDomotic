@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
@@ -767,6 +768,64 @@ public class SQLContract
                 }
 
                 return cursor;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static List getServerList(long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+
+                List<Long> all = new ArrayList<>();
+
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null) {
+
+                    // Define a projection that specifies which columns from the database
+                    // you will actually use after this query.
+                    String[] projection =
+                            {
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
+                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                            };
+
+                    // How you want the results sorted in the resulting Cursor
+                    String sortOrder = "";
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_ROOM_ID + " = ?" ;
+
+                    String[] wherenArgs = { String.valueOf(lRoomID) };
+
+                    Cursor cursor = db.query(
+                            TABLE_NAME,                 // The table to query
+                            projection,                 // The columns to return
+                            whereClause,                  // The columns for the WHERE clause
+                            wherenArgs,              // The values for the WHERE clause
+                            null,                       // don't group the rows
+                            null,                       // don't filter by row groups
+                            sortOrder                   // The sort order
+                    );
+
+                    if((cursor != null) && (cursor.getCount() > 0))
+                    {
+                        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                        {
+                            int iEnable = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE));
+                            long lID = cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID));
+                            if(iEnable == 1 && !all.contains(lID))
+                            {
+                                all.add(lID);
+                            }
+                        }
+                    }
+                }
+                return all;
             }
             finally
             {
