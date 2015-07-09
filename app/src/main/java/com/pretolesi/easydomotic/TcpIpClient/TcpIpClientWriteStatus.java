@@ -96,9 +96,9 @@ public class TcpIpClientWriteStatus {
     public static enum Status
     {
         IDLE(0, R.string.ticwos_idle),
-        OK(0, R.string.ticwos_ok),
-        ERROR(1, R.string.ticwos_error),
-        TIMEOUT(2, R.string.ticwos_timeout);
+        OK(1, R.string.ticwos_ok),
+        ERROR(2, R.string.ticwos_error),
+        TIMEOUT(3, R.string.ticwos_timeout);
 
         private int ID;
         private int StringResID;

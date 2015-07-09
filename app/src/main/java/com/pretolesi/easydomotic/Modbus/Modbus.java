@@ -357,7 +357,7 @@ public class Modbus {
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
             short shTID = bb.getShort(); // Transaction Identifier
             short shPID = bb.getShort(); // Protocol Identifier, must be 0
-            if(shTID != 0){
+            if(shPID != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }
             short shLength = bb.getShort(); // Length

@@ -139,7 +139,7 @@ public class LightSwitch extends Switch implements
 
         // Listener
         if(m_bvd != null){
-            if(!getEditMode()) {
+            if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
                 BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
                 if(bcc != null){
                     bcc.registerTcpIpClientReadValueStatus(this);
@@ -174,7 +174,8 @@ public class LightSwitch extends Switch implements
         m_LabelTextView = null;
     }
 
-    private synchronized void readValue(){
+//    private synchronized void readValue(){
+    private void readValue(){
         if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
             BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
             if(bcc != null){
@@ -208,7 +209,7 @@ public class LightSwitch extends Switch implements
     }
 
     private void writeSwitchValue(boolean bValue){
-        if(m_bvd != null){
+        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
             BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
             if(bcc != null){
                 Short sh;
@@ -263,8 +264,6 @@ public class LightSwitch extends Switch implements
                             } else {
                                 this.setError(ticrs.getErrorMessage());
                             }
-                        } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                            this.setError(ticrs.getErrorMessage());
                         } else {
                             this.setError(ticrs.getErrorMessage());
                         }

@@ -79,7 +79,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_server_port.setText(BaseValueCommClientData.PortDefaultValue);
         m_id_stica_et_timeout = (NumericEditText)findViewById(R.id.id_stica_et_timeout);
         m_id_stica_et_timeout.setInputLimit(BaseValueCommClientData.TimeoutMinValue, BaseValueCommClientData.TimeoutMaxValue);
-        m_id_stica_et_timeout.setText(BaseValueCommClientData.TimeouDefaultValue);
+//        m_id_stica_et_timeout.setText(BaseValueCommClientData.TimeouDefaultValue);
         m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
         m_id_stica_et_comm_send_data_delay.setInputLimit(BaseValueCommClientData.CommSendDelayDataMinValue, BaseValueCommClientData.CommSendDelayDataMaxValue);
         m_id_stica_et_comm_send_data_delay.setText(BaseValueCommClientData.CommSendDelayDataDefaultValue);
@@ -457,7 +457,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             lID = m_lIDParameter;
 //        }
         if(lID > 0){
-            if(SQLContract.BaseValueEntry.delete(lID)){
+            if(SQLContract.TcpIpClientEntry.delete(lID)){
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return;

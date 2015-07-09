@@ -37,6 +37,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         m_id_et_server_address.setHint(R.string.hint_et_server_bt_address);
         m_id_stica_tv_server_port.setVisibility(View.GONE);
         m_id_stica_et_server_port.setVisibility(View.GONE);
+        m_id_stica_et_timeout.setText(Short.toString((short) 3000));
         m_id_stica_tv_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);

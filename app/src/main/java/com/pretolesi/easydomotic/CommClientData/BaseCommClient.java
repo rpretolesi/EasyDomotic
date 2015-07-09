@@ -176,19 +176,6 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                 tim.setMsgTimeMSNow();
                 tim.setMsgAsSent(true);
             }
-
-/*
-            tim = m_clqim.peek();
-            verificare che per la modifica forse non e' necessario fare il loop-
-            Considerare anche la priorita'
-            for (TcpIpMsg tim_temp : m_clqim) {
-                if (tim != null && tim_temp != null && tim.getTID() == tim_temp.getTID() && tim.getUID() == tim_temp.getUID()) {
-                    tim_temp.setMsgTimeMSNow();
-                    tim_temp.setMsgAsSent(true);
-                }
-            }
-
-*/
         }
 
         return tim;
@@ -224,8 +211,8 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
                     if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
                         tim.setMsgTimeMSNow();
                         tim.setMsgAsSent(false);
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, m_context.getString(R.string.TimeoutException)));
-                        publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, m_context.getString(R.string.TimeoutException), null));
+                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException)));
+                        publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException), null));
                     }
                 }
             }
@@ -274,11 +261,12 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected boolean startConnection() { return false; }
 
-    protected boolean send() {
+    protected boolean send() { return false; }
+
+    protected boolean sendMsg(TcpIpMsg tim) {
 
         if (m_dataOutputStream != null) {
             try {
-                TcpIpMsg tim = getMsgToSend();
                 if(tim != null){
                     m_dataOutputStream.write(tim.getMsgData(), 0, tim.getMsgData().length);
                     setOnLineProgressStatusBar();

@@ -105,6 +105,14 @@ public class TCPIPClient extends BaseCommClient {
     }
 
     @Override
+    protected boolean send() {
+        super.send();
+        TcpIpMsg tim = getMsgToSend();
+
+        return sendMsg(tim);
+    }
+
+    @Override
     protected boolean receive() {
         super.receive();
         if (m_dataInputStream == null){
@@ -168,8 +176,6 @@ public class TCPIPClient extends BaseCommClient {
                                         }
                                     }
 
-                                    // m_timeMillisecondsGet = System.currentTimeMillis();
-                                    // Log.d(TAG, this.toString() + "receive() return true. Time(ms):" + (System.currentTimeMillis() - m_timeMillisecondsReceive));
                                     return true;
                                 }
                             } catch (ModbusPDULengthOutOfRangeException ex) {
@@ -207,7 +213,6 @@ public class TCPIPClient extends BaseCommClient {
                 } catch (ModbusProtocolOutOfRangeException ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
-                    // Log.d(TAG, this.toString() + "receive()->" + "ModbusProtocolOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusMBAPLengthException ex) {
                     // Callbacks on UI
                     publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
@@ -240,6 +245,9 @@ public class TCPIPClient extends BaseCommClient {
             }
         }
 
+        // The TCP/IP it's a rely protocol.
+        // If an exception happens, i prefer to close and connect it again
+        m_bRestartConnection = true;
         return false;
     }
 

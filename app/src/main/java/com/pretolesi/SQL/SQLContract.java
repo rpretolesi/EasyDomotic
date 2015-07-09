@@ -1281,23 +1281,26 @@ public class SQLContract
                         if(bvd == null){
                             return null;
                         }
-                        whereClause = whereClause + _ID + " = ? ";
-                        if (iterator.hasNext()) {
-                            whereClause = whereClause + " OR ";
-                        }controllare qui!!!!
-                        whereArgs[iWhereArgs] = String.valueOf(bvd.getProtTcpIpClientID());
-                        iWhereArgs = iWhereArgs + 1;
+                        if(bvd.getProtTcpIpClientEnable()){
+                            whereClause = whereClause + _ID + " = ? ";
+                            if (iterator.hasNext()) {
+                                whereClause = whereClause + " OR ";
+                            }
+                            whereArgs[iWhereArgs] = String.valueOf(bvd.getProtTcpIpClientID());
+                            iWhereArgs = iWhereArgs + 1;
+                        }
                     }
-
-                    cursor = db.query(
-                            TABLE_NAME,                 // The table to query
-                            projection,                 // The columns to return
-                            whereClause,                // The columns for the WHERE clause
-                            whereArgs,                  // The values for the WHERE clause
-                            null,                       // don't group the rows
-                            null,                       // don't filter by row groups
-                            sortOrder                   // The sort order
-                    );
+                    if(iWhereArgs > 0) {
+                        cursor = db.query(
+                                TABLE_NAME,                 // The table to query
+                                projection,                 // The columns to return
+                                whereClause,                // The columns for the WHERE clause
+                                whereArgs,                  // The values for the WHERE clause
+                                null,                       // don't group the rows
+                                null,                       // don't filter by row groups
+                                sortOrder                   // The sort order
+                        );
+                    }
 
                 }
 

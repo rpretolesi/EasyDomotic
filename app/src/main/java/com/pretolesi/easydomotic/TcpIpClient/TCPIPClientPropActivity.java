@@ -45,8 +45,11 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
         m_id_tv_server_address.setText(R.string.text_tv_server_ip_address);
         m_id_et_server_address.setText(R.string.text_et_server_ip_address);
         m_id_et_server_address.setHint(R.string.hint_et_server_ip_address);
+        m_id_stica_et_timeout.setText(Short.toString((short)9000));
         m_id_stica_tv_comm_receive_wait_data.setVisibility(View.GONE);
         m_id_stica_et_comm_receive_wait_data.setVisibility(View.GONE);
+        m_id_stica_tv_comm_nr_max_err.setVisibility(View.GONE);
+        m_id_stica_et_comm_nr_max_err.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_et_protocol_field_1.setVisibility(View.GONE);
         m_id_stica_tv_protocol_field_2.setVisibility(View.GONE);

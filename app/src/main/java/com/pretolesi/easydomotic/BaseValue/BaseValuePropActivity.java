@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
@@ -99,16 +100,16 @@ public class BaseValuePropActivity extends Activity implements
 
         m_id_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
         m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
+        m_id_cb_enable_tcp_ip_client_protocol.setChecked(false);
         m_id_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
         m_id_spn_tcp_ip_client_protocol.setEnabled(false);
 
-        m_id_cb_enable_tcp_ip_client_protocol.setOnClickListener(new View.OnClickListener() {
-
+        m_id_cb_enable_tcp_ip_client_protocol.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                m_id_spn_tcp_ip_client_protocol.setEnabled(((CheckBox) v).isChecked());
-                m_id_et_protocol_ui.setEnabled(((CheckBox) v).isChecked());
-                m_id_et_protocol_addr_value.setEnabled(((CheckBox) v).isChecked());
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                m_id_spn_tcp_ip_client_protocol.setEnabled(isChecked);
+                m_id_et_protocol_ui.setEnabled(isChecked);
+                m_id_et_protocol_addr_value.setEnabled(isChecked);
             }
         });
 
@@ -427,19 +428,10 @@ public class BaseValuePropActivity extends Activity implements
 
     protected void getBaseValue() {
         // Stato
-        if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() <= 0){
-            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
-            m_id_spn_tcp_ip_client_protocol.setEnabled(false);
-            if (m_id_et_protocol_ui != null) {
-                m_id_et_protocol_ui.setEnabled(false);
+        if(m_id_spn_tcp_ip_client_protocol != null){
+            if(m_id_spn_tcp_ip_client_protocol.getCount() > 0){
+                m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
             }
-            if (m_id_et_protocol_addr_value != null) {
-                m_id_et_protocol_addr_value.setEnabled(false);
-            }
-        }
-
-        if(m_id_spn_tcp_ip_client_protocol != null && m_id_spn_tcp_ip_client_protocol.getCount() > 0){
-            m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
         }
 
         // Dati
@@ -476,39 +468,13 @@ public class BaseValuePropActivity extends Activity implements
             m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
         }
 
-        if (m_id_cb_enable_tcp_ip_client_protocol != null) {
-            m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
-
-            if(m_id_cb_enable_tcp_ip_client_protocol.isChecked()){
-                if (m_id_spn_tcp_ip_client_protocol != null) {
-                    m_id_spn_tcp_ip_client_protocol.setEnabled(true);
-                }
-                if (m_id_et_protocol_ui != null) {
-                    m_id_et_protocol_ui.setEnabled(true);
-                }
-                if (m_id_et_protocol_addr_value != null) {
-                    m_id_et_protocol_addr_value.setEnabled(true);
-                }
-            } else {
-                if (m_id_spn_tcp_ip_client_protocol != null) {
-                    m_id_spn_tcp_ip_client_protocol.setEnabled(false);
-                }
-                if (m_id_et_protocol_ui != null) {
-                    m_id_et_protocol_ui.setEnabled(false);
-                }
-                if (m_id_et_protocol_addr_value != null) {
-                    m_id_et_protocol_addr_value.setEnabled(false);
-                }
-            }
-        }
-
-
-        if (m_id_spn_tcp_ip_client_protocol != null) {
+        if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
             for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
                 Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
                 if (value != null) {
                     long id = value.getLong(value.getColumnIndex("_id"));
                     if (id == m_bvd.getProtTcpIpClientID()) {
+                        m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
                         m_id_spn_tcp_ip_client_protocol.setSelection(i);
                     }
                 }

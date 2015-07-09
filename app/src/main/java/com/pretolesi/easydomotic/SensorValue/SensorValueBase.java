@@ -66,7 +66,7 @@ public class SensorValueBase extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            if(!getEditMode()) {
+            if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
                 BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
                 if(bcc != null){
                     bcc.registerTcpIpClientWriteSwitchStatus(this);

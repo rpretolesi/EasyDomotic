@@ -162,6 +162,23 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     }
 
     @Override
+    protected boolean send() {
+        super.send();
+        TcpIpMsg tim = getMsgToSend();
+
+        // if there is message to sent, i will empty the receive buffer
+        if(tim != null){
+            if(m_rdis != null){
+                // Svuoto il buffer di ricezione
+                resetErrorCount();
+                m_rdis.getData(true);
+            }
+        }
+
+        return sendMsg(tim);
+    }
+
+    @Override
     protected boolean receive() {
         super.receive();
 

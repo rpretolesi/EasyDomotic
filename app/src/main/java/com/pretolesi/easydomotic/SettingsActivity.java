@@ -304,9 +304,14 @@ public class SettingsActivity extends BaseActivity implements
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
+            Fragment f = getFragmentManager().findFragmentById(R.id.container);
+            if(f != null && f instanceof BaseFragment) {
+                getMenuInflater().inflate(R.menu.menu_setting, menu);
+                restoreActionBar();
+                return true;
+            } else {
+                return super.onCreateOptionsMenu(menu);
+            }
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -320,7 +325,8 @@ public class SettingsActivity extends BaseActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.id_item_menu_delete_room) {
+            finire qui...
             return true;
         }
 

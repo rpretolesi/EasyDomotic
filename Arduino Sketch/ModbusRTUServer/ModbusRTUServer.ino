@@ -631,7 +631,7 @@ void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusP
         }
       }
     }
-    // Write Multiple Register
+    // Read Multiple Register
     if (byteModbusFunctionCode == 0x03) {
       unsigned short ushortModbusAddress = getShortFromBytes(&byteInModbusPDU[1]);
       Serial.print("Address: ");
@@ -643,16 +643,25 @@ void processModbusPDU(byte byteInModbusPDU[], int iInlenght, byte byteOutModbusP
       Serial.print("Byte Count: ");
       Serial.println(byteByteCount);
 
-      // Prepare answer
-      byteOutModbusPDU[0] = byteInModbusPDU[0]; // Function Code
-      *iOutlenght = 1;
-      byteOutModbusPDU[1] = byteByteCount; // Byte Count
-      *iOutlenght = *iOutlenght + 1;
+      if (ushortModbusAddress + shortQuantityOfRegisters < 20) {
+        bAddressOk = true;
 
-      // Copy data to union
-      memcpy(&byteOutModbusPDU[2], &m_union_share_mem.temp_bytearray[ushortModbusAddress], byteByteCount);
-      *iOutlenght = *iOutlenght + byteByteCount;
-
+        // Prepare answer
+        byteOutModbusPDU[0] = byteInModbusPDU[0]; // Function Code
+        *iOutlenght = 1;
+        byteOutModbusPDU[1] = byteByteCount; // Byte Count
+        *iOutlenght = *iOutlenght + 1;
+  
+        // Copy data to union
+        memcpy(&byteOutModbusPDU[2], &m_union_share_mem.temp_bytearray[ushortModbusAddress], byteByteCount);
+        *iOutlenght = *iOutlenght + byteByteCount;
+      } else {
+        // Address out of range
+        // Prepare answer
+        byteOutModbusPDU[0] = byteInModbusPDU[0] + 0x80;
+        byteOutModbusPDU[1] = 0x02;
+        *iOutlenght = 2;        
+      }
     }    
   }  
 }

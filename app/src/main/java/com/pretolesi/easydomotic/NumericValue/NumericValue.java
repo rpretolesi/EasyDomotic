@@ -198,14 +198,8 @@ public class NumericValue extends BaseValue implements
                         } else {
                             this.setError(ticrs.getErrorMessage());
                         }
-                    } else if(ticrs.getStatus() == TcpIpClientReadStatus.Status.TIMEOUT) {
-                        this.setError(ticrs.getErrorMessage());
-//                        strValue = getTimeoutValue();
-//                        this.setError("");
                     } else {
-                         this.setError(ticrs.getErrorMessage());
-//                        strValue = getErrorValue(ticrs.getErrorCode());
-//                        this.setError("");
+                        this.setError(ticrs.getErrorMessage());
                     }
                     setText(strValue);
                 }
@@ -235,9 +229,9 @@ public class NumericValue extends BaseValue implements
                         // Write Ok, i can close the Input
                         setErrorInputField("");
                         closeInputField();
+                    } else {
+                        setErrorInputField(ticws.getErrorMessage());
                     }
-                } else {
-                    setErrorInputField(ticws.getErrorMessage());
                 }
             }
         }
