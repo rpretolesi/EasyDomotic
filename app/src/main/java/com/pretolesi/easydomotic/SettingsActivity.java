@@ -26,6 +26,7 @@ import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 import com.pretolesi.easydomotic.dialogs.SetNameAndOrientDialogFragment;
+import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,9 @@ public class SettingsActivity extends BaseActivity implements
         SettingsNavigationDrawerFragment.NavigationDrawerCallbacks,
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
         RoomListFragment.ListRoomFragmentCallbacks,
-        BaseValueCommClientListFragment.BaseValueCommClientFragmentCallbacks {
+        BaseValueCommClientListFragment.BaseValueCommClientFragmentCallbacks,
+        YesNoDialogFragment.YesNoDialogFragmentCallbacks{
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -267,17 +270,6 @@ public class SettingsActivity extends BaseActivity implements
         }
     }
 
-    private boolean deleteRoom(long lRoomID){
-        // First, i delete all Controls in the room
-        if(SQLContract.BaseValueEntry.deleteByRoomID(lRoomID)){
-            // Ok, i can delete the room
-            if(SQLContract.RoomEntry.deleteByID(lRoomID)){
-                // Ok
-finire qui...
-            }
-        }
-    }
-
     @Override
     public void onBaseValueCommClientFragmentCallbacksListener(int sectionNumber, int position, long id, int iType) {
         // Show title when close activity
@@ -292,19 +284,6 @@ finire qui...
             startActivity(intent);
         }
     }
-/*
-    @Override
-    public void onSectionAttached(int number) {
-
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -334,7 +313,7 @@ finire qui...
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.id_item_menu_delete_room) {
-            finire qui...
+            deleteRoom(DialogOriginID.ORIGIN_MENU_BUTTON_ID);
             return true;
         }
 
@@ -356,10 +335,70 @@ finire qui...
         Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
         return false;
     }
+
+    private void deleteRoom(int iDialogOriginID){
+        YesNoDialogFragment.newInstance(
+                iDialogOriginID,
+                DialogActionID.DELETE_CONFIRM_ID,
+                getString(R.string.text_yndf_title_data_delete),
+                getString(R.string.text_yndf_message_data_delete_confirmation),
+                getString(R.string.text_yndf_btn_yes),
+                getString(R.string.text_yndf_btn_no)
+        ).show(getFragmentManager(), "");
+    }
+
+    @Override
+    public void onYesNoDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID, boolean bYes, boolean bNo) {
+        if(iDialogOriginID == DialogOriginID.ORIGIN_MENU_BUTTON_ID) {
+            if(iDialogActionID == DialogActionID.DELETE_CONFIRM_ID) {
+                if(bYes) {
+                    // Delete
+                    deleteRoomValueData(iDialogOriginID);
+                }
+
+                if(bNo) {
+                    // No action...
+                }
+            }
+        }
+    }
+
+    private void deleteRoomValueData(int iDialogOriginID){
+        Fragment f = getFragmentManager().findFragmentById(R.id.container);
+        if(f != null && f instanceof BaseFragment){
+            BaseFragment bf = (BaseFragment)f;
+            RoomFragmentData rfd = bf.getRoomFragmentData();
+            if(rfd != null) {
+                // First, i delete all Controls in the room
+                SQLContract.BaseValueEntry.deleteByRoomID(rfd.getID());
+                // Ok, i can delete the room
+                if(SQLContract.RoomEntry.deleteByID(rfd.getID())){
+                    // Ok
+                    OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .remove(f)
+                            .commit();
+                    vedere qui perche' viene riconosciuto il fragment sebbene sia cancellato...'
+
+                    return ;
+                }
+                OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_ERROR_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_error), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+                return;
+            }
+        }
+        OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
+                .show(getFragmentManager(), "");
+
+    }
+
     public static Intent makeSettingsActivity(Context context)
     {
         Intent intent = new Intent();
         intent.setClass(context, SettingsActivity.class);
         return intent;
     }
+
 }
