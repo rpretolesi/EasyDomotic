@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -637,7 +636,7 @@ public class BaseValuePropActivity extends Activity implements
             lID = m_lIDParameter;
         }
         if(lID > 0){
-            if(SQLContract.BaseValueEntry.delete(lID)){
+            if(SQLContract.BaseValueEntry.deleteByID(lID)){
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return;

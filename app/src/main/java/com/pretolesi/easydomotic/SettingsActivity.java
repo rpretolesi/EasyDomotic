@@ -234,9 +234,6 @@ public class SettingsActivity extends BaseActivity implements
                 }
             }
         }
-        if(position == 2){
-
-        }
     }
 
     @Override
@@ -266,6 +263,17 @@ public class SettingsActivity extends BaseActivity implements
                             .commit();
 
                 }
+            }
+        }
+    }
+
+    private boolean deleteRoom(long lRoomID){
+        // First, i delete all Controls in the room
+        if(SQLContract.BaseValueEntry.deleteByRoomID(lRoomID)){
+            // Ok, i can delete the room
+            if(SQLContract.RoomEntry.deleteByID(lRoomID)){
+                // Ok
+finire qui...
             }
         }
     }

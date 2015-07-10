@@ -834,7 +834,7 @@ public class SQLContract
             }
         }
 
-        public static boolean delete(long lID)
+        public static boolean deleteByID(long lID)
         {
             try
             {
@@ -847,6 +847,34 @@ public class SQLContract
                     String whereClause = _ID + " = ? ";
 
                     String[] wherenArgs = { String.valueOf(lID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
+        public static boolean deleteByRoomID(long lRoomID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
+                {
+
+                    // Which row to get based on WHERE
+                    String whereClause = COLUMN_NAME_ROOM_ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(lRoomID) };
 
                     if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
                     {
@@ -1683,9 +1711,38 @@ public class SQLContract
             }
             return alrfd;
         }
+
+        public static boolean deleteByID(long lID)
+        {
+            try
+            {
+                m_LockCommandHolder.lock();
+                SQLiteDatabase db = SQLHelper.getInstance().getDB();
+                if(db != null)
+                {
+
+                    // Which row to get based on WHERE
+                    String whereClause = _ID + " = ? ";
+
+                    String[] wherenArgs = { String.valueOf(lID) };
+
+                    if(db.delete(TABLE_NAME, whereClause, wherenArgs) > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                m_LockCommandHolder.unlock();
+            }
+        }
+
     }
 
-    public static long save(SQLiteDatabase db, String table, ContentValues values, String whereClause, String[] whereArgs, long lID ){
+    private static long save(SQLiteDatabase db, String table, ContentValues values, String whereClause, String[] whereArgs, long lID ){
         long m_lID = -1;
         if(db != null) {
             if (db.update(table, values, whereClause, whereArgs) == 0) {
