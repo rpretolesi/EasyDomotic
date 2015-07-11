@@ -134,7 +134,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((SettingsActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
-//        ((SettingsActivity) activity).restoreActionBar();
+        ((SettingsActivity) activity).restoreActionBar();
         try {
             mCallbacks = (BaseValueCommClientFragmentCallbacks) activity;
         } catch (ClassCastException e) {

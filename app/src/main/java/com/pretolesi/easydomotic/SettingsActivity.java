@@ -39,7 +39,8 @@ public class SettingsActivity extends BaseActivity implements
         SetNameAndOrientDialogFragment.SetNameAndOrientDialogFragmentCallbacks,
         RoomListFragment.ListRoomFragmentCallbacks,
         BaseValueCommClientListFragment.BaseValueCommClientFragmentCallbacks,
-        YesNoDialogFragment.YesNoDialogFragmentCallbacks{
+        YesNoDialogFragment.YesNoDialogFragmentCallbacks,
+        OkDialogFragment.OkDialogFragmentCallbacks{
 
 
     /**
@@ -61,6 +62,7 @@ public class SettingsActivity extends BaseActivity implements
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
     }
 
     @Override
@@ -231,9 +233,18 @@ public class SettingsActivity extends BaseActivity implements
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, BaseFragment.newInstance(position + 1, iRoomID, true), rfd.getTAG())
                             .commit();
-                    Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
+
+                    fragmentManager.executePendingTransactions();
+
+                    invalidateOptionsMenu();
+
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_MENU_BUTTON_ID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+//                    Toast.makeText(this, R.string.text_toast_room_saved_ok, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(this, R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_MENU_BUTTON_ID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+//                    Toast.makeText(this, R.string.text_toast_room_saved_error, Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -265,6 +276,9 @@ public class SettingsActivity extends BaseActivity implements
                             .replace(R.id.container, BaseFragment.newInstance(position + 1, id, true), rfd.getTAG())
                             .commit();
 
+                    fragmentManager.executePendingTransactions();
+
+                    invalidateOptionsMenu();
                 }
             }
         }
@@ -275,6 +289,7 @@ public class SettingsActivity extends BaseActivity implements
         // Show title when close activity
         onSectionSetTitle(getString(R.string.app_name));
         restoreActionBar();
+ // TODO:      ciascuna activity dovrebbe gestire action bar
         if(position == 7){
             Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, TCPIPClientPropActivity.class, id, iType);
             startActivity(intent);
@@ -297,7 +312,8 @@ public class SettingsActivity extends BaseActivity implements
                 restoreActionBar();
                 return true;
             } else {
-                return super.onCreateOptionsMenu(menu);
+                restoreActionBar();
+                return true;
             }
         }
 
@@ -327,12 +343,25 @@ public class SettingsActivity extends BaseActivity implements
                 if(!SQLContract.RoomEntry.isTagPresent(strTag)){
                     return true;
                 } else {
-                    Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
+                    OkDialogFragment.newInstance(DialogOriginID.ORIGIN_MENU_BUTTON_ID, DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_name_already_exist), getString(R.string.text_odf_message_ok_button))
+                            .show(getFragmentManager(), "");
+//                    Toast.makeText(this, R.string.text_toast_room_name_already_exist, Toast.LENGTH_LONG).show();
                     return false;
                 }
             }
         }
-        Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
+/*
+        OkDialogFragment.newInstance(iDialogOriginID,
+                DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID,
+                getString(R.string.text_yndf_title_base_value_name_already_exist),
+                getString(R.string.text_yndf_message_base_value_name_already_exist_confirmation),
+                getString(R.string.text_yndf_btn_yes),
+                getString(R.string.text_yndf_btn_no)
+        ).show(getFragmentManager(), "");
+*/
+        OkDialogFragment.newInstance(DialogOriginID.ORIGIN_MENU_BUTTON_ID, DialogActionID.SAVE_ITEM_NOT_VALID_CONFIRM_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_name_not_valid), getString(R.string.text_odf_message_ok_button))
+                .show(getFragmentManager(), "");
+//        Toast.makeText(this, R.string.text_toast_room_name_not_valid, Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -363,6 +392,17 @@ public class SettingsActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void onOkDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID) {
+        if(iDialogOriginID == DialogOriginID.ORIGIN_MENU_BUTTON_ID) {
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID || iDialogActionID == DialogActionID.SAVE_ITEM_NOT_VALID_CONFIRM_ID) {
+                OkDialogFragment.newInstance(DialogOriginID.ORIGIN_MENU_BUTTON_ID, DialogActionID.SAVING_ERROR_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_error), getString(R.string.text_odf_message_ok_button))
+                        .show(getFragmentManager(), "");
+
+            }
+        }
+    }
+
     private void deleteRoomValueData(int iDialogOriginID){
         Fragment f = getFragmentManager().findFragmentById(R.id.container);
         if(f != null && f instanceof BaseFragment){
@@ -380,7 +420,14 @@ public class SettingsActivity extends BaseActivity implements
                     fragmentManager.beginTransaction()
                             .remove(f)
                             .commit();
-                    vedere qui perche' viene riconosciuto il fragment sebbene sia cancellato...'
+
+                    fragmentManager.executePendingTransactions();
+
+                    // No section
+                    onSectionAttached(0);
+                    restoreActionBar();
+
+                    invalidateOptionsMenu();
 
                     return ;
                 }

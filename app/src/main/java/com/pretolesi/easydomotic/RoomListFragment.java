@@ -123,6 +123,7 @@ public class RoomListFragment extends ListFragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((SettingsActivity) activity).onSectionAttached(getArguments().getInt(BaseFragment.ARG_SECTION_NUMBER));
+        ((SettingsActivity) activity).restoreActionBar();
         try {
             mCallbacks = (ListRoomFragmentCallbacks) activity;
         } catch (ClassCastException e) {
@@ -132,34 +133,26 @@ public class RoomListFragment extends ListFragment implements
     @Override
     public void onResume() {
         super.onResume();
-//        getLoaderManager().initLoader(0, null, this);
-        // Log.d(TAG, this.toString() + ": " + "onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        getLoaderManager().destroyLoader(0);
-
-        // Log.d(TAG, this.toString() + ": " + "onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Log.d(TAG, this.toString() + ": " + "onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Log.d(TAG, this.toString() + ": " + "onDestroyView()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Log.d(TAG, this.toString() + ": " + "onDestroy()");
     }
 
     @Override
@@ -225,7 +218,6 @@ public class RoomListFragment extends ListFragment implements
         } else {
             setListShownNoAnimation(true);
         }
-        // Log.d(TAG, this.toString() + ": " + "onLoadFinished()");
     }
 
     @Override
@@ -234,7 +226,6 @@ public class RoomListFragment extends ListFragment implements
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
         mAdapter.swapCursor(null);
-        // Log.d(TAG, this.toString() + ": " + "onLoaderReset()");
     }
 
     /**

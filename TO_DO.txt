@@ -17,7 +17,8 @@ FATTO-Aggiungere il write only nel LightSwitch finire...
 FATTO-Togliere la variabile EnableProtocol
 FATTO-Mettere le scritture in testa anziche' in coda.
 FATTO-Svuotare il buffer di ricezione in timeout, sia su TCP che su bluetooth......
-Fare il delete delle Room
+FATTO-Fare il delete delle Room
+verificare commento su questa funzione:onBaseValueCommClientFragmentCallbacksListener in SettingsActivity
 
 Da fare nelle prossime versioni
 
@@ -27,3 +28,4 @@ Quando nel sensor uso la simulazione, vedere se si puo' migliorare la visualizza
 Mettere la stessa List messa nei messaggi bluetooth, nelle altre liste.
 Inserire anche lo stato del segnale nel bluetooth.
 Vedere se e' il caso di usare StartActivityForResult nella ListActivity anziche' le interfacce.
+Rifare gestione salvataggio e gestione room.

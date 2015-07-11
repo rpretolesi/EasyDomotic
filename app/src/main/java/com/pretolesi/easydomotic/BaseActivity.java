@@ -66,6 +66,9 @@ public class BaseActivity extends Activity {
     public void onSectionAttached(int number) {
 
         switch (number) {
+            case 0:
+                mTitle = getString(R.string.app_name);
+                break;
             case 1:
                 mTitle = getString(R.string.settings_title_section_new_room);
                 break;
@@ -101,6 +104,7 @@ public class BaseActivity extends Activity {
     }
 
     public void onSectionSetTitle(String strTitle) {
+
         mTitle = strTitle;
     }
 

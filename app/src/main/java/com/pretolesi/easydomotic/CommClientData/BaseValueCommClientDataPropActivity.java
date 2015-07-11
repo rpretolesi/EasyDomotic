@@ -253,7 +253,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     @Override
     public void onYesNoDialogFragmentClickListener(int iDialogOriginID, int iDialogActionID, boolean bYes, boolean bNo) {
         if(iDialogOriginID == DialogOriginID.ORIGIN_MENU_BUTTON_ID) {
-            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
@@ -282,7 +282,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         }
 
         if(iDialogOriginID == DialogOriginID.ORIGIN_BACK_BUTTON_ID) {
-            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID) {
+            if(iDialogActionID == DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID) {
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
@@ -397,7 +397,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 }
             } else {
                 YesNoDialogFragment.newInstance(iDialogOriginID,
-                        DialogActionID.SAVE_ITEM_ALREADY_EXSIST_CONFIRM_ID,
+                        DialogActionID.SAVE_ITEM_ALREADY_EXIST_CONFIRM_ID,
                         getString(R.string.text_yndf_title_base_value_name_already_exist),
                         getString(R.string.text_yndf_message_base_value_name_already_exist_confirmation),
                         getString(R.string.text_yndf_btn_yes),
