@@ -56,7 +56,7 @@ public class BluetoothListAdapter_Memo extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null && m_LayoutInflater != null) {
-            convertView = m_LayoutInflater.inflate(R.layout.bluetooth_client_configuration_list_activity, parent, false);
+            convertView = m_LayoutInflater.inflate(R.layout.bluetooth_client_configuration_list_activity_items, parent, false);
         }
 
         TextView id_tv_name = ViewHolder.get(convertView, R.id.id_tv_name);

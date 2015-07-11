@@ -75,9 +75,10 @@ public class BluetoothClientConfiguration extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        setContentView(R.layout.bluetooth_client_configuration_list_activity);
 
         // Get the Bluetooth reference
         m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -103,7 +104,7 @@ public class BluetoothClientConfiguration extends ListActivity {
         setListAdapter(m_blAdapter);
 
 /*
-//        setContentView(R.layout.bluetooth_client_configuration_list_activity);
+//        setContentView(R.layout.bluetooth_client_configuration_list_activity_);
         // Query for all people contacts using the Contacts.People convenience class.
         // Put a managed wrapper around the retrieved cursor so we don't have to worry about
         // requerying or closing it as the activity changes state.
