@@ -79,7 +79,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_id_stica_et_server_port.setText(BaseValueCommClientData.PortDefaultValue);
         m_id_stica_et_timeout = (NumericEditText)findViewById(R.id.id_stica_et_timeout);
         m_id_stica_et_timeout.setInputLimit(BaseValueCommClientData.TimeoutMinValue, BaseValueCommClientData.TimeoutMaxValue);
-//        m_id_stica_et_timeout.setText(BaseValueCommClientData.TimeouDefaultValue);
+        m_id_stica_et_timeout.setText(BaseValueCommClientData.TimeoutDefaultValue);
         m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
         m_id_stica_et_comm_send_data_delay.setInputLimit(BaseValueCommClientData.CommSendDelayDataMinValue, BaseValueCommClientData.CommSendDelayDataMaxValue);
         m_id_stica_et_comm_send_data_delay.setText(BaseValueCommClientData.CommSendDelayDataDefaultValue);
@@ -106,19 +106,8 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         // or start a new one.
         Intent intent = getIntent();
         if(intent != null) {
-//            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
             m_lIDParameter = intent.getLongExtra(BASE_VALUE_COMM_CLIENT_ID, -1);
         }
-
-
-//        setActionBarTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
-/*
-        m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-//                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.values()));
-                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.SERIAL)));
-
-        setActionBar();
-*/
     }
 
     protected void setActionBarTitle(String strTitle) {
@@ -127,31 +116,6 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             actionBar.setTitle(strTitle);
         }
     }
-
-/*
-    protected void setActionBar() {
-        ActionBar actionBar = getActionBar();
-        if(actionBar != null){
-            actionBar.setTitle(strTitle);
-        }
-/*
-        int iTypeParameter;
-//        if(m_bvdParameter != null){
-//            iTypeParameter = m_bvdParameter.getTranspProtocolID();
-//        } else {
-            iTypeParameter = m_iTypeParameter;
-//        }
-        switch (iTypeParameter){
-            case BaseValueCommClientData.TYPE_TCP_IP_CLIENT:
-                actionBar.setTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
-                break;
-            case BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT:
-                actionBar.setTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
-                break;
-
-        }
-*/
-//    }
 
     @Override
     protected void onResume() {

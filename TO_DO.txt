@@ -19,7 +19,8 @@ FATTO-Svuotare il buffer di ricezione in timeout, sia su TCP che su bluetooth...
 FATTO-Fare il delete delle Room
 verificare commento su questa funzione:onBaseValueCommClientFragmentCallbacksListener in SettingsActivity
 FATTO-Aggiungere No device found in bluetooth discovery
-Mettere default address in serial = 1 ed in TCP/IP=0?(verificare quest'ultimo). oppure verificare se e' il caso di fare il broadcast...
+FATTO-Mettere default address in serial = 1 ed in TCP/IP=0?(verificare quest'ultimo). oppure verificare se e' il caso di fare il broadcast...
+Sistemare i nomi dei protocolli ed anche dei Campi SQL
 
 Da fare nelle prossime versioni
 

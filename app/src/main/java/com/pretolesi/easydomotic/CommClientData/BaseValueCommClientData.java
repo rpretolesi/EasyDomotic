@@ -28,7 +28,7 @@ public class BaseValueCommClientData implements Parcelable {
 
     public static int TimeoutMinValue = 1;
     public static int TimeoutMaxValue = 60000;
-    public static String TimeouDefaultValue = "3000";
+    public static String TimeoutDefaultValue = "3000";
 
     public static int CommSendDelayDataMinValue = 1;
     public static int CommSendDelayDataMaxValue = 60000;

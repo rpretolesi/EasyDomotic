@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -109,6 +110,35 @@ public class BaseValuePropActivity extends Activity implements
                 m_id_spn_tcp_ip_client_protocol.setEnabled(isChecked);
                 m_id_et_protocol_ui.setEnabled(isChecked);
                 m_id_et_protocol_addr_value.setEnabled(isChecked);
+            }
+        });
+
+        m_id_spn_tcp_ip_client_protocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Set Limit for address
+                // and check again
+                BaseValueCommClientData.Protocol p = null;
+                Cursor cursor = SQLContract.TcpIpClientEntry.load(id);
+                ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+                if(alticd != null && !alticd.isEmpty()){
+                    p = alticd.get(0).getProtocol();
+                }
+                if(p != null && p == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL){
+                    if(m_id_et_protocol_ui != null) {
+                        m_id_et_protocol_ui.setInputLimit(1, 247);
+                    }
+                }
+                if(p != null && p == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP){
+                    if(m_id_et_protocol_ui != null) {
+                        m_id_et_protocol_ui.setInputLimit(0, 247);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -589,6 +619,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         try {
+
             if (m_id_et_protocol_ui != null) {
                 m_bvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
             }
