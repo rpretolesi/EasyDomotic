@@ -1,18 +1,16 @@
-package com.pretolesi.easydomotic.SensorValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-
 import java.util.List;
 
 /**
  *
  */
-public class SensorValueRaw extends SensorValueBase {
+public class SensorValueRawControl extends SensorValueBaseControl {
 
     private static final String TAG = "SensorValue";
 
@@ -24,11 +22,11 @@ public class SensorValueRaw extends SensorValueBase {
     // Storage for Sensor readings
     private float[] m_SensorValue = null;
 
-    public SensorValueRaw(Context context) {
+    public SensorValueRawControl(Context context) {
         super(context);
     }
 
-    public SensorValueRaw(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public SensorValueRawControl(Context context, ControlData bvd, int iMsgID, boolean bEditMode) {
         super(context, bvd, iMsgID, bEditMode);
     }
 

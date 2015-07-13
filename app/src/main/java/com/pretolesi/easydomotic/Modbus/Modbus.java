@@ -2,7 +2,7 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData.CommProtocolType;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData.CommProtocolType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;

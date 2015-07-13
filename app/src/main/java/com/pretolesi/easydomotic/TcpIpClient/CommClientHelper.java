@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.pretolesi.easydomotic.BluetoothClient.BluetoothClient;
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 
 import java.util.List;
 import java.util.Vector;
@@ -19,20 +19,20 @@ public class CommClientHelper {
     private static CommClientHelper m_Instance;
     private static List<BaseCommClient> m_ltic;
 
-    private CommClientHelper(List<BaseValueTranspProtocolClientData> lticd)
+    private CommClientHelper(List<TranspProtocolData> lticd)
     {
         if ((m_ltic == null))
         {
             if(lticd != null && !lticd.isEmpty()) {
                 m_ltic = new Vector<>();
-                for(BaseValueTranspProtocolClientData ticd : lticd){
-                    if(ticd.getTranspProtocolTypeID() == BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID()){
+                for(TranspProtocolData ticd : lticd){
+                    if(ticd.getTranspProtocolTypeID() == TranspProtocolData.TranspProtocolType.TCP_IP.getID()){
                         TCPIPClient tic = new TCPIPClient(m_context);
     //                    tic.execute(ticd);
                         tic.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
                                 m_ltic.add(tic);
                     }
-                    if(ticd.getTranspProtocolTypeID() == BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID()){
+                    if(ticd.getTranspProtocolTypeID() == TranspProtocolData.TranspProtocolType.BLUETOOTH.getID()){
                         BluetoothClient btc = new BluetoothClient(m_context);
                         btc.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ticd);
                                 m_ltic.add(btc);
@@ -49,7 +49,7 @@ public class CommClientHelper {
      * @param context
      *            the application context
      */
-    public synchronized static CommClientHelper startInstance(Context context, List<BaseValueTranspProtocolClientData> lticd)
+    public synchronized static CommClientHelper startInstance(Context context, List<TranspProtocolData> lticd)
     {
         if (context != null && lticd != null && m_Instance == null)
         {

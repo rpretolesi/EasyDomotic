@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.SensorValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -7,9 +7,8 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData.SensorTypeCalibr;
-import com.pretolesi.easydomotic.BaseValue.BaseValuePropActivity;
+
+import com.pretolesi.easydomotic.Control.ControlData.SensorTypeCalibr;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.R;
@@ -22,8 +21,7 @@ import java.util.List;
 /**
  *
  */
-public class SensorValuePropActivity extends BaseValuePropActivity {
-    private static final String TAG = "SensorValuePropAct";
+public class SensorValueControlPropActivity extends ControlDataPropActivity {
 
     private NumericEditText m_id_et_min_nr_char_to_show;
     private NumericEditText m_id_et_nr_of_decimal;
@@ -47,14 +45,14 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         onBaseCreate();
 
         m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
-        m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
-        m_id_et_min_nr_char_to_show.setText(BaseValueData.ValueMinNrCharToShowDefaulValue);
+        m_id_et_min_nr_char_to_show.setInputLimit(ControlData.ValueMinNrCharToShowMinValue, ControlData.ValueMinNrCharToShowMaxValue);
+        m_id_et_min_nr_char_to_show.setText(ControlData.ValueMinNrCharToShowDefaulValue);
         m_id_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
-        m_id_et_nr_of_decimal.setInputLimit(BaseValueData.ValueNrOfDecimalMinValue, BaseValueData.ValueNrOfDecimalMaxValue);
-        m_id_et_nr_of_decimal.setText(BaseValueData.ValueNrOfDecimalDefaulValue);
+        m_id_et_nr_of_decimal.setInputLimit(ControlData.ValueNrOfDecimalMinValue, ControlData.ValueNrOfDecimalMaxValue);
+        m_id_et_nr_of_decimal.setText(ControlData.ValueNrOfDecimalDefaulValue);
         m_id_et_um = (StringEditText)findViewById(R.id.id_et_um);
-        m_id_et_um.setInputLimit(BaseValueData.ValueUMMinValue, BaseValueData.ValueUMMaxValue);
-        m_id_et_um.setText(BaseValueData.ValueUMDefaulValue);
+        m_id_et_um.setInputLimit(ControlData.ValueUMMinValue, ControlData.ValueUMMaxValue);
+        m_id_et_um.setText(ControlData.ValueUMDefaulValue);
 
         // Sensor
         m_id_spn_sensor_type = (Spinner)findViewById(R.id.id_spn_sensor_type);
@@ -63,41 +61,41 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         m_id_spn_sensor_value.setSelection(-1);
         m_id_cb_sensor_enable_simulation = (CheckBox)findViewById(R.id.id_cb_sensor_enable_simulation);
         m_id_et_sensor_ampl_k = (NumericEditText)findViewById(R.id.id_et_sensor_ampl_k);
-        m_id_et_sensor_ampl_k.setInputLimit(BaseValueData.SensorAmplKMinValue, BaseValueData.SensorAmplKMaxValue);
-        m_id_et_sensor_ampl_k.setText(BaseValueData.SensorAmplKDefaulValue);
+        m_id_et_sensor_ampl_k.setInputLimit(ControlData.SensorAmplKMinValue, ControlData.SensorAmplKMaxValue);
+        m_id_et_sensor_ampl_k.setText(ControlData.SensorAmplKDefaulValue);
         m_id_et_sensor_low_pass_filter_k = (NumericEditText)findViewById(R.id.id_et_sensor_low_pass_filter_k);
-        m_id_et_sensor_low_pass_filter_k.setInputLimit(BaseValueData.SensorLowPassFilterKMinValue, BaseValueData.SensorLowPassFilterKMaxValue);
-        m_id_et_sensor_low_pass_filter_k.setText(BaseValueData.SensorLowPassFilterKDefaulValue);
+        m_id_et_sensor_low_pass_filter_k.setInputLimit(ControlData.SensorLowPassFilterKMinValue, ControlData.SensorLowPassFilterKMaxValue);
+        m_id_et_sensor_low_pass_filter_k.setText(ControlData.SensorLowPassFilterKDefaulValue);
         m_id_et_sensor_sample_time_millis = (NumericEditText)findViewById(R.id.id_et_sensor_sample_time);
-        m_id_et_sensor_sample_time_millis.setInputLimit(BaseValueData.SensorSampleTimeMinValue, BaseValueData.SensorSampleTimeMaxValue);
-        m_id_et_sensor_sample_time_millis.setText(BaseValueData.SensorSampleTimeDefaulValue);
+        m_id_et_sensor_sample_time_millis.setInputLimit(ControlData.SensorSampleTimeMinValue, ControlData.SensorSampleTimeMaxValue);
+        m_id_et_sensor_sample_time_millis.setText(ControlData.SensorSampleTimeDefaulValue);
         m_id_et_sensor_write_update_millis = (NumericEditText)findViewById(R.id.id_et_sensor_write_update_time);
-        m_id_et_sensor_write_update_millis.setInputLimit(BaseValueData.SensorWriteUpdateTimeMinValue, BaseValueData.SensorWriteUpdateTimeMaxValue);
-        m_id_et_sensor_write_update_millis.setText(BaseValueData.SensorWriteUpdateTimeDefaulValue);
+        m_id_et_sensor_write_update_millis.setInputLimit(ControlData.SensorWriteUpdateTimeMinValue, ControlData.SensorWriteUpdateTimeMaxValue);
+        m_id_et_sensor_write_update_millis.setText(ControlData.SensorWriteUpdateTimeDefaulValue);
 
         // Get sensor list
         int iTypeParameter;
-        if(m_bvdParameter != null){
-            iTypeParameter = m_bvdParameter.getType();
+        if(m_cdParameter != null){
+            iTypeParameter = m_cdParameter.getType();
         } else {
-            iTypeParameter = m_iTypeParameter;
+            iTypeParameter = m_iControlTypeParameter;
         }
 
-        if(iTypeParameter == BaseValueData.TYPE_SENSOR_RAW_VALUE){
+        if(iTypeParameter == ControlData.TYPE_SENSOR_RAW_VALUE){
             SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if(sm != null){
                 List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
                 m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                         android.R.layout.simple_list_item_1, ls));
             }
-        } else if(iTypeParameter == BaseValueData.TYPE_SENSOR_CALIBR_VALUE){
+        } else if(iTypeParameter == ControlData.TYPE_SENSOR_CALIBR_VALUE){
             ArrayList<SensorTypeCalibr> alstc = SensorTypeCalibr.getListSensorTypeCalibr();
             m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, alstc));
 
         }
         m_id_spn_sensor_value.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueData.SensorValue.values()));
+                android.R.layout.simple_list_item_1, ControlData.SensorValue.values()));
 
     }
 
@@ -106,49 +104,49 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
         super.getBaseValue();
 
         // Dati
-        if (m_bvd == null) {
+        if (m_cd == null) {
             return ;
         }
 
         if (m_id_et_min_nr_char_to_show != null) {
-            m_id_et_min_nr_char_to_show.setText(Integer.toString(m_bvd.getValueMinNrCharToShow()));
+            m_id_et_min_nr_char_to_show.setText(Integer.toString(m_cd.getValueMinNrCharToShow()));
         }
         if (m_id_et_nr_of_decimal != null) {
-            m_id_et_nr_of_decimal.setText(Integer.toString(m_bvd.getValueNrOfDecimal()));
+            m_id_et_nr_of_decimal.setText(Integer.toString(m_cd.getValueNrOfDecimal()));
         }
         if (m_id_et_um != null) {
-            m_id_et_um.setText(m_bvd.getValueUM());
+            m_id_et_um.setText(m_cd.getValueUM());
         }
 
         // Sensor
         if(m_id_spn_sensor_type != null) {
             long lItem = -1;
             try{
-                lItem = m_bvd.getSensorTypeID();
+                lItem = m_cd.getSensorTypeID();
             } catch (Exception ignore) { }
             m_id_spn_sensor_type.setSelection((int) lItem);
         }
         if(m_id_spn_sensor_value != null) {
             long lItem = -1;
             try{
-                lItem = m_bvd.getSensorValueID();
+                lItem = m_cd.getSensorValueID();
             } catch (Exception ignore) { }
             m_id_spn_sensor_value.setSelection((int) lItem);
         }
         if(m_id_cb_sensor_enable_simulation != null) {
-            m_id_cb_sensor_enable_simulation.setChecked(m_bvd.getSensorEnableSimulation());
+            m_id_cb_sensor_enable_simulation.setChecked(m_cd.getSensorEnableSimulation());
         }
         if (m_id_et_sensor_ampl_k != null) {
-            m_id_et_sensor_ampl_k.setText(Float.toString(m_bvd.getSensorAmplK()));
+            m_id_et_sensor_ampl_k.setText(Float.toString(m_cd.getSensorAmplK()));
         }
         if (m_id_et_sensor_low_pass_filter_k != null) {
-            m_id_et_sensor_low_pass_filter_k.setText(Float.toString(m_bvd.getSensorLowPassFilterK()));
+            m_id_et_sensor_low_pass_filter_k.setText(Float.toString(m_cd.getSensorLowPassFilterK()));
         }
         if (m_id_et_sensor_sample_time_millis != null) {
-            m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_bvd.getSensorSampleTimeMillis()));
+            m_id_et_sensor_sample_time_millis.setText(Integer.toString(m_cd.getSensorSampleTimeMillis()));
         }
         if (m_id_et_sensor_write_update_millis != null) {
-            m_id_et_sensor_write_update_millis.setText(Integer.toString(m_bvd.getSensorWriteUpdateTimeMillis()));
+            m_id_et_sensor_write_update_millis.setText(Integer.toString(m_cd.getSensorWriteUpdateTimeMillis()));
         }
     }
 
@@ -156,43 +154,43 @@ public class SensorValuePropActivity extends BaseValuePropActivity {
     protected boolean setBaseData(int iDialogOriginID){
         boolean bRes = super.setBaseData(iDialogOriginID);
         // Dati
-        if (m_bvd == null) {
+        if (m_cd == null) {
             return false;
         }
 
         try {
             if (m_id_et_min_nr_char_to_show != null) {
-                m_bvd.setValueMinNrCharToShow(Integer.parseInt(m_id_et_min_nr_char_to_show.getText().toString()));
+                m_cd.setValueMinNrCharToShow(Integer.parseInt(m_id_et_min_nr_char_to_show.getText().toString()));
             }
             if (m_id_et_nr_of_decimal != null) {
-                m_bvd.setValueNrOfDecimal(Integer.parseInt(m_id_et_nr_of_decimal.getText().toString()));
+                m_cd.setValueNrOfDecimal(Integer.parseInt(m_id_et_nr_of_decimal.getText().toString()));
             }
             if (m_id_et_um != null) {
-                m_bvd.setValueUM(m_id_et_um.getText().toString());
+                m_cd.setValueUM(m_id_et_um.getText().toString());
             }
 
             // Sensor
             if(m_id_spn_sensor_type != null) {
-                m_bvd.setSensorTypeID(m_id_spn_sensor_type.getSelectedItemId());
+                m_cd.setSensorTypeID(m_id_spn_sensor_type.getSelectedItemId());
             }
 
             if(m_id_spn_sensor_value != null) {
-                m_bvd.setSensorValueID(m_id_spn_sensor_value.getSelectedItemId());
+                m_cd.setSensorValueID(m_id_spn_sensor_value.getSelectedItemId());
             }
             if(m_id_cb_sensor_enable_simulation != null) {
-                m_bvd.setSensorEnableSimulation(m_id_cb_sensor_enable_simulation.isChecked());
+                m_cd.setSensorEnableSimulation(m_id_cb_sensor_enable_simulation.isChecked());
             }
             if (m_id_et_sensor_ampl_k != null) {
-                m_bvd.setSensorAmplK(Float.parseFloat(m_id_et_sensor_ampl_k.getText().toString()));
+                m_cd.setSensorAmplK(Float.parseFloat(m_id_et_sensor_ampl_k.getText().toString()));
             }
             if (m_id_et_sensor_low_pass_filter_k != null) {
-                m_bvd.setSensorLowPassFilterK(Float.parseFloat(m_id_et_sensor_low_pass_filter_k.getText().toString()));
+                m_cd.setSensorLowPassFilterK(Float.parseFloat(m_id_et_sensor_low_pass_filter_k.getText().toString()));
             }
             if (m_id_et_sensor_sample_time_millis != null) {
-                m_bvd.setSensorSampleTimeMillis(Integer.parseInt(m_id_et_sensor_sample_time_millis.getText().toString()));
+                m_cd.setSensorSampleTimeMillis(Integer.parseInt(m_id_et_sensor_sample_time_millis.getText().toString()));
             }
             if (m_id_et_sensor_write_update_millis != null) {
-                m_bvd.setSensorWriteUpdateTimeMillis(Integer.parseInt(m_id_et_sensor_write_update_millis.getText().toString()));
+                m_cd.setSensorWriteUpdateTimeMillis(Integer.parseInt(m_id_et_sensor_write_update_millis.getText().toString()));
             }
 
         } catch (Exception ex) {

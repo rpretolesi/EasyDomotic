@@ -1,17 +1,17 @@
-package com.pretolesi.easydomotic.SensorValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData.SensorTypeCalibr;
+
+import com.pretolesi.easydomotic.Control.ControlData.SensorTypeCalibr;
 import java.util.List;
 
 /**
  *
  */
-public class SensorValueCalibr extends SensorValueBase {
+public class SensorValueCalibrControl extends SensorValueBaseControl {
 
     private static final String TAG = "SensorValueCalibr";
 
@@ -27,11 +27,11 @@ public class SensorValueCalibr extends SensorValueBase {
     private float[] m_OrientationMatrix = null;
     private float[] m_RotationInDegress = null;
 
-    public SensorValueCalibr(Context context) {
+    public SensorValueCalibrControl(Context context) {
         super(context);
     }
 
-    public SensorValueCalibr(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public SensorValueCalibrControl(Context context, ControlData bvd, int iMsgID, boolean bEditMode) {
         super(context, bvd, iMsgID, bEditMode);
     }
 

@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData.CommProtocolType;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData.CommProtocolType;
 import com.pretolesi.easydomotic.Modbus.Modbus;
 import com.pretolesi.easydomotic.Modbus.ModbusAddressOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusQuantityOfRegistersOutOfRange;
@@ -75,7 +75,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     }
 
     protected Context m_context = null;
-    protected BaseValueTranspProtocolClientData m_ticd = null;
+    protected TranspProtocolData m_ticd = null;
     private ConcurrentLinkedQueue<TcpIpMsg> m_clqim = null;
 
     // MBAP
@@ -799,7 +799,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     @Override
     protected Void doInBackground(Object... obj) {
 
-        m_ticd = (BaseValueTranspProtocolClientData) obj[0];
+        m_ticd = (TranspProtocolData) obj[0];
 
         try {
             while (!isCancelled() && m_ticd != null) {

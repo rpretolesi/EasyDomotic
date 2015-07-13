@@ -4,17 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolDataPropActivity;
 import com.pretolesi.easydomotic.R;
 
 /**
  *
  */
-public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity {
-
-    private static final String TAG = "TCPIPClientPropAct";
-
+public class TcpIpClientProtocolPropActivity extends TranspProtocolDataPropActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +31,7 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
         m_id_stica_et_protocol_field_2.setVisibility(View.GONE);
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.getValues(BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP)));
+                android.R.layout.simple_list_item_1, TranspProtocolData.CommProtocolType.getValues(TranspProtocolData.TranspProtocolType.TCP_IP)));
 
         setActionBarTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
 
@@ -44,7 +41,7 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
     protected boolean setBaseData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueTranspProtocolClientData(BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID());
+            m_ticd = new TranspProtocolData(TranspProtocolData.TranspProtocolType.TCP_IP.getID());
         }
 
         return super.setBaseData(iDialogOriginID);

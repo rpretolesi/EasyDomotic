@@ -1,11 +1,9 @@
-package com.pretolesi.easydomotic.NumericValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.GestureDetectorCompat;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValue;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
@@ -16,23 +14,23 @@ import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 /**
  *
  */
-public class NumericValue extends BaseValue implements
+public class NumericValueControl extends Control implements
         TCPIPClient.TcpIpClientReadValueStatusListener,
         TCPIPClient.TcpIpClientWriteStatusListener {
 
     private static final String TAG = "NumericValue";
     private GestureDetectorCompat mDetector;
 
-    private BaseValueData m_bvd;
+    private ControlData m_bvd;
     private int m_iMsgID;
     private int m_iTIDRead;
     private int m_iTIDWrite;
 
-    public NumericValue(Context context) {
+    public NumericValueControl(Context context) {
         this(context,  null, -1, false);
     }
 
-    public NumericValue(Context context,  BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public NumericValueControl(Context context, ControlData bvd, int iMsgID, boolean bEditMode) {
         super(context);
         if(bvd != null) {
             this.m_bvd = bvd;
@@ -41,7 +39,7 @@ public class NumericValue extends BaseValue implements
             this.m_iTIDWrite = m_iMsgID + 2;
             this.setTag(bvd.getTag());
 
-            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
+            setNumericDataType(DataType.getDataType(m_bvd.getTranspProtocolDataType()));
             setEditMode(bEditMode);
             setVertical(bvd.getVertical());
             setTextAlignment(TEXT_ALIGNMENT_CENTER);
@@ -56,8 +54,8 @@ public class NumericValue extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
-                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(!getEditMode() && m_bvd.getTranspProtocolEnable()) {
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
                 if(bcc != null){
                     bcc.registerTcpIpClientReadValueStatus(this);
                     bcc.registerTcpIpClientWriteSwitchStatus(this);
@@ -79,7 +77,7 @@ public class NumericValue extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
             if(bcc != null){
                 bcc.unregisterTcpIpClientReadValueStatus(this);
                 bcc.unregisterTcpIpClientWriteSwitchStatus(this);
@@ -90,10 +88,10 @@ public class NumericValue extends BaseValue implements
     }
 
      private synchronized void readValue(){
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_bvd != null && m_bvd.getTranspProtocolEnable()){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
             if(bcc != null){
-                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getTranspProtocolUI(), m_bvd.getTranspProtocolDataAddress(), getNumericDataType());
             }
         }
     }
@@ -112,7 +110,7 @@ public class NumericValue extends BaseValue implements
                 strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
             }
         } else {
-            strDefaultValue = BaseValueData.ValueDefaulValue;
+            strDefaultValue = ControlData.ValueDefaulValue;
         }
 
         return strDefaultValue;
@@ -132,7 +130,7 @@ public class NumericValue extends BaseValue implements
                 strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
             }
         } else {
-            strDefaultValue = BaseValueData.ValueDefaulValue;
+            strDefaultValue = ControlData.ValueDefaulValue;
         }
 
         return strDefaultValue;
@@ -149,7 +147,7 @@ public class NumericValue extends BaseValue implements
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
         if(ticrs != null && m_bvd != null){
-            if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
+            if(ticrs.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     Object obj = null;
                     String strValue = getDefaultValue();
@@ -210,10 +208,10 @@ public class NumericValue extends BaseValue implements
     @Override
     protected void OnWriteInputField(String strValue) {
         super.OnWriteInputField(strValue);
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_bvd != null && m_bvd.getTranspProtocolEnable()) {
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
             if (bcc != null) {
-                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
+                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getTranspProtocolUI(), m_bvd.getTranspProtocolDataAddress(), getNumericDataType(), strValue);
             }
         }
         // Read the value written...
@@ -223,7 +221,7 @@ public class NumericValue extends BaseValue implements
     @Override
     public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
         if(ticws != null && m_bvd != null){
-            if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()){
+            if(ticws.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticws.getTID() == m_iTIDWrite) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         // Write Ok, i can close the Input
@@ -245,7 +243,7 @@ public class NumericValue extends BaseValue implements
                 m_bvd.setSaved(false);
                 m_bvd.setPosX((int)getX());
                 m_bvd.setPosY((int)getY());
-                Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByValueData(this.getContext(), NumericValuePropActivity.class, m_bvd);
+                Intent intent = NumericValueControlPropActivity.makeBaseValuePropActivityByValueData(this.getContext(), NumericValueControlPropActivity.class, m_bvd);
                 this.getContext().startActivity(intent);
             } else {
                 if(!m_bvd.getValueReadOnly()){

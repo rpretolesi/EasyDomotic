@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.BaseValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -28,7 +28,7 @@ import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -39,16 +39,15 @@ import java.util.ArrayList;
 /**
  *
  */
-public class BaseValuePropActivity extends Activity implements
+public class ControlDataPropActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
-    protected static final String TAG = "BaseValuePropActivity";
 
-    protected static final String ROOM_ID = "Room_ID";
-    protected static final String TYPE = "Type";
-    protected static final String BASE_VALUE_ID = "Base_Value_ID";
-    protected static final String BASE_VALUE_DATA = "Base_Value_Data";
+    protected static final String ROOM_ID = "RoomID";
+    protected static final String CONTROL_TYPE = "ControlType";
+    protected static final String CONTROL_ID = "ControlID";
+    protected static final String CONTROL_DATA = "ControlData";
 
  //   private CharSequence mTitle;
 
@@ -62,20 +61,20 @@ public class BaseValuePropActivity extends Activity implements
     protected RadioButton m_id_rb_horizontal;
     protected RadioButton m_id_rb_vertical;
 
-    protected CheckBox m_id_cb_enable_tcp_ip_client_protocol;
-    protected Spinner m_id_spn_tcp_ip_client_protocol;
+    protected CheckBox m_id_cb_enable_transp_protocol;
+    protected Spinner m_id_spn_transp_protocol;
 
     protected NumericEditText m_id_et_protocol_ui;
-    protected NumericEditText m_id_et_protocol_addr_value;
+    protected NumericEditText m_id_et_protocol_data_addr;
 
     protected Spinner m_id_spn_protocol_data_type;
 
-    protected BaseValueData m_bvd;
-    protected int m_iTypeParameter;
+    protected ControlData m_cd;
+    protected int m_iControlTypeParameter;
     protected long m_lRoomIDParameter;
-    protected long m_lIDParameter;
-    protected BaseValueData m_bvdParameter;
-    protected SimpleCursorAdapter m_TcpIpClientAdapter;
+    protected long m_lControlIDParameter;
+    protected ControlData m_cdParameter;
+    protected SimpleCursorAdapter m_TranspProtocolAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,51 +84,51 @@ public class BaseValuePropActivity extends Activity implements
     protected void onBaseCreate() {
         m_id_spn_room = (Spinner) findViewById(R.id.id_spn_room_name);
         m_id_et_name = (StringEditText)findViewById(R.id.id_et_name);
-        m_id_et_name.setInputLimit(BaseValueData.TAGMinChar, BaseValueData.TAGMaxChar);
-        m_id_et_name.setText(BaseValueData.TAGDefaultValue);
+        m_id_et_name.setInputLimit(ControlData.TAGMinChar, ControlData.TAGMaxChar);
+        m_id_et_name.setText(ControlData.TAGDefaultValue);
         m_id_rb_horizontal = (RadioButton)findViewById(R.id.id_rb_horizontal);
         m_id_rb_horizontal.setChecked(true);
         m_id_rb_vertical = (RadioButton)findViewById(R.id.id_rb_vertical);
         m_id_rb_vertical.setChecked(false);
         m_id_et_position_x = (EditText)findViewById(R.id.id_et_position_x);
-        m_id_et_position_x.setText(BaseValueData.PosXDefaultValue);
+        m_id_et_position_x.setText(ControlData.PosXDefaultValue);
         m_id_et_position_y = (EditText)findViewById(R.id.id_et_position_y);
-        m_id_et_position_y.setText(BaseValueData.PosYDefaultValue);
+        m_id_et_position_y.setText(ControlData.PosYDefaultValue);
         m_id_et_position_z = (EditText)findViewById(R.id.id_et_position_z);
-        m_id_et_position_z.setText(BaseValueData.PosZDefaultValue);
+        m_id_et_position_z.setText(ControlData.PosZDefaultValue);
 
-        m_id_cb_enable_tcp_ip_client_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
-        m_id_cb_enable_tcp_ip_client_protocol.setEnabled(false);
-        m_id_cb_enable_tcp_ip_client_protocol.setChecked(false);
-        m_id_spn_tcp_ip_client_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
-        m_id_spn_tcp_ip_client_protocol.setEnabled(false);
+        m_id_cb_enable_transp_protocol = (CheckBox)findViewById(R.id.id_cb_enable_tcp_ip_client_protocol);
+        m_id_cb_enable_transp_protocol.setEnabled(false);
+        m_id_cb_enable_transp_protocol.setChecked(false);
+        m_id_spn_transp_protocol = (Spinner)findViewById(R.id.id_spn_tcp_ip_client_protocol);
+        m_id_spn_transp_protocol.setEnabled(false);
 
-        m_id_cb_enable_tcp_ip_client_protocol.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        m_id_cb_enable_transp_protocol.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                m_id_spn_tcp_ip_client_protocol.setEnabled(isChecked);
+                m_id_spn_transp_protocol.setEnabled(isChecked);
                 m_id_et_protocol_ui.setEnabled(isChecked);
-                m_id_et_protocol_addr_value.setEnabled(isChecked);
+                m_id_et_protocol_data_addr.setEnabled(isChecked);
             }
         });
 
-        m_id_spn_tcp_ip_client_protocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        m_id_spn_transp_protocol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Set Limit for address
                 // and check again
-                BaseValueTranspProtocolClientData.CommProtocolType p = null;
-                Cursor cursor = SQLContract.TranspProtocolClientEntry.load(id);
-                ArrayList<BaseValueTranspProtocolClientData> alticd = SQLContract.TranspProtocolClientEntry.get(cursor);
+                TranspProtocolData.CommProtocolType p = null;
+                Cursor cursor = SQLContract.TranspProtocolEntry.load(id);
+                ArrayList<TranspProtocolData> alticd = SQLContract.TranspProtocolEntry.get(cursor);
                 if (alticd != null && !alticd.isEmpty()) {
                     p = alticd.get(0).getCommProtocolType();
                 }
-                if (p != null && p == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_SERIAL) {
+                if (p != null && p == TranspProtocolData.CommProtocolType.MODBUS_ON_SERIAL) {
                     if (m_id_et_protocol_ui != null) {
                         m_id_et_protocol_ui.setInputLimit(1, 247);
                     }
                 }
-                if (p != null && p == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_TCP_IP) {
+                if (p != null && p == TranspProtocolData.CommProtocolType.MODBUS_ON_TCP_IP) {
                     if (m_id_et_protocol_ui != null) {
                         m_id_et_protocol_ui.setInputLimit(0, 247);
                     }
@@ -143,27 +142,27 @@ public class BaseValuePropActivity extends Activity implements
         });
 
         m_id_et_protocol_ui = (NumericEditText)findViewById(R.id.id_et_protocol_ui);
-        m_id_et_protocol_ui.setInputLimit(BaseValueData.ProtTcpIpClientValueIDMinValue, BaseValueData.ProtTcpIpClientValueIDMaxValue);
-        m_id_et_protocol_ui.setText(BaseValueData.ProtTcpIpClientValueIDDefaulValue);
+        m_id_et_protocol_ui.setInputLimit(ControlData.ProtTcpIpClientValueIDMinValue, ControlData.ProtTcpIpClientValueIDMaxValue);
+        m_id_et_protocol_ui.setText(ControlData.ProtTcpIpClientValueIDDefaulValue);
         m_id_et_protocol_ui.setEnabled(false);
-        m_id_et_protocol_addr_value = (NumericEditText)findViewById(R.id.id_et_protocol_addr_value);
-        m_id_et_protocol_addr_value.setInputLimit(BaseValueData.ProtTcpIpClientValueAddressMin, BaseValueData.ProtTcpIpClientValueAddressMax);
-        m_id_et_protocol_addr_value.setText(BaseValueData.ProtTcpIpClientValueAddressDefaul);
-        m_id_et_protocol_addr_value.setEnabled(false);
+        m_id_et_protocol_data_addr = (NumericEditText)findViewById(R.id.id_et_protocol_data_addr);
+        m_id_et_protocol_data_addr.setInputLimit(ControlData.ProtTcpIpClientValueAddressMin, ControlData.ProtTcpIpClientValueAddressMax);
+        m_id_et_protocol_data_addr.setText(ControlData.ProtTcpIpClientValueAddressDefaul);
+        m_id_et_protocol_data_addr.setEnabled(false);
 
         m_id_spn_protocol_data_type = (Spinner)findViewById(R.id.id_spn_protocol_data_type);
-        m_id_spn_protocol_data_type.setSelection(BaseValueData.ProtTcpIpClientValueDataTypeDefaul);
+        m_id_spn_protocol_data_type.setSelection(ControlData.ProtTcpIpClientValueDataTypeDefaul);
 
         Intent intent = getIntent();
         if(intent != null) {
-            m_iTypeParameter = intent.getIntExtra(TYPE, -1);
+            m_iControlTypeParameter = intent.getIntExtra(CONTROL_TYPE, -1);
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
-            m_lIDParameter = intent.getIntExtra(BASE_VALUE_ID, -1);
-            m_bvdParameter = intent.getParcelableExtra(BASE_VALUE_DATA);
+            m_lControlIDParameter = intent.getIntExtra(CONTROL_ID, -1);
+            m_cdParameter = intent.getParcelableExtra(CONTROL_DATA);
         }
 
-        m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.values()));
+        m_id_spn_transp_protocol.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, TranspProtocolData.CommProtocolType.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,
@@ -173,13 +172,13 @@ public class BaseValuePropActivity extends Activity implements
                 new int[] {android.R.id.text1}, 0);
         m_id_spn_room.setAdapter(m_SCAdapter);
 
-        m_TcpIpClientAdapter = new SimpleCursorAdapter(
+        m_TranspProtocolAdapter = new SimpleCursorAdapter(
                 this,
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[] {SQLContract.TranspProtocolClientEntry.COLUMN_NAME_NAME},
+                new String[] {SQLContract.TranspProtocolEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
-        m_id_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
+        m_id_spn_transp_protocol.setAdapter(m_TranspProtocolAdapter);
 
         m_id_spn_protocol_data_type.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, NumericDataType.DataType.values()));
@@ -192,20 +191,20 @@ public class BaseValuePropActivity extends Activity implements
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             int iTypeParameter;
-            if(m_bvdParameter != null){
-                iTypeParameter = m_bvdParameter.getType();
+            if(m_cdParameter != null){
+                iTypeParameter = m_cdParameter.getType();
             } else {
-                iTypeParameter = m_iTypeParameter;
+                iTypeParameter = m_iControlTypeParameter;
             }
             switch (iTypeParameter){
-                case BaseValueData.TYPE_LIGHT_SWITCH:
+                case ControlData.TYPE_LIGHT_SWITCH:
                     actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
                     break;
-                case BaseValueData.TYPE_NUMERIC_VALUE:
+                case ControlData.TYPE_NUMERIC_VALUE:
                     actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
                     break;
-                case BaseValueData.TYPE_SENSOR_RAW_VALUE:
-                case BaseValueData.TYPE_SENSOR_CALIBR_VALUE:
+                case ControlData.TYPE_SENSOR_RAW_VALUE:
+                case ControlData.TYPE_SENSOR_CALIBR_VALUE:
                     actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
                     break;
             }
@@ -259,8 +258,8 @@ public class BaseValuePropActivity extends Activity implements
     @Override
     public void onBackPressed() {
         boolean bAskForSave = false;
-        if (m_bvd != null) {
-            if(!m_bvd.getSaved()){
+        if (m_cd != null) {
+            if(!m_cd.getSaved()){
                 bAskForSave = true;
             }
         } else {
@@ -297,10 +296,10 @@ public class BaseValuePropActivity extends Activity implements
                 @Override
                 public Cursor loadInBackground() {
                     Cursor cursor = null;
-                    if(m_bvdParameter != null){
-                        cursor = SQLContract.BaseValueControlEntry.loadFromBaseValueData(m_bvdParameter);
-                    } else if (m_lIDParameter > 0){
-                        cursor = SQLContract.BaseValueControlEntry.loadByID(m_lIDParameter);
+                    if(m_cdParameter != null){
+                        cursor = SQLContract.ControlEntry.loadFromBaseValueData(m_cdParameter);
+                    } else if (m_lControlIDParameter > 0){
+                        cursor = SQLContract.ControlEntry.loadByID(m_lControlIDParameter);
                     }
                     return cursor;
                 }
@@ -311,7 +310,7 @@ public class BaseValuePropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TranspProtocolClientEntry.load();
+                    return SQLContract.TranspProtocolEntry.load();
                 }
             };
         }
@@ -331,14 +330,14 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
-            ArrayList<BaseValueData> albve = SQLContract.BaseValueControlEntry.get(cursor);
+            ArrayList<ControlData> albve = SQLContract.ControlEntry.get(cursor);
             if(albve != null && !albve.isEmpty()){
-                m_bvd = albve.get(0);
+                m_cd = albve.get(0);
             }
             if(m_id_spn_room != null) {
                 long lRoomID;
-                if(m_bvd != null) {
-                    lRoomID = m_bvd.getRoomID();
+                if(m_cd != null) {
+                    lRoomID = m_cd.getRoomID();
                 } else {
                     lRoomID = m_lRoomIDParameter;
                 }
@@ -354,7 +353,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
-            m_TcpIpClientAdapter.swapCursor(cursor);
+            m_TranspProtocolAdapter.swapCursor(cursor);
             getBaseValue();
         }
 
@@ -368,7 +367,7 @@ public class BaseValuePropActivity extends Activity implements
             m_SCAdapter.swapCursor(null);
         }
         if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
-            m_TcpIpClientAdapter.swapCursor(null);
+            m_TranspProtocolAdapter.swapCursor(null);
         }
 
         // Log.d(TAG, this.toString() + ": " + "onLoaderReset() id: " + loader.getId());
@@ -381,7 +380,7 @@ public class BaseValuePropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.BaseValueControlEntry.save(m_bvd)){
+                        if(SQLContract.ControlEntry.save(m_cd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -410,7 +409,7 @@ public class BaseValuePropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.BaseValueControlEntry.save(m_bvd)){
+                        if(SQLContract.ControlEntry.save(m_cd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -457,21 +456,21 @@ public class BaseValuePropActivity extends Activity implements
 
     protected void getBaseValue() {
         // Stato
-        if(m_id_spn_tcp_ip_client_protocol != null){
-            if(m_id_spn_tcp_ip_client_protocol.getCount() > 0){
-                m_id_cb_enable_tcp_ip_client_protocol.setEnabled(true);
+        if(m_id_spn_transp_protocol != null){
+            if(m_id_spn_transp_protocol.getCount() > 0){
+                m_id_cb_enable_transp_protocol.setEnabled(true);
             }
         }
 
         // Dati
-        if (m_bvd == null) {
+        if (m_cd == null) {
             return ;
         }
         if (m_id_et_name != null) {
-            m_id_et_name.setText(m_bvd.getTag());
+            m_id_et_name.setText(m_cd.getTag());
         }
 
-        if (m_bvd.getVertical()) {
+        if (m_cd.getVertical()) {
             if (m_id_rb_vertical != null) {
                 m_id_rb_vertical.setChecked(true);
             }
@@ -488,39 +487,39 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if (m_id_et_position_x != null) {
-            m_id_et_position_x.setText(Float.toString(m_bvd.getPosX()));
+            m_id_et_position_x.setText(Float.toString(m_cd.getPosX()));
         }
         if (m_id_et_position_y != null) {
-            m_id_et_position_y.setText(Float.toString(m_bvd.getPosY()));
+            m_id_et_position_y.setText(Float.toString(m_cd.getPosY()));
         }
         if (m_id_et_position_z != null) {
-            m_id_et_position_z.setText(Float.toString(m_bvd.getPosZ()));
+            m_id_et_position_z.setText(Float.toString(m_cd.getPosZ()));
         }
 
-        if (m_id_spn_tcp_ip_client_protocol != null && m_id_cb_enable_tcp_ip_client_protocol != null) {
-            for (int i = 0; i < m_id_spn_tcp_ip_client_protocol.getCount(); i++) {
-                Cursor value = (Cursor) m_id_spn_tcp_ip_client_protocol.getItemAtPosition(i);
+        if (m_id_spn_transp_protocol != null && m_id_cb_enable_transp_protocol != null) {
+            for (int i = 0; i < m_id_spn_transp_protocol.getCount(); i++) {
+                Cursor value = (Cursor) m_id_spn_transp_protocol.getItemAtPosition(i);
                 if (value != null) {
                     long id = value.getLong(value.getColumnIndex("_id"));
-                    if (id == m_bvd.getProtTcpIpClientID()) {
-                        m_id_cb_enable_tcp_ip_client_protocol.setChecked(m_bvd.getProtTcpIpClientEnable());
-                        m_id_spn_tcp_ip_client_protocol.setSelection(i);
+                    if (id == m_cd.getTranspProtocolID()) {
+                        m_id_cb_enable_transp_protocol.setChecked(m_cd.getTranspProtocolEnable());
+                        m_id_spn_transp_protocol.setSelection(i);
                     }
                 }
             }
         }
 
         if (m_id_et_protocol_ui != null) {
-            m_id_et_protocol_ui.setText(Integer.toString(m_bvd.getProtTcpIpClientValueID()));
+            m_id_et_protocol_ui.setText(Integer.toString(m_cd.getTranspProtocolUI()));
         }
-        if (m_id_et_protocol_addr_value != null) {
-            m_id_et_protocol_addr_value.setText(Integer.toString(m_bvd.getProtTcpIpClientValueAddress()));
+        if (m_id_et_protocol_data_addr != null) {
+            m_id_et_protocol_data_addr.setText(Integer.toString(m_cd.getTranspProtocolDataAddress()));
         }
 
         if(m_id_spn_protocol_data_type != null) {
             long lItem = -1;
             try{
-                lItem = m_bvd.getProtTcpIpClientValueDataType();
+                lItem = m_cd.getTranspProtocolDataType();
             } catch (Exception ignore) { }
             m_id_spn_protocol_data_type.setSelection((int) lItem);
         }
@@ -536,9 +535,9 @@ public class BaseValuePropActivity extends Activity implements
             // oppure
             // Se l'ID e' maggiore di 0
             // il Record esiste Gia'
-            if(!((m_bvd != null && (m_bvd.getID() > 0)) || (m_lIDParameter > 0))){
+            if(!((m_cd != null && (m_cd.getID() > 0)) || (m_lControlIDParameter > 0))){
                 if(setBaseData(iDialogOriginID)){
-                    if(SQLContract.BaseValueControlEntry.save(m_bvd)){
+                    if(SQLContract.ControlEntry.save(m_cd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                 .show(getFragmentManager(), "");
                     } else {
@@ -559,8 +558,8 @@ public class BaseValuePropActivity extends Activity implements
     }
 
     protected boolean setBaseData(int iDialogOriginID){
-        if (m_bvd == null) {
-            m_bvd = new BaseValueData(m_iTypeParameter);
+        if (m_cd == null) {
+            m_cd = new ControlData(m_iControlTypeParameter);
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){
@@ -581,50 +580,50 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         // Set the selected Room
-        m_bvd.setRoomID(m_id_spn_room.getSelectedItemId());
+        m_cd.setRoomID(m_id_spn_room.getSelectedItemId());
 
         if (m_id_et_name != null) {
-            m_bvd.setTAG(m_id_et_name.getText().toString());
+            m_cd.setTAG(m_id_et_name.getText().toString());
         }
 
         if(getOrientation() == Orientation.PORTRAIT ){
-            m_bvd.setVertical(false);
+            m_cd.setVertical(false);
         }
         if(getOrientation() == Orientation.LANDSCAPE ){
-            m_bvd.setVertical(true);
+            m_cd.setVertical(true);
         }
 
 
         try {
             if (m_id_et_position_x != null) {
-                m_bvd.setPosX(Float.parseFloat(m_id_et_position_x.getText().toString()));
+                m_cd.setPosX(Float.parseFloat(m_id_et_position_x.getText().toString()));
             }
             if (m_id_et_position_y != null) {
-                m_bvd.setPosY(Float.parseFloat(m_id_et_position_y.getText().toString()));
+                m_cd.setPosY(Float.parseFloat(m_id_et_position_y.getText().toString()));
             }
             if (m_id_et_position_z != null) {
-                m_bvd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
+                m_cd.setPosZ(Float.parseFloat(m_id_et_position_z.getText().toString()));
             }
         } catch (Exception ex) {
             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.VALUE_ERROR_ID, getString(R.string.text_odf_title_format_not_valid), getString(R.string.text_odf_message_format_not_valid), getString(R.string.text_odf_message_ok_button))
                     .show(getFragmentManager(), "");
             return false;
         }
-        if(m_id_cb_enable_tcp_ip_client_protocol != null) {
-            m_bvd.setProtTcpIpClientEnable(m_id_cb_enable_tcp_ip_client_protocol.isChecked());
+        if(m_id_cb_enable_transp_protocol != null) {
+            m_cd.setTranspProtocolEnable(m_id_cb_enable_transp_protocol.isChecked());
         }
 
-        if(m_id_spn_tcp_ip_client_protocol != null) {
-            m_bvd.setProtTcpIpClientID(m_id_spn_tcp_ip_client_protocol.getSelectedItemId());
+        if(m_id_spn_transp_protocol != null) {
+            m_cd.setTranspProtocolID(m_id_spn_transp_protocol.getSelectedItemId());
         }
 
         try {
 
             if (m_id_et_protocol_ui != null) {
-                m_bvd.setProtTcpIpClientValueID(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
+                m_cd.setTranspProtocolUI(Integer.parseInt(m_id_et_protocol_ui.getText().toString()));
             }
-            if (m_id_et_protocol_addr_value != null) {
-                m_bvd.setProtTcpIpClientValueAddress(Integer.parseInt(m_id_et_protocol_addr_value.getText().toString()));
+            if (m_id_et_protocol_data_addr != null) {
+                m_cd.setTranspProtocolDataAddress(Integer.parseInt(m_id_et_protocol_data_addr.getText().toString()));
             }
 
         } catch (Exception ex) {
@@ -634,7 +633,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if(m_id_spn_protocol_data_type != null) {
-            m_bvd.setProtTcpIpClientValueDataType((int) m_id_spn_protocol_data_type.getSelectedItemId());
+            m_cd.setTranspProtocolDataType((int) m_id_spn_protocol_data_type.getSelectedItemId());
         }
 
         return true;
@@ -661,13 +660,13 @@ public class BaseValuePropActivity extends Activity implements
     }
     private void deleteBaseValueData(int iDialogOriginID) {
         long lID = -1;
-        if(m_bvd != null && m_bvd.getID() > 0) {
-            lID = m_bvd.getID();
+        if(m_cd != null && m_cd.getID() > 0) {
+            lID = m_cd.getID();
         } else {
-            lID = m_lIDParameter;
+            lID = m_lControlIDParameter;
         }
         if(lID > 0){
-            if(SQLContract.BaseValueControlEntry.deleteByID(lID)){
+            if(SQLContract.ControlEntry.deleteByID(lID)){
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return;
@@ -694,29 +693,29 @@ public class BaseValuePropActivity extends Activity implements
     public static Intent makeBaseValuePropActivity(Context context, Class cls, int iType) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValuePropActivity.TYPE, iType);
+        intent.putExtra(ControlDataPropActivity.CONTROL_TYPE, iType);
         return intent;
     }
 
     public static Intent makeBaseValuePropActivityByRoomID(Context context, Class cls, int iType, long lRoomID) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValuePropActivity.TYPE, iType);
-        intent.putExtra(BaseValuePropActivity.ROOM_ID, lRoomID);
+        intent.putExtra(ControlDataPropActivity.CONTROL_TYPE, iType);
+        intent.putExtra(ControlDataPropActivity.ROOM_ID, lRoomID);
         return intent;
     }
 
     public static Intent makeBaseValuePropActivityByValueID(Context context, Class cls, long lID) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValuePropActivity.BASE_VALUE_ID, lID);
+        intent.putExtra(ControlDataPropActivity.CONTROL_ID, lID);
         return intent;
     }
 
-    public static Intent makeBaseValuePropActivityByValueData(Context context, Class cls, BaseValueData bvd) {
+    public static Intent makeBaseValuePropActivityByValueData(Context context, Class cls, ControlData bvd) {
         Intent intent = new Intent();
         intent.setClass(context, cls);
-        intent.putExtra(BaseValuePropActivity.BASE_VALUE_DATA, bvd);
+        intent.putExtra(ControlDataPropActivity.CONTROL_DATA, bvd);
         return intent;
     }
 }

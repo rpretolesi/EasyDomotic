@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomDataStream.ReadDataInputStream;
 import com.pretolesi.easydomotic.Modbus.Modbus;
@@ -208,7 +208,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         }
 
         // Modbus
-        if((m_ticd.getCommProtocolType() == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_SERIAL)) {
+        if((m_ticd.getCommProtocolType() == TranspProtocolData.CommProtocolType.MODBUS_ON_SERIAL)) {
             try {
                 byte[] bytePDU = m_rdis.getData(false);
                 bytePDU_temp = bytePDU;// Debug

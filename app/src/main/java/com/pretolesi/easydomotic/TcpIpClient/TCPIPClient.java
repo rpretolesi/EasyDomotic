@@ -3,7 +3,7 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
@@ -131,7 +131,7 @@ public class TCPIPClient extends BaseCommClient {
         }
 
         // Modbus
-        if((m_ticd.getCommProtocolType() == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_TCP_IP)) {
+        if((m_ticd.getCommProtocolType() == TranspProtocolData.CommProtocolType.MODBUS_ON_TCP_IP)) {
             try {
                 Arrays.fill(m_byteMBAP, (byte) 0);
                 m_dataInputStream.readFully(m_byteMBAP, 0, m_byteMBAP.length);

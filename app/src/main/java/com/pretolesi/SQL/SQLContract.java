@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.Control.ControlData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 
 /**
  *
@@ -291,8 +291,8 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class BaseValueControlEntry implements BaseColumns {
-        public static final String TABLE_NAME = "BaseValueControl";
+    public static abstract class ControlEntry implements BaseColumns {
+        public static final String TABLE_NAME = "Control";
         public static final String COLUMN_NAME_TYPE = "Type";
         public static final String COLUMN_NAME_ROOM_ID = "Room_ID";
         public static final String COLUMN_NAME_TAG = "TAG";
@@ -303,9 +303,9 @@ public class SQLContract
 
         public static final String COLUMN_NAME_TRANSP_PROTOCOL_ENABLE = "TranspProtocolEnable";
         public static final String COLUMN_NAME_TRANSP_PROTOCOL_ID = "TranspProtocolID";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_UI = "TranspProtocolUI";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS = "TranspProtocolDataAddress";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE = "TranspProtocolDataType";
 
         public static final String COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW = "ValueMinNrCharToShow";
         public static final String COLUMN_NAME_VALUE_NR_OF_DECIMAL = "ValueNrOfDecimal";
@@ -344,9 +344,9 @@ public class SQLContract
 
                         COLUMN_NAME_TRANSP_PROTOCOL_ENABLE + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TRANSP_PROTOCOL_ID + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_UI + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE + INT_TYPE + COMMA_SEP +
 
                         COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_VALUE_NR_OF_DECIMAL + INT_TYPE + COMMA_SEP +
@@ -372,59 +372,59 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(BaseValueData bve)  {
+        public static boolean save(ControlData cd)  {
 
             boolean bRes = true;
             try
             {
                 m_LockCommandHolder.lock();
                 SQLiteDatabase db = SQLHelper.getInstance().getDB();
-                if(db != null && bve != null) {
+                if(db != null && cd != null) {
 
                     ContentValues values = new ContentValues();
 
-                    values.put(COLUMN_NAME_TYPE, bve.getType());
-                    values.put(COLUMN_NAME_ROOM_ID, bve.getRoomID());
-                    values.put(COLUMN_NAME_TAG, String.valueOf(bve.getTag()));
-                    values.put(COLUMN_NAME_X, Float.toString(bve.getPosX()));
-                    values.put(COLUMN_NAME_Y, Float.toString(bve.getPosY()));
-                    values.put(COLUMN_NAME_Z, Float.toString(bve.getPosZ()));
-                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bve.getVertical() ? 1 : 0));
+                    values.put(COLUMN_NAME_TYPE, cd.getType());
+                    values.put(COLUMN_NAME_ROOM_ID, cd.getRoomID());
+                    values.put(COLUMN_NAME_TAG, String.valueOf(cd.getTag()));
+                    values.put(COLUMN_NAME_X, Float.toString(cd.getPosX()));
+                    values.put(COLUMN_NAME_Y, Float.toString(cd.getPosY()));
+                    values.put(COLUMN_NAME_Z, Float.toString(cd.getPosZ()));
+                    values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(cd.getVertical() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE, Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ID, bve.getProtTcpIpClientID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, bve.getProtTcpIpClientValueID());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, bve.getProtTcpIpClientValueAddress());
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, bve.getProtTcpIpClientValueDataType());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE, Integer.valueOf(cd.getTranspProtocolEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ID, cd.getTranspProtocolID());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_UI, cd.getTranspProtocolUI());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS, cd.getTranspProtocolDataAddress());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE, cd.getTranspProtocolDataType());
 
-                    values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, bve.getValueMinNrCharToShow());
-                    values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, bve.getValueNrOfDecimal());
-                    values.put(COLUMN_NAME_VALUE_UM, bve.getValueUM());
-                    values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, bve.getValueUpdateMillis());
-                    values.put(COLUMN_NAME_VALUE_READ_ONLY, Integer.valueOf(bve.getValueReadOnly() ? 1 : 0));
-                    values.put(COLUMN_NAME_VALUE_WRITE_ONLY, Integer.valueOf(bve.getValueWriteOnly() ? 1 : 0));
+                    values.put(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW, cd.getValueMinNrCharToShow());
+                    values.put(COLUMN_NAME_VALUE_NR_OF_DECIMAL, cd.getValueNrOfDecimal());
+                    values.put(COLUMN_NAME_VALUE_UM, cd.getValueUM());
+                    values.put(COLUMN_NAME_VALUE_UPDATE_MILLIS, cd.getValueUpdateMillis());
+                    values.put(COLUMN_NAME_VALUE_READ_ONLY, Integer.valueOf(cd.getValueReadOnly() ? 1 : 0));
+                    values.put(COLUMN_NAME_VALUE_WRITE_ONLY, Integer.valueOf(cd.getValueWriteOnly() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_WRITE_VALUE_OFF, bve.getWriteValueOFF());
-                    values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, bve.getWriteValueOFFON());
-                    values.put(COLUMN_NAME_WRITE_VALUE_ON_OFF, bve.getWriteValueONOFF());
-                    values.put(COLUMN_NAME_WRITE_VALUE_ON, bve.getWriteValueON());
+                    values.put(COLUMN_NAME_WRITE_VALUE_OFF, cd.getWriteValueOFF());
+                    values.put(COLUMN_NAME_WRITE_VALUE_OFF_ON, cd.getWriteValueOFFON());
+                    values.put(COLUMN_NAME_WRITE_VALUE_ON_OFF, cd.getWriteValueONOFF());
+                    values.put(COLUMN_NAME_WRITE_VALUE_ON, cd.getWriteValueON());
 
-                    values.put(COLUMN_NAME_SENSOR_TYPE_ID, bve.getSensorTypeID());
-                    values.put(COLUMN_NAME_SENSOR_VALUE_ID, bve.getSensorValueID());
-                    values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0));
-                    values.put(COLUMN_NAME_SENSOR_AMPL_K, bve.getSensorAmplK());
-                    values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, bve.getSensorLowPassFilterK());
-                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, bve.getSensorSampleTimeMillis());
-                    values.put(COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME, bve.getSensorWriteUpdateTimeMillis());
+                    values.put(COLUMN_NAME_SENSOR_TYPE_ID, cd.getSensorTypeID());
+                    values.put(COLUMN_NAME_SENSOR_VALUE_ID, cd.getSensorValueID());
+                    values.put(COLUMN_NAME_SENSOR_ENABLE_SIMULATION, Integer.valueOf(cd.getSensorEnableSimulation() ? 1 : 0));
+                    values.put(COLUMN_NAME_SENSOR_AMPL_K, cd.getSensorAmplK());
+                    values.put(COLUMN_NAME_SENSOR_LOW_PASS_FILTER_K, cd.getSensorLowPassFilterK());
+                    values.put(COLUMN_NAME_SENSOR_SAMPLE_TIME, cd.getSensorSampleTimeMillis());
+                    values.put(COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME, cd.getSensorWriteUpdateTimeMillis());
 
                     String whereClause = _ID + " = ? ";
 
-                    String[] whereArgs = {String.valueOf(bve.getID())};
-                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, bve.getID());
+                    String[] whereArgs = {String.valueOf(cd.getID())};
+                    long id = SQLContract.save(db, TABLE_NAME, values, whereClause, whereArgs, cd.getID());
                     // Update or Save
                     if (id > 0) {
-                        bve.setID(id);
-                        bve.setSaved(true);
+                        cd.setID(id);
+                        cd.setSaved(true);
                     } else {
                         bRes = false;
                     }
@@ -437,7 +437,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromBaseValueData(BaseValueData bve)
+        public static Cursor loadFromBaseValueData(ControlData cd)
         {
             try
             {
@@ -445,7 +445,7 @@ public class SQLContract
 
                 MatrixCursor cursor = null;
 
-                if(bve != null){
+                if(cd != null){
 
                     String[] columns = new String[] {
                             _ID,
@@ -459,9 +459,9 @@ public class SQLContract
 
                             COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
                             COLUMN_NAME_TRANSP_PROTOCOL_ID,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                            COLUMN_NAME_TRANSP_PROTOCOL_UI,
+                            COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS,
+                            COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE,
 
                             COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
                             COLUMN_NAME_VALUE_NR_OF_DECIMAL,
@@ -488,40 +488,40 @@ public class SQLContract
 
                     cursor = new MatrixCursor(columns);
                     cursor.addRow(new Object[]{
-                            bve.getID(),
-                            bve.getType(),
-                            bve.getRoomID(),
-                            bve.getTag(),
-                            bve.getPosX(),
-                            bve.getPosY(),
-                            bve.getPosZ(),
-                            Integer.valueOf(bve.getVertical() ? 1 : 0),
+                            cd.getID(),
+                            cd.getType(),
+                            cd.getRoomID(),
+                            cd.getTag(),
+                            cd.getPosX(),
+                            cd.getPosY(),
+                            cd.getPosZ(),
+                            Integer.valueOf(cd.getVertical() ? 1 : 0),
 
-                            Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0),
-                            bve.getProtTcpIpClientID(),
-                            bve.getProtTcpIpClientValueID(),
-                            bve.getProtTcpIpClientValueAddress(),
-                            bve.getProtTcpIpClientValueDataType(),
+                            Integer.valueOf(cd.getTranspProtocolEnable() ? 1 : 0),
+                            cd.getTranspProtocolID(),
+                            cd.getTranspProtocolUI(),
+                            cd.getTranspProtocolDataAddress(),
+                            cd.getTranspProtocolDataType(),
 
-                            bve.getValueMinNrCharToShow(),
-                            bve.getValueNrOfDecimal(),
-                            bve.getValueUM(),
-                            bve.getValueUpdateMillis(),
-                            Integer.valueOf(bve.getValueReadOnly() ? 1 : 0),
-                            Integer.valueOf(bve.getValueWriteOnly() ? 1 : 0),
+                            cd.getValueMinNrCharToShow(),
+                            cd.getValueNrOfDecimal(),
+                            cd.getValueUM(),
+                            cd.getValueUpdateMillis(),
+                            Integer.valueOf(cd.getValueReadOnly() ? 1 : 0),
+                            Integer.valueOf(cd.getValueWriteOnly() ? 1 : 0),
 
-                            bve.getWriteValueOFF(),
-                            bve.getWriteValueOFFON(),
-                            bve.getWriteValueONOFF(),
-                            bve.getWriteValueON(),
+                            cd.getWriteValueOFF(),
+                            cd.getWriteValueOFFON(),
+                            cd.getWriteValueONOFF(),
+                            cd.getWriteValueON(),
 
-                            bve.getSensorTypeID(),
-                            bve.getSensorValueID(),
-                            Integer.valueOf(bve.getSensorEnableSimulation() ? 1 : 0),
-                            bve.getSensorAmplK(),
-                            bve.getSensorLowPassFilterK(),
-                            bve.getSensorSampleTimeMillis(),
-                            bve.getSensorWriteUpdateTimeMillis(),
+                            cd.getSensorTypeID(),
+                            cd.getSensorValueID(),
+                            Integer.valueOf(cd.getSensorEnableSimulation() ? 1 : 0),
+                            cd.getSensorAmplK(),
+                            cd.getSensorLowPassFilterK(),
+                            cd.getSensorSampleTimeMillis(),
+                            cd.getSensorWriteUpdateTimeMillis(),
 
                             0   // Origin
                     });
@@ -562,9 +562,9 @@ public class SQLContract
 
                                     COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
                                     COLUMN_NAME_TRANSP_PROTOCOL_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_UI,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE,
 
                                     COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
                                     COLUMN_NAME_VALUE_NR_OF_DECIMAL,
@@ -642,9 +642,9 @@ public class SQLContract
 
                                     COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
                                     COLUMN_NAME_TRANSP_PROTOCOL_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_UI,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE,
 
                                     COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
                                     COLUMN_NAME_VALUE_NR_OF_DECIMAL,
@@ -722,9 +722,9 @@ public class SQLContract
 
                                     COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
                                     COLUMN_NAME_TRANSP_PROTOCOL_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_UI,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE,
 
                                     COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW,
                                     COLUMN_NAME_VALUE_NR_OF_DECIMAL,
@@ -890,19 +890,19 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<BaseValueData> get(Cursor cursor){
+        public static ArrayList<ControlData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                BaseValueData bve = null;
-                ArrayList<BaseValueData> albve = null;
+                ControlData cd = null;
+                ArrayList<ControlData> alcd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                     {
-                        if(albve == null){
-                            albve = new ArrayList<>();
+                        if(alcd == null){
+                            alcd = new ArrayList<>();
                         }
                         // Origin
                         boolean bSaved = true;
@@ -912,8 +912,8 @@ public class SQLContract
                                 bSaved = false;
                             }
                         }
-                        bve = new BaseValueData(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)));
-                        bve.setPositionValue(
+                        cd = new ControlData(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)));
+                        cd.setPositionValue(
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TYPE)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ROOM_ID)),
@@ -924,15 +924,15 @@ public class SQLContract
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_LANDSCAPE)) == 0) ? false : true)
                         );
 
-                        bve.setProtTcpIpClient(
+                        cd.setTranspProtocol(
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE)) == 0) ? false : true),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ID)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE))
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_UI)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_DATA_ADDRESS)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_DATA_TYPE))
                         );
 
-                        bve.setFormatValue(
+                        cd.setFormatValue(
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_MIN_NR_CHAR_TO_SHOW)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_NR_OF_DECIMAL)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VALUE_UM)),
@@ -941,14 +941,14 @@ public class SQLContract
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_VALUE_WRITE_ONLY)) == 0) ? false : true)
                         );
 
-                        bve.setSwitchValue(
+                        cd.setSwitchValue(
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_OFF)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_OFF_ON)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_ON_OFF)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_WRITE_VALUE_ON))
                         );
 
-                        bve.setSensorType(
+                        cd.setSensorType(
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_SENSOR_TYPE_ID)),
                                 cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_SENSOR_VALUE_ID)),
                                 ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_ENABLE_SIMULATION)) == 0) ? false : true),
@@ -958,10 +958,10 @@ public class SQLContract
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SENSOR_WRITE_UPDATE_TIME))
                         );
 
-                        albve.add(bve);
+                        alcd.add(cd);
                     }
                 }
-                return albve;
+                return alcd;
             }
             finally
             {
@@ -972,7 +972,7 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class TranspProtocolClientEntry implements BaseColumns {
+    public static abstract class TranspProtocolEntry implements BaseColumns {
         public static final String TABLE_NAME = "TranspProtocol";
         public static final String COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID = "TranspProtocolTypeID";
         public static final String COLUMN_NAME_NAME = "Name";
@@ -1009,7 +1009,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(BaseValueTranspProtocolClientData ticd)  {
+        public static boolean save(TranspProtocolData ticd)  {
 
             boolean bRes = true;
             try
@@ -1051,7 +1051,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromTCPIPClientData(BaseValueTranspProtocolClientData ticd)
+        public static Cursor loadFromTCPIPClientData(TranspProtocolData ticd)
         {
             try
             {
@@ -1268,7 +1268,7 @@ public class SQLContract
             }
         }
 
-        public static Cursor load(List<BaseValueData> lbvd)
+        public static Cursor load(List<ControlData> lbvd)
         {
             try
             {
@@ -1304,17 +1304,17 @@ public class SQLContract
                     String whereClause = "";
                     String[] whereArgs = new String[lbvd.size()];
                     int iWhereArgs = 0;
-                    for (Iterator<BaseValueData> iterator = lbvd.iterator(); iterator.hasNext();) {
-                        BaseValueData bvd = iterator.next();
+                    for (Iterator<ControlData> iterator = lbvd.iterator(); iterator.hasNext();) {
+                        ControlData bvd = iterator.next();
                         if(bvd == null){
                             return null;
                         }
-                        if(bvd.getProtTcpIpClientEnable()){
+                        if(bvd.getTranspProtocolEnable()){
                             whereClause = whereClause + _ID + " = ? ";
                             if (iterator.hasNext()) {
                                 whereClause = whereClause + " OR ";
                             }
-                            whereArgs[iWhereArgs] = String.valueOf(bvd.getProtTcpIpClientID());
+                            whereArgs[iWhereArgs] = String.valueOf(bvd.getTranspProtocolID());
                             iWhereArgs = iWhereArgs + 1;
                         }
                     }
@@ -1368,13 +1368,13 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<BaseValueTranspProtocolClientData> get(Cursor cursor){
+        public static ArrayList<TranspProtocolData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                BaseValueTranspProtocolClientData ticd = null;
-                ArrayList<BaseValueTranspProtocolClientData> alticd = null;
+                TranspProtocolData ticd = null;
+                ArrayList<TranspProtocolData> alticd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
@@ -1391,7 +1391,7 @@ public class SQLContract
                             }
                         }
 
-                        ticd = new BaseValueTranspProtocolClientData(
+                        ticd = new TranspProtocolData(
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,

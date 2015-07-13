@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.LightSwitch;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +15,6 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.pretolesi.easydomotic.BaseFragment;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
@@ -28,22 +27,20 @@ import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 /**
  *
  */
-public class LightSwitch extends Switch implements
+public class LightSwitchControl extends Switch implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
-//        ToggleButton.OnCheckedChangeListener,
         ToggleButton.OnClickListener,
         TCPIPClient.TcpIpClientReadValueStatusListener,
         TCPIPClient.TcpIpClientWriteStatusListener {
 
-    private static final String TAG = "LightSwitch";
     private NumericDataType.DataType m_dtDataType;
 
     private GestureDetectorCompat mDetector;
     private float mLastTouchX;
     private float mLastTouchY;
 
-    private BaseValueData m_bvd;
+    private ControlData m_cd;
     private int m_iMsgID;
     private boolean m_iTIDReadClicked;
     private int m_iTIDRead;
@@ -61,10 +58,10 @@ public class LightSwitch extends Switch implements
     // Label for Switch
     private LabelTextView m_LabelTextView;
 
-    public LightSwitch(Context context) {
+    public LightSwitchControl(Context context) {
         super(context);
         m_LabelTextView = null;
-        this.m_bvd = null;
+        this.m_cd = null;
         this.m_iMsgID = -1;
         this.m_iTIDReadClicked = false;
         this.m_iTIDRead = -1;
@@ -79,11 +76,11 @@ public class LightSwitch extends Switch implements
         setTextOn("1");
     }
 
-    public LightSwitch(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public LightSwitchControl(Context context, ControlData cd, int iMsgID, boolean bEditMode) {
         super(context);
         m_LabelTextView = null;
-        if(bvd != null) {
-            this.m_bvd = bvd;
+        if(cd != null) {
+            this.m_cd = cd;
             this.m_iMsgID = iMsgID;
             this.m_iTIDReadClicked = false;
             this.m_iTIDRead = m_iMsgID + 1;
@@ -91,11 +88,11 @@ public class LightSwitch extends Switch implements
             this.m_iTIDOFFON = m_iMsgID + 3;
             this.m_iTIDONOFF = m_iMsgID + 4;
             this.m_iTIDON = m_iMsgID + 5;
-            this.setTag(bvd.getTag());
+            this.setTag(cd.getTag());
             setNumericDataType(DataType.SHORT);
             setEditMode(bEditMode);
-            setVertical(m_bvd.getVertical());
-            if(bvd.getValueReadOnly()){
+            setVertical(m_cd.getVertical());
+            if(cd.getValueReadOnly()){
                 this.setClickable(false);
             }
         }
@@ -138,14 +135,14 @@ public class LightSwitch extends Switch implements
         }
 
         // Listener
-        if(m_bvd != null){
-            if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
-                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_cd != null){
+            if(!getEditMode() && m_cd.getTranspProtocolEnable()) {
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_cd.getTranspProtocolID());
                 if(bcc != null){
                     bcc.registerTcpIpClientReadValueStatus(this);
                     bcc.registerTcpIpClientWriteSwitchStatus(this);
                 }
-                setTimer(m_bvd.getValueUpdateMillis());
+                setTimer(m_cd.getValueUpdateMillis());
             }
         }
 
@@ -163,8 +160,8 @@ public class LightSwitch extends Switch implements
         }
 
         // Listener
-        if(m_bvd != null){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_cd != null){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_cd.getTranspProtocolID());
             if(bcc != null){
                 bcc.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -176,10 +173,10 @@ public class LightSwitch extends Switch implements
 
 //    private synchronized void readValue(){
     private void readValue(){
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_cd != null && m_cd.getTranspProtocolEnable()){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_cd.getTranspProtocolID());
             if(bcc != null){
-                bcc.readValue(getContext(), m_iTIDRead, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType());
+                bcc.readValue(getContext(), m_iTIDRead, m_cd.getTranspProtocolUI(), m_cd.getTranspProtocolDataAddress(), getNumericDataType());
             }
         }
     }
@@ -209,16 +206,16 @@ public class LightSwitch extends Switch implements
     }
 
     private void writeSwitchValue(boolean bValue){
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_cd != null && m_cd.getTranspProtocolEnable()){
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_cd.getTranspProtocolID());
             if(bcc != null){
                 Short sh;
                 if(bValue) {
-                    sh = (short)m_bvd.getWriteValueON();
-                    bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
+                    sh = (short) m_cd.getWriteValueON();
+                    bcc.writeValue(getContext(), m_iTIDON, m_cd.getTranspProtocolUI(), m_cd.getTranspProtocolDataAddress(), sh);
                  } else {
-                    sh = (short)m_bvd.getWriteValueOFF();
-                    bcc.writeValue(getContext(), m_iTIDON, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), sh);
+                    sh = (short) m_cd.getWriteValueOFF();
+                    bcc.writeValue(getContext(), m_iTIDON, m_cd.getTranspProtocolUI(), m_cd.getTranspProtocolDataAddress(), sh);
                 }
             }
         }
@@ -226,8 +223,8 @@ public class LightSwitch extends Switch implements
 
     @Override
     public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
-        if(ticrs != null && m_bvd != null){
-            if(ticrs.getServerID() == m_bvd.getProtTcpIpClientID()){
+        if(ticrs != null && m_cd != null){
+            if(ticrs.getServerID() == m_cd.getTranspProtocolID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     if(!m_iTIDReadClicked) {
                         // Only Short
@@ -235,10 +232,10 @@ public class LightSwitch extends Switch implements
                             if (ticrs.getValue() != null) {
                                 if(ticrs.getValue() instanceof Short){
                                     Short sh = (Short)ticrs.getValue();
-                                    if(sh == m_bvd.getWriteValueON()){
+                                    if(sh == m_cd.getWriteValueON()){
                                         setChecked(true);
                                     }
-                                    if(sh == m_bvd.getWriteValueOFF()){
+                                    if(sh == m_cd.getWriteValueOFF()){
                                         setChecked(false);
                                     }
                                     this.setError(null);
@@ -277,9 +274,9 @@ public class LightSwitch extends Switch implements
     @Override
     public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
 
-        if(ticws != null && m_bvd != null){
+        if(ticws != null && m_cd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
-                if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()) {
+                if(ticws.getServerID() == m_cd.getTranspProtocolID()) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         this.setError(null);
                     } else {
@@ -318,7 +315,7 @@ public class LightSwitch extends Switch implements
     };
 
     protected void onTimer() {
-        if(m_bvd != null && !m_bvd.getValueWriteOnly()) {
+        if(m_cd != null && !m_cd.getValueWriteOnly()) {
             readValue();
         }
      }
@@ -353,9 +350,9 @@ public class LightSwitch extends Switch implements
                 }
 
                 case MotionEvent.ACTION_UP: {
-                    if(m_bvd != null) {
-                        m_bvd.setSaved(false);
-                        Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByValueData(this.getContext(), LightSwitchPropActivity.class, m_bvd);
+                    if(m_cd != null) {
+                        m_cd.setSaved(false);
+                        Intent intent = LightSwitchControlPropActivity.makeBaseValuePropActivityByValueData(this.getContext(), LightSwitchControlPropActivity.class, m_cd);
                         this.getContext().startActivity(intent);
                     }
                     break;
@@ -365,7 +362,7 @@ public class LightSwitch extends Switch implements
             this.mDetector.onTouchEvent(event);
             return true;
         } else {
-            if(m_bvd != null && m_bvd.getValueReadOnly()) {
+            if(m_cd != null && m_cd.getValueReadOnly()) {
               if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP ){
                    return true;
                 }
@@ -398,8 +395,8 @@ public class LightSwitch extends Switch implements
 
     @Override
     public boolean onDown(MotionEvent event) {
-        if(m_bvd != null) {
-            m_bvd.setSaved(false);
+        if(m_cd != null) {
+            m_cd.setSaved(false);
         }
 
         if(this.getLayoutParams() instanceof RelativeLayout.LayoutParams){
@@ -428,10 +425,10 @@ public class LightSwitch extends Switch implements
         final float dx = x - mLastTouchX;
         final float dy = y - mLastTouchY;
 
-        if(m_bvd != null) {
+        if(m_cd != null) {
             BaseFragment.setViewPosition(this, (int) dx, (int) dy);
-            m_bvd.setPosX((int) dx);
-            m_bvd.setPosY((int) dy);
+            m_cd.setPosX((int) dx);
+            m_cd.setPosY((int) dy);
 
         }
         return true;

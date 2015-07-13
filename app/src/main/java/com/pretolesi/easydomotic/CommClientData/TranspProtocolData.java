@@ -9,7 +9,7 @@ import java.util.List;
 /**
  *
  */
-public class BaseValueTranspProtocolClientData implements Parcelable {
+public class TranspProtocolData implements Parcelable {
 
     public static short NameMinChar = 1;
     public static short NameMaxChar = 128;
@@ -65,7 +65,7 @@ public class BaseValueTranspProtocolClientData implements Parcelable {
     private int m_iHead;
     private int m_iTail;
 
-    public BaseValueTranspProtocolClientData(int iType) {
+    public TranspProtocolData(int iType) {
         this.m_lTransProtocolTypeID = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
@@ -81,7 +81,7 @@ public class BaseValueTranspProtocolClientData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public BaseValueTranspProtocolClientData(long lTransProtocolID, long id, boolean bSaved, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lCommProtocolID, int iHead, int iTail) {
+    public TranspProtocolData(long lTransProtocolID, long id, boolean bSaved, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lCommProtocolID, int iHead, int iTail) {
         this.m_lTransProtocolTypeID = lTransProtocolID;
         this.m_ID = id;
         this.m_strName = strName;
@@ -194,7 +194,7 @@ public class BaseValueTranspProtocolClientData implements Parcelable {
         return m_iTail;
     }
 
-    protected BaseValueTranspProtocolClientData(Parcel in) {
+    protected TranspProtocolData(Parcel in) {
         m_lTransProtocolTypeID = in.readLong();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
@@ -233,15 +233,15 @@ public class BaseValueTranspProtocolClientData implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Creator<BaseValueTranspProtocolClientData> CREATOR = new Creator<BaseValueTranspProtocolClientData>() {
+    public static final Creator<TranspProtocolData> CREATOR = new Creator<TranspProtocolData>() {
         @Override
-        public BaseValueTranspProtocolClientData createFromParcel(Parcel in) {
-            return new BaseValueTranspProtocolClientData(in);
+        public TranspProtocolData createFromParcel(Parcel in) {
+            return new TranspProtocolData(in);
         }
 
         @Override
-        public BaseValueTranspProtocolClientData[] newArray(int size) {
-            return new BaseValueTranspProtocolClientData[size];
+        public TranspProtocolData[] newArray(int size) {
+            return new TranspProtocolData[size];
         }
     };
 

@@ -12,14 +12,14 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.BluetoothClient.BluetoothClientDataPropActivity;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
-import com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity;
-import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
-import com.pretolesi.easydomotic.TcpIpClient.TCPIPClientPropActivity;
+import com.pretolesi.easydomotic.Control.ControlData;
+import com.pretolesi.easydomotic.BluetoothClient.BluetoothClientProtocolPropActivity;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolDataPropActivity;
+import com.pretolesi.easydomotic.Control.LightSwitchControlPropActivity;
+import com.pretolesi.easydomotic.Control.NumericValueControlPropActivity;
+import com.pretolesi.easydomotic.Control.SensorValueControlPropActivity;
+import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientProtocolPropActivity;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientListFragment;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
@@ -103,7 +103,7 @@ public class SettingsActivity extends BaseActivity implements
                     onSectionSetTitle(getString(R.string.app_name));
                     restoreActionBar();
 
-                    Intent intent = LightSwitchPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchPropActivity.class, BaseValueData.TYPE_LIGHT_SWITCH, rfd.getID());
+                    Intent intent = LightSwitchControlPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchControlPropActivity.class, ControlData.TYPE_LIGHT_SWITCH, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -125,7 +125,7 @@ public class SettingsActivity extends BaseActivity implements
                     onSectionSetTitle(getString(R.string.app_name));
                     restoreActionBar();
 
-                    Intent intent = NumericValuePropActivity.makeBaseValuePropActivityByRoomID(this, NumericValuePropActivity.class, BaseValueData.TYPE_NUMERIC_VALUE, rfd.getID());
+                    Intent intent = NumericValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, NumericValueControlPropActivity.class, ControlData.TYPE_NUMERIC_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -147,7 +147,7 @@ public class SettingsActivity extends BaseActivity implements
                     onSectionSetTitle(getString(R.string.app_name));
                     restoreActionBar();
 
-                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_RAW_VALUE, rfd.getID());
+                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.TYPE_SENSOR_RAW_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -169,7 +169,7 @@ public class SettingsActivity extends BaseActivity implements
                     onSectionSetTitle(getString(R.string.app_name));
                     restoreActionBar();
 
-                    Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByRoomID(this, SensorValuePropActivity.class, BaseValueData.TYPE_SENSOR_CALIBR_VALUE, rfd.getID());
+                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.TYPE_SENSOR_CALIBR_VALUE, rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -186,14 +186,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, TCPIPClientPropActivity.class, BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID());
+            Intent intent = TranspProtocolDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, TcpIpClientProtocolPropActivity.class, TranspProtocolData.TranspProtocolType.TCP_IP.getID());
             startActivity(intent);
         }
         if(position == 7){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID()),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, TranspProtocolData.TranspProtocolType.TCP_IP.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
 
@@ -202,14 +202,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, BluetoothClientDataPropActivity.class, BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID());
+            Intent intent = TranspProtocolDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, BluetoothClientProtocolPropActivity.class, TranspProtocolData.TranspProtocolType.BLUETOOTH.getID());
             startActivity(intent);
         }
         if(position == 9){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID()),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, TranspProtocolData.TranspProtocolType.BLUETOOTH.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
     }
@@ -290,11 +290,11 @@ public class SettingsActivity extends BaseActivity implements
         restoreActionBar();
  // TODO:      ciascuna activity dovrebbe gestire action bar
         if(position == 7){
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, TCPIPClientPropActivity.class, id, iType);
+            Intent intent = TranspProtocolDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, TcpIpClientProtocolPropActivity.class, id, iType);
             startActivity(intent);
         }
         if(position == 9){
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, BluetoothClientDataPropActivity.class, id, iType);
+            Intent intent = TranspProtocolDataPropActivity.makeBaseValueCommClientPropActivityByIDAndTranspProtocol(this, BluetoothClientProtocolPropActivity.class, id, iType);
             startActivity(intent);
         }
     }
@@ -409,7 +409,7 @@ public class SettingsActivity extends BaseActivity implements
             RoomFragmentData rfd = bf.getRoomFragmentData();
             if(rfd != null) {
                 // First, i delete all Controls in the room
-                SQLContract.BaseValueControlEntry.deleteByRoomID(rfd.getID());
+                SQLContract.ControlEntry.deleteByRoomID(rfd.getID());
                 // Ok, i can delete the room
                 if(SQLContract.RoomEntry.deleteByID(rfd.getID())){
                     // Ok

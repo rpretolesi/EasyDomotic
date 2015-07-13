@@ -19,15 +19,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
+import com.pretolesi.easydomotic.Control.ControlData;
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.LightSwitch.LightSwitch;
+import com.pretolesi.easydomotic.Control.LightSwitchControl;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.NumericValue.NumericValue;
-import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
-import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
+import com.pretolesi.easydomotic.Control.NumericValueControl;
+import com.pretolesi.easydomotic.Control.SensorValueCalibrControl;
+import com.pretolesi.easydomotic.Control.SensorValueRawControl;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -59,8 +59,8 @@ public class BaseFragment extends Fragment implements
     protected TextView m_tvRoomName;
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
-    protected ArrayList<BaseValueData> m_albvd;
-    protected ArrayList<BaseValueTranspProtocolClientData> m_alticd;
+    protected ArrayList<ControlData> m_albvd;
+    protected ArrayList<TranspProtocolData> m_alticd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
     protected LinearLayout m_llStatusTcpIpServer;
@@ -199,7 +199,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.BaseValueControlEntry.load(getArguments().getLong(ROOM_ID, -1));
+                    return SQLContract.ControlEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -208,7 +208,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TranspProtocolClientEntry.load(m_albvd);
+                    return SQLContract.TranspProtocolEntry.load(m_albvd);
                 }
             };
         }
@@ -230,7 +230,7 @@ public class BaseFragment extends Fragment implements
         }
 
         if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
-            m_albvd = SQLContract.BaseValueControlEntry.get(cursor);
+            m_albvd = SQLContract.ControlEntry.get(cursor);
 
             // Controls
             getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
@@ -239,7 +239,7 @@ public class BaseFragment extends Fragment implements
         if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
-                m_alticd = SQLContract.TranspProtocolClientEntry.get(cursor);
+                m_alticd = SQLContract.TranspProtocolEntry.get(cursor);
                 CommClientHelper.startInstance(getActivity(), m_alticd);
 
                 // Register Listener For Tcp Ip Server
@@ -355,11 +355,11 @@ public class BaseFragment extends Fragment implements
     private void updateControls(){
         // Define the switch
         if(m_rl != null && m_albvd != null){
-            for(BaseValueData bvd : m_albvd){
+            for(ControlData bvd : m_albvd){
                 if(bvd != null){
                     switch (bvd.getType()){
-                        case BaseValueData.TYPE_LIGHT_SWITCH:
-                            LightSwitch ls = new LightSwitch(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        case ControlData.TYPE_LIGHT_SWITCH:
+                            LightSwitchControl ls = new LightSwitchControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
                             }
@@ -368,8 +368,8 @@ public class BaseFragment extends Fragment implements
 
                             break;
 
-                        case BaseValueData.TYPE_NUMERIC_VALUE:
-                            NumericValue nv = new NumericValue(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        case ControlData.TYPE_NUMERIC_VALUE:
+                            NumericValueControl nv = new NumericValueControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
                             }
@@ -378,8 +378,8 @@ public class BaseFragment extends Fragment implements
 
                             break;
 
-                        case BaseValueData.TYPE_SENSOR_RAW_VALUE:
-                            SensorValueRaw svr = new SensorValueRaw(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        case ControlData.TYPE_SENSOR_RAW_VALUE:
+                            SensorValueRawControl svr = new SensorValueRawControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
                             }
@@ -388,8 +388,8 @@ public class BaseFragment extends Fragment implements
 
                             break;
 
-                        case BaseValueData.TYPE_SENSOR_CALIBR_VALUE:
-                            SensorValueCalibr svc = new SensorValueCalibr(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        case ControlData.TYPE_SENSOR_CALIBR_VALUE:
+                            SensorValueCalibrControl svc = new SensorValueCalibrControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                             if(bvd.getVertical()){
                                 ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();
                             }

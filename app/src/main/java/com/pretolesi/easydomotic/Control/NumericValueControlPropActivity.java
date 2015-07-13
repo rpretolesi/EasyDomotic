@@ -1,10 +1,8 @@
-package com.pretolesi.easydomotic.NumericValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.os.Bundle;
 import android.widget.CheckBox;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.BaseValue.BaseValuePropActivity;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.R;
@@ -14,7 +12,7 @@ import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 /**
  *
  */
-public class NumericValuePropActivity extends BaseValuePropActivity {
+public class NumericValueControlPropActivity extends ControlDataPropActivity {
     private static final String TAG = "NumericValuePropAct";
 
     private NumericEditText m_id_et_min_nr_char_to_show;
@@ -32,17 +30,17 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
         onBaseCreate();
 
         m_id_et_min_nr_char_to_show = (NumericEditText)findViewById(R.id.id_et_min_nr_char_to_show);
-        m_id_et_min_nr_char_to_show.setInputLimit(BaseValueData.ValueMinNrCharToShowMinValue, BaseValueData.ValueMinNrCharToShowMaxValue);
-        m_id_et_min_nr_char_to_show.setText(BaseValueData.ValueMinNrCharToShowDefaulValue);
+        m_id_et_min_nr_char_to_show.setInputLimit(ControlData.ValueMinNrCharToShowMinValue, ControlData.ValueMinNrCharToShowMaxValue);
+        m_id_et_min_nr_char_to_show.setText(ControlData.ValueMinNrCharToShowDefaulValue);
         m_id_et_nr_of_decimal = (NumericEditText)findViewById(R.id.id_et_nr_of_decimal);
-        m_id_et_nr_of_decimal.setInputLimit(BaseValueData.ValueNrOfDecimalMinValue, BaseValueData.ValueNrOfDecimalMaxValue);
-        m_id_et_nr_of_decimal.setText(BaseValueData.ValueNrOfDecimalDefaulValue);
+        m_id_et_nr_of_decimal.setInputLimit(ControlData.ValueNrOfDecimalMinValue, ControlData.ValueNrOfDecimalMaxValue);
+        m_id_et_nr_of_decimal.setText(ControlData.ValueNrOfDecimalDefaulValue);
         m_id_et_um = (StringEditText)findViewById(R.id.id_et_um);
-        m_id_et_um.setInputLimit(BaseValueData.ValueUMMinValue, BaseValueData.ValueUMMaxValue);
-        m_id_et_um.setText(BaseValueData.ValueUMDefaulValue);
+        m_id_et_um.setInputLimit(ControlData.ValueUMMinValue, ControlData.ValueUMMaxValue);
+        m_id_et_um.setText(ControlData.ValueUMDefaulValue);
         m_id_et_update_millis = (NumericEditText)findViewById(R.id.id_et_update_millis);
-        m_id_et_update_millis.setInputLimit(BaseValueData.ValueUpdateMillisMinValue, BaseValueData.ValueUpdateMillisMaxValue);
-        m_id_et_update_millis.setText(BaseValueData.ValueUpdateMillisDefaulValue);
+        m_id_et_update_millis.setInputLimit(ControlData.ValueUpdateMillisMinValue, ControlData.ValueUpdateMillisMaxValue);
+        m_id_et_update_millis.setText(ControlData.ValueUpdateMillisDefaulValue);
         m_id_cb_read_only = (CheckBox)findViewById(R.id.id_cb_read_only);
 
     }
@@ -51,24 +49,24 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
         super.getBaseValue();
 
         // Dati
-        if (m_bvd == null) {
+        if (m_cd == null) {
             return ;
         }
 
         if (m_id_et_min_nr_char_to_show != null) {
-            m_id_et_min_nr_char_to_show.setText(Integer.toString(m_bvd.getValueMinNrCharToShow()));
+            m_id_et_min_nr_char_to_show.setText(Integer.toString(m_cd.getValueMinNrCharToShow()));
         }
         if (m_id_et_nr_of_decimal != null) {
-            m_id_et_nr_of_decimal.setText(Integer.toString(m_bvd.getValueNrOfDecimal()));
+            m_id_et_nr_of_decimal.setText(Integer.toString(m_cd.getValueNrOfDecimal()));
         }
         if (m_id_et_um != null) {
-            m_id_et_um.setText(m_bvd.getValueUM());
+            m_id_et_um.setText(m_cd.getValueUM());
         }
         if (m_id_et_update_millis != null) {
-            m_id_et_update_millis.setText(Integer.toString(m_bvd.getValueUpdateMillis()));
+            m_id_et_update_millis.setText(Integer.toString(m_cd.getValueUpdateMillis()));
         }
         if (m_id_cb_read_only != null) {
-            m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+            m_id_cb_read_only.setChecked(m_cd.getValueReadOnly());
         }
     }
 
@@ -76,26 +74,26 @@ public class NumericValuePropActivity extends BaseValuePropActivity {
     protected boolean setBaseData(int iDialogOriginID){
         boolean bRes = super.setBaseData(iDialogOriginID);
         // Dati
-        if (m_bvd == null) {
+        if (m_cd == null) {
             return false;
         }
 
         try {
 
             if (m_id_et_min_nr_char_to_show != null) {
-                m_bvd.setValueMinNrCharToShow(Integer.parseInt(m_id_et_min_nr_char_to_show.getText().toString()));
+                m_cd.setValueMinNrCharToShow(Integer.parseInt(m_id_et_min_nr_char_to_show.getText().toString()));
             }
             if (m_id_et_nr_of_decimal != null) {
-                m_bvd.setValueNrOfDecimal(Integer.parseInt(m_id_et_nr_of_decimal.getText().toString()));
+                m_cd.setValueNrOfDecimal(Integer.parseInt(m_id_et_nr_of_decimal.getText().toString()));
             }
             if (m_id_et_um != null) {
-                m_bvd.setValueUM(m_id_et_um.getText().toString());
+                m_cd.setValueUM(m_id_et_um.getText().toString());
             }
             if (m_id_et_update_millis != null) {
-                m_bvd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
+                m_cd.setValueUpdateMillis(Integer.parseInt(m_id_et_update_millis.getText().toString()));
             }
             if (m_id_cb_read_only != null) {
-                m_id_cb_read_only.setChecked(m_bvd.getValueReadOnly());
+                m_id_cb_read_only.setChecked(m_cd.getValueReadOnly());
             }
 
         } catch (Exception ex) {

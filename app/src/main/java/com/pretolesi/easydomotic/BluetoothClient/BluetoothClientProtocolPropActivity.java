@@ -7,16 +7,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
+import com.pretolesi.easydomotic.CommClientData.TranspProtocolDataPropActivity;
 import com.pretolesi.easydomotic.R;
 
 
 /**
  * Created by ricca_000 on 03/06/2015.
  */
-public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPropActivity {
-    private static final String TAG = "BluetoothClientDataPropActivity";
+public class BluetoothClientProtocolPropActivity extends TranspProtocolDataPropActivity {
+
     private static final int ACTIVITY_RESULT_BT_ADDRESS = 1;
 
     public static final String BT_NAME = "bt_name";
@@ -54,7 +54,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         });
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.getValues(BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH)));
+                android.R.layout.simple_list_item_1, TranspProtocolData.CommProtocolType.getValues(TranspProtocolData.TranspProtocolType.BLUETOOTH)));
 
         setActionBarTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
 
@@ -91,7 +91,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
     protected boolean setBaseData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueTranspProtocolClientData(BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID());
+            m_ticd = new TranspProtocolData(TranspProtocolData.TranspProtocolType.BLUETOOTH.getID());
         }
 
         return super.setBaseData(iDialogOriginID);

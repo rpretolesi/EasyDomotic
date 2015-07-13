@@ -62,10 +62,10 @@ public class BaseValueCommClientListFragment extends ListFragment implements
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID()){
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == TranspProtocolData.TranspProtocolType.TCP_IP.getID()){
             setEmptyText("No Tcp Ip Server");
         }
-        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID()){
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == TranspProtocolData.TranspProtocolType.BLUETOOTH.getID()){
             setEmptyText("No Bluetooth Server");
         }
 
@@ -75,7 +75,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[] {SQLContract.TranspProtocolClientEntry.COLUMN_NAME_NAME},
+                new String[] {SQLContract.TranspProtocolEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
         setListAdapter(mAdapter);
 
@@ -212,7 +212,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TranspProtocolClientEntry.loadByTranspProtocol(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL));
+                    return SQLContract.TranspProtocolEntry.loadByTranspProtocol(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL));
                 }
             };
         }

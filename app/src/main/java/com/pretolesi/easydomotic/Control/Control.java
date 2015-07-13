@@ -1,15 +1,12 @@
-package com.pretolesi.easydomotic.BaseValue;
+package com.pretolesi.easydomotic.Control;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.hardware.SensorEventListener;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.text.InputType;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -24,12 +21,11 @@ import com.pretolesi.easydomotic.BaseFragment;
 import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity;
 
 /**
  *
  */
-public class BaseValue extends TextView implements
+public class Control extends TextView implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
@@ -49,7 +45,7 @@ public class BaseValue extends TextView implements
     // Label for Switch
     private LabelTextView m_LabelTextView;
 
-    public BaseValue(Context context) {
+    public Control(Context context) {
         super(context);
         m_LabelTextView = null;
         m_bEditMode = false;

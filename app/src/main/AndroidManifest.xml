@@ -32,42 +32,42 @@
         </activity>
         <activity
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName = "com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity"
+            android:parentActivityName = ".Control.LightSwitchControlPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name="com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity"
+            android:name=".Control.LightSwitchControlPropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName = "com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity"
+            android:parentActivityName = ".Control.NumericValueControlPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name="com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity"
+            android:name=".Control.NumericValueControlPropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName = "com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity"
+            android:parentActivityName = ".Control.SensorValueControlPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name="com.pretolesi.easydomotic.SensorValue.SensorValuePropActivity"
+            android:name=".Control.SensorValueControlPropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName = ".TcpIpClient.TCPIPClientPropActivity"
+            android:parentActivityName = ".TcpIpClient.TcpIpClientProtocolPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name=".TcpIpClient.TCPIPClientPropActivity"
+            android:name=".TcpIpClient.TcpIpClientProtocolPropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName = ".BluetoothClient.BluetoothClientDataPropActivity"
+            android:parentActivityName = ".BluetoothClient.BluetoothClientProtocolPropActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/android:Theme.Holo"
-            android:name=".BluetoothClient.BluetoothClientDataPropActivity"
+            android:name=".BluetoothClient.BluetoothClientProtocolPropActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

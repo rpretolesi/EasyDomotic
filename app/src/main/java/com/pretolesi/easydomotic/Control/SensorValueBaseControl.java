@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.SensorValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +7,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValue;
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
@@ -18,13 +16,13 @@ import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
 /**
  *
  */
-public class SensorValueBase extends BaseValue implements
+public class SensorValueBaseControl extends Control implements
         TCPIPClient.TcpIpClientWriteStatusListener,
         SensorEventListener {
 
     private static final String TAG = "SensorValueBase";
 
-    protected BaseValueData m_bvd;
+    protected ControlData m_bvd;
     private int m_iMsgID;
     private int m_iTIDWrite;
 
@@ -34,14 +32,14 @@ public class SensorValueBase extends BaseValue implements
 
     private long m_lTimeLast;
 
-    public SensorValueBase(Context context) {
+    public SensorValueBaseControl(Context context) {
         super(context);
         this.m_bvd = null;
         this.m_iMsgID = -1;
         this.m_iTIDWrite = -1;
     }
 
-    public SensorValueBase(Context context, BaseValueData bvd, int iMsgID, boolean bEditMode) {
+    public SensorValueBaseControl(Context context, ControlData bvd, int iMsgID, boolean bEditMode) {
         super(context);
         if(bvd != null) {
             this.m_bvd = bvd;
@@ -49,7 +47,7 @@ public class SensorValueBase extends BaseValue implements
             this.m_iTIDWrite = m_iMsgID + 1;
             this.setTag(bvd.getTag());
 
-            setNumericDataType(DataType.getDataType(m_bvd.getProtTcpIpClientValueDataType()));
+            setNumericDataType(DataType.getDataType(m_bvd.getTranspProtocolDataType()));
             setEditMode(bEditMode);
         }
     }
@@ -66,8 +64,8 @@ public class SensorValueBase extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            if(!getEditMode() && m_bvd.getProtTcpIpClientEnable()) {
-                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            if(!getEditMode() && m_bvd.getTranspProtocolEnable()) {
+                BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
                 if(bcc != null){
                     bcc.registerTcpIpClientWriteSwitchStatus(this);
                 }
@@ -88,7 +86,7 @@ public class SensorValueBase extends BaseValue implements
 
         // Listener
         if(m_bvd != null){
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
             if(bcc != null){
                 bcc.unregisterTcpIpClientWriteSwitchStatus(this);
             }
@@ -123,7 +121,7 @@ public class SensorValueBase extends BaseValue implements
                 strDefaultValue = strDefaultValue + " " + m_bvd.getValueUM();
             }
         } else {
-            strDefaultValue = BaseValueData.ValueDefaulValue;
+            strDefaultValue = ControlData.ValueDefaulValue;
         }
 
         return strDefaultValue;
@@ -139,7 +137,7 @@ public class SensorValueBase extends BaseValue implements
     @Override
     public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
         if(ticws != null && m_bvd != null){
-            if(ticws.getServerID() == m_bvd.getProtTcpIpClientID()){
+            if(ticws.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticws.getTID() == m_iTIDWrite) {
                     if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
                         if(m_bvd.getSensorEnableSimulation()){
@@ -180,7 +178,7 @@ public class SensorValueBase extends BaseValue implements
                 m_bvd.setSaved(false);
                 m_bvd.setPosX((int)getX());
                 m_bvd.setPosY((int)getY());
-                Intent intent = SensorValuePropActivity.makeBaseValuePropActivityByValueData(this.getContext(), SensorValuePropActivity.class, m_bvd);
+                Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByValueData(this.getContext(), SensorValueControlPropActivity.class, m_bvd);
                 this.getContext().startActivity(intent);
             } else {
                 if(m_bvd.getSensorEnableSimulation()){
@@ -195,17 +193,16 @@ public class SensorValueBase extends BaseValue implements
         super.onTimer();
         if(m_bvd != null && !m_bvd.getSensorEnableSimulation()) {
             // Write Sensor Data
-//            String strData = Float.toString(m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
             String strData = convertFormatValueToString(getNumericDataType(), m_SensorValueOut[(int) m_bvd.getSensorValueID()]);
             WriteInputField(strData);
         }
     }
 
     protected void WriteInputField(String strValue){
-        if(m_bvd != null && m_bvd.getProtTcpIpClientEnable()) {
-            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getProtTcpIpClientID());
+        if(m_bvd != null && m_bvd.getTranspProtocolEnable()) {
+            BaseCommClient bcc = CommClientHelper.getBaseCommClient(m_bvd.getTranspProtocolID());
             if (bcc != null) {
-                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getProtTcpIpClientValueID(), m_bvd.getProtTcpIpClientValueAddress(), getNumericDataType(), strValue);
+                bcc.writeValue(getContext(), m_iTIDWrite, m_bvd.getTranspProtocolUI(), m_bvd.getTranspProtocolDataAddress(), getNumericDataType(), strValue);
             }
         }
     }

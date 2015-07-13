@@ -191,19 +191,19 @@
                         android:inputType="number"/>
 
                     <TextView
-                        android:id="@+id/id_tv_protocol_addr_value"
+                        android:id="@+id/id_tv_protocol_data_addr_"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@+id/id_tv_protocol_ui"
                         android:layout_marginStart="10dp"
-                        android:text="@string/text_tv_protocol_addr_value"
-                        android:labelFor="@+id/id_et_protocol_addr_value"/>
+                        android:text="@string/text_tv_protocol_data_addr"
+                        android:labelFor="@+id/id_et_protocol_data_addr"/>
 
                     <com.pretolesi.easydomotic.CustomControls.NumericEditText
-                        android:id="@+id/id_et_protocol_addr_value"
+                        android:id="@+id/id_et_protocol_data_addr"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/id_tv_protocol_addr_value"
+                        android:layout_below="@id/id_tv_protocol_data_addr_"
                         android:layout_toEndOf="@+id/id_tv_protocol_ui"
                         android:layout_marginStart="10dp"
                         android:text="0"

@@ -1,4 +1,4 @@
-package com.pretolesi.easydomotic.BaseValue;
+package com.pretolesi.easydomotic.Control;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class BaseValueData implements Parcelable {
+public class ControlData implements Parcelable {
 
     public static final int TYPE_LIGHT_SWITCH = 1;
     public static final int TYPE_NUMERIC_VALUE = 2;
@@ -87,11 +87,11 @@ public class BaseValueData implements Parcelable {
     private boolean m_bVertical;
 
     // Protocol_
-    private boolean m_bProtTcpIpClientEnable;
-    private long m_lProtTcpIpClientID;
-    private int m_iProtTcpIpClientValueID;
-    private int m_iProtTcpIpClientValueAddress;
-    private int m_iProtTcpIpClientValueDataType;
+    private boolean m_bTranspProtocolEnable;
+    private long m_lTranspProtocolID;
+    private int m_iTranspProtocolUI;
+    private int m_iTranspProtocolDataAddress;
+    private int m_iTranspProtocolDataType;
 
     // Format Value
     private int m_iValueMinNrCharToShow;
@@ -116,7 +116,7 @@ public class BaseValueData implements Parcelable {
     private int m_iSensorSampleTimeMillis;
     private int m_iSensorWriteUpdateTimeMillis;
 
-    public BaseValueData(int iType) {
+    public ControlData(int iType) {
         // Graphic
         m_iType = iType;
         m_ID = -1;
@@ -129,11 +129,11 @@ public class BaseValueData implements Parcelable {
         m_bVertical = false;
 
         // Protocol_
-        m_bProtTcpIpClientEnable = false;
-        m_lProtTcpIpClientID = -1;
-        m_iProtTcpIpClientValueID = 0;
-        m_iProtTcpIpClientValueAddress = 0;
-        m_iProtTcpIpClientValueDataType = -1;
+        m_bTranspProtocolEnable = false;
+        m_lTranspProtocolID = -1;
+        m_iTranspProtocolUI = 0;
+        m_iTranspProtocolDataAddress = 0;
+        m_iTranspProtocolDataType = -1;
 
         // Format Value
         m_iValueMinNrCharToShow = 0;
@@ -170,12 +170,12 @@ public class BaseValueData implements Parcelable {
         m_bVertical = bLandscape;
     }
 
-    public void setProtTcpIpClient(boolean bProtTcpIpClientEnable, long lProtTcpIpClientID, int iProtTcpIpClientValueID, int iProtTcpIpClientValueAddress, int iProtTcpIpClientValueDataType) {
-        this.m_bProtTcpIpClientEnable = bProtTcpIpClientEnable;
-        this.m_lProtTcpIpClientID = lProtTcpIpClientID;
-        this.m_iProtTcpIpClientValueID = iProtTcpIpClientValueID;
-        this.m_iProtTcpIpClientValueAddress = iProtTcpIpClientValueAddress;
-        this.m_iProtTcpIpClientValueDataType = iProtTcpIpClientValueDataType;
+    public void setTranspProtocol(boolean bTranspProtocolEnable, long lTranspProtocolID, int iTranspProtocolUI, int iTranspProtocolDataAddress, int iTranspProtocolDataType) {
+        this.m_bTranspProtocolEnable = bTranspProtocolEnable;
+        this.m_lTranspProtocolID = lTranspProtocolID;
+        this.m_iTranspProtocolUI = iTranspProtocolUI;
+        this.m_iTranspProtocolDataAddress = iTranspProtocolDataAddress;
+        this.m_iTranspProtocolDataType = iTranspProtocolDataType;
     }
 
     public void setFormatValue(int iValueMinNrCharToShow, int iValueNrOfDecimal, String strValueUM, int iValueUpdateMillis, boolean bValueReadOnly, boolean bValueWriteOnly) {
@@ -226,15 +226,15 @@ public class BaseValueData implements Parcelable {
     public void setVertical(boolean bVertical) { this.m_bVertical = bVertical; }
 
     // Protocol_
-    public void setProtTcpIpClientEnable(boolean bTcpIpClientEnable) { this.m_bProtTcpIpClientEnable = bTcpIpClientEnable; }
+    public void setTranspProtocolEnable(boolean bTranspProtocolEnable) { this.m_bTranspProtocolEnable = bTranspProtocolEnable; }
 
-    public void setProtTcpIpClientID(long lProtTcpIpClientID) { this.m_lProtTcpIpClientID = lProtTcpIpClientID; }
+    public void setTranspProtocolID(long lProtTcpIpClientID) { this.m_lTranspProtocolID = lProtTcpIpClientID; }
 
-    public void setProtTcpIpClientValueID(int iProtTcpIpClientValueID) { this.m_iProtTcpIpClientValueID = iProtTcpIpClientValueID; }
+    public void setTranspProtocolUI(int iTranspProtocolUI) { this.m_iTranspProtocolUI = iTranspProtocolUI; }
 
-    public void setProtTcpIpClientValueAddress(int iProtTcpIpClientValueAddress) { this.m_iProtTcpIpClientValueAddress = iProtTcpIpClientValueAddress;  }
+    public void setTranspProtocolDataAddress(int iTranspProtocolDataAddress) { this.m_iTranspProtocolDataAddress = iTranspProtocolDataAddress;  }
 
-    public void setProtTcpIpClientValueDataType(int iProtTcpIpClientValueDataType) { this.m_iProtTcpIpClientValueDataType = iProtTcpIpClientValueDataType; }
+    public void setTranspProtocolDataType(int iTranspProtocolDataType) { this.m_iTranspProtocolDataType = iTranspProtocolDataType; }
 
     // Value Format
     public void setValueMinNrCharToShow(int iValueMinNrCharToShow) { this.m_iValueMinNrCharToShow = iValueMinNrCharToShow; }
@@ -313,17 +313,17 @@ public class BaseValueData implements Parcelable {
     public boolean getVertical() { return m_bVertical; }
 
     // Protocol_
-    public boolean getProtTcpIpClientEnable() { return m_bProtTcpIpClientEnable; }
+    public boolean getTranspProtocolEnable() { return m_bTranspProtocolEnable; }
 
-    public long getProtTcpIpClientID() {
-        return m_lProtTcpIpClientID;
+    public long getTranspProtocolID() {
+        return m_lTranspProtocolID;
     }
-finire qui capendo dove e come e' utilizzata la funzione seguente'
-    public int getProtTcpIpClientValueID() { return m_iProtTcpIpClientValueID; }
 
-    public int getProtTcpIpClientValueAddress() { return m_iProtTcpIpClientValueAddress; }
+    public int getTranspProtocolUI() { return m_iTranspProtocolUI; }
 
-    public int getProtTcpIpClientValueDataType() { return m_iProtTcpIpClientValueDataType; }
+    public int getTranspProtocolDataAddress() { return m_iTranspProtocolDataAddress; }
+
+    public int getTranspProtocolDataType() { return m_iTranspProtocolDataType; }
 
     // Format Number
     public int getValueMinNrCharToShow() {
@@ -382,7 +382,7 @@ finire qui capendo dove e come e' utilizzata la funzione seguente'
         return m_iSensorWriteUpdateTimeMillis;
     }
 
-    protected BaseValueData(Parcel in) {
+    protected ControlData(Parcel in) {
         m_iType = in.readInt();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
@@ -393,11 +393,11 @@ finire qui capendo dove e come e' utilizzata la funzione seguente'
         m_fPosZ = in.readFloat();
         m_bVertical = in.readByte() != 0;
 
-        m_bProtTcpIpClientEnable = in.readByte() != 0;
-        m_lProtTcpIpClientID = in.readLong();
-        m_iProtTcpIpClientValueID = in.readInt();
-        m_iProtTcpIpClientValueAddress = in.readInt();
-        m_iProtTcpIpClientValueDataType = in.readInt();
+        m_bTranspProtocolEnable = in.readByte() != 0;
+        m_lTranspProtocolID = in.readLong();
+        m_iTranspProtocolUI = in.readInt();
+        m_iTranspProtocolDataAddress = in.readInt();
+        m_iTranspProtocolDataType = in.readInt();
 
         m_iValueMinNrCharToShow = in.readInt();
         m_iValueNrOfDecimal = in.readInt();
@@ -437,11 +437,11 @@ finire qui capendo dove e come e' utilizzata la funzione seguente'
         dest.writeFloat(m_fPosZ);
         dest.writeByte((byte) (m_bVertical ? 1 : 0));
 
-        dest.writeByte((byte) (m_bProtTcpIpClientEnable ? 1 : 0));
-        dest.writeLong(m_lProtTcpIpClientID);
-        dest.writeInt(m_iProtTcpIpClientValueID);
-        dest.writeInt(m_iProtTcpIpClientValueAddress);
-        dest.writeInt(m_iProtTcpIpClientValueDataType);
+        dest.writeByte((byte) (m_bTranspProtocolEnable ? 1 : 0));
+        dest.writeLong(m_lTranspProtocolID);
+        dest.writeInt(m_iTranspProtocolUI);
+        dest.writeInt(m_iTranspProtocolDataAddress);
+        dest.writeInt(m_iTranspProtocolDataType);
 
         dest.writeInt(m_iValueMinNrCharToShow);
         dest.writeInt(m_iValueNrOfDecimal);
@@ -465,15 +465,15 @@ finire qui capendo dove e come e' utilizzata la funzione seguente'
     }
 
     @SuppressWarnings("unused")
-    public static final Parcelable.Creator<BaseValueData> CREATOR = new Parcelable.Creator<BaseValueData>() {
+    public static final Parcelable.Creator<ControlData> CREATOR = new Parcelable.Creator<ControlData>() {
         @Override
-        public BaseValueData createFromParcel(Parcel in) {
-            return new BaseValueData(in);
+        public ControlData createFromParcel(Parcel in) {
+            return new ControlData(in);
         }
 
         @Override
-        public BaseValueData[] newArray(int size) {
-            return new BaseValueData[size];
+        public ControlData[] newArray(int size) {
+            return new ControlData[size];
         }
     };
 

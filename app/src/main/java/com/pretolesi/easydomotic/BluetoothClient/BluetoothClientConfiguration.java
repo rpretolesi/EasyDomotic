@@ -8,11 +8,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,14 +19,11 @@ import com.pretolesi.easydomotic.R;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  *
  */
 public class BluetoothClientConfiguration extends ListActivity {
-    private static final String TAG = "BluetoothClientConfiguration";
 
     private static final int REQUEST_ENABLE_BT = 1;
 
@@ -177,8 +172,8 @@ public class BluetoothClientConfiguration extends ListActivity {
             Intent intent = getIntent();
             if(intent != null) {
                 if(m_blAdapter != null) {
-                    intent.putExtra(BluetoothClientDataPropActivity.BT_NAME, m_blAdapter.getItem(position).getName());
-                    intent.putExtra(BluetoothClientDataPropActivity.BT_ADDRESS, m_blAdapter.getItem(position).getAddress());
+                    intent.putExtra(BluetoothClientProtocolPropActivity.BT_NAME, m_blAdapter.getItem(position).getName());
+                    intent.putExtra(BluetoothClientProtocolPropActivity.BT_ADDRESS, m_blAdapter.getItem(position).getAddress());
                     setResult(RESULT_OK, intent);
                 } else {
                     setResult(RESULT_CANCELED, intent);
@@ -190,19 +185,6 @@ public class BluetoothClientConfiguration extends ListActivity {
             PairingThread pt = new PairingThread(m_blAdapter.getItem(position));
             pt.run();
         }
-/*
-        Intent intent = getIntent();
-        if(intent != null) {
-            if(m_blAdapter != null) {
-                intent.putExtra(BluetoothClientDataPropActivity.BT_NAME, m_blAdapter.getItem(position).getName());
-                intent.putExtra(BluetoothClientDataPropActivity.BT_ADDRESS, m_blAdapter.getItem(position).getAddress());
-                setResult(RESULT_OK, intent);
-            } else {
-                setResult(RESULT_CANCELED, intent);
-            }
-            finish();
-        }
-*/
     }
 
     private void getBluetoothDevice(){
