@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.RoomFragmentData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 
 /**
  *
@@ -291,8 +291,8 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class BaseValueEntry implements BaseColumns {
-        public static final String TABLE_NAME = "BaseValue";
+    public static abstract class BaseValueControlEntry implements BaseColumns {
+        public static final String TABLE_NAME = "BaseValueControl";
         public static final String COLUMN_NAME_TYPE = "Type";
         public static final String COLUMN_NAME_ROOM_ID = "Room_ID";
         public static final String COLUMN_NAME_TAG = "TAG";
@@ -301,8 +301,8 @@ public class SQLContract
         public static final String COLUMN_NAME_Z = "Z";
         public static final String COLUMN_NAME_LANDSCAPE = "Landscape";
 
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE = "ProtTcpIpClientEnable";
-        public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_ID = "ProtTcpIpClientID";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_ENABLE = "TranspProtocolEnable";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_ID = "TranspProtocolID";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID = "ProtTcpIpClientValueID";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS = "ProtTcpIpClientValueAddress";
         public static final String COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE = "ProtTcpIpClientValueDataType";
@@ -342,8 +342,8 @@ public class SQLContract
                         COLUMN_NAME_Z + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LANDSCAPE + INT_TYPE + COMMA_SEP +
 
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROT_TCP_IP_CLIENT_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_ENABLE + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE + INT_TYPE + COMMA_SEP +
@@ -391,8 +391,8 @@ public class SQLContract
                     values.put(COLUMN_NAME_Z, Float.toString(bve.getPosZ()));
                     values.put(COLUMN_NAME_LANDSCAPE, Integer.valueOf(bve.getVertical() ? 1 : 0));
 
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE, Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0));
-                    values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID, bve.getProtTcpIpClientID());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE, Integer.valueOf(bve.getProtTcpIpClientEnable() ? 1 : 0));
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_ID, bve.getProtTcpIpClientID());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID, bve.getProtTcpIpClientValueID());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS, bve.getProtTcpIpClientValueAddress());
                     values.put(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE, bve.getProtTcpIpClientValueDataType());
@@ -457,8 +457,8 @@ public class SQLContract
                             COLUMN_NAME_Z,
                             COLUMN_NAME_LANDSCAPE,
 
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
-                            COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                            COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
+                            COLUMN_NAME_TRANSP_PROTOCOL_ID,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                             COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
@@ -560,8 +560,8 @@ public class SQLContract
                                     COLUMN_NAME_Z,
                                     COLUMN_NAME_LANDSCAPE,
 
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
@@ -640,8 +640,8 @@ public class SQLContract
                                     COLUMN_NAME_Z,
                                     COLUMN_NAME_LANDSCAPE,
 
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
@@ -720,8 +720,8 @@ public class SQLContract
                                     COLUMN_NAME_Z,
                                     COLUMN_NAME_LANDSCAPE,
 
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS,
                                     COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE,
@@ -791,8 +791,8 @@ public class SQLContract
                     // you will actually use after this query.
                     String[] projection =
                             {
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE,
-                                    COLUMN_NAME_PROT_TCP_IP_CLIENT_ID,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ENABLE,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_ID,
                             };
 
                     // How you want the results sorted in the resulting Cursor
@@ -817,8 +817,8 @@ public class SQLContract
                     {
                         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                         {
-                            int iEnable = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE));
-                            long lID = cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID));
+                            int iEnable = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE));
+                            long lID = cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ID));
                             if(iEnable == 1 && !all.contains(lID))
                             {
                                 all.add(lID);
@@ -925,8 +925,8 @@ public class SQLContract
                         );
 
                         bve.setProtTcpIpClient(
-                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ENABLE)) == 0) ? false : true),
-                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_ID)),
+                                ((cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ENABLE)) == 0) ? false : true),
+                                cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_ADDRESS)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROT_TCP_IP_CLIENT_VALUE_DATA_TYPE))
@@ -972,17 +972,17 @@ public class SQLContract
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class TcpIpClientEntry implements BaseColumns {
-        public static final String TABLE_NAME = "TCPIPClient";
-        public static final String COLUMN_NAME_TRANSP_PROTOCOL = "TransProtocol";
+    public static abstract class TranspProtocolClientEntry implements BaseColumns {
+        public static final String TABLE_NAME = "TranspProtocol";
+        public static final String COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID = "TranspProtocolTypeID";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_ADDRESS = "Address";
         public static final String COLUMN_NAME_PORT = "Port";
         public static final String COLUMN_NAME_TIMEOUT = "Timeout";
-        public static final String COLUMN_NAME_COMM_SEND_DATA_DELAY = "CommSendDataDelay";
-        public static final String COLUMN_NAME_COMM_RECEIVE_WAIT_DATA = "CommReceiveWaitData";
-        public static final String COLUMN_NAME_COMM_NR_MAX_OF_ERR = "CommNrMaxOfErr";
-        public static final String COLUMN_NAME_PROTOCOL = "Protocol";
+        public static final String COLUMN_NAME_SEND_DATA_DELAY = "SendDataDelay";
+        public static final String COLUMN_NAME_RECEIVE_WAIT_DATA = "ReceiveWaitData";
+        public static final String COLUMN_NAME_NR_MAX_OF_ERR = "NrMaxOfErr";
+        public static final String COLUMN_NAME_COMM_PROTOCOL_TYPE_ID = "CommProtocolTypeID";
         public static final String COLUMN_NAME_HEAD = "Head";
         public static final String COLUMN_NAME_TAIL = "Tail";
 
@@ -993,15 +993,15 @@ public class SQLContract
                 "CREATE TABLE " + TABLE_NAME +
                         " (" +
                         _ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_NAME_TRANSP_PROTOCOL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_ADDRESS + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_PORT + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TIMEOUT + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_COMM_SEND_DATA_DELAY + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_COMM_RECEIVE_WAIT_DATA + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_COMM_NR_MAX_OF_ERR + INT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_PROTOCOL + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SEND_DATA_DELAY + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_RECEIVE_WAIT_DATA + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_NR_MAX_OF_ERR + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_COMM_PROTOCOL_TYPE_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_HEAD + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TAIL + INT_TYPE +
                         " )";
@@ -1009,7 +1009,7 @@ public class SQLContract
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static boolean save(BaseValueCommClientData ticd)  {
+        public static boolean save(BaseValueTranspProtocolClientData ticd)  {
 
             boolean bRes = true;
             try
@@ -1019,15 +1019,15 @@ public class SQLContract
                 if(db != null && ticd != null) {
 
                     ContentValues values = new ContentValues();
-                    values.put(COLUMN_NAME_TRANSP_PROTOCOL, ticd.getTranspProtocolID());
+                    values.put(COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID, ticd.getTranspProtocolTypeID());
                     values.put(COLUMN_NAME_NAME, ticd.getName());
                     values.put(COLUMN_NAME_ADDRESS, ticd.getAddress());
                     values.put(COLUMN_NAME_PORT, ticd.getPort());
                     values.put(COLUMN_NAME_TIMEOUT, ticd.getTimeout());
-                    values.put(COLUMN_NAME_COMM_SEND_DATA_DELAY, ticd.getCommSendDelayData());
-                    values.put(COLUMN_NAME_COMM_RECEIVE_WAIT_DATA, ticd.getCommReceiveWaitData());
-                    values.put(COLUMN_NAME_COMM_NR_MAX_OF_ERR, ticd.getCommNrMaxOfErr());
-                    values.put(COLUMN_NAME_PROTOCOL, ticd.getProtocolID());
+                    values.put(COLUMN_NAME_SEND_DATA_DELAY, ticd.getSendDelayData());
+                    values.put(COLUMN_NAME_RECEIVE_WAIT_DATA, ticd.getReceiveWaitData());
+                    values.put(COLUMN_NAME_NR_MAX_OF_ERR, ticd.getNrMaxOfErr());
+                    values.put(COLUMN_NAME_COMM_PROTOCOL_TYPE_ID, ticd.getCommProtocolTypeID());
                     values.put(COLUMN_NAME_HEAD, ticd.getHead());
                     values.put(COLUMN_NAME_TAIL, ticd.getTail());
 
@@ -1051,7 +1051,7 @@ public class SQLContract
 
         }
 
-        public static Cursor loadFromTCPIPClientData(BaseValueCommClientData ticd)
+        public static Cursor loadFromTCPIPClientData(BaseValueTranspProtocolClientData ticd)
         {
             try
             {
@@ -1063,15 +1063,15 @@ public class SQLContract
 
                     String[] columns = new String[] {
                             _ID,
-                            COLUMN_NAME_TRANSP_PROTOCOL,
+                            COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID,
                             COLUMN_NAME_NAME,
                             COLUMN_NAME_ADDRESS,
                             COLUMN_NAME_PORT,
                             COLUMN_NAME_TIMEOUT,
-                            COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                            COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
-                            COLUMN_NAME_COMM_NR_MAX_OF_ERR,
-                            COLUMN_NAME_PROTOCOL,
+                            COLUMN_NAME_SEND_DATA_DELAY,
+                            COLUMN_NAME_RECEIVE_WAIT_DATA,
+                            COLUMN_NAME_NR_MAX_OF_ERR,
+                            COLUMN_NAME_COMM_PROTOCOL_TYPE_ID,
                             COLUMN_NAME_HEAD,
                             COLUMN_NAME_TAIL,
 
@@ -1081,13 +1081,13 @@ public class SQLContract
                     cursor = new MatrixCursor(columns);
                     cursor.addRow(new Object[] {
                             ticd.getID(),
-                            ticd.getTranspProtocolID(),
+                            ticd.getTranspProtocolTypeID(),
                             ticd.getPort(),
                             ticd.getTimeout(),
-                            ticd.getCommSendDelayData(),
-                            ticd.getCommReceiveWaitData(),
-                            ticd.getCommNrMaxOfErr(),
-                            ticd.getProtocol(),
+                            ticd.getSendDelayData(),
+                            ticd.getReceiveWaitData(),
+                            ticd.getNrMaxOfErr(),
+                            ticd.getCommProtocolType(),
 
                             0   // Origin
                     });
@@ -1118,15 +1118,15 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TRANSP_PROTOCOL,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
-                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
-                                    COLUMN_NAME_COMM_NR_MAX_OF_ERR,
-                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_SEND_DATA_DELAY,
+                                    COLUMN_NAME_RECEIVE_WAIT_DATA,
+                                    COLUMN_NAME_NR_MAX_OF_ERR,
+                                    COLUMN_NAME_COMM_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
                             };
@@ -1175,15 +1175,15 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TRANSP_PROTOCOL,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
-                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
-                                    COLUMN_NAME_COMM_NR_MAX_OF_ERR,
-                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_SEND_DATA_DELAY,
+                                    COLUMN_NAME_RECEIVE_WAIT_DATA,
+                                    COLUMN_NAME_NR_MAX_OF_ERR,
+                                    COLUMN_NAME_COMM_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
                             };
@@ -1192,7 +1192,7 @@ public class SQLContract
                     String sortOrder = "";
 
                     // Which row to get based on WHERE
-                    String whereClause = COLUMN_NAME_TRANSP_PROTOCOL + " = ? ";
+                    String whereClause = COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID + " = ? ";
 
                     String[] wherenArgs = { String.valueOf(lTranspProtocol) };
 
@@ -1232,15 +1232,15 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TRANSP_PROTOCOL,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
-                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
-                                    COLUMN_NAME_COMM_NR_MAX_OF_ERR,
-                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_SEND_DATA_DELAY,
+                                    COLUMN_NAME_RECEIVE_WAIT_DATA,
+                                    COLUMN_NAME_NR_MAX_OF_ERR,
+                                    COLUMN_NAME_COMM_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
                             };
@@ -1284,15 +1284,15 @@ public class SQLContract
                     String[] projection =
                             {
                                     _ID,
-                                    COLUMN_NAME_TRANSP_PROTOCOL,
+                                    COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_NAME,
                                     COLUMN_NAME_ADDRESS,
                                     COLUMN_NAME_PORT,
                                     COLUMN_NAME_TIMEOUT,
-                                    COLUMN_NAME_COMM_SEND_DATA_DELAY,
-                                    COLUMN_NAME_COMM_RECEIVE_WAIT_DATA,
-                                    COLUMN_NAME_COMM_NR_MAX_OF_ERR,
-                                    COLUMN_NAME_PROTOCOL,
+                                    COLUMN_NAME_SEND_DATA_DELAY,
+                                    COLUMN_NAME_RECEIVE_WAIT_DATA,
+                                    COLUMN_NAME_NR_MAX_OF_ERR,
+                                    COLUMN_NAME_COMM_PROTOCOL_TYPE_ID,
                                     COLUMN_NAME_HEAD,
                                     COLUMN_NAME_TAIL
                             };
@@ -1368,13 +1368,13 @@ public class SQLContract
             }
         }
 
-        public static ArrayList<BaseValueCommClientData> get(Cursor cursor){
+        public static ArrayList<BaseValueTranspProtocolClientData> get(Cursor cursor){
             try
             {
                 m_LockCommandHolder.lock();
 
-                BaseValueCommClientData ticd = null;
-                ArrayList<BaseValueCommClientData> alticd = null;
+                BaseValueTranspProtocolClientData ticd = null;
+                ArrayList<BaseValueTranspProtocolClientData> alticd = null;
                 if((cursor != null) && (cursor.getCount() > 0))
                 {
                     for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
@@ -1391,18 +1391,18 @@ public class SQLContract
                             }
                         }
 
-                        ticd = new BaseValueCommClientData(
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL)),
+                        ticd = new BaseValueTranspProtocolClientData(
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TRANSP_PROTOCOL_TYPE_ID)),
                                 cursor.getLong(cursor.getColumnIndex(_ID)),
                                 bSaved,
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_NAME)),
                                 cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ADDRESS)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PORT)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TIMEOUT)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_SEND_DATA_DELAY)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_RECEIVE_WAIT_DATA)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_NR_MAX_OF_ERR)),
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_PROTOCOL)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SEND_DATA_DELAY)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_RECEIVE_WAIT_DATA)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_NR_MAX_OF_ERR)),
+                                cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_COMM_PROTOCOL_TYPE_ID)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_HEAD)),
                                 cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_TAIL))
 

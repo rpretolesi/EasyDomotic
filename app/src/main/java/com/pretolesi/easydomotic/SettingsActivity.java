@@ -10,12 +10,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.Toast;
 
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseValue.BaseValueData;
 import com.pretolesi.easydomotic.BluetoothClient.BluetoothClientDataPropActivity;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
 import com.pretolesi.easydomotic.LightSwitch.LightSwitchPropActivity;
 import com.pretolesi.easydomotic.NumericValue.NumericValuePropActivity;
@@ -187,14 +186,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, TCPIPClientPropActivity.class, BaseValueCommClientData.TraspProtocol.TCP_IP.getID());
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, TCPIPClientPropActivity.class, BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID());
             startActivity(intent);
         }
         if(position == 7){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TraspProtocol.TCP_IP.getID()),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
 
@@ -203,14 +202,14 @@ public class SettingsActivity extends BaseActivity implements
             onSectionSetTitle(getString(R.string.app_name));
             restoreActionBar();
 
-            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, BluetoothClientDataPropActivity.class, BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID());
+            Intent intent = BaseValueCommClientDataPropActivity.makeBaseValueCommClientPropActivityByTranspProtocol(this, BluetoothClientDataPropActivity.class, BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID());
             startActivity(intent);
         }
         if(position == 9){
             // Costruisco il frame...
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID()),getString(R.string.settings_title_section_open_room))
+                    .replace(R.id.container, BaseValueCommClientListFragment.newInstance(position + 1, position, BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID()),getString(R.string.settings_title_section_open_room))
                     .commit();
         }
     }
@@ -410,7 +409,7 @@ public class SettingsActivity extends BaseActivity implements
             RoomFragmentData rfd = bf.getRoomFragmentData();
             if(rfd != null) {
                 // First, i delete all Controls in the room
-                SQLContract.BaseValueEntry.deleteByRoomID(rfd.getID());
+                SQLContract.BaseValueControlEntry.deleteByRoomID(rfd.getID());
                 // Ok, i can delete the room
                 if(SQLContract.RoomEntry.deleteByID(rfd.getID())){
                     // Ok

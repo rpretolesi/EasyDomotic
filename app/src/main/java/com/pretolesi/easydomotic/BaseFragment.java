@@ -27,7 +27,7 @@ import com.pretolesi.easydomotic.NumericValue.NumericValue;
 import com.pretolesi.easydomotic.SensorValue.SensorValueCalibr;
 import com.pretolesi.easydomotic.SensorValue.SensorValueRaw;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -60,7 +60,7 @@ public class BaseFragment extends Fragment implements
     protected RelativeLayout m_rl;
     protected RoomFragmentData m_rfd;
     protected ArrayList<BaseValueData> m_albvd;
-    protected ArrayList<BaseValueCommClientData> m_alticd;
+    protected ArrayList<BaseValueTranspProtocolClientData> m_alticd;
 
     protected HorizontalScrollView m_osvStatusTcpIpServer;
     protected LinearLayout m_llStatusTcpIpServer;
@@ -199,7 +199,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.BaseValueEntry.load(getArguments().getLong(ROOM_ID, -1));
+                    return SQLContract.BaseValueControlEntry.load(getArguments().getLong(ROOM_ID, -1));
                 }
             };
         }
@@ -208,7 +208,7 @@ public class BaseFragment extends Fragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load(m_albvd);
+                    return SQLContract.TranspProtocolClientEntry.load(m_albvd);
                 }
             };
         }
@@ -230,7 +230,7 @@ public class BaseFragment extends Fragment implements
         }
 
         if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
-            m_albvd = SQLContract.BaseValueEntry.get(cursor);
+            m_albvd = SQLContract.BaseValueControlEntry.get(cursor);
 
             // Controls
             getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
@@ -239,7 +239,7 @@ public class BaseFragment extends Fragment implements
         if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
-                m_alticd = SQLContract.TcpIpClientEntry.get(cursor);
+                m_alticd = SQLContract.TranspProtocolClientEntry.get(cursor);
                 CommClientHelper.startInstance(getActivity(), m_alticd);
 
                 // Register Listener For Tcp Ip Server

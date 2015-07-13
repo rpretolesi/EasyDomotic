@@ -1,34 +1,12 @@
 package com.pretolesi.easydomotic.TcpIpClient;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 
-import com.pretolesi.SQL.SQLContract;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
-import com.pretolesi.easydomotic.CustomControls.NumericEditText;
-import com.pretolesi.easydomotic.CustomControls.StringEditText;
-import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.dialogs.DialogActionID;
-import com.pretolesi.easydomotic.dialogs.DialogOriginID;
-import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
-import com.pretolesi.easydomotic.dialogs.YesNoDialogFragment;
-
-import java.util.ArrayList;
 
 /**
  *
@@ -56,7 +34,7 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
         m_id_stica_et_protocol_field_2.setVisibility(View.GONE);
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.TCP_IP)));
+                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.getValues(BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP)));
 
         setActionBarTitle(getString(R.string.settings_title_section_edit_tcp_ip_client));
 
@@ -66,7 +44,7 @@ public class TCPIPClientPropActivity extends BaseValueCommClientDataPropActivity
     protected boolean setBaseData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.TCP_IP.getID());
+            m_ticd = new BaseValueTranspProtocolClientData(BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID());
         }
 
         return super.setBaseData(iDialogOriginID);

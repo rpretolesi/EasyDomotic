@@ -2,7 +2,7 @@ package com.pretolesi.easydomotic.Modbus;
 
 import android.content.Context;
 
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData.Protocol;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData.CommProtocolType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
@@ -15,22 +15,22 @@ import java.nio.ByteBuffer;
  */
 public class Modbus {
 
-    public static synchronized TcpIpMsg writeShort(Context context, int iTID, int iUID, int iAddress, int iValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeShort(Context context, int iTID, int iUID, int iAddress, int iValue, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         // Value Ok Just 1 register
         TcpIpMsg tim = null;
         int[] iaValue = new int[1];
         iaValue[0] = iValue;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 1, DataType.SHORT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 1, DataType.SHORT);
         }
 
         return tim;
     }
 
-    public static synchronized TcpIpMsg writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeInteger(Context context, int iTID, int iUID, int iAddress, long lValue, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
 
         TcpIpMsg tim = null;
         ByteBuffer bb = ByteBuffer.allocate(4);
@@ -38,16 +38,16 @@ public class Modbus {
         int[] iaValue = new int[2];
         iaValue[0] = bb.getShort(0);
         iaValue[1] = bb.getShort(2);
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 2, DataType.INT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 2, DataType.INT);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg writeLong(Context context, int iTID, int iUID, int iAddress, long lValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeLong(Context context, int iTID, int iUID, int iAddress, long lValue, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
 
         TcpIpMsg tim = null;
         ByteBuffer bb = ByteBuffer.allocate(8);
@@ -57,16 +57,16 @@ public class Modbus {
         iaValue[1] = bb.getShort(2);
         iaValue[2] = bb.getShort(4);
         iaValue[3] = bb.getShort(6);
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 4, DataType.LONG);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 4, DataType.LONG);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeFloat(Context context, int iTID, int iUID, int iAddress, float fValue, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
 
         TcpIpMsg tim = null;
         ByteBuffer bb = ByteBuffer.allocate(4);
@@ -74,16 +74,16 @@ public class Modbus {
         int[] iaValue = new int[2];
         iaValue[0] = bb.getShort(0);
         iaValue[1] = bb.getShort(2);
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 2, DataType.FLOAT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 2, DataType.FLOAT);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg writeDouble(Context context, int iTID, int iUID, int iAddress, double dblValue, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
 
         TcpIpMsg tim = null;
         ByteBuffer bb = ByteBuffer.allocate(8);
@@ -93,10 +93,10 @@ public class Modbus {
         iaValue[1] = bb.getShort(2);
         iaValue[2] = bb.getShort(4);
         iaValue[3] = bb.getShort(6);
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = writeMultipleRegistersOnTcp(context, iTID, iUID, iAddress, iaValue, 4, DataType.DOUBLE);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = writeMultipleRegistersOnSerial(context, iTID, iUID, iAddress, iaValue, 4, DataType.DOUBLE);
         }
         return tim;
@@ -217,56 +217,56 @@ public class Modbus {
         return new TcpIpMsg(iTID, byteUID, bb.array(), dt, 1);
     }
 
-    public static synchronized TcpIpMsg readShort(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg readShort(Context context, int iTID, int iUID, int iAddress, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         TcpIpMsg tim = null;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = readHoldingRegistersOnTcp(context, iTID, iUID, iAddress, (short) 1, DataType.SHORT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = readHoldingRegistersOnSerial(context, iTID, iUID, iAddress, (short) 1, DataType.SHORT);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg readInt(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg readInt(Context context, int iTID, int iUID, int iAddress, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         TcpIpMsg tim = null;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = readHoldingRegistersOnTcp(context, iTID, iUID, iAddress, (short) 2, DataType.INT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = readHoldingRegistersOnSerial(context, iTID, iUID, iAddress, (short) 2, DataType.INT);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg readLong(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg readLong(Context context, int iTID, int iUID, int iAddress, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         TcpIpMsg tim = null;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = readHoldingRegistersOnTcp(context, iTID, iUID, iAddress, (short) 4, DataType.LONG);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = readHoldingRegistersOnSerial(context, iTID, iUID, iAddress, (short) 4, DataType.LONG);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg readFloat(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg readFloat(Context context, int iTID, int iUID, int iAddress, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         TcpIpMsg tim = null;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = readHoldingRegistersOnTcp(context, iTID, iUID, iAddress, (short) 2, DataType.FLOAT);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = readHoldingRegistersOnSerial(context, iTID, iUID, iAddress, (short) 2, DataType.FLOAT);
         }
         return tim;
     }
 
-    public static synchronized TcpIpMsg readDouble(Context context, int iTID, int iUID, int iAddress, Protocol p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
+    public static synchronized TcpIpMsg readDouble(Context context, int iTID, int iUID, int iAddress, CommProtocolType p) throws ModbusAddressOutOfRangeException, ModbusValueOutOfRangeException, ModbusTransIdOutOfRangeException, ModbusQuantityOfRegistersOutOfRange, ModbusUnitIdOutOfRangeException {
         TcpIpMsg tim = null;
-        if(p == Protocol.MODBUS_ON_TCP_IP){
+        if(p == CommProtocolType.MODBUS_ON_TCP_IP){
             tim = readHoldingRegistersOnTcp(context, iTID, iUID, iAddress, (short) 4, DataType.DOUBLE);
         }
-        if(p == Protocol.MODBUS_ON_SERIAL){
+        if(p == CommProtocolType.MODBUS_ON_SERIAL){
             tim = readHoldingRegistersOnSerial(context, iTID, iUID, iAddress, (short) 4, DataType.DOUBLE);
         }
         return tim;
@@ -356,7 +356,7 @@ public class Modbus {
         if(byteMBA != null && byteMBA.length == 6){
             ByteBuffer bb = ByteBuffer.wrap(byteMBA);
             short shTID = bb.getShort(); // Transaction Identifier
-            short shPID = bb.getShort(); // Protocol Identifier, must be 0
+            short shPID = bb.getShort(); // Protocol_
             if(shPID != 0){
                 throw new ModbusProtocolOutOfRangeException(context.getString(R.string.ModbusProtocolOutOfRangeException));
             }

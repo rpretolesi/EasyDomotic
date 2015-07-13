@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.CustomDataStream.ReadDataInputStream;
 import com.pretolesi.easydomotic.Modbus.Modbus;
@@ -203,12 +203,12 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // No Data to read
         // Ora attendo un certo tempo dalla ricezione dei primi dati per assicurarmi che tutti il messaggio sia completo
         // Imposto un tempo di 4 ms
-        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + m_ticd.getCommReceiveWaitData() >= System.currentTimeMillis())) {
+        if(!m_bDataInputStreamReady || (m_lDataInputStreamReadyTime + m_ticd.getReceiveWaitData() >= System.currentTimeMillis())) {
             return true;
         }
 
         // Modbus
-        if((m_ticd.getProtocol() == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL)) {
+        if((m_ticd.getCommProtocolType() == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_SERIAL)) {
             try {
                 byte[] bytePDU = m_rdis.getData(false);
                 bytePDU_temp = bytePDU;// Debug

@@ -62,30 +62,20 @@ public class BaseValueCommClientListFragment extends ListFragment implements
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueCommClientData.TraspProtocol.TCP_IP.getID()){
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueTranspProtocolClientData.TranspProtocolType.TCP_IP.getID()){
             setEmptyText("No Tcp Ip Server");
         }
-        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID()){
+        if(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL) == BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID()){
             setEmptyText("No Bluetooth Server");
         }
-/*
-        switch (getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL)){
-            case BaseValueCommClientData.TraspProtocol.TCP_IP.getID():
-                setEmptyText("No Tcp Ip Server");
-                break;
-            case BaseValueCommClientData.TYPE_BLUETOOTH_CLIENT:
-                setEmptyText("No Bluetooth Server");
-                break;
 
-        }
-*/
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
+                new String[] {SQLContract.TranspProtocolClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
         setListAdapter(mAdapter);
 
@@ -222,7 +212,7 @@ public class BaseValueCommClientListFragment extends ListFragment implements
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.loadByTranspProtocol(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL));
+                    return SQLContract.TranspProtocolClientEntry.loadByTranspProtocol(getArguments().getLong(BaseFragment.CLIENT_TRANSP_PROTOCOL));
                 }
             };
         }

@@ -86,7 +86,7 @@ public class BaseValueData implements Parcelable {
     private float m_fPosZ;
     private boolean m_bVertical;
 
-    // Protocol Tcp Ip Client
+    // Protocol_
     private boolean m_bProtTcpIpClientEnable;
     private long m_lProtTcpIpClientID;
     private int m_iProtTcpIpClientValueID;
@@ -128,7 +128,7 @@ public class BaseValueData implements Parcelable {
         m_fPosZ = 0;
         m_bVertical = false;
 
-        // Protocol Tcp Ip Client
+        // Protocol_
         m_bProtTcpIpClientEnable = false;
         m_lProtTcpIpClientID = -1;
         m_iProtTcpIpClientValueID = 0;
@@ -225,7 +225,7 @@ public class BaseValueData implements Parcelable {
 
     public void setVertical(boolean bVertical) { this.m_bVertical = bVertical; }
 
-    // Protocol
+    // Protocol_
     public void setProtTcpIpClientEnable(boolean bTcpIpClientEnable) { this.m_bProtTcpIpClientEnable = bTcpIpClientEnable; }
 
     public void setProtTcpIpClientID(long lProtTcpIpClientID) { this.m_lProtTcpIpClientID = lProtTcpIpClientID; }
@@ -312,13 +312,13 @@ public class BaseValueData implements Parcelable {
 
     public boolean getVertical() { return m_bVertical; }
 
-    // Protocol
+    // Protocol_
     public boolean getProtTcpIpClientEnable() { return m_bProtTcpIpClientEnable; }
 
     public long getProtTcpIpClientID() {
         return m_lProtTcpIpClientID;
     }
-
+finire qui capendo dove e come e' utilizzata la funzione seguente'
     public int getProtTcpIpClientValueID() { return m_iProtTcpIpClientValueID; }
 
     public int getProtTcpIpClientValueAddress() { return m_iProtTcpIpClientValueAddress; }

@@ -3,7 +3,7 @@ package com.pretolesi.easydomotic.TcpIpClient;
 import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
@@ -131,7 +131,7 @@ public class TCPIPClient extends BaseCommClient {
         }
 
         // Modbus
-        if((m_ticd.getProtocol() == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP)) {
+        if((m_ticd.getCommProtocolType() == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_TCP_IP)) {
             try {
                 Arrays.fill(m_byteMBAP, (byte) 0);
                 m_dataInputStream.readFully(m_byteMBAP, 0, m_byteMBAP.length);
@@ -280,133 +280,4 @@ public class TCPIPClient extends BaseCommClient {
     public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, DataType dtDataType, String strValue){
         return super.writeValue(context, iTID, iUID, iAddress, dtDataType, strValue);
     }
-/*
-    @Override
-    public synchronized boolean writeValue(Context context, int iTID, int iUID, int iAddress, Object objValue){
-        if(objValue == null) {
-            return false;
-        }
-        if(objValue instanceof Short){
-            writeShort(context, iTID, iUID, iAddress, (Short)objValue);
-            return true;
-        }
-        if(objValue instanceof Integer){
-            writeInteger(context, iTID, iUID, iAddress, (Integer) objValue);
-            return true;
-        }
-        if(objValue instanceof Long){
-            writeLong(context, iTID, iUID, iAddress, (Long) objValue);
-            return true;
-        }
-        if(objValue instanceof Float){
-            writeFloat(context, iTID, iUID, iAddress, (Float) objValue);
-            return true;
-        }
-        if(objValue instanceof Double){
-            writeDouble(context, iTID, iUID, iAddress, (Double) objValue);
-            return true;
-        }
-        return false;
-    }
-*/
-
-
-/*
-    @Override
-    protected void onPreExecute() {
-
-    }
-
-    @Override
-    protected Void doInBackground(Object... obj) {
-        super.doInBackground(obj);
-
-        try {
-            while (!isCancelled() && m_ticd != null) {
-                try {
-                    if (!isConnected()) {
-                        // Stop communication with Server
-                        stopConnection();
-                        // attendo per non sovraccaricare CPU
-                        try {
-                            Thread.sleep(3000, 0);
-                        } catch (InterruptedException ignored) {
-
-                        }
-
-                        // Start communication with Server
-                        startConnection();
-                        // attendo per non sovraccaricare CPU
-                        try {
-                            Thread.sleep(3000, 0);
-                        } catch (InterruptedException ignored) {
-                        }
-                    } else {
-                        if (!send()){
-                            try {
-                                Thread.sleep(3000, 0);
-                            } catch (InterruptedException ignored) {
-                            }
-                        }
-
-                        if (!receive()) {
-                            try {
-                                Thread.sleep(3000, 0);
-                            } catch (InterruptedException ignored) {
-                            }
-                        }
-                        // Delay (depending of the protocol specific
-                        try {
-                            Thread.sleep(m_ticd.getCommSendDelayData(), 0);
-                        } catch (InterruptedException ignored) {
-                        }
-                    }
-                } catch (Exception ex) {
-                    // Log.d(TAG, this.toString() + "doInBackground()->" + "Exception ex: " + ex.getMessage());
-                }
-            }
-        } catch (Exception ex) {
-            // Log.d(TAG, this.toString() + "doInBackground()->" + "Exception ex: " + ex.getMessage());
-        }
-
-        // Closing...
-        stopConnection();
-
-        // Log.d(TAG, this.toString() + "doInBackground() return");
-        return null;
-    }
-
-    @Override
-    protected void onProgressUpdate(Object... obj) {
-        super.onProgressUpdate(obj);
-        // Aggiorno
-        if(obj != null){
-            if(obj[0] instanceof TcpIpClientStatus){
-                if(m_vTcpIpClientStatusListener != null) {
-                    for (TcpIpClientStatusListener ticl : m_vTcpIpClientStatusListener) {
-                        ticl.onTcpIpClientStatusCallback((TcpIpClientStatus) obj[0]);
-                    }
-                }
-            }
-            if(obj[0] instanceof TcpIpClientWriteStatus){
-                if(m_vTcpIpClientWriteStatusListener != null) {
-                    for (TcpIpClientWriteStatusListener ticwsl : m_vTcpIpClientWriteStatusListener) {
-                        ticwsl.onWriteValueStatusCallback((TcpIpClientWriteStatus) obj[0]);
-                    }
-                }
-            }
-            if(obj[0] instanceof TcpIpClientReadStatus){
-                if(m_vTcpIpClientReadValueStatusListener != null) {
-                    for (TcpIpClientReadValueStatusListener ticrvsl : m_vTcpIpClientReadValueStatusListener) {
-                        ticrvsl.onReadValueStatusCallback((TcpIpClientReadStatus) obj[0]);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-    }
-*/
 }

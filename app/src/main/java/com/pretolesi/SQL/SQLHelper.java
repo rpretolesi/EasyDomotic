@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.pretolesi.SQL.SQLContract;
-
 /**
  * Helper for DB SQL
  */
@@ -66,18 +64,18 @@ public class SQLHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL(SQLContract.Settings.SQL_CREATE_ENTRIES);
-        db.execSQL(SQLContract.TcpIpClientEntry.SQL_CREATE_ENTRIES);
+        db.execSQL(SQLContract.TranspProtocolClientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_CREATE_ENTRIES);
-        db.execSQL(SQLContract.BaseValueEntry.SQL_CREATE_ENTRIES);
+        db.execSQL(SQLContract.BaseValueControlEntry.SQL_CREATE_ENTRIES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         db.execSQL(SQLContract.Settings.SQL_DELETE_ENTRIES);
-        db.execSQL(SQLContract.TcpIpClientEntry.SQL_DELETE_ENTRIES);
+        db.execSQL(SQLContract.TranspProtocolClientEntry.SQL_DELETE_ENTRIES);
         db.execSQL(SQLContract.RoomEntry.SQL_DELETE_ENTRIES);
-        db.execSQL(SQLContract.BaseValueEntry.SQL_DELETE_ENTRIES);
+        db.execSQL(SQLContract.BaseValueControlEntry.SQL_DELETE_ENTRIES);
 
         onCreate(db);
     }

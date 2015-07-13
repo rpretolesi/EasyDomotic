@@ -1,7 +1,5 @@
 package com.pretolesi.easydomotic.BluetoothClient;
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -9,8 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import com.pretolesi.easydomotic.BaseValue.BaseValueData;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientDataPropActivity;
 import com.pretolesi.easydomotic.R;
 
@@ -57,7 +54,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
         });
 
         m_id_stica_spn_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.getValues(BaseValueCommClientData.TraspProtocol.BLUETOOTH)));
+                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.getValues(BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH)));
 
         setActionBarTitle(getString(R.string.settings_title_section_edit_bluetooth_client));
 
@@ -94,7 +91,7 @@ public class BluetoothClientDataPropActivity  extends BaseValueCommClientDataPro
     protected boolean setBaseData(int iDialogOriginID){
 
         if (m_ticd == null) {
-            m_ticd = new BaseValueCommClientData(BaseValueCommClientData.TraspProtocol.BLUETOOTH.getID());
+            m_ticd = new BaseValueTranspProtocolClientData(BaseValueTranspProtocolClientData.TranspProtocolType.BLUETOOTH.getID());
         }
 
         return super.setBaseData(iDialogOriginID);

@@ -28,7 +28,7 @@ import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Orientation;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.CommClientData.BaseValueCommClientData;
+import com.pretolesi.easydomotic.CommClientData.BaseValueTranspProtocolClientData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
 import com.pretolesi.easydomotic.dialogs.DialogOriginID;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
@@ -118,19 +118,19 @@ public class BaseValuePropActivity extends Activity implements
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Set Limit for address
                 // and check again
-                BaseValueCommClientData.Protocol p = null;
-                Cursor cursor = SQLContract.TcpIpClientEntry.load(id);
-                ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
-                if(alticd != null && !alticd.isEmpty()){
-                    p = alticd.get(0).getProtocol();
+                BaseValueTranspProtocolClientData.CommProtocolType p = null;
+                Cursor cursor = SQLContract.TranspProtocolClientEntry.load(id);
+                ArrayList<BaseValueTranspProtocolClientData> alticd = SQLContract.TranspProtocolClientEntry.get(cursor);
+                if (alticd != null && !alticd.isEmpty()) {
+                    p = alticd.get(0).getCommProtocolType();
                 }
-                if(p != null && p == BaseValueCommClientData.Protocol.MODBUS_ON_SERIAL){
-                    if(m_id_et_protocol_ui != null) {
+                if (p != null && p == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_SERIAL) {
+                    if (m_id_et_protocol_ui != null) {
                         m_id_et_protocol_ui.setInputLimit(1, 247);
                     }
                 }
-                if(p != null && p == BaseValueCommClientData.Protocol.MODBUS_ON_TCP_IP){
-                    if(m_id_et_protocol_ui != null) {
+                if (p != null && p == BaseValueTranspProtocolClientData.CommProtocolType.MODBUS_ON_TCP_IP) {
+                    if (m_id_et_protocol_ui != null) {
                         m_id_et_protocol_ui.setInputLimit(0, 247);
                     }
                 }
@@ -163,7 +163,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         m_id_spn_tcp_ip_client_protocol.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, BaseValueCommClientData.Protocol.values()));
+                android.R.layout.simple_list_item_1, BaseValueTranspProtocolClientData.CommProtocolType.values()));
 
         m_SCAdapter = new SimpleCursorAdapter(
                 this,
@@ -177,7 +177,7 @@ public class BaseValuePropActivity extends Activity implements
                 this,
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[] {SQLContract.TcpIpClientEntry.COLUMN_NAME_NAME},
+                new String[] {SQLContract.TranspProtocolClientEntry.COLUMN_NAME_NAME},
                 new int[] {android.R.id.text1}, 0);
         m_id_spn_tcp_ip_client_protocol.setAdapter(m_TcpIpClientAdapter);
 
@@ -298,9 +298,9 @@ public class BaseValuePropActivity extends Activity implements
                 public Cursor loadInBackground() {
                     Cursor cursor = null;
                     if(m_bvdParameter != null){
-                        cursor = SQLContract.BaseValueEntry.loadFromBaseValueData(m_bvdParameter);
+                        cursor = SQLContract.BaseValueControlEntry.loadFromBaseValueData(m_bvdParameter);
                     } else if (m_lIDParameter > 0){
-                        cursor = SQLContract.BaseValueEntry.loadByID(m_lIDParameter);
+                        cursor = SQLContract.BaseValueControlEntry.loadByID(m_lIDParameter);
                     }
                     return cursor;
                 }
@@ -311,7 +311,7 @@ public class BaseValuePropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load();
+                    return SQLContract.TranspProtocolClientEntry.load();
                 }
             };
         }
@@ -331,7 +331,7 @@ public class BaseValuePropActivity extends Activity implements
         }
 
         if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
-            ArrayList<BaseValueData> albve = SQLContract.BaseValueEntry.get(cursor);
+            ArrayList<BaseValueData> albve = SQLContract.BaseValueControlEntry.get(cursor);
             if(albve != null && !albve.isEmpty()){
                 m_bvd = albve.get(0);
             }
@@ -381,7 +381,7 @@ public class BaseValuePropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.BaseValueEntry.save(m_bvd)){
+                        if(SQLContract.BaseValueControlEntry.save(m_bvd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -410,7 +410,7 @@ public class BaseValuePropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.BaseValueEntry.save(m_bvd)){
+                        if(SQLContract.BaseValueControlEntry.save(m_bvd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -538,7 +538,7 @@ public class BaseValuePropActivity extends Activity implements
             // il Record esiste Gia'
             if(!((m_bvd != null && (m_bvd.getID() > 0)) || (m_lIDParameter > 0))){
                 if(setBaseData(iDialogOriginID)){
-                    if(SQLContract.BaseValueEntry.save(m_bvd)){
+                    if(SQLContract.BaseValueControlEntry.save(m_bvd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                 .show(getFragmentManager(), "");
                     } else {
@@ -667,7 +667,7 @@ public class BaseValuePropActivity extends Activity implements
             lID = m_lIDParameter;
         }
         if(lID > 0){
-            if(SQLContract.BaseValueEntry.deleteByID(lID)){
+            if(SQLContract.BaseValueControlEntry.deleteByID(lID)){
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return;

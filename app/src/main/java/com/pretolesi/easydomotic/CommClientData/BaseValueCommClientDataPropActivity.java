@@ -57,7 +57,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     protected TextView m_id_stica_tv_protocol_field_2;
     protected NumericEditText m_id_stica_et_protocol_field_2;
 
-    protected BaseValueCommClientData m_ticd;
+    protected BaseValueTranspProtocolClientData m_ticd;
     protected long m_lIDParameter;
 
     @Override
@@ -67,40 +67,40 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
         m_id_tv_server_name = (TextView)findViewById(R.id.id_tv_server_name);
         m_id_et_server_name = (StringEditText)findViewById(R.id.id_stica_et_server_name);
-        m_id_et_server_name.setInputLimit(BaseValueCommClientData.NameMinChar, BaseValueCommClientData.NameMaxChar);
-        m_id_et_server_name.setText(BaseValueCommClientData.NameDefaultValue);
+        m_id_et_server_name.setInputLimit(BaseValueTranspProtocolClientData.NameMinChar, BaseValueTranspProtocolClientData.NameMaxChar);
+        m_id_et_server_name.setText(BaseValueTranspProtocolClientData.NameDefaultValue);
         m_id_tv_server_address = (TextView)findViewById(R.id.id_tv_server_address);
         m_id_et_server_address = (StringEditText)findViewById(R.id.id_et_server_address);
-        m_id_et_server_address.setInputLimit(BaseValueCommClientData.AddressMinChar, BaseValueCommClientData.AddressMaxChar);
-        m_id_et_server_address.setText(BaseValueCommClientData.AddressDefaultValue);
+        m_id_et_server_address.setInputLimit(BaseValueTranspProtocolClientData.AddressMinChar, BaseValueTranspProtocolClientData.AddressMaxChar);
+        m_id_et_server_address.setText(BaseValueTranspProtocolClientData.AddressDefaultValue);
         m_id_stica_tv_server_port = (TextView)findViewById(R.id.id_stica_tv_server_port);
         m_id_stica_et_server_port = (NumericEditText)findViewById(R.id.id_stica_et_server_port);
-        m_id_stica_et_server_port.setInputLimit(BaseValueCommClientData.PortMinValue, BaseValueCommClientData.PortMaxValue);
-        m_id_stica_et_server_port.setText(BaseValueCommClientData.PortDefaultValue);
+        m_id_stica_et_server_port.setInputLimit(BaseValueTranspProtocolClientData.PortMinValue, BaseValueTranspProtocolClientData.PortMaxValue);
+        m_id_stica_et_server_port.setText(BaseValueTranspProtocolClientData.PortDefaultValue);
         m_id_stica_et_timeout = (NumericEditText)findViewById(R.id.id_stica_et_timeout);
-        m_id_stica_et_timeout.setInputLimit(BaseValueCommClientData.TimeoutMinValue, BaseValueCommClientData.TimeoutMaxValue);
-        m_id_stica_et_timeout.setText(BaseValueCommClientData.TimeoutDefaultValue);
+        m_id_stica_et_timeout.setInputLimit(BaseValueTranspProtocolClientData.TimeoutMinValue, BaseValueTranspProtocolClientData.TimeoutMaxValue);
+        m_id_stica_et_timeout.setText(BaseValueTranspProtocolClientData.TimeoutDefaultValue);
         m_id_stica_et_comm_send_data_delay = (NumericEditText)findViewById(R.id.id_stica_et_comm_send_data_delay);
-        m_id_stica_et_comm_send_data_delay.setInputLimit(BaseValueCommClientData.CommSendDelayDataMinValue, BaseValueCommClientData.CommSendDelayDataMaxValue);
-        m_id_stica_et_comm_send_data_delay.setText(BaseValueCommClientData.CommSendDelayDataDefaultValue);
+        m_id_stica_et_comm_send_data_delay.setInputLimit(BaseValueTranspProtocolClientData.CommSendDelayDataMinValue, BaseValueTranspProtocolClientData.CommSendDelayDataMaxValue);
+        m_id_stica_et_comm_send_data_delay.setText(BaseValueTranspProtocolClientData.CommSendDelayDataDefaultValue);
         m_id_stica_tv_comm_receive_wait_data = (TextView)findViewById(R.id.id_stica_tv_comm_receive_wait_data);
         m_id_stica_et_comm_receive_wait_data = (NumericEditText)findViewById(R.id.id_stica_et_comm_receive_wait_data);
-        m_id_stica_et_comm_receive_wait_data.setInputLimit(BaseValueCommClientData.CommReceiveWaitDataMinValue, BaseValueCommClientData.CommReceiveWaitDataMaxValue);
-        m_id_stica_et_comm_receive_wait_data.setText(BaseValueCommClientData.CommReceiveWaitDataDefaultValue);
+        m_id_stica_et_comm_receive_wait_data.setInputLimit(BaseValueTranspProtocolClientData.CommReceiveWaitDataMinValue, BaseValueTranspProtocolClientData.CommReceiveWaitDataMaxValue);
+        m_id_stica_et_comm_receive_wait_data.setText(BaseValueTranspProtocolClientData.CommReceiveWaitDataDefaultValue);
         m_id_stica_tv_comm_nr_max_err = (TextView)findViewById(R.id.id_stica_tv_comm_nr_max_err);
         m_id_stica_et_comm_nr_max_err = (NumericEditText)findViewById(R.id.id_stica_et_comm_nr_max_err);
-        m_id_stica_et_comm_nr_max_err.setInputLimit(BaseValueCommClientData.CommNrMaxOfErrMinValue, BaseValueCommClientData.CommNrMaxOfErrMaxValue);
-        m_id_stica_et_comm_nr_max_err.setText(BaseValueCommClientData.CommNrMaxOfErrDefaultValue);
+        m_id_stica_et_comm_nr_max_err.setInputLimit(BaseValueTranspProtocolClientData.CommNrMaxOfErrMinValue, BaseValueTranspProtocolClientData.CommNrMaxOfErrMaxValue);
+        m_id_stica_et_comm_nr_max_err.setText(BaseValueTranspProtocolClientData.CommNrMaxOfErrDefaultValue);
         m_id_stica_spn_protocol = (Spinner) findViewById(R.id.id_stica_spn_protocol);
-        m_id_stica_spn_protocol.setSelection(BaseValueCommClientData.ProtocolDefaulValue);
+        m_id_stica_spn_protocol.setSelection(BaseValueTranspProtocolClientData.ProtocolDefaulValue);
         m_id_stica_tv_protocol_field_1 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_1);
         m_id_stica_et_protocol_field_1 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_1);
-        m_id_stica_et_protocol_field_1.setInputLimit(BaseValueCommClientData.HeadMinValue, BaseValueCommClientData.HeadMaxValue);
-        m_id_stica_et_protocol_field_1.setText(BaseValueCommClientData.HeadDefaulValue);
+        m_id_stica_et_protocol_field_1.setInputLimit(BaseValueTranspProtocolClientData.HeadMinValue, BaseValueTranspProtocolClientData.HeadMaxValue);
+        m_id_stica_et_protocol_field_1.setText(BaseValueTranspProtocolClientData.HeadDefaulValue);
         m_id_stica_tv_protocol_field_2 = (TextView)findViewById(R.id.id_stica_tv_protocol_field_2);
         m_id_stica_et_protocol_field_2 = (NumericEditText)findViewById(R.id.id_stica_et_protocol_field_2);
-        m_id_stica_et_protocol_field_2.setInputLimit(BaseValueCommClientData.TailMinValue, BaseValueCommClientData.TailMaxValue);
-        m_id_stica_et_protocol_field_2.setText(BaseValueCommClientData.TailDefaulValue);
+        m_id_stica_et_protocol_field_2.setInputLimit(BaseValueTranspProtocolClientData.TailMinValue, BaseValueTranspProtocolClientData.TailMaxValue);
+        m_id_stica_et_protocol_field_2.setText(BaseValueTranspProtocolClientData.TailDefaulValue);
 
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
@@ -189,7 +189,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
-                    return SQLContract.TcpIpClientEntry.load(m_lIDParameter);
+                    return SQLContract.TranspProtocolClientEntry.load(m_lIDParameter);
                 }
             };
         }
@@ -200,7 +200,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
-            ArrayList<BaseValueCommClientData> alticd = SQLContract.TcpIpClientEntry.get(cursor);
+            ArrayList<BaseValueTranspProtocolClientData> alticd = SQLContract.TranspProtocolClientEntry.get(cursor);
             if(alticd != null && !alticd.isEmpty()){
                 m_ticd = alticd.get(0);
                 m_ticd.setSaved(false);
@@ -221,7 +221,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                        if(SQLContract.TranspProtocolClientEntry.save(m_ticd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -250,7 +250,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
                 if(bYes) {
                     // Save ok, exit
                     if(setBaseData(iDialogOriginID)){
-                        if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                        if(SQLContract.TranspProtocolClientEntry.save(m_ticd)){
                             OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                     .show(getFragmentManager(), "");
                         } else {
@@ -313,21 +313,21 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             m_id_stica_et_timeout.setText(Integer.toString(m_ticd.getTimeout()));
         }
         if(m_id_stica_et_comm_send_data_delay != null) {
-            m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getCommSendDelayData()));
+            m_id_stica_et_comm_send_data_delay.setText(Integer.toString(m_ticd.getSendDelayData()));
         }
         if(m_id_stica_et_comm_receive_wait_data != null) {
-            m_id_stica_et_comm_receive_wait_data.setText(Integer.toString(m_ticd.getCommReceiveWaitData()));
+            m_id_stica_et_comm_receive_wait_data.setText(Integer.toString(m_ticd.getReceiveWaitData()));
         }
         if(m_id_stica_et_comm_nr_max_err != null) {
-            m_id_stica_et_comm_nr_max_err.setText(Integer.toString(m_ticd.getCommNrMaxOfErr()));
+            m_id_stica_et_comm_nr_max_err.setText(Integer.toString(m_ticd.getNrMaxOfErr()));
         }
         if(m_id_stica_spn_protocol != null) {
-            BaseValueCommClientData.Protocol p = m_ticd.getProtocol();
+            BaseValueTranspProtocolClientData.CommProtocolType p = m_ticd.getCommProtocolType();
             if(p != null){
                 for (int position = 0; position < m_id_stica_spn_protocol.getCount(); position++)
                 {
                     Object obj = m_id_stica_spn_protocol.getItemAtPosition(position);
-                    if (obj != null && obj instanceof BaseValueCommClientData.Protocol && obj == p){
+                    if (obj != null && obj instanceof BaseValueTranspProtocolClientData.CommProtocolType && obj == p){
                         m_id_stica_spn_protocol.setSelection(position);
                         break;
                     }
@@ -351,7 +351,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
 
             if(!((m_ticd != null && (m_ticd.getID() > 0)) || (m_lIDParameter > 0))){
                 if(setBaseData(iDialogOriginID)){
-                    if(SQLContract.TcpIpClientEntry.save(m_ticd)){
+                    if(SQLContract.TranspProtocolClientEntry.save(m_ticd)){
                         OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.SAVING_OK_ID, getString(R.string.text_odf_title_saving), getString(R.string.text_odf_message_saving_ok), getString(R.string.text_odf_message_ok_button))
                                 .show(getFragmentManager(), "");
                     } else {
@@ -372,16 +372,6 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
     }
 
     protected boolean setBaseData(int iDialogOriginID){
-/*
-        if (m_ticd == null) {
-            if(m_tp == null){
-                return false;
-            }
-            int iProtocolID = BaseValueCommClientData.Protocol.getID(m_tp);
-            m_ticd = new BaseValueCommClientData(iProtocolID);
-            m_ticd.setEnable(true);
-        }
-*/
 
         if (m_ticd == null) {
             return false;
@@ -391,11 +381,11 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
         m_ticd.setAddress(m_id_et_server_address.getText().toString());
         m_ticd.setPort(Integer.parseInt(m_id_stica_et_server_port.getText().toString()));
         m_ticd.setTimeout(Integer.parseInt(m_id_stica_et_timeout.getText().toString()));
-        m_ticd.setCommSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
-        m_ticd.setCommReceiveWaitData(Integer.parseInt(m_id_stica_et_comm_receive_wait_data.getText().toString()));
-        m_ticd.setCommNrMaxOfErr(Integer.parseInt(m_id_stica_et_comm_nr_max_err.getText().toString()));
-        if(m_id_stica_spn_protocol != null && m_id_stica_spn_protocol.getSelectedItem() instanceof BaseValueCommClientData.Protocol){
-            m_ticd.setProtocol((BaseValueCommClientData.Protocol)m_id_stica_spn_protocol.getSelectedItem());
+        m_ticd.setSendDelayData(Integer.parseInt(m_id_stica_et_comm_send_data_delay.getText().toString()));
+        m_ticd.setReceiveWaitData(Integer.parseInt(m_id_stica_et_comm_receive_wait_data.getText().toString()));
+        m_ticd.setNrMaxOfErr(Integer.parseInt(m_id_stica_et_comm_nr_max_err.getText().toString()));
+        if(m_id_stica_spn_protocol != null && m_id_stica_spn_protocol.getSelectedItem() instanceof BaseValueTranspProtocolClientData.CommProtocolType){
+            m_ticd.setCommProtocolType((BaseValueTranspProtocolClientData.CommProtocolType) m_id_stica_spn_protocol.getSelectedItem());
         }
         m_ticd.setHead(Integer.parseInt(m_id_stica_et_protocol_field_1.getText().toString()));
         m_ticd.setTail(Integer.parseInt(m_id_stica_et_protocol_field_2.getText().toString()));
@@ -421,7 +411,7 @@ public class BaseValueCommClientDataPropActivity extends Activity implements
             lID = m_lIDParameter;
 //        }
         if(lID > 0){
-            if(SQLContract.TcpIpClientEntry.delete(lID)){
+            if(SQLContract.TranspProtocolClientEntry.delete(lID)){
                 OkDialogFragment.newInstance(iDialogOriginID, DialogActionID.DELETING_OK_ID, getString(R.string.text_odf_title_deleting), getString(R.string.text_odf_message_deleting_ok), getString(R.string.text_odf_message_ok_button))
                         .show(getFragmentManager(), "");
                 return;
