@@ -11,7 +11,7 @@ import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
 
 /**
  *
@@ -135,11 +135,11 @@ public class SensorValueBaseControl extends Control implements
     }
 
     @Override
-    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
+    public void onWriteValueStatusCallback(ClientWriteStatus ticws) {
         if(ticws != null && m_bvd != null){
             if(ticws.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticws.getTID() == m_iTIDWrite) {
-                    if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
+                    if(ticws.getStatus() == ClientWriteStatus.Status.OK){
                         if(m_bvd.getSensorEnableSimulation()){
                             // Write Ok, i can close the Input
                             closeInputField();

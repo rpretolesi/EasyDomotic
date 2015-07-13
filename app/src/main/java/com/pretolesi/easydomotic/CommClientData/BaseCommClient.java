@@ -13,10 +13,10 @@ import com.pretolesi.easydomotic.Modbus.ModbusTransIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusValueOutOfRangeException;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
+import com.pretolesi.easydomotic.IO.ClientReadStatus;
+import com.pretolesi.easydomotic.IO.ClientStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
+import com.pretolesi.easydomotic.IO.ClientMsg;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -76,7 +76,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected Context m_context = null;
     protected TranspProtocolData m_ticd = null;
-    private ConcurrentLinkedQueue<TcpIpMsg> m_clqim = null;
+    private ConcurrentLinkedQueue<ClientMsg> m_clqim = null;
 
     // MBAP
     protected byte[] m_byteMBAP = null;
@@ -123,7 +123,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         return "";
     }
 
-    protected void setMsgToSend(TcpIpMsg tim) {
+    protected void setMsgToSend(ClientMsg tim) {
         if (m_clqim != null && tim != null) {
             if (!m_clqim.contains(tim)) {
                 m_clqim.add(tim);
@@ -131,10 +131,10 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         }
     }
 
-    protected TcpIpMsg getMsgSent(){
-        TcpIpMsg tim = null;
-        for (Iterator<TcpIpMsg> iterator = m_clqim.iterator(); iterator.hasNext();) {
-            TcpIpMsg tim_temp = iterator.next();
+    protected ClientMsg getMsgSent(){
+        ClientMsg tim = null;
+        for (Iterator<ClientMsg> iterator = m_clqim.iterator(); iterator.hasNext();) {
+            ClientMsg tim_temp = iterator.next();
             if (tim_temp != null) {
                 if(tim_temp.getMsgSent()) {
                     tim = tim_temp;
@@ -145,24 +145,24 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         return tim;
     }
 
-    protected TcpIpMsg getMsgToSend(){
+    protected ClientMsg getMsgToSend(){
         boolean bNoMsgSent = true;
 
         if(m_clqim == null || m_clqim.isEmpty()) {
             return null;
         }
 
-        for (TcpIpMsg tim : m_clqim) {
+        for (ClientMsg tim : m_clqim) {
             if (tim != null && tim.getMsgSent()) {
                 bNoMsgSent = false;
             }
         }
 
         int iPriority = -1;
-        TcpIpMsg tim = null;
+        ClientMsg tim = null;
 
         if(bNoMsgSent) {
-            for (TcpIpMsg tim_temp : m_clqim) {
+            for (ClientMsg tim_temp : m_clqim) {
                 if (tim_temp != null && tim_temp.getPriority() > iPriority) {
                     iPriority = tim_temp.getPriority();
                     tim = tim_temp;
@@ -180,12 +180,12 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         return tim;
     }
 
-    protected TcpIpMsg removeMsg(short shTID, short shUID) {
-        TcpIpMsg timRemoved = null;
-        for (Iterator<TcpIpMsg> iterator = m_clqim.iterator(); iterator.hasNext(); ) {
-            TcpIpMsg tim = iterator.next();
+    protected ClientMsg removeMsg(short shTID, short shUID) {
+        ClientMsg timRemoved = null;
+        for (Iterator<ClientMsg> iterator = m_clqim.iterator(); iterator.hasNext(); ) {
+            ClientMsg tim = iterator.next();
             if (tim != null && tim.getTID() == shTID && tim.getUID() == shUID) {
-                timRemoved = new TcpIpMsg(tim);
+                timRemoved = new ClientMsg(tim);
                 iterator.remove();
             }
         }
@@ -194,7 +194,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void setAllMsgAsUnsent(){
         if(m_clqim != null) {
-            for (TcpIpMsg tim : m_clqim) {
+            for (ClientMsg tim : m_clqim) {
                 if (tim != null) {
                     tim.setMsgTimeMSNow();
                     tim.setMsgAsSent(false);
@@ -205,13 +205,13 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 
     protected void checkTimeoutAndSetAllMsgAsUnsent(){
         if(m_clqim != null && m_context != null) {
-            for (TcpIpMsg tim : m_clqim) {
+            for (ClientMsg tim : m_clqim) {
                 if (tim != null) {
                     if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
                         tim.setMsgTimeMSNow();
                         tim.setMsgAsSent(false);
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException)));
-                        publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException), null));
+                        publishProgress(new ClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), ClientWriteStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException)));
+                        publishProgress(new ClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), ClientReadStatus.Status.ERROR, 0, m_context.getString(R.string.TimeoutException), null));
                     }
                 }
             }
@@ -255,14 +255,14 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
             strProgress = strProgress + "-";
         }
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, strProgress ));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ONLINE, strProgress ));
     }
 
     protected boolean startConnection() { return false; }
 
     protected boolean send() { return false; }
 
-    protected boolean sendMsg(TcpIpMsg tim) {
+    protected boolean sendMsg(ClientMsg tim) {
 
         if (m_dataOutputStream != null) {
             try {
@@ -276,7 +276,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
 //                return true;
             } catch (Exception ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 // Close
                 stopConnection();
             }
@@ -296,7 +296,7 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
     protected void stopConnection() {
         if(m_ticd != null) {
             // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.DISCONNECTING, ""));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.DISCONNECTING, ""));
         }
 
         // close Output stream
@@ -327,31 +327,31 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.writeShort(context, iTID, iUID, iAddress, iValue, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
@@ -362,31 +362,31 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.writeInteger(context, iTID, iUID, iAddress, lValue, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
@@ -397,31 +397,31 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.writeLong(context, iTID, iUID, iAddress, lValue, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
@@ -432,31 +432,31 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.writeFloat(context, iTID, iUID, iAddress, fValue, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
@@ -467,31 +467,31 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.writeDouble(context, iTID, iUID, iAddress, dblValue, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusTransIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusUnitIdOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusAddressOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusValueOutOfRangeException ex: " + ex.getMessage());
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "ModbusQuantityOfRegistersOutOfRange ex: " + ex.getMessage());
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientWriteStatus(getID(), iTID, iUID, TcpIpClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
+                    publishProgress(new ClientWriteStatus(getID(), iTID, iUID, ClientWriteStatus.Status.ERROR, 0, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "Exception ex: " + ex.getMessage());
                 }
             }
@@ -598,26 +598,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readShort(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.readShort(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 }
             }
         }
@@ -627,26 +627,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readInt(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.readInt(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 }
             }
         }
@@ -656,26 +656,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readLong(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.readLong(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 }
             }
         }
@@ -685,26 +685,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.readFloat(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 }
             }
         }
@@ -714,26 +714,26 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         if(m_ticd != null) {
             if((m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_TCP_IP) || (m_ticd.getCommProtocolType() == CommProtocolType.MODBUS_ON_SERIAL)) {
                 try {
-                    TcpIpMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
+                    ClientMsg tim = Modbus.readDouble(context, iTID, iUID, iAddress, m_ticd.getCommProtocolType());
                     setMsgToSend(tim);
                 } catch (ModbusUnitIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusAddressOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusValueOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusQuantityOfRegistersOutOfRange ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (ModbusTransIdOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientReadStatus(getID(), iTID, iUID, TcpIpClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
+                    publishProgress(new ClientReadStatus(getID(), iTID, iUID, ClientReadStatus.Status.ERROR, 0, ex.getMessage(), null));
                 }
             }
         }
@@ -863,29 +863,29 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         super.onProgressUpdate(obj);
         // Aggiorno
         if(obj != null){
-            if(obj[0] instanceof TcpIpClientStatus){
+            if(obj[0] instanceof ClientStatus){
                 if(m_vTcpIpClientStatusListener != null) {
                     for (TcpIpClientStatusListener ticl : m_vTcpIpClientStatusListener) {
                         if(ticl != null) {
-                            ticl.onTcpIpClientStatusCallback((TcpIpClientStatus) obj[0]);
+                            ticl.onTcpIpClientStatusCallback((ClientStatus) obj[0]);
                         }
                     }
                 }
             }
-            if(obj[0] instanceof TcpIpClientWriteStatus){
+            if(obj[0] instanceof ClientWriteStatus){
                 if(m_vTcpIpClientWriteStatusListener != null) {
                     for (TcpIpClientWriteStatusListener ticwsl : m_vTcpIpClientWriteStatusListener) {
                         if(ticwsl != null) {
-                            ticwsl.onWriteValueStatusCallback((TcpIpClientWriteStatus) obj[0]);
+                            ticwsl.onWriteValueStatusCallback((ClientWriteStatus) obj[0]);
                         }
                     }
                 }
             }
-            if(obj[0] instanceof TcpIpClientReadStatus){
+            if(obj[0] instanceof ClientReadStatus){
                 if(m_vTcpIpClientReadValueStatusListener != null) {
                     for (TcpIpClientReadValueStatusListener ticrvsl : m_vTcpIpClientReadValueStatusListener) {
                         if(ticrvsl != null) {
-                            ticrvsl.onReadValueStatusCallback((TcpIpClientReadStatus) obj[0]);
+                            ticrvsl.onReadValueStatusCallback((ClientReadStatus) obj[0]);
                         }
                     }
                 }
@@ -904,18 +904,18 @@ public class BaseCommClient extends AsyncTask<Object, Object, Void> {
         /**
          * Callbacks
          */
-        void onTcpIpClientStatusCallback(TcpIpClientStatus tics);
+        void onTcpIpClientStatusCallback(ClientStatus tics);
     }
     public interface TcpIpClientWriteStatusListener {
         /**
          * Callbacks
          */
-        void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws);
+        void onWriteValueStatusCallback(ClientWriteStatus ticws);
     }
     public interface TcpIpClientReadValueStatusListener {
         /**
          * Callbacks
          */
-        void onReadValueStatusCallback(TcpIpClientReadStatus ticrs);
+        void onReadValueStatusCallback(ClientReadStatus ticrs);
     }
 }

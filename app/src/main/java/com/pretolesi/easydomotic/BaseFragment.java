@@ -26,10 +26,11 @@ import com.pretolesi.easydomotic.LoadersUtils.Loaders;
 import com.pretolesi.easydomotic.Control.NumericValueControl;
 import com.pretolesi.easydomotic.Control.SensorValueCalibrControl;
 import com.pretolesi.easydomotic.Control.SensorValueRawControl;
+import com.pretolesi.easydomotic.Room.RoomFragmentData;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
+import com.pretolesi.easydomotic.IO.ClientStatus;
 import com.pretolesi.easydomotic.dialogs.OkDialogFragment;
 
 import java.util.ArrayList;
@@ -154,8 +155,8 @@ public class BaseFragment extends Fragment implements
 
         CommClientHelper.stopInstance();
 
-        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.CONTROL_LOADER_ID);
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
     }
 
@@ -195,7 +196,7 @@ public class BaseFragment extends Fragment implements
             };
         }
 
-        if(id == Loaders.BASE_VALUE_LOADER_ID){
+        if(id == Loaders.CONTROL_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
@@ -204,7 +205,7 @@ public class BaseFragment extends Fragment implements
             };
         }
 
-        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
+        if(id == Loaders.TRANSP_PROTOCOL_LOADER_ID){
             return new CursorLoader(getActivity()){
                 @Override
                 public Cursor loadInBackground() {
@@ -225,18 +226,18 @@ public class BaseFragment extends Fragment implements
                 m_rfd = alrfd.get(0);
 
                 // Controls
-                getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
+                getLoaderManager().initLoader(Loaders.CONTROL_LOADER_ID, null, this);
             }
         }
 
-        if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
+        if(loader.getId() == Loaders.CONTROL_LOADER_ID) {
             m_albvd = SQLContract.ControlEntry.get(cursor);
 
             // Controls
-            getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID, null, this);
         }
 
-        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.TRANSP_PROTOCOL_LOADER_ID) {
             // Start Only if not in edit mode
             if(!getArguments().getBoolean(EDIT_MODE, false)) {
                 m_alticd = SQLContract.TranspProtocolEntry.get(cursor);
@@ -357,46 +358,40 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_albvd != null){
             for(ControlData bvd : m_albvd){
                 if(bvd != null){
-                    switch (bvd.getType()){
-                        case ControlData.TYPE_LIGHT_SWITCH:
-                            LightSwitchControl ls = new LightSwitchControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getVertical()){
-                                ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
-                            }
-                            setViewPosition(ls, bvd.getPosX(), bvd.getPosY());
-                            m_rl.addView(ls);
+                    if(bvd.getTypeID() == ControlData.TYPE_LIGHT_SWITCH) {
+                        LightSwitchControl ls = new LightSwitchControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        if (bvd.getVertical()) {
+                            ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
+                        }
+                        setViewPosition(ls, bvd.getPosX(), bvd.getPosY());
+                        m_rl.addView(ls);
+                    }
 
-                            break;
+                    if(bvd.getTypeID() == ControlData.TYPE_NUMERIC_VALUE) {
+                        NumericValueControl nv = new NumericValueControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        if(bvd.getVertical()){
+                            ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
+                        }
+                        setViewPosition(nv, bvd.getPosX(), bvd.getPosY());
+                        m_rl.addView(nv);
+                    }
 
-                        case ControlData.TYPE_NUMERIC_VALUE:
-                            NumericValueControl nv = new NumericValueControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getVertical()){
-                                ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
-                            }
-                            setViewPosition(nv, bvd.getPosX(), bvd.getPosY());
-                            m_rl.addView(nv);
+                    if(bvd.getTypeID() == ControlData.TYPE_SENSOR_RAW_VALUE) {
+                        SensorValueRawControl svr = new SensorValueRawControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        if(bvd.getVertical()){
+                            ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
+                        }
+                        setViewPosition(svr, bvd.getPosX(), bvd.getPosY());
+                        m_rl.addView(svr);
+                    }
 
-                            break;
-
-                        case ControlData.TYPE_SENSOR_RAW_VALUE:
-                            SensorValueRawControl svr = new SensorValueRawControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getVertical()){
-                                ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
-                            }
-                            setViewPosition(svr, bvd.getPosX(), bvd.getPosY());
-                            m_rl.addView(svr);
-
-                            break;
-
-                        case ControlData.TYPE_SENSOR_CALIBR_VALUE:
-                            SensorValueCalibrControl svc = new SensorValueCalibrControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
-                            if(bvd.getVertical()){
-                                ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();
-                            }
-                            setViewPosition(svc, bvd.getPosX(), bvd.getPosY());
-                            m_rl.addView(svc);
-
-                            break;
+                    if(bvd.getTypeID() == ControlData.TYPE_SENSOR_CALIBR_VALUE) {
+                        SensorValueCalibrControl svc = new SensorValueCalibrControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
+                        if(bvd.getVertical()){
+                            ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();
+                        }
+                        setViewPosition(svc, bvd.getPosX(), bvd.getPosY());
+                        m_rl.addView(svc);
                     }
                 }
             }
@@ -428,7 +423,7 @@ public class BaseFragment extends Fragment implements
     }
 
     @Override
-    public void onTcpIpClientStatusCallback(TcpIpClientStatus tics) {
+    public void onTcpIpClientStatusCallback(ClientStatus tics) {
         TextView tv = (TextView)getActivity().findViewById((int)tics.getServerID());
         if(tv != null){
             tv.setText(tics.getServerName() + "-" + tics.getStatus().toString() + "\n" + tics.getError());

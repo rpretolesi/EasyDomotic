@@ -34,8 +34,6 @@ public class TranspProtocolDataPropActivity extends Activity implements
         OkDialogFragment.OkDialogFragmentCallbacks,
         YesNoDialogFragment.YesNoDialogFragmentCallbacks{
 
-    private static final String TAG = "TCPIPClientPropAct";
-
     protected static final String TRANSP_PROTOCOL = "transp_protocol";
     protected static final String BASE_VALUE_COMM_CLIENT_ID = "Base_Value_Comm_Client_ID";
 
@@ -120,13 +118,13 @@ public class TranspProtocolDataPropActivity extends Activity implements
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
+        getLoaderManager().initLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID, null, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID);
     }
 
     @Override
@@ -185,7 +183,7 @@ public class TranspProtocolDataPropActivity extends Activity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Log.d(TAG, this.toString() + ": " + "onCreateLoader() id:" + id);
-        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
+        if(id == Loaders.TRANSP_PROTOCOL_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -199,7 +197,7 @@ public class TranspProtocolDataPropActivity extends Activity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.TRANSP_PROTOCOL_LOADER_ID) {
             ArrayList<TranspProtocolData> alticd = SQLContract.TranspProtocolEntry.get(cursor);
             if(alticd != null && !alticd.isEmpty()){
                 m_ticd = alticd.get(0);

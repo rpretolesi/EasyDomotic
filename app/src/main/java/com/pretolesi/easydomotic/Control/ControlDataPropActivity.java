@@ -26,7 +26,7 @@ import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericEditText;
 import com.pretolesi.easydomotic.CustomControls.StringEditText;
 import com.pretolesi.easydomotic.LoadersUtils.Loaders;
-import com.pretolesi.easydomotic.Orientation;
+import com.pretolesi.easydomotic.Settings.Orientation;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
 import com.pretolesi.easydomotic.dialogs.DialogActionID;
@@ -70,7 +70,7 @@ public class ControlDataPropActivity extends Activity implements
     protected Spinner m_id_spn_protocol_data_type;
 
     protected ControlData m_cd;
-    protected int m_iControlTypeParameter;
+    protected int m_lControlTypeParameter;
     protected long m_lRoomIDParameter;
     protected long m_lControlIDParameter;
     protected ControlData m_cdParameter;
@@ -155,7 +155,7 @@ public class ControlDataPropActivity extends Activity implements
 
         Intent intent = getIntent();
         if(intent != null) {
-            m_iControlTypeParameter = intent.getIntExtra(CONTROL_TYPE, -1);
+            m_lControlTypeParameter = intent.getIntExtra(CONTROL_TYPE, -1);
             m_lRoomIDParameter = intent.getLongExtra(ROOM_ID, -1);
             m_lControlIDParameter = intent.getIntExtra(CONTROL_ID, -1);
             m_cdParameter = intent.getParcelableExtra(CONTROL_DATA);
@@ -190,23 +190,21 @@ public class ControlDataPropActivity extends Activity implements
         ActionBar actionBar = getActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            int iTypeParameter;
+            long lControlTypeParameter;
             if(m_cdParameter != null){
-                iTypeParameter = m_cdParameter.getType();
+                lControlTypeParameter = m_cdParameter.getTypeID();
             } else {
-                iTypeParameter = m_iControlTypeParameter;
+                lControlTypeParameter = m_lControlTypeParameter;
             }
-            switch (iTypeParameter){
-                case ControlData.TYPE_LIGHT_SWITCH:
-                    actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
-                    break;
-                case ControlData.TYPE_NUMERIC_VALUE:
-                    actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
-                    break;
-                case ControlData.TYPE_SENSOR_RAW_VALUE:
-                case ControlData.TYPE_SENSOR_CALIBR_VALUE:
-                    actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
-                    break;
+
+            if(lControlTypeParameter == ControlData.TYPE_LIGHT_SWITCH) {
+                actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
+            }
+            if(lControlTypeParameter == ControlData.TYPE_NUMERIC_VALUE) {
+                actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
+            }
+            if(lControlTypeParameter == ControlData.TYPE_SENSOR_RAW_VALUE || lControlTypeParameter == ControlData.TYPE_SENSOR_CALIBR_VALUE) {
+                actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
             }
         }
     }
@@ -222,8 +220,8 @@ public class ControlDataPropActivity extends Activity implements
     protected void onPause() {
         super.onPause();
         getLoaderManager().destroyLoader(Loaders.ROOM_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_LOADER_ID);
-        getLoaderManager().destroyLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.CONTROL_LOADER_ID);
+        getLoaderManager().destroyLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID);
     }
 
     @Override
@@ -291,7 +289,7 @@ public class ControlDataPropActivity extends Activity implements
             };
         }
 
-        if(id == Loaders.BASE_VALUE_LOADER_ID){
+        if(id == Loaders.CONTROL_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -306,7 +304,7 @@ public class ControlDataPropActivity extends Activity implements
             };
         }
 
-        if(id == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID){
+        if(id == Loaders.TRANSP_PROTOCOL_LOADER_ID){
             return new CursorLoader(this){
                 @Override
                 public Cursor loadInBackground() {
@@ -326,10 +324,10 @@ public class ControlDataPropActivity extends Activity implements
             m_SCAdapter.swapCursor(cursor);
 
             // Secondo
-            getLoaderManager().initLoader(Loaders.BASE_VALUE_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.CONTROL_LOADER_ID, null, this);
         }
 
-        if(loader.getId() == Loaders.BASE_VALUE_LOADER_ID) {
+        if(loader.getId() == Loaders.CONTROL_LOADER_ID) {
             ArrayList<ControlData> albve = SQLContract.ControlEntry.get(cursor);
             if(albve != null && !albve.isEmpty()){
                 m_cd = albve.get(0);
@@ -349,10 +347,10 @@ public class ControlDataPropActivity extends Activity implements
             }
 
             // Terzo
-            getLoaderManager().initLoader(Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID, null, this);
+            getLoaderManager().initLoader(Loaders.TRANSP_PROTOCOL_LOADER_ID, null, this);
         }
 
-        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.TRANSP_PROTOCOL_LOADER_ID) {
             m_TranspProtocolAdapter.swapCursor(cursor);
             getBaseValue();
         }
@@ -366,7 +364,7 @@ public class ControlDataPropActivity extends Activity implements
         if(loader.getId() == Loaders.ROOM_LOADER_ID) {
             m_SCAdapter.swapCursor(null);
         }
-        if(loader.getId() == Loaders.BASE_VALUE_COMM_CLIENT_LOADER_ID) {
+        if(loader.getId() == Loaders.TRANSP_PROTOCOL_LOADER_ID) {
             m_TranspProtocolAdapter.swapCursor(null);
         }
 
@@ -559,7 +557,7 @@ public class ControlDataPropActivity extends Activity implements
 
     protected boolean setBaseData(int iDialogOriginID){
         if (m_cd == null) {
-            m_cd = new ControlData(m_iControlTypeParameter);
+            m_cd = new ControlData(m_lControlTypeParameter);
         }
 
         if((m_id_spn_room == null) || (m_id_spn_room.getSelectedItemId() == AdapterView.INVALID_ROW_ID)){

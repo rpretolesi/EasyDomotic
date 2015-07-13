@@ -10,10 +10,10 @@ import java.util.ArrayList;
  */
 public class ControlData implements Parcelable {
 
-    public static final int TYPE_LIGHT_SWITCH = 1;
-    public static final int TYPE_NUMERIC_VALUE = 2;
-    public static final int TYPE_SENSOR_RAW_VALUE = 3;
-    public static final int TYPE_SENSOR_CALIBR_VALUE = 4;
+    public static final long TYPE_LIGHT_SWITCH = 1;
+    public static final long TYPE_NUMERIC_VALUE = 2;
+    public static final long TYPE_SENSOR_RAW_VALUE = 3;
+    public static final long TYPE_SENSOR_CALIBR_VALUE = 4;
 
     public static short TAGMinChar = 1;
     public static short TAGMaxChar = 128;
@@ -77,7 +77,7 @@ public class ControlData implements Parcelable {
 
     // Graphic
     private long m_ID;
-    private int m_iType;
+    private long m_lTypeID;
     private boolean m_bSaved;
     private long m_lRoomID;
     private String m_strTAG;
@@ -116,9 +116,9 @@ public class ControlData implements Parcelable {
     private int m_iSensorSampleTimeMillis;
     private int m_iSensorWriteUpdateTimeMillis;
 
-    public ControlData(int iType) {
+    public ControlData(long lTypeID) {
         // Graphic
-        m_iType = iType;
+        m_lTypeID = lTypeID;
         m_ID = -1;
         m_bSaved = false;
         m_lRoomID = -1;
@@ -158,9 +158,9 @@ public class ControlData implements Parcelable {
         m_iSensorSampleTimeMillis = 300;
     }
 
-    public void setPositionValue(int iType, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
+    public void setPositionValue(long lTypeID, long id, long lRoomID, String strTAG, float fPosX, float fPosY, float fPosZ, boolean bLandscape) {
         // Graphic
-        m_iType = iType;
+        m_lTypeID = lTypeID;
         m_ID = id;
         m_lRoomID = lRoomID;
         m_strTAG = strTAG;
@@ -207,7 +207,7 @@ public class ControlData implements Parcelable {
     }
 
     // Set Method
-    public void setType(int iType) { this.m_iType = iType; }
+    public void setTypeID(long lType) { this.m_lTypeID = lType; }
 
     public void setID(long id) { this.m_ID = id; }
 
@@ -288,7 +288,7 @@ public class ControlData implements Parcelable {
     }
 
     // Get Method
-    public int getType() { return m_iType; }
+    public long getTypeID() { return m_lTypeID; }
 
     public long getID() { return m_ID; }
 
@@ -383,7 +383,7 @@ public class ControlData implements Parcelable {
     }
 
     protected ControlData(Parcel in) {
-        m_iType = in.readInt();
+        m_lTypeID = in.readLong();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_lRoomID = in.readLong();
@@ -427,7 +427,7 @@ public class ControlData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(m_iType);
+        dest.writeLong(m_lTypeID);
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeLong(m_lRoomID);

@@ -4,6 +4,10 @@ import android.content.Context;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
+import com.pretolesi.easydomotic.IO.ClientMsg;
+import com.pretolesi.easydomotic.IO.ClientReadStatus;
+import com.pretolesi.easydomotic.IO.ClientStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
 import com.pretolesi.easydomotic.Modbus.ModbusByteCountOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusCRCException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
@@ -46,7 +50,7 @@ public class TCPIPClient extends BaseCommClient {
 
         if (m_ticd != null) {
             // Callbacks on UI
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.CONNECTING, ""));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.CONNECTING, ""));
             try {
                 m_socketAddress = new InetSocketAddress(m_ticd.getAddress(), m_ticd.getPort());
                 if (m_clientSocket == null) {
@@ -62,14 +66,14 @@ public class TCPIPClient extends BaseCommClient {
                     setAllMsgAsUnsent();
 
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, "" ));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ONLINE, "" ));
 
                     return true;
                 }
             } catch (Exception ex) {
                 // Log.d(TAG, this.toString() + "startConnection()->" + "Exception ex: " + ex.getMessage());
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, ex.getMessage()));
             }
         }
 
@@ -80,19 +84,7 @@ public class TCPIPClient extends BaseCommClient {
 
     @Override
     protected boolean isConnected() {
-/*
-        for (Iterator<TcpIpMsg> iterator = m_vtim.iterator(); iterator.hasNext();) {
-            TcpIpMsg tim = iterator.next();
-            if (tim != null) {
-                if (System.currentTimeMillis() - tim.getSentTimeMS() >= m_ticd.getTimeout()) {
-                    tim.setMsgTimeMSNow();
-                    tim.setMsgAsSent(false);
-                    publishProgress(new TcpIpClientWriteStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientWriteStatus.Status.TIMEOUT, 0, ""));
-                    publishProgress(new TcpIpClientReadStatus(getID(), (int) tim.getTID(), (int) tim.getUID(), TcpIpClientReadStatus.Status.TIMEOUT, 0, "", null));
-                }
-            }
-        }
-*/
+
         checkTimeoutAndSetAllMsgAsUnsent();
 
         if(m_clientSocket != null && m_dataInputStream != null && m_dataOutputStream != null && m_clientSocket.isConnected()){
@@ -100,14 +92,14 @@ public class TCPIPClient extends BaseCommClient {
         }
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, ""));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, ""));
         return false;
     }
 
     @Override
     protected boolean send() {
         super.send();
-        TcpIpMsg tim = getMsgToSend();
+        ClientMsg tim = getMsgToSend();
 
         return sendMsg(tim);
     }
@@ -123,7 +115,7 @@ public class TCPIPClient extends BaseCommClient {
         }
 
         // Check for sent message
-        TcpIpMsg tim = getMsgSent();
+        ClientMsg tim = getMsgSent();
 
         // No message sent, nothing to receive
         if(tim == null) {
@@ -151,7 +143,7 @@ public class TCPIPClient extends BaseCommClient {
                                     setOnLineProgressStatusBar();
 
                                     // Tutto Ok, rimuovo l'elemento
-                                    TcpIpMsg timRemoved = removeMsg((short) mmbap.getTID(), mpdu.getUID());
+                                    ClientMsg timRemoved = removeMsg((short) mmbap.getTID(), mpdu.getUID());
                                     DataType dtDataType = null;
                                     if (timRemoved != null) {
                                         dtDataType = timRemoved.getDataType();
@@ -161,18 +153,18 @@ public class TCPIPClient extends BaseCommClient {
 
                                         // Check Return code
                                         if (mpdu.getExCID() == 0) {
-                                            publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                                            publishProgress(new ClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), ClientWriteStatus.Status.OK, 0, ""));
                                         } else {
-                                            publishProgress(new TcpIpClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), ""));
+                                            publishProgress(new ClientWriteStatus(getID(), mmbap.getTID(), mpdu.getUID(), ClientWriteStatus.Status.ERROR, mpdu.getExCID(), ""));
                                         }
                                     }
 
                                     if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                                         // Check Return code
                                         if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
-                                            publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
+                                            publishProgress(new ClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), ClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
                                         } else {
-                                            publishProgress(new TcpIpClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), "", null));
+                                            publishProgress(new ClientReadStatus(getID(), mmbap.getTID(), mpdu.getUID(), ClientReadStatus.Status.ERROR, mpdu.getExCID(), "", null));
                                         }
                                     }
 
@@ -180,67 +172,67 @@ public class TCPIPClient extends BaseCommClient {
                                 }
                             } catch (ModbusPDULengthOutOfRangeException ex) {
                                 // Callbacks on UI
-                                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                             } catch (ModbusCRCException ex) {
                                 // Callbacks on UI
-                                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                             } catch (ModbusUnitIdOutOfRangeException ex) {
                                 // Callbacks on UI
-                                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                             } catch (ModbusByteCountOutOfRangeException ex) {
                                 // Callbacks on UI
-                                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                             } catch (Exception ex) {
                                 // Callbacks on UI
-                                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                             }
 
                         } catch (SocketTimeoutException ex) {
                             // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
+                            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.TIMEOUT, ex.getMessage()));
                         } catch (EOFException ex) {
                             // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                         } catch (IOException ex) {
                             // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                         } catch (Exception ex) {
                             // Callbacks on UI
-                            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                         }
                     }
 
                 } catch (ModbusProtocolOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 } catch (ModbusMBAPLengthException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "receive()->" + "ModbusMBAPLengthException ex: " + ex.getMessage());
                 } catch (ModbusPDULengthOutOfRangeException ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 } catch (Exception ex) {
                     // Callbacks on UI
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                     // Log.d(TAG, this.toString() + "receive() ->" + "Exception ex: " + ex.getMessage());
                 }
 
             } catch (SocketTimeoutException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.TIMEOUT, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.TIMEOUT, ex.getMessage()));
                 // Log.d(TAG, this.toString() + "receive() MBAP->" + "SocketTimeoutException ex: " + ex.getMessage());
             } catch (EOFException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 // Log.d(TAG, this.toString() + "receive() MBAP->" + "EOFException ex: " + ex.getMessage());
             } catch (IOException ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 // Log.d(TAG, this.toString() + "receive() MBAP->" + "IOException ex: " + ex.getMessage());
             } catch (Exception ex) {
                 // Callbacks on UI
-                publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 // Log.d(TAG, this.toString() + "receive() MBAP->" + "Exception ex: " + ex.getMessage());
             }
         }
@@ -268,7 +260,7 @@ public class TCPIPClient extends BaseCommClient {
         m_socketAddress = null;
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, "" ));
     }
 
     @Override

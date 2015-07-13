@@ -6,8 +6,8 @@ import android.support.v4.view.GestureDetectorCompat;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
+import com.pretolesi.easydomotic.IO.ClientReadStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 
@@ -145,13 +145,13 @@ public class NumericValueControl extends Control implements
     }
 
     @Override
-    public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
+    public void onReadValueStatusCallback(ClientReadStatus ticrs) {
         if(ticrs != null && m_bvd != null){
             if(ticrs.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     Object obj = null;
                     String strValue = getDefaultValue();
-                    if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
+                    if(ticrs.getStatus() == ClientReadStatus.Status.OK) {
                         if (ticrs.getValue() != null) {
                             if(ticrs.getValue() instanceof Short){
                                 Short sh = (Short)ticrs.getValue();
@@ -219,11 +219,11 @@ public class NumericValueControl extends Control implements
     }
 
     @Override
-    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
+    public void onWriteValueStatusCallback(ClientWriteStatus ticws) {
         if(ticws != null && m_bvd != null){
             if(ticws.getServerID() == m_bvd.getTranspProtocolID()){
                 if(ticws.getTID() == m_iTIDWrite) {
-                    if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
+                    if(ticws.getStatus() == ClientWriteStatus.Status.OK){
                         // Write Ok, i can close the Input
                         setErrorInputField("");
                         closeInputField();

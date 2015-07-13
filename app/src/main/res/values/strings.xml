@@ -26,7 +26,7 @@
     <!-- Common Exception String    -->
     <string name="TimeoutException">Timeout.</string>
 
-    <!-- TcpIpClientStatus. -->
+    <!-- ClientStatus. -->
     <string name="tics_idle">Idle</string>
     <string name="tics_offline">Offline</string>
     <string name="tics_connecting">Connecting#8230</string>
@@ -35,7 +35,7 @@
     <string name="tics_timeout">Timeout</string>
     <string name="tics_disconnecting">Disconnecting#8230</string>
 
-    <!-- TcpIpClientWriteStatus. -->
+    <!-- ClientWriteStatus. -->
     <string name="ticwos_idle">Idle</string>
     <string name="ticwos_ok">OK</string>
     <string name="ticwos_error">Error</string>

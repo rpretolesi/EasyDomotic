@@ -76,9 +76,9 @@ public class SensorValueControlPropActivity extends ControlDataPropActivity {
         // Get sensor list
         int iTypeParameter;
         if(m_cdParameter != null){
-            iTypeParameter = m_cdParameter.getType();
+            iTypeParameter = m_cdParameter.getTypeID();
         } else {
-            iTypeParameter = m_iControlTypeParameter;
+            iTypeParameter = m_lControlTypeParameter;
         }
 
         if(iTypeParameter == ControlData.TYPE_SENSOR_RAW_VALUE){

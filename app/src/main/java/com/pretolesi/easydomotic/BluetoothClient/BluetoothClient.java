@@ -16,10 +16,10 @@ import com.pretolesi.easydomotic.Modbus.ModbusPDULengthOutOfRangeException;
 import com.pretolesi.easydomotic.Modbus.ModbusPDU;
 import com.pretolesi.easydomotic.Modbus.ModbusUnitIdOutOfRangeException;
 import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpMsg;
+import com.pretolesi.easydomotic.IO.ClientReadStatus;
+import com.pretolesi.easydomotic.IO.ClientStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
+import com.pretolesi.easydomotic.IO.ClientMsg;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -49,7 +49,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     }
 
     // Cancellare
-    private TcpIpMsg timRemoved_temp;// Debug
+    private ClientMsg timRemoved_temp;// Debug
     private byte[] bytePDU_temp;// Debug
 
     @Override
@@ -63,7 +63,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (m_BluetoothAdapter == null) {
             // Device does not support Bluetooth
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, "Device does not support Bluetooth"));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, "Device does not support Bluetooth"));
             return false;
         }
         // Stop discovering
@@ -88,7 +88,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
         if (m_btDevice == null) {
             // Device does not support Bluetooth
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, "Device selected is not paired. Please try to pair before use it."));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, "Device selected is not paired. Please try to pair before use it."));
             return false;
         }
 
@@ -96,7 +96,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         try {
             m_btSocket = m_btDevice.createRfcommSocketToServiceRecord(BluetoothClient.SSP_UUID);
         } catch (IOException ex) {
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, "Cannot create Bluetooth Stream." + " " + ex.getMessage()));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, "Cannot create Bluetooth Stream." + " " + ex.getMessage()));
             return false;
         }
 
@@ -122,7 +122,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             } catch (IOException ex_2) {
             }
             m_btSocket = null;
-            publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "Cannot establish a connection with:" + getName() + ", " + getAddress() + ", " + ex_1.getMessage() + "."));
+            publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, "Cannot establish a connection with:" + getName() + ", " + getAddress() + ", " + ex_1.getMessage() + "."));
             return false;
         }
 
@@ -130,7 +130,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         setAllMsgAsUnsent();
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ONLINE, "" ));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ONLINE, "" ));
 
         return true;
     }
@@ -145,7 +145,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         }
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, "" ));
         return false;
     }
 
@@ -164,7 +164,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
     @Override
     protected boolean send() {
         super.send();
-        TcpIpMsg tim = getMsgToSend();
+        ClientMsg tim = getMsgToSend();
 
         // if there is message to sent, i will empty the receive buffer
         if(tim != null){
@@ -193,7 +193,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         }
 
         // Check for sent message
-        TcpIpMsg tim = getMsgSent();
+        ClientMsg tim = getMsgSent();
 
         // No message sent, nothing to receive
         if(tim == null) {
@@ -225,7 +225,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
                 // Controllo l'indirizzo
                 if(tim.getUID() != mpdu.getUID()){
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, m_context.getString(R.string.ModbusUnitIdNotMatchingException)));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, m_context.getString(R.string.ModbusUnitIdNotMatchingException)));
                     return false;
                 }
 
@@ -235,7 +235,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
                 m_rdis.getData(true);
 
                 // Tutto Ok, rimuovo l'elemento
-                TcpIpMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
+                ClientMsg timRemoved = removeMsg((short)tim.getTID(), mpdu.getUID());
                 timRemoved_temp = timRemoved;
                 DataType dtDataType = null;
                 if(timRemoved != null){
@@ -245,18 +245,18 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
                 if (mpdu.getFEC() == 0x10 || mpdu.getFEC() == 0x90) {
                     // Check Return code
                     if (mpdu.getExCID() == 0) {
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.OK, 0, ""));
+                        publishProgress(new ClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), ClientWriteStatus.Status.OK, 0, ""));
                     } else {
-                        publishProgress(new TcpIpClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientWriteStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr()));
+                        publishProgress(new ClientWriteStatus(getID(), (short)tim.getTID(), mpdu.getUID(), ClientWriteStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr()));
                     }
                 }
 
                 if (mpdu.getFEC() == 0x03 || mpdu.getFEC() == 0x83) {
                     // Check Return code
                     if (mpdu.getExCID() == 0 && dtDataType != null && mpdu.getPDUValue() != null) {
-                        publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
+                        publishProgress(new ClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), ClientReadStatus.Status.OK, 0, "", getValue(dtDataType, mpdu.getPDUValue())));
                     } else {
-                        publishProgress(new TcpIpClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), TcpIpClientReadStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr(), null));
+                        publishProgress(new ClientReadStatus(getID(), (short)tim.getTID(), mpdu.getUID(), ClientReadStatus.Status.ERROR, mpdu.getExCID(), mpdu.getExCDescr(), null));
                     }
                 }
 
@@ -265,27 +265,27 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             } catch (ModbusPDULengthOutOfRangeException ex) {
                 // Callbacks on UI
                 if(canErrorFireAndIncCount()) {
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusCRCException ex) {
                 // Callbacks on UI
                  if(canErrorFireAndIncCount()) {
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusUnitIdOutOfRangeException ex) {
                 // Callbacks on UI
                 if(canErrorFireAndIncCount()) {
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (ModbusByteCountOutOfRangeException ex) {
                 // Callbacks on UI
                 if(canErrorFireAndIncCount()) {
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 }
             } catch (Exception ex) {
                 // Callbacks on UI
                 if(canErrorFireAndIncCount()) {
-                    publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.ERROR, ex.getMessage()));
+                    publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.ERROR, ex.getMessage()));
                 }
             }
         }
@@ -325,7 +325,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         }
 
         // Callbacks on UI
-        publishProgress(new TcpIpClientStatus(getID(), getName(), TcpIpClientStatus.Status.OFFLINE, "" ));
+        publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, "" ));
     }
 
     @Override

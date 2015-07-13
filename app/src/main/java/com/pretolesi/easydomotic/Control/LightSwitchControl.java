@@ -19,8 +19,8 @@ import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CustomControls.LabelTextView;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType;
 import com.pretolesi.easydomotic.CustomControls.NumericDataType.DataType;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientReadStatus;
-import com.pretolesi.easydomotic.TcpIpClient.TcpIpClientWriteStatus;
+import com.pretolesi.easydomotic.IO.ClientReadStatus;
+import com.pretolesi.easydomotic.IO.ClientWriteStatus;
 import com.pretolesi.easydomotic.TcpIpClient.TCPIPClient;
 import com.pretolesi.easydomotic.TcpIpClient.CommClientHelper;
 
@@ -222,13 +222,13 @@ public class LightSwitchControl extends Switch implements
     }
 
     @Override
-    public void onReadValueStatusCallback(TcpIpClientReadStatus ticrs) {
+    public void onReadValueStatusCallback(ClientReadStatus ticrs) {
         if(ticrs != null && m_cd != null){
             if(ticrs.getServerID() == m_cd.getTranspProtocolID()){
                 if(ticrs.getTID() == m_iTIDRead) {
                     if(!m_iTIDReadClicked) {
                         // Only Short
-                        if(ticrs.getStatus() == TcpIpClientReadStatus.Status.OK) {
+                        if(ticrs.getStatus() == ClientReadStatus.Status.OK) {
                             if (ticrs.getValue() != null) {
                                 if(ticrs.getValue() instanceof Short){
                                     Short sh = (Short)ticrs.getValue();
@@ -272,12 +272,12 @@ public class LightSwitchControl extends Switch implements
     }
 
     @Override
-    public void onWriteValueStatusCallback(TcpIpClientWriteStatus ticws) {
+    public void onWriteValueStatusCallback(ClientWriteStatus ticws) {
 
         if(ticws != null && m_cd != null){
             if(ticws.getTID() == m_iTIDOFF || ticws.getTID() == m_iTIDOFFON || ticws.getTID() == m_iTIDONOFF || ticws.getTID() == m_iTIDON) {
                 if(ticws.getServerID() == m_cd.getTranspProtocolID()) {
-                    if(ticws.getStatus() == TcpIpClientWriteStatus.Status.OK){
+                    if(ticws.getStatus() == ClientWriteStatus.Status.OK){
                         this.setError(null);
                     } else {
                         this.setError(ticws.getErrorMessage());

@@ -52,7 +52,7 @@ public class TranspProtocolData implements Parcelable {
     public static String TailDefaulValue = "0";
 
     private long m_ID;
-    private long m_lTransProtocolTypeID;
+    private long m_lTypeID;
     private boolean m_bSaved;
     private String m_strName;
     private String m_strAddress;
@@ -66,7 +66,7 @@ public class TranspProtocolData implements Parcelable {
     private int m_iTail;
 
     public TranspProtocolData(int iType) {
-        this.m_lTransProtocolTypeID = iType;
+        this.m_lTypeID = iType;
         this.m_ID = -1;
         this.m_bSaved = false;
         this.m_strName = null;
@@ -81,8 +81,8 @@ public class TranspProtocolData implements Parcelable {
         this.m_iTail = 0;
     }
 
-    public TranspProtocolData(long lTransProtocolID, long id, boolean bSaved, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lCommProtocolID, int iHead, int iTail) {
-        this.m_lTransProtocolTypeID = lTransProtocolID;
+    public TranspProtocolData(long lTypeID, long id, boolean bSaved, String strName, String strAddress, int iPort, int iTimeout, int iCommSendDelayData, int iCommReceiveWaitData, int iCommNrMaxOfErr, long lCommProtocolID, int iHead, int iTail) {
+        this.m_lTypeID = lTypeID;
         this.m_ID = id;
         this.m_strName = strName;
         this.m_bSaved = bSaved;
@@ -97,7 +97,7 @@ public class TranspProtocolData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public void setTranspProtocolTypeID(long lTransProtocolTypeID) { this.m_lTransProtocolTypeID = lTransProtocolTypeID; }
+    public void setTypeID(long lTypeID) { this.m_lTypeID = lTypeID; }
 
     public void setID(long id) {
         this.m_ID = id;
@@ -148,7 +148,7 @@ public class TranspProtocolData implements Parcelable {
         this.m_iTail = iTail;
     }
 
-    public long getTranspProtocolTypeID() { return m_lTransProtocolTypeID; }
+    public long getTypeID() { return m_lTypeID; }
 
     public long getID() { return m_ID; }
 
@@ -195,7 +195,7 @@ public class TranspProtocolData implements Parcelable {
     }
 
     protected TranspProtocolData(Parcel in) {
-        m_lTransProtocolTypeID = in.readLong();
+        m_lTypeID = in.readLong();
         m_ID = in.readLong();
         m_bSaved = in.readByte() != 0;
         m_strName = in.readString();
@@ -217,7 +217,7 @@ public class TranspProtocolData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(m_lTransProtocolTypeID);
+        dest.writeLong(m_lTypeID);
         dest.writeLong(m_ID);
         dest.writeByte((byte) (m_bSaved ? 1 : 0));
         dest.writeString(m_strName);
@@ -244,6 +244,29 @@ public class TranspProtocolData implements Parcelable {
             return new TranspProtocolData[size];
         }
     };
+
+    public enum TranspProtocolType {
+        TCP_IP(0, "TCP/IP"),
+        BLUETOOTH(1, "Bluetooth");
+
+        private int m_iProtocolID;
+        private String m_strProtocolName;
+
+        TranspProtocolType(int IProtocolID, String strProtocolName) {
+
+            m_iProtocolID = IProtocolID;
+            m_strProtocolName = strProtocolName;
+        }
+
+        public int getID() {
+            return m_iProtocolID;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(m_iProtocolID) + "-" + m_strProtocolName;
+        }
+    }
 
     public enum CommProtocolType {
         MODBUS_ON_TCP_IP(0, "Modbus RTU ON TCP/IP", TranspProtocolType.TCP_IP),
@@ -280,26 +303,4 @@ public class TranspProtocolData implements Parcelable {
         }
     }
 
-    public enum TranspProtocolType {
-        TCP_IP(0, "TCP/IP"),
-        BLUETOOTH(1, "Bluetooth");
-
-        private int m_iProtocolID;
-        private String m_strProtocolName;
-
-        TranspProtocolType(int IProtocolID, String strProtocolName) {
-
-            m_iProtocolID = IProtocolID;
-            m_strProtocolName = strProtocolName;
-        }
-
-        public int getID() {
-            return m_iProtocolID;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(m_iProtocolID) + "-" + m_strProtocolName;
-        }
-    }
 }
