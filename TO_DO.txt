@@ -1,26 +1,4 @@
-FATTO-Vedere se possibile istanziare solo il server che si usa in quella pagina
 Verificare se il wait su overbuffer funziona nel thread secondario di ricezione
-FATTO-Verificare bene cosa succede quando si va in timeout...
-FATTO-Verificare gestione errori lato Arduino.
-FATTO-Finire di fare i setError su tutti i controlli.
-FATTO-Verificare se possibile fare subito dopo una scrittura, una lettura, per aggiornare subito il dato.
-FATTO-Vedere come ripulire i buffer di ricezione sia su Arduino sia su Android, su errore
-FATTO, anche se llegrmente in modo diverso!!! Selezionare il protocollo in base al tipo di istanza(seriale o TCPPIP). Lasciare, quindi, nella selezione solo 1 campo con scritto MODBUS.
-FATTO-Fare lo stato del pulsante sul ritorno dello stato.
-NON NECESSARIO-Resettare il tempo di timeout solo quando la connessione viene stabilita.
-FATTO-Verificare se Status.TIMEOUT risulti inutile in quanto c'e' gia' la descrizione.
-FATTO-Verificare perche' da' OutOfLenght prima di CRC error(dovrebbe, in teoria, dare prima il CRC error!
-FATTO-Fare modifica errori su tcp come su bluetooth.
-FATTO-Fare avanzare la linea solo su invio/ricezione completa frame
-FATTO-Aggiungere il write only nel LightSwitch finire...
-FATTO-Togliere la variabile EnableProtocol
-FATTO-Mettere le scritture in testa anziche' in coda.
-FATTO-Svuotare il buffer di ricezione in timeout, sia su TCP che su bluetooth......
-FATTO-Fare il delete delle Room
-verificare commento su questa funzione:onBaseValueCommClientFragmentCallbacksListener in SettingsActivity
-FATTO-Aggiungere No device found in bluetooth discovery
-FATTO-Mettere default address in serial = 1 ed in TCP/IP=0?(verificare quest'ultimo). oppure verificare se e' il caso di fare il broadcast...
-FATTO-Sistemare i nomi dei protocolli ed anche dei Campi SQL
 
 Da fare nelle prossime versioni
 

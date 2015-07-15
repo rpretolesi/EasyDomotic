@@ -197,13 +197,13 @@ public class ControlDataPropActivity extends Activity implements
                 lControlTypeParameter = m_lControlTypeParameter;
             }
 
-            if(lControlTypeParameter == ControlData.TYPE_LIGHT_SWITCH) {
+            if(lControlTypeParameter == ControlData.ControlType.SWITCH.getID()) {
                 actionBar.setTitle(getString(R.string.settings_title_section_edit_switch));
             }
-            if(lControlTypeParameter == ControlData.TYPE_NUMERIC_VALUE) {
+            if(lControlTypeParameter == ControlData.ControlType.VALUE.getID()) {
                 actionBar.setTitle(getString(R.string.settings_title_section_edit_numeric_value));
             }
-            if(lControlTypeParameter == ControlData.TYPE_SENSOR_RAW_VALUE || lControlTypeParameter == ControlData.TYPE_SENSOR_CALIBR_VALUE) {
+            if(lControlTypeParameter == ControlData.ControlType.RAW_SENSOR.getID() || lControlTypeParameter == ControlData.ControlType.CAL_SENSOR.getID()) {
                 actionBar.setTitle(getString(R.string.settings_title_section_edit_sensor_value));
             }
         }

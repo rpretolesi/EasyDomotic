@@ -81,14 +81,14 @@ public class SensorValueControlPropActivity extends ControlDataPropActivity {
             iTypeParameter = m_lControlTypeParameter;
         }
 
-        if(iTypeParameter == ControlData.TYPE_SENSOR_RAW_VALUE){
+        if(iTypeParameter == ControlData.ControlType.RAW_SENSOR.getID()){
             SensorManager sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if(sm != null){
                 List<Sensor> ls = sm.getSensorList(Sensor.TYPE_ALL);
                 m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                         android.R.layout.simple_list_item_1, ls));
             }
-        } else if(iTypeParameter == ControlData.TYPE_SENSOR_CALIBR_VALUE){
+        } else if(iTypeParameter == ControlData.ControlType.CAL_SENSOR.getID()){
             ArrayList<SensorTypeCalibr> alstc = SensorTypeCalibr.getListSensorTypeCalibr();
             m_id_spn_sensor_type.setAdapter(new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, alstc));

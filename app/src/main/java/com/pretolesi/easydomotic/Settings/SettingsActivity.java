@@ -108,7 +108,7 @@ public class SettingsActivity extends BaseActivity implements
 //                    onSectionSetTitle(getString(R.string.app_name));
 //                    restoreActionBar();
 
-                    Intent intent = LightSwitchControlPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchControlPropActivity.class, ControlData.TYPE_LIGHT_SWITCH, rfd.getID());
+                    Intent intent = LightSwitchControlPropActivity.makeBaseValuePropActivityByRoomID(this, LightSwitchControlPropActivity.class, ControlData.ControlType.SWITCH.getID(), rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -130,7 +130,7 @@ public class SettingsActivity extends BaseActivity implements
 //                    onSectionSetTitle(getString(R.string.app_name));
 //                    restoreActionBar();
 
-                    Intent intent = NumericValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, NumericValueControlPropActivity.class, ControlData.TYPE_NUMERIC_VALUE, rfd.getID());
+                    Intent intent = NumericValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, NumericValueControlPropActivity.class, ControlData.ControlType.VALUE.getID(), rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -152,7 +152,7 @@ public class SettingsActivity extends BaseActivity implements
 //                    onSectionSetTitle(getString(R.string.app_name));
 //                    restoreActionBar();
 
-                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.TYPE_SENSOR_RAW_VALUE, rfd.getID());
+                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.ControlType.RAW_SENSOR.getID(), rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))
@@ -174,7 +174,7 @@ public class SettingsActivity extends BaseActivity implements
 //                    onSectionSetTitle(getString(R.string.app_name));
 //                    restoreActionBar();
 
-                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.TYPE_SENSOR_CALIBR_VALUE, rfd.getID());
+                    Intent intent = SensorValueControlPropActivity.makeBaseValuePropActivityByRoomID(this, SensorValueControlPropActivity.class, ControlData.ControlType.CAL_SENSOR.getID(), rfd.getID());
                     startActivity(intent);
                 }else {
                     OkDialogFragment.newInstance(DialogOriginID.ORIGIN_NAVIGATION_DRAWER_ITEM_ID, DialogActionID.ROOM_ERROR_ID, getString(R.string.text_odf_title_room_data_not_present), getString(R.string.text_odf_message_room_data_not_present), getString(R.string.text_odf_message_ok_button))

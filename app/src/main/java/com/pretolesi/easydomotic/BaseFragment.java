@@ -358,7 +358,7 @@ public class BaseFragment extends Fragment implements
         if(m_rl != null && m_albvd != null){
             for(ControlData bvd : m_albvd){
                 if(bvd != null){
-                    if(bvd.getTypeID() == ControlData.TYPE_LIGHT_SWITCH) {
+                    if(bvd.getTypeID() == ControlData.ControlType.SWITCH.getID()) {
                         LightSwitchControl ls = new LightSwitchControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                         if (bvd.getVertical()) {
                             ObjectAnimator.ofFloat(ls, "rotation", 0, 90).start();
@@ -367,7 +367,7 @@ public class BaseFragment extends Fragment implements
                         m_rl.addView(ls);
                     }
 
-                    if(bvd.getTypeID() == ControlData.TYPE_NUMERIC_VALUE) {
+                    if(bvd.getTypeID() == ControlData.ControlType.VALUE.getID()) {
                         NumericValueControl nv = new NumericValueControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                         if(bvd.getVertical()){
                             ObjectAnimator.ofFloat(nv, "rotation", 0, 90).start();
@@ -376,7 +376,7 @@ public class BaseFragment extends Fragment implements
                         m_rl.addView(nv);
                     }
 
-                    if(bvd.getTypeID() == ControlData.TYPE_SENSOR_RAW_VALUE) {
+                    if(bvd.getTypeID() == ControlData.ControlType.RAW_SENSOR.getID()) {
                         SensorValueRawControl svr = new SensorValueRawControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                         if(bvd.getVertical()){
                             ObjectAnimator.ofFloat(svr, "rotation", 0, 90).start();
@@ -385,7 +385,7 @@ public class BaseFragment extends Fragment implements
                         m_rl.addView(svr);
                     }
 
-                    if(bvd.getTypeID() == ControlData.TYPE_SENSOR_CALIBR_VALUE) {
+                    if(bvd.getTypeID() == ControlData.ControlType.CAL_SENSOR.getID()) {
                         SensorValueCalibrControl svc = new SensorValueCalibrControl(getActivity(), bvd, getChildID(), getArguments().getBoolean(EDIT_MODE, false));
                         if(bvd.getVertical()){
                             ObjectAnimator.ofFloat(svc, "rotation", 0, 90).start();

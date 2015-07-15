@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.util.Log;
 
 import com.pretolesi.easydomotic.CommClientData.BaseCommClient;
 import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
@@ -111,9 +112,11 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
             resetErrorCount();
 
             // Start Read
-            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
+//            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
+            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)2);
             m_rdis.registerReadDataInputStream(this);
             m_rdis.start();
+            Log.d(TAG, "start()");
 
         } catch (IOException ex_1) {
             // Unable to connect; close the socket and get out

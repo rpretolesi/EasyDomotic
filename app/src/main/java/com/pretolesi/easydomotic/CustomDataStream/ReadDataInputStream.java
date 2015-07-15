@@ -1,5 +1,7 @@
 package com.pretolesi.easydomotic.CustomDataStream;
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -15,6 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by RPRETOLESI on 22/06/2015.
  */
 public class ReadDataInputStream extends Thread {
+    private static final String TAG = "ReadDataInputStream";
     // Listener e Callback
     // Client
     protected List<ReadDataInputStreamListener> m_vReadDataInputStreamListener = null;
@@ -52,46 +55,51 @@ public class ReadDataInputStream extends Thread {
         while(!isInterrupted()){
             boolean bReadOk;
             bReadOk = false;
-
             try {
-                // wait in case of too data
-                while (m_shDataLenght == m_byteData.length)
-                        m_notFull.await();
-
-                // Get data
+//                // Get data
                 byteData = m_dis.readByte();
                 bReadOk = true;
+            } catch (IOException ex) {
+                int i = 0;
+                i=i+1;
+            } catch (Exception ex) {
+                int i = 0;
+                i=i+1;
+            }
+
+            if(!isInterrupted() && bReadOk){
 
                 // Lock
                 m_Lock.lock();
 
-                // Put data on buffer
-                m_byteData[m_shDataLenght] = byteData;
-                m_shDataLenght = (short)(m_shDataLenght + 1);
+                try {
+                    // wait in case of too data
+                    while (m_shDataLenght == m_byteData.length) {
+                        Log.d(TAG, "Before Await");
+                        m_notFull.await();
+                        Log.d(TAG, "After Await");
+                    }
 
-            } catch (InterruptedException ex) {
-                byte byteData1;
-                int a = 0;
-                a = 1;
-                byteData1 = byteData;
-            } catch (IOException ex) {
-                byte byteData1;
-                int a = 0;
-                a = 1;
-                byteData1 = byteData;
-            } catch (Exception ex) {
-                byte byteData1;
-                int a = 0;
-                a = 1;
-                byteData1 = byteData;
-            }
-            finally {
-                if(m_Lock.isLocked()){
-                    m_Lock.unlock();
+    //                // Get data
+    //                byteData = m_dis.readByte();
+    //                bReadOk = true;
+
+                    // Lock
+    //                m_Lock.lock();
+
+                    // Put data on buffer
+                    m_byteData[m_shDataLenght] = byteData;
+                    m_shDataLenght = (short)(m_shDataLenght + 1);
+
+                } catch (InterruptedException ex) {
+                } catch (Exception ex) {
                 }
-            }
+                finally {
+                    if(m_Lock.isLocked()){
+                        m_Lock.unlock();
+                    }
+                }
 
-            if(bReadOk) {
                 if (m_vReadDataInputStreamListener != null) {
                     for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
                         if(rdisl != null) {
@@ -99,18 +107,17 @@ public class ReadDataInputStream extends Thread {
                         }
                     }
                 }
-            } else {
-                if(!isInterrupted()) {
-                    if (m_vReadDataInputStreamListener != null) {
-                        for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                            if(rdisl != null) {
-                                rdisl.onCloseReadDataInputStreamCallback();
-                            }
-                        }
-                    }
+            }
+        }
+
+        if (m_vReadDataInputStreamListener != null) {
+            for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
+                if(rdisl != null) {
+                    rdisl.onCloseReadDataInputStreamCallback();
                 }
             }
         }
+        Log.d(TAG, "End Run");
     }
 
     public byte[] getData(boolean bDeleteData){
