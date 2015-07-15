@@ -113,7 +113,7 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
             // Start Read
 //            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
-            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)2);
+            m_rdis = new ReadDataInputStream(m_dataInputStream, (short)256);
             m_rdis.registerReadDataInputStream(this);
             m_rdis.start();
             Log.d(TAG, "start()");
@@ -306,6 +306,8 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
 
     @Override
     protected void stopConnection() {
+        Log.d(TAG, "start stopConnection");
+
         super.stopConnection();
 
         // Chiudo il socket
@@ -320,15 +322,20 @@ public class BluetoothClient extends BaseCommClient implements ReadDataInputStre
         // Attendo che il Thread di lettura si arresti
         if (m_rdis != null) {
             m_rdis.interrupt();
+            Log.d(TAG, "After interrupt");
             try {
+                Log.d(TAG, "Before join");
                 m_rdis.join();
-            } catch (InterruptedException e) {
+                Log.d(TAG, "After join");
+            } catch (InterruptedException ex) {
+                Log.d(TAG, "InterruptedException" + ex.getMessage());
             }
             m_rdis = null;
         }
 
         // Callbacks on UI
         publishProgress(new ClientStatus(getID(), getName(), ClientStatus.Status.OFFLINE, "" ));
+        Log.d(TAG, "finish stopConnection");
     }
 
     @Override

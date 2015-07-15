@@ -14,7 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by RPRETOLESI on 22/06/2015.
+ *
  */
 public class ReadDataInputStream extends Thread {
     private static final String TAG = "ReadDataInputStream";
@@ -45,69 +45,65 @@ public class ReadDataInputStream extends Thread {
 
     @Override
     public void run() {
-        byte byteData = -111;
-
-        //Code
-        if(m_dis == null){
-            return;
-        }
-
-        while(!isInterrupted()){
-            boolean bReadOk;
-            bReadOk = false;
-            try {
-//                // Get data
-                byteData = m_dis.readByte();
-                bReadOk = true;
-            } catch (IOException ex) {
-                int i = 0;
-                i=i+1;
-            } catch (Exception ex) {
-                int i = 0;
-                i=i+1;
+        try{
+            //Code
+            if(m_dis == null){
+                return;
             }
+            byte byteData = -1;
+            boolean bReadOk = true;
 
-            if(!isInterrupted() && bReadOk){
-
-                // Lock
-                m_Lock.lock();
-
+            while(!isInterrupted() && bReadOk){
+                bReadOk = false;
                 try {
-                    // wait in case of too data
-                    while (m_shDataLenght == m_byteData.length) {
-                        Log.d(TAG, "Before Await");
-                        m_notFull.await();
-                        Log.d(TAG, "After Await");
-                    }
-
                     // Get data
-    //                byteData = m_dis.readByte();
-    //                bReadOk = true;
+//                    Log.d(TAG, "readByte");
+                    byteData = m_dis.readByte();
+                    bReadOk = true;
+                } catch (IOException ex) {
+                    Log.d(TAG, "readByte - IOException" + ex.getMessage());
+                } catch (Exception ex) {
+                    Log.d(TAG, "readByte - Exception" + ex.getMessage());
+                }
+
+                if(bReadOk){
 
                     // Lock
-    //                m_Lock.lock();
+                    m_Lock.lock();
 
-                    // Put data on buffer
-                    m_byteData[m_shDataLenght] = byteData;
-                    m_shDataLenght = (short)(m_shDataLenght + 1);
+                    try {
+                        // wait in case of too data
+                        while (m_shDataLenght == m_byteData.length) {
+                            Log.d(TAG, "Before Await");
+                            m_notFull.await();
+                            Log.d(TAG, "After Await");
+                        }
 
-                } catch (InterruptedException ex) {
-                } catch (Exception ex) {
-                }
-                finally {
-                    if(m_Lock.isLocked()){
-                        m_Lock.unlock();
+                        // Put data on buffer
+                        m_byteData[m_shDataLenght] = byteData;
+                        m_shDataLenght = (short)(m_shDataLenght + 1);
+
                     }
-                }
+                    finally {
+                        if(m_Lock.isLocked()){
+                            m_Lock.unlock();
+                        }
+                    }
 
-                if (m_vReadDataInputStreamListener != null) {
-                    for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
-                        if(rdisl != null) {
-                            rdisl.onReadDataInputStreamCallback();
+                    if (m_vReadDataInputStreamListener != null) {
+                        for (ReadDataInputStreamListener rdisl : m_vReadDataInputStreamListener) {
+                            if(rdisl != null) {
+                                rdisl.onReadDataInputStreamCallback();
+                            }
                         }
                     }
                 }
             }
+
+        } catch (InterruptedException ex) {
+            Log.d(TAG, "await - InterruptedException" + ex.getMessage());
+        } catch (Exception ex) {
+            Log.d(TAG, "await - Exception" + ex.getMessage());
         }
 
         if (m_vReadDataInputStreamListener != null) {
@@ -136,6 +132,7 @@ public class ReadDataInputStream extends Thread {
             }
             byteData = Arrays.copyOf(m_byteData,m_shDataLenght);
             if(bDeleteData){
+//                Log.d(TAG, "Before signal");
                 m_shDataLenght = 0;
                 m_notFull.signal();
             }
