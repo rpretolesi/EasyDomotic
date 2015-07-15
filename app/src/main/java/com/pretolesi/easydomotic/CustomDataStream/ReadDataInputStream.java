@@ -80,7 +80,7 @@ public class ReadDataInputStream extends Thread {
                         Log.d(TAG, "After Await");
                     }
 
-    //                // Get data
+                    // Get data
     //                byteData = m_dis.readByte();
     //                bReadOk = true;
 
