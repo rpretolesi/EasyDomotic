@@ -312,7 +312,7 @@ public class SettingsActivity extends BaseActivity implements
             // decide what to show in the action bar.
             Fragment f = getFragmentManager().findFragmentById(R.id.container);
             if(f != null && f instanceof BaseFragment) {
-                getMenuInflater().inflate(R.menu.menu_setting, menu);
+                getMenuInflater().inflate(R.menu.menu_setting_room, menu);
                 restoreActionBar();
                 return true;
             } else {

@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import com.pretolesi.SQL.SQLContract;
 import com.pretolesi.easydomotic.BaseActivity;
 import com.pretolesi.easydomotic.BaseFragment;
+import com.pretolesi.easydomotic.EULA.EULA;
 import com.pretolesi.easydomotic.R;
 import com.pretolesi.easydomotic.Settings.SettingsActivity;
 
@@ -32,6 +33,8 @@ public class RunTimeActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.run_time_activity);
+        // EULA
+        new EULA(this).show();
 
         mNavigationDrawerFragment = (RunTimeNavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
