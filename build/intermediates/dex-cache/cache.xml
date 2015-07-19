@@ -6,28 +6,28 @@
         jumboMode="false"
         revision="21.1.2"
         sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
-        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-27550b2df4fc793c304045faa5c26d61710431bd.jar" />
+        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\release\internal_impl-21.0.3-27550b2df4fc793c304045faa5c26d61710431bd.jar" />
     </item>
     <item
         jar="C:\Users\ricca_000\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.3\support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
-        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-b830141177a7b71f5974beca4e94534bb8a582a6.jar" />
+        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\release\support-annotations-21.0.3-b830141177a7b71f5974beca4e94534bb8a582a6.jar" />
     </item>
     <item
         jar="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\debug\classes-714503f3b4117359e16dbeb9318ee0b4efbc88b5.jar" />
+        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\release\classes-714503f3b4117359e16dbeb9318ee0b4efbc88b5.jar" />
     </item>
     <item
         jar="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\debug\classes-2d00108e5473317b53609269612466f2b3acf883.jar" />
+        <dex dex="C:\Users\ricca_000\Documents\Android\AndroidStudioProjects\EasyScada\app\build\intermediates\pre-dexed\release\classes-2d00108e5473317b53609269612466f2b3acf883.jar" />
     </item>
 
 </items>
