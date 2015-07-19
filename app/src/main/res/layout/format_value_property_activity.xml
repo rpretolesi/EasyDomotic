@@ -25,7 +25,7 @@
                     android:text="@string/text_tv_nr_of_decimal"
                     android:labelFor="@+id/text_nvpa_tv_nr_of_decimal"/>
 
-                <com.pretolesi.easydomotic.CustomControls.NumericEditText
+                <com.pretolesi.easyscada.CustomControls.NumericEditText
                     android:id="@+id/id_et_nr_of_decimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                     android:text="@string/text_tv_min_nr_char_to_show"
                     android:labelFor="@+id/text_nvpa_tv_min_nr_char_to_show"/>
 
-                <com.pretolesi.easydomotic.CustomControls.NumericEditText
+                <com.pretolesi.easyscada.CustomControls.NumericEditText
                     android:id="@+id/id_et_min_nr_char_to_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                     android:text="@string/text_tv_um"
                     android:labelFor="@+id/text_nvpa_tv_um"/>
 
-                <com.pretolesi.easydomotic.CustomControls.StringEditText
+                <com.pretolesi.easyscada.CustomControls.StringEditText
                     android:id="@+id/id_et_um"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

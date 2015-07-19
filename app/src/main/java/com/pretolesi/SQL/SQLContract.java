@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.pretolesi.easydomotic.Control.ControlData;
-import com.pretolesi.easydomotic.R;
-import com.pretolesi.easydomotic.Room.RoomFragmentData;
-import com.pretolesi.easydomotic.CommClientData.TranspProtocolData;
+import com.pretolesi.easyscada.Control.ControlData;
+import com.pretolesi.easyscada.R;
+import com.pretolesi.easyscada.Room.RoomFragmentData;
+import com.pretolesi.easyscada.CommClientData.TranspProtocolData;
 
 /**
  *
